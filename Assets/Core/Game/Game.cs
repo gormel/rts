@@ -1,38 +1,70 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Assets.Core.GameObjects;
 using Assets.Core.GameObjects.Base;
 using UnityEngine;
 
 namespace Assets.Core.Game
 {
-    class Player
-    {
-        public ResourceStorage Money { get; } = new ResourceStorage();
-        public IGameObjectFactory GameObjectFactory { get; }
-    }
-
     class Game
     {
         public Map.Map Map { get; }
 
         private IDictionary<Guid, RtsGameObject> mGameObjects = new Dictionary<Guid, RtsGameObject>();
-        private ICollection<Guid> mRemoveRequested = new List<Guid>();
-        private ICollection<RtsGameObject> mPlaceRequested = new List<RtsGameObject>();
+        private ICollection<Action> mRequested = new List<Action>();
+        private ICollection<Player> mPlayers = new List<Player>();
 
         public Game()
         {
             Map = new Map.Map(50, 50);
         }
 
-        public void PlaceObject(RtsGameObject obj)
+        public void AddPlayer(Player player)
         {
-            mPlaceRequested.Add(obj);
+            mPlayers.Add(player);
         }
 
-        public void RemoveObject(Guid objId)
+        public Task<Guid> PlaceObject(RtsGameObject obj)
         {
-            mRemoveRequested.Add(objId);
+            var tcs = new TaskCompletionSource<Guid>();
+            mRequested.Add(() =>
+            {
+                var id = Guid.NewGuid();
+                obj.ID = id;
+                mGameObjects.Add(id, obj);
+                tcs.SetResult(id);
+            });
+
+            return tcs.Task;
+        }
+
+        public Task<RtsGameObject> RemoveObject(Guid objId)
+        {
+            var tcs = new TaskCompletionSource<RtsGameObject>();
+            mRequested.Add(() =>
+            {
+                RtsGameObject obj;
+                if (!mGameObjects.TryGetValue(objId, out obj))
+                    tcs.SetException(new ArgumentException("There are no object with this ID."));
+
+                mGameObjects.Remove(objId);
+                tcs.SetResult(obj);
+            });
+
+            return tcs.Task;
+        }
+
+        public T GetObject<T>(Guid objectId) where T : RtsGameObject
+        {
+            RtsGameObject result;
+            if (!mGameObjects.TryGetValue(objectId, out result))
+                throw new ArgumentException("There are no object with this ID.");
+
+            if (!(result is T))
+                throw new ArgumentException("Object type does not match.");
+
+            return (T)result;
         }
 
         public void Update(TimeSpan elapsed)
@@ -40,26 +72,10 @@ namespace Assets.Core.Game
             foreach (var o in mGameObjects.Values)
                 o.Update(elapsed);
 
-            foreach (var id in mRemoveRequested)
-            {
-                RtsGameObject gameObject;
-                if (mGameObjects.TryGetValue(id, out gameObject))
-                {
-                    gameObject.ID = Guid.Empty;
-                    mGameObjects.Remove(id);
-                }
-            }
+            foreach (var request in mRequested)
+                request();
 
-            mRemoveRequested.Clear();
-
-            foreach (var gameObject in mPlaceRequested)
-            {
-                var id = Guid.NewGuid();
-                gameObject.ID = id;
-                mGameObjects.Add(id, gameObject);
-            }
-
-            mPlaceRequested.Clear();
+            mRequested.Clear();
         }
 
         public bool GetIsAreaFree(Vector2 position, Vector2 size)

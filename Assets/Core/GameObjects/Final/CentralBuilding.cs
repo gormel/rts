@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Assets.Core.GameObjects.Base;
 using Assets.Core.GameObjects.Utils;
 using UnityEngine;
@@ -8,8 +9,8 @@ namespace Assets.Core.GameObjects.Final
 {
     interface ICentralBuildingOrders : IBuildingOrders
     {
-        bool QueueWorker();
-        void SetWaypoint(Vector2 waypoint);
+        Task<bool> QueueWorker();
+        Task SetWaypoint(Vector2 waypoint);
     }
 
     interface ICentralBuildingInfo : IBuildingInfo
@@ -67,9 +68,9 @@ namespace Assets.Core.GameObjects.Final
             Health = MaxHealth = MaximumHealthConst;
         }
 
-        public bool QueueWorker()
+        public async Task<bool> QueueWorker()
         {
-            if (!Controller.Money.Spend(WorkerCost))
+            if (!Player.Money.Spend(WorkerCost))
                 return false;
 
             PlacementPoint point;
@@ -81,7 +82,7 @@ namespace Assets.Core.GameObjects.Final
             mOrders.Enqueue(new Order(productionTime, () =>
             {
                 WorkersQueued--;
-                var worker = mGame.GameObjectFactory.CreateWorker(point.Position);
+                var worker = Player.CreateWorker(point.Position);
                 mGame.PlaceObject(worker);
                 mPlacementService.ReleasePoint(point.ID);
                 if (!new Rect(Position, Size).Contains(Waypoint))
@@ -90,7 +91,7 @@ namespace Assets.Core.GameObjects.Final
             return true;
         }
 
-        public void SetWaypoint(Vector2 waypoint)
+        public async Task SetWaypoint(Vector2 waypoint)
         {
             Waypoint = waypoint;
         }

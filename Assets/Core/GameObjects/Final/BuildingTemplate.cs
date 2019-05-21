@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Assets.Core.GameObjects.Base;
 using Assets.Core.GameObjects.Utils;
 using Assets.Utils;
@@ -14,7 +15,7 @@ namespace Assets.Core.GameObjects.Final
 
     interface IBuildingTemplateOrders : IBuildingOrders
     {
-        void Cancel();
+        Task Cancel();
     }
 
     internal class BuildingTemplate : Building, IBuildingTemplateInfo, IBuildingTemplateOrders
@@ -58,14 +59,14 @@ namespace Assets.Core.GameObjects.Final
 
             if (mBuildTime <= TimeSpan.Zero)
             {
-                mGame.RemoveObject(this);
+                mGame.RemoveObject(ID);
                 mGame.PlaceObject(mCreateBuilding(Position));
             }
         }
 
-        public void Cancel()
+        public async Task Cancel()
         {
-            mGame.RemoveObject(this);
+            await mGame.RemoveObject(ID);
         }
     }
 }

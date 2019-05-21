@@ -9,6 +9,7 @@ using Assets.Core.GameObjects.Final;
 using Assets.Core.Map;
 using Assets.Utils;
 using Assets.Views;
+using Assets.Views.Base;
 using UnityEngine;
 using GameObject = UnityEngine.GameObject;
 
@@ -19,21 +20,22 @@ class Root : MonoBehaviour, IGameObjectFactory
     public GameObject BuildingTemplatePrefab;
     public GameObject CentralBuildingPrefab;
 
+    public Player Player { get; private set; }
     public Game Game { get; private set; }
     public MapView MapView { get; private set; }
-    public Player Controller { get; private set; }
 
     void Start()
     {
-        Game = new Game(this);
-        Controller = Game.GreenPlayer;
-        Controller.Money.Store(1000000);
+        Game = new Game();
+        Player = new Player(this);
+        Player.Money.Store(100000);
+        Game.AddPlayer(Player);
 
         MapView = CreateMap(Game.Map);
 
-        Game.PlaceObject(CreateWorker(Controller, new Vector2(14, 10)));
-        Game.PlaceObject(CreateWorker(Controller, new Vector2(15, 10)));
-        Game.PlaceObject(CreateWorker(Controller, new Vector2(16, 10)));
+        Game.PlaceObject(Player.CreateWorker(new Vector2(14, 10)));
+        Game.PlaceObject(Player.CreateWorker(new Vector2(15, 10)));
+        Game.PlaceObject(Player.CreateWorker(new Vector2(16, 10)));
     }
 
     private MapView CreateMap(Map map)
@@ -56,9 +58,11 @@ class Root : MonoBehaviour, IGameObjectFactory
         Game.Update(TimeSpan.FromSeconds(Time.deltaTime));
     }
 
-    private TModel CreateModelAndView<TView, TModel>(GameObject prefab, Func<TView, TModel> createModel, Vector2 position)
-        where TView : ModelSelectableView<TModel>
-        where TModel : RtsGameObject
+    private TModel CreateModelAndView<TView, TModel, TOrders, TInfo>(GameObject prefab, Func<TView, TModel> createModel, Vector2 position)
+        where TView : ModelSelectableView<TOrders, TInfo>
+        where TOrders : IGameObjectOrders
+        where TInfo : IGameObjectInfo
+        where TModel : RtsGameObject, TOrders, TInfo
     {
         if (WorkerPrefab == null)
             throw new Exception("Worker prefab is not set.");
@@ -70,7 +74,7 @@ class Root : MonoBehaviour, IGameObjectFactory
 
         var result = createModel(view);
         view.Map = MapView;
-        view.LoadModel(result);
+        view.LoadModel(result, result);
 
         instance.transform.parent = MapView.ChildContainer.transform;
         instance.transform.localPosition = GameUtils.GetPosition(position, Game.Map);
@@ -78,28 +82,28 @@ class Root : MonoBehaviour, IGameObjectFactory
         return result;
     }
 
-    public Worker CreateWorker(Player controller, Vector2 position)
+    public Worker CreateWorker(Vector2 position)
     {
-        return CreateModelAndView<WorkerView, Worker>(
+        return CreateModelAndView<WorkerView, Worker, IWorkerOrders, IWorkerInfo>(
             WorkerPrefab, 
-            view => new Worker(Game, controller, view, position),
+            view => new Worker(Game, view, position),
             position);
     }
 
-    public BuildingTemplate CreateBuildingTemplate(Player controller, Vector2 position, Func<Vector2, Building> building, TimeSpan buildTime, Vector2 size, float maxHealth)
+    public BuildingTemplate CreateBuildingTemplate(Vector2 position, Func<Vector2, Building> building, TimeSpan buildTime, Vector2 size, float maxHealth)
     {
-        return CreateModelAndView<BuildingTemplateView, BuildingTemplate>(
+        return CreateModelAndView<BuildingTemplateView, BuildingTemplate, IBuildingTemplateOrders, IBuildingTemplateInfo>(
             BuildingTemplatePrefab,
-            view => new BuildingTemplate(Game, controller, building, buildTime, size, position, maxHealth, view),
+            view => new BuildingTemplate(Game, building, buildTime, size, position, maxHealth, view),
             position
         );
     }
 
-    public CentralBuilding CreateCentralBuilding(Player controller, Vector2 position)
+    public CentralBuilding CreateCentralBuilding(Vector2 position)
     {
-        return CreateModelAndView<CentralBuildingView, CentralBuilding>(
+        return CreateModelAndView<CentralBuildingView, CentralBuilding, ICentralBuildingOrders, ICentralBuildingInfo>(
             CentralBuildingPrefab,
-            view => new CentralBuilding(Game, controller, position, view), 
+            view => new CentralBuilding(Game, position, view), 
             position
         );
     }

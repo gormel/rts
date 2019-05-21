@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Assets.Interaction
 {
-    sealed class SelectedWorkersActionsInterface : SelectedUnitsActionsInterface<Worker, WorkerView>
+    sealed class SelectedWorkersActionsInterface : SelectedUnitsActionsInterface<IWorkerOrders, IWorkerInfo, WorkerView>
     {
         public GameObject StartScreen;
 

@@ -29,32 +29,100 @@ namespace Assets.Interaction
             }
         }
 
-        private class InterfaceAction
+        private abstract class InterfaceAction
         {
-            private readonly Action<Vector2> mOnClick;
-            private readonly Action<Vector2> mOnMove;
-            private readonly Action mOnCancel;
+            public abstract void Resolve(Vector2 position);
+            public abstract void Move(Vector2 position);
+            public abstract void Cancel();
+        }
 
-            public InterfaceAction(Action<Vector2> onClick, Action<Vector2> onMove, Action onCancel)
+        private class GoToInterfaceAction<TOrders, TInfo> : InterfaceAction
+            where TOrders : IUnitOrders
+            where TInfo : IUnitInfo
+        {
+            private readonly IEnumerable<UnitView<TOrders, TInfo>> mViews;
+
+            public GoToInterfaceAction(IEnumerable<UnitView<TOrders, TInfo>> views)
             {
-                mOnClick = onClick;
-                mOnMove = onMove;
-                mOnCancel = onCancel;
+                mViews = views;
+            }
+            public override void Resolve(Vector2 position)
+            {
+                foreach (var view in mViews)
+                    view.GoTo(position);
             }
 
-            public void Resolve(Vector2 position)
+            public override void Move(Vector2 position)
             {
-                mOnClick?.Invoke(position);
             }
 
-            public void Move(Vector2 position)
+            public override void Cancel()
             {
-                mOnMove?.Invoke(position);
+            }
+        }
+
+        private class BuildingPlacementInterfaceAction : InterfaceAction
+        {
+            private readonly UserInterface mUserInterface;
+            private readonly IEnumerable<WorkerView> mWorkers;
+            private readonly Func<WorkerView, Vector2, Task<BuildingTemplate>> mCreateTemplate;
+            private readonly Vector2 mSize;
+            private GameObject cursorObj;
+            private BuildCursorColorer colorer;
+
+            public BuildingPlacementInterfaceAction(
+                UserInterface userInterface, 
+                IEnumerable<WorkerView> workers, 
+                Func<WorkerView, Vector2, Task<BuildingTemplate>> createTemplate, 
+                Vector2 size
+                )
+            {
+                mUserInterface = userInterface;
+                mWorkers = workers;
+                mCreateTemplate = createTemplate;
+                mSize = size;
+                cursorObj = Instantiate(userInterface.BuildCursorPrefab);
+                colorer = cursorObj.GetComponent<BuildCursorColorer>();
+                cursorObj.transform.localScale = new Vector3(
+                    cursorObj.transform.localScale.x * size.x,
+                    cursorObj.transform.localScale.y,
+                    cursorObj.transform.localScale.z * size.y);
             }
 
-            public void Cancel()
+            public override async void Resolve(Vector2 position)
             {
-                mOnCancel?.Invoke();
+                try
+                {
+                    Task<BuildingTemplate> createTemplate = null;
+                    foreach (var view in mWorkers.Take(1))
+                        createTemplate = mCreateTemplate(view, position);
+
+                    if (createTemplate == null)
+                        return;
+
+                    var template = await createTemplate;
+
+                    foreach (var view in mWorkers.Skip(1))
+                        view.AttachAsBuilder(template.ID);
+                }
+                finally
+                {
+                    cursorObj.transform.SetParent(null);
+                    Destroy(cursorObj);
+                }
+            }
+
+            public override void Move(Vector2 position)
+            {
+                position = new Vector2(Mathf.FloorToInt(position.x), Mathf.FloorToInt(position.y));
+                colorer.Valid = mUserInterface.Root.Game.GetIsAreaFree(position, mSize);
+                cursorObj.transform.localPosition = GameUtils.GetPosition(position, mUserInterface.Root.Game.Map);
+            }
+
+            public override void Cancel()
+            {
+                cursorObj.transform.SetParent(null);
+                Destroy(cursorObj);
             }
         }
 
@@ -89,50 +157,22 @@ namespace Assets.Interaction
             return RaycastBase<T>(mouse, Physics.RaycastAll);
         }
 
-        public void BeginGoTo<TModel>(IEnumerable<UnitView<TModel>> views) where TModel : Unit
+        public void BeginGoTo<TOrders, TInfo>(IEnumerable<UnitView<TOrders, TInfo>> views) 
+            where TOrders : IUnitOrders
+            where TInfo : IUnitInfo
         {
-            mCurrentAction = new InterfaceAction(pos =>
-            {
-                foreach (var view in views)
-                    view.GoTo(pos);
-            }, null, null);
+            if (mCurrentAction != null)
+                mCurrentAction.Cancel();
+
+            mCurrentAction = new GoToInterfaceAction<TOrders, TInfo>(views);
         }
 
-        public void BeginBuildingPlacement(IEnumerable<WorkerView> workers, Func<WorkerView, Vector2, BuildingTemplate> createTemplate, Vector2 size)
+        public void BeginBuildingPlacement(IEnumerable<WorkerView> workers, Func<WorkerView, Vector2, Task<BuildingTemplate>> createTemplate, Vector2 size)
         {
-            var cursorObj = Instantiate(BuildCursorPrefab);
-            var colorer = cursorObj.GetComponent<BuildCursorColorer>();
-            cursorObj.transform.localScale = new Vector3(
-                cursorObj.transform.localScale.x * size.x, 
-                cursorObj.transform.localScale.y, 
-                cursorObj.transform.localScale.z * size.y);
+            if (mCurrentAction != null)
+                mCurrentAction.Cancel();
 
-            mCurrentAction = new InterfaceAction(pos =>
-            {
-                BuildingTemplate template = null;
-                foreach (var view in workers.Take(1))
-                    template = createTemplate(view, pos);
-
-                if (template == null)
-                    return;
-
-                foreach (var view in workers.Skip(1))
-                    view.AttachAsBuilder(template);
-
-                cursorObj.transform.SetParent(null);
-                Destroy(cursorObj);
-            }, pos =>
-            {
-                pos = new Vector2(Mathf.FloorToInt(pos.x), Mathf.FloorToInt(pos.y));
-
-                colorer.Valid = Root.Game.GetIsAreaFree(pos, size);
-
-                cursorObj.transform.localPosition = GameUtils.GetPosition(pos, Root.Game.Map);
-            }, () =>
-            {
-                cursorObj.transform.SetParent(null);
-                Destroy(cursorObj);
-            });
+            mCurrentAction = new BuildingPlacementInterfaceAction(this, workers, createTemplate, size);
         }
 
         void Update()
@@ -191,15 +231,27 @@ namespace Assets.Interaction
 
                 if (Input.GetMouseButtonDown((int) MouseButton.LeftMouse))
                 {
-                    mCurrentAction.Resolve(mapPoint);
-                    mCurrentAction = null;
+                    try
+                    {
+                        mCurrentAction.Resolve(mapPoint);
+                    }
+                    finally
+                    {
+                        mCurrentAction = null;
+                    }
                     return;
                 }
 
                 if (Input.GetMouseButtonDown((int) MouseButton.RightMouse))
                 {
-                    mCurrentAction.Cancel();
-                    mCurrentAction = null;
+                    try
+                    {
+                        mCurrentAction.Cancel();
+                    }
+                    finally
+                    {
+                        mCurrentAction = null;
+                    }
                     return;
                 }
 

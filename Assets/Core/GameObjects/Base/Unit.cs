@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Assets.Core.GameObjects.Utils;
 using Assets.Core.Map;
 using UnityEngine;
@@ -7,7 +8,7 @@ namespace Assets.Core.GameObjects.Base
 {
     interface IUnitOrders : IGameObjectOrders
     {
-        void GoTo(Vector2 position);
+        Task GoTo(Vector2 position);
     }
 
     interface IUnitInfo : IGameObjectInfo
@@ -72,7 +73,7 @@ namespace Assets.Core.GameObjects.Base
             mOrder.Begin();
         }
 
-        public void GoTo(Vector2 position)
+        public async Task GoTo(Vector2 position)
         {
             SetOrder(new GoToOrder(this, position));
         }

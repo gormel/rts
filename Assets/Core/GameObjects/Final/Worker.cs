@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Assets.Core.GameObjects.Base;
 using Assets.Core.GameObjects.Utils;
 using Assets.Core.Map;
@@ -8,8 +9,8 @@ namespace Assets.Core.GameObjects.Final
 {
     interface IWorkerOrders : IUnitOrders
     {
-        BuildingTemplate PlaceCentralBuildingTemplate(Vector2Int position);
-        void AttachAsBuilder(Guid templateId);
+        Task<BuildingTemplate> PlaceCentralBuildingTemplate(Vector2Int position);
+        Task AttachAsBuilder(Guid templateId);
     }
 
     interface IWorkerInfo : IUnitInfo
@@ -57,25 +58,24 @@ namespace Assets.Core.GameObjects.Final
         public const int CentralBuildingCost = 400;
         public static TimeSpan CentralBuildingBuildTime { get; } = TimeSpan.FromSeconds(30);
         
-        public BuildingTemplate PlaceCentralBuildingTemplate(Vector2Int position)
+        public async Task<BuildingTemplate> PlaceCentralBuildingTemplate(Vector2Int position)
         {
-            if (!Controller.Money.Spend(CentralBuildingCost))
+            if (!Player.Money.Spend(CentralBuildingCost))
                 return null;
 
             if (!mGame.GetIsAreaFree(position, CentralBuilding.BuildingSize))
                 return null;
 
-            var template = mGame.GameObjectFactory.CreateBuildingTemplate(
-                Controller,
+            var template = Player.CreateBuildingTemplate(
                 position,
-                pos => mGame.GameObjectFactory.CreateCentralBuilding(Controller, pos),
+                pos => Player.CreateCentralBuilding(pos),
                 CentralBuildingBuildTime,
                 CentralBuilding.BuildingSize,
                 CentralBuilding.MaximumHealthConst
             );
 
-            mGame.PlaceObject(template);
-            AttachAsBuilder(template);
+            var id = await mGame.PlaceObject(template);
+            await AttachAsBuilder(id);
             return template;
         }
 
@@ -86,8 +86,9 @@ namespace Assets.Core.GameObjects.Final
             MaxHealth = Health = 40;
         }
 
-        public void AttachAsBuilder(Guid templateId)
+        public async Task AttachAsBuilder(Guid templateId)
         {
+            var template = mGame.GetObject<BuildingTemplate>(templateId);
             PlacementPoint point;
             if (!template.PlacementService.TryAllocatePoint(out point))
                 return;

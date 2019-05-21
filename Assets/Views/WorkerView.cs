@@ -41,7 +41,7 @@ namespace Assets.Views
             Orders.AttachAsBuilder(templateId);
         }
 
-        public BuildingTemplate PlaceCentralBuilding(Vector2Int position)
+        public Task<BuildingTemplate> PlaceCentralBuilding(Vector2Int position)
         {
             return Orders.PlaceCentralBuildingTemplate(position);
         }

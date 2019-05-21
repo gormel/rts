@@ -50,7 +50,8 @@ namespace Assets.Views.Base
 
         protected virtual void OnLateUpdate()
         {
-            transform.rotation = Quaternion.LookRotation(mNavMeshAgent.velocity.normalized);
+            if (mNavMeshAgent.velocity.sqrMagnitude > 0.01)
+                transform.rotation = Quaternion.LookRotation(mNavMeshAgent.velocity.normalized);
         }
 
         public void SetTarget(Vector2 position, Map map)

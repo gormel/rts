@@ -8,7 +8,10 @@ using UnityEngine;
 
 namespace Assets.Interaction
 {
-    abstract class SelectedUnitsActionsInterface<TModel, TView> : MonoBehaviour where TModel : Unit where TView : UnitView<TModel>
+    abstract class SelectedUnitsActionsInterface<TOrders, TInfo, TView> : MonoBehaviour 
+        where TOrders : IUnitOrders
+        where TInfo : IUnitInfo
+        where TView : UnitView<TOrders, TInfo>
     {
         public UserInterface Interface;
 
