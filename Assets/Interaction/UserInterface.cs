@@ -31,9 +31,17 @@ namespace Assets.Interaction
 
         private abstract class InterfaceAction
         {
-            public abstract void Resolve(Vector2 position);
-            public abstract void Move(Vector2 position);
-            public abstract void Cancel();
+            public virtual void Resolve(Vector2 position)
+            {
+            }
+
+            public virtual void Move(Vector2 position)
+            {
+            }
+
+            public virtual void Cancel()
+            {
+            }
         }
 
         private class GoToInterfaceAction<TOrders, TInfo> : InterfaceAction
@@ -50,14 +58,6 @@ namespace Assets.Interaction
             {
                 foreach (var view in mViews)
                     view.GoTo(position);
-            }
-
-            public override void Move(Vector2 position)
-            {
-            }
-
-            public override void Cancel()
-            {
             }
         }
 
