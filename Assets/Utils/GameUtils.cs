@@ -10,9 +10,9 @@ namespace Assets.Utils
 {
     static class GameUtils
     {
-        public static Vector3 GetPosition(Vector2 flatPosition, Map map)
+        public static Vector3 GetPosition(Vector2 flatPosition, IMapData mapData)
         {
-            return new Vector3(flatPosition.x, map.GetHeightAt(flatPosition), flatPosition.y);
+            return new Vector3(flatPosition.x, mapData.GetHeightAt(flatPosition), flatPosition.y);
         }
 
         public static Vector2 GetFlatPosition(Vector3 position)

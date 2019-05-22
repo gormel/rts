@@ -65,7 +65,7 @@ namespace Assets.Interaction
         {
             private readonly UserInterface mUserInterface;
             private readonly IEnumerable<WorkerView> mWorkers;
-            private readonly Func<WorkerView, Vector2, Task<BuildingTemplate>> mCreateTemplate;
+            private readonly Func<WorkerView, Vector2, Task<Guid>> mCreateTemplate;
             private readonly Vector2 mSize;
             private GameObject cursorObj;
             private BuildCursorColorer colorer;
@@ -73,7 +73,7 @@ namespace Assets.Interaction
             public BuildingPlacementInterfaceAction(
                 UserInterface userInterface, 
                 IEnumerable<WorkerView> workers, 
-                Func<WorkerView, Vector2, Task<BuildingTemplate>> createTemplate, 
+                Func<WorkerView, Vector2, Task<Guid>> createTemplate, 
                 Vector2 size
                 )
             {
@@ -93,17 +93,17 @@ namespace Assets.Interaction
             {
                 try
                 {
-                    Task<BuildingTemplate> createTemplate = null;
+                    Task<Guid> createTemplateId = null;
                     foreach (var view in mWorkers.Take(1))
-                        createTemplate = mCreateTemplate(view, position);
+                        createTemplateId = mCreateTemplate(view, position);
 
-                    if (createTemplate == null)
+                    if (createTemplateId == null)
                         return;
 
-                    var template = await createTemplate;
+                    var templateId = await createTemplateId;
 
                     foreach (var view in mWorkers.Skip(1))
-                        view.AttachAsBuilder(template.ID);
+                        view.AttachAsBuilder(templateId);
                 }
                 finally
                 {
@@ -115,8 +115,8 @@ namespace Assets.Interaction
             public override void Move(Vector2 position)
             {
                 position = new Vector2(Mathf.FloorToInt(position.x), Mathf.FloorToInt(position.y));
-                colorer.Valid = mUserInterface.Root.Game.GetIsAreaFree(position, mSize);
-                cursorObj.transform.localPosition = GameUtils.GetPosition(position, mUserInterface.Root.Game.Map);
+                colorer.Valid = mUserInterface.Root.MapView.IsAreaFree(position, mSize);
+                cursorObj.transform.localPosition = mUserInterface.Root.MapView.GetWorldPosition(position);
             }
 
             public override void Cancel()
@@ -167,7 +167,7 @@ namespace Assets.Interaction
             mCurrentAction = new GoToInterfaceAction<TOrders, TInfo>(views);
         }
 
-        public void BeginBuildingPlacement(IEnumerable<WorkerView> workers, Func<WorkerView, Vector2, Task<BuildingTemplate>> createTemplate, Vector2 size)
+        public void BeginBuildingPlacement(IEnumerable<WorkerView> workers, Func<WorkerView, Vector2, Task<Guid>> createTemplate, Vector2 size)
         {
             if (mCurrentAction != null)
                 mCurrentAction.Cancel();

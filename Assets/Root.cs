@@ -7,6 +7,7 @@ using Assets.Core.GameObjects;
 using Assets.Core.GameObjects.Base;
 using Assets.Core.GameObjects.Final;
 using Assets.Core.Map;
+using Assets.Networking;
 using Assets.Utils;
 using Assets.Views;
 using Assets.Views.Base;
@@ -20,8 +21,9 @@ class Root : MonoBehaviour, IGameObjectFactory
     public GameObject BuildingTemplatePrefab;
     public GameObject CentralBuildingPrefab;
 
+    public NetworkManager NetworkManager;
     public Player Player { get; private set; }
-    public Game Game { get; private set; }
+    private Game Game { get; set; }
     public MapView MapView { get; private set; }
 
     void Start()
@@ -48,7 +50,7 @@ class Root : MonoBehaviour, IGameObjectFactory
         if (view == null)
             throw new Exception("Map prefab not contains MapView.");
 
-        view.LoadMap(map);
+        view.LoadMap(map.Data);
         mapInstance.transform.parent = transform;
         return view;
     }
@@ -77,7 +79,7 @@ class Root : MonoBehaviour, IGameObjectFactory
         view.LoadModel(result, result);
 
         instance.transform.parent = MapView.ChildContainer.transform;
-        instance.transform.localPosition = GameUtils.GetPosition(position, Game.Map);
+        instance.transform.localPosition = MapView.GetWorldPosition(position);
 
         return result;
     }

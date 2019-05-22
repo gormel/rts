@@ -32,7 +32,7 @@ namespace Assets.Core.GameObjects.Base
 
             protected override void OnBegin()
             {
-                mUnit.mPathFinder.SetTarget(mPosition, mUnit.mGame.Map);
+                mUnit.mPathFinder.SetTarget(mPosition, mUnit.mGame.Map.Data);
             }
 
             protected override void OnUpdate(TimeSpan deltaTime)

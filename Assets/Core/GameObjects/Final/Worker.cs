@@ -9,7 +9,7 @@ namespace Assets.Core.GameObjects.Final
 {
     interface IWorkerOrders : IUnitOrders
     {
-        Task<BuildingTemplate> PlaceCentralBuildingTemplate(Vector2Int position);
+        Task<Guid> PlaceCentralBuildingTemplate(Vector2Int position);
         Task AttachAsBuilder(Guid templateId);
     }
 
@@ -58,13 +58,13 @@ namespace Assets.Core.GameObjects.Final
         public const int CentralBuildingCost = 400;
         public static TimeSpan CentralBuildingBuildTime { get; } = TimeSpan.FromSeconds(30);
         
-        public async Task<BuildingTemplate> PlaceCentralBuildingTemplate(Vector2Int position)
+        public async Task<Guid> PlaceCentralBuildingTemplate(Vector2Int position)
         {
             if (!Player.Money.Spend(CentralBuildingCost))
-                return null;
+                return Guid.Empty;
 
             if (!mGame.GetIsAreaFree(position, CentralBuilding.BuildingSize))
-                return null;
+                return Guid.Empty;
 
             var template = Player.CreateBuildingTemplate(
                 position,
@@ -76,7 +76,7 @@ namespace Assets.Core.GameObjects.Final
 
             var id = await mGame.PlaceObject(template);
             await AttachAsBuilder(id);
-            return template;
+            return id;
         }
 
         public Worker(Game.Game game, IPathFinder pathFinder, Vector2 position)

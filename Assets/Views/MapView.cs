@@ -14,10 +14,9 @@ namespace Assets.Views
     {
         public const int AgentTypeID = 0;
         public GameObject ChildContainer;
+        private IMapData mMapData;
 
-        private Map mMap;
-
-        public void LoadMap(Map map)
+        public void LoadMap(IMapData mapData)
         {
             var meshFilter = GetComponent<MeshFilter>();
             if (meshFilter == null)
@@ -29,21 +28,21 @@ namespace Assets.Views
             var mapVertices = new List<Vector3>();
             var mapUVs = new List<Vector2>();
             var i = 0;
-            var mapIndices = new int[(map.Width - 1) * (map.Length - 1) * 4];
-            for (int x = 0; x < map.Width; x++)
+            var mapIndices = new int[(mapData.Width - 1) * (mapData.Length - 1) * 4];
+            for (int x = 0; x < mapData.Width; x++)
             {
-                for (int y = 0; y < map.Length; y++)
+                for (int y = 0; y < mapData.Length; y++)
                 {
-                    mapVertices.Add(GameUtils.GetPosition(new Vector2(x, y), map));
+                    mapVertices.Add(GameUtils.GetPosition(new Vector2(x, y), mapData));
                     mapUVs.Add(new Vector2(x, y) / 4);
 
-                    if (y == map.Length - 1 || x == map.Width - 1)
+                    if (y == mapData.Length - 1 || x == mapData.Width - 1)
                         continue;
 
-                    mapIndices[i++] = x * map.Length + y;
-                    mapIndices[i++] = x * map.Length + y + 1;
-                    mapIndices[i++] = (x + 1) * map.Length + y + 1;
-                    mapIndices[i++] = (x + 1) * map.Length + y;
+                    mapIndices[i++] = x * mapData.Length + y;
+                    mapIndices[i++] = x * mapData.Length + y + 1;
+                    mapIndices[i++] = (x + 1) * mapData.Length + y + 1;
+                    mapIndices[i++] = (x + 1) * mapData.Length + y;
                 }
             }
 
@@ -74,18 +73,23 @@ namespace Assets.Views
             var navMeshData = NavMeshBuilder.BuildNavMeshData(
                 settings,
                 new List<NavMeshBuildSource> {source},
-                new Bounds(new Vector3((float) map.Width / 2, 0, (float) map.Length / 2), new Vector3(map.Width, 2, map.Length)),
+                new Bounds(new Vector3((float) mapData.Width / 2, 0, (float) mapData.Length / 2), new Vector3(mapData.Width, 2, mapData.Length)),
                 transform.position, 
                 transform.rotation
                 );
 
             NavMesh.AddNavMeshData(navMeshData);
-            mMap = map;
+            mMapData = mapData;
+        }
+
+        public bool IsAreaFree(Vector2 position, Vector2 size)
+        {
+            return true;
         }
 
         public Vector3 GetWorldPosition(Vector2 flatPosition)
         {
-            return GameUtils.GetPosition(flatPosition, mMap);
+            return GameUtils.GetPosition(flatPosition, mMapData);
         }
     }
 }

@@ -93,7 +93,7 @@ namespace Assets.Core.Game
                 }
             }
 
-            return Map.GetIsAreaFree(position, size);
+            return Map.Data.GetIsAreaFree(position, size);
         }
     }
 }

@@ -54,12 +54,12 @@ namespace Assets.Views.Base
                 transform.rotation = Quaternion.LookRotation(mNavMeshAgent.velocity.normalized);
         }
 
-        public void SetTarget(Vector2 position, Map map)
+        public void SetTarget(Vector2 position, IMapData mapData)
         {
             Active = true;
             Execute(() =>
             {
-                mNavMeshAgent.SetDestination(mTarget = GameUtils.GetPosition(position, map));
+                mNavMeshAgent.SetDestination(mTarget = GameUtils.GetPosition(position, mapData));
             });
         }
 

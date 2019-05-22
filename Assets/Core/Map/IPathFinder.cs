@@ -8,7 +8,7 @@ namespace Assets.Core.Map
         Vector2 CurrentPosition { get; }
         Vector2 CurrentDirection { get; }
 
-        void SetTarget(Vector2 position, Map map);
+        void SetTarget(Vector2 position, IMapData mapData);
 
         void Stop();
     }
