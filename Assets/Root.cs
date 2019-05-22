@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Net.Sockets;
 using Assets.Core;
 using Assets.Core.Game;
 using Assets.Core.GameObjects;
@@ -8,11 +9,13 @@ using Assets.Core.GameObjects.Base;
 using Assets.Core.GameObjects.Final;
 using Assets.Core.Map;
 using Assets.Networking;
+using Assets.Networking.ServerClientPackages;
 using Assets.Utils;
 using Assets.Views;
 using Assets.Views.Base;
 using UnityEngine;
 using GameObject = UnityEngine.GameObject;
+using Random = UnityEngine.Random;
 
 class Root : MonoBehaviour, IGameObjectFactory
 {
@@ -29,15 +32,26 @@ class Root : MonoBehaviour, IGameObjectFactory
     void Start()
     {
         Game = new Game();
+        MapView = CreateMap(Game.Map);
+
         Player = new Player(this);
         Player.Money.Store(100000);
         Game.AddPlayer(Player);
-
-        MapView = CreateMap(Game.Map);
-
         Game.PlaceObject(Player.CreateWorker(new Vector2(14, 10)));
-        Game.PlaceObject(Player.CreateWorker(new Vector2(15, 10)));
-        Game.PlaceObject(Player.CreateWorker(new Vector2(16, 10)));
+
+        NetworkManager.Server.OnConnected += ServerOnOnConnected;
+    }
+
+    private void ServerOnOnConnected(TcpClient tcpClient)
+    {
+        var clientPlayer = new Player(this);
+        clientPlayer.Money.Store(10000);
+        Game.AddPlayer(clientPlayer);
+        Game.PlaceObject(clientPlayer.CreateWorker(new Vector2(Random.Range(0, 20), Random.Range(0, 20))));
+
+        //send map
+        //send game state
+        //create player
     }
 
     private MapView CreateMap(Map map)
@@ -86,27 +100,36 @@ class Root : MonoBehaviour, IGameObjectFactory
 
     public Worker CreateWorker(Vector2 position)
     {
-        return CreateModelAndView<WorkerView, Worker, IWorkerOrders, IWorkerInfo>(
+        var worker = CreateModelAndView<WorkerView, Worker, IWorkerOrders, IWorkerInfo>(
             WorkerPrefab, 
             view => new Worker(Game, view, position),
-            position);
+            position
+        );
+        var t = NetworkManager.Server.ObjectCreated(worker, worker, null);
+        return worker;
     }
 
     public BuildingTemplate CreateBuildingTemplate(Vector2 position, Func<Vector2, Building> building, TimeSpan buildTime, Vector2 size, float maxHealth)
     {
-        return CreateModelAndView<BuildingTemplateView, BuildingTemplate, IBuildingTemplateOrders, IBuildingTemplateInfo>(
+        var template = CreateModelAndView<BuildingTemplateView, BuildingTemplate, IBuildingTemplateOrders, IBuildingTemplateInfo>(
             BuildingTemplatePrefab,
             view => new BuildingTemplate(Game, building, buildTime, size, position, maxHealth, view),
             position
         );
+
+        var t = NetworkManager.Server.ObjectCreated(template, template, new BuildingTemplatePackageProcessor(template, template));
+        return template;
     }
 
     public CentralBuilding CreateCentralBuilding(Vector2 position)
     {
-        return CreateModelAndView<CentralBuildingView, CentralBuilding, ICentralBuildingOrders, ICentralBuildingInfo>(
+        var centralBuilding = CreateModelAndView<CentralBuildingView, CentralBuilding, ICentralBuildingOrders, ICentralBuildingInfo>(
             CentralBuildingPrefab,
             view => new CentralBuilding(Game, position, view), 
             position
         );
+
+        var t = NetworkManager.Server.ObjectCreated(centralBuilding, centralBuilding, null);
+        return centralBuilding;
     }
 }

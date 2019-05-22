@@ -16,7 +16,7 @@ namespace Assets.Views.Base
 
         public bool IsSelected
         {
-            get => mIsSelected;
+            get { return mIsSelected; }
             set
             {
                 SelectionObject.SetActive(value);
