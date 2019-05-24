@@ -5,20 +5,20 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 
-namespace Assets.Networking
+namespace Assets.Networking.NetworkCustoms
 {
-    class CancelBuildingTemplatePackage { }
+    class CancelBuildingTemplateData { }
 
     class BuildingTemplateStatePackage : IBuildingTemplateInfo
     {
         public Guid ID { get; set; }
-        public Vector2 Position { get; }
-        public float Health { get; }
-        public float MaxHealth { get; }
-        public Vector2 Size { get; }
-        public Vector2 Waypoint { get; }
-        public float Progress { get; }
-        public int AttachedWorkers { get; }
+        public Vector2 Position { get; private set; }
+        public float Health { get; private set; }
+        public float MaxHealth { get; private set; }
+        public Vector2 Size { get; private set; }
+        public Vector2 Waypoint { get; private set; }
+        public float Progress { get; private set; }
+        public int AttachedWorkers { get; private set; }
 
         public BuildingTemplateStatePackage(IBuildingTemplateInfo info)
         {
@@ -32,17 +32,23 @@ namespace Assets.Networking
             AttachedWorkers = info.AttachedWorkers;
         }
     }
-    class BuildingTemplatePackageProcessor : IPackageProcessor
+
+    class BuildingTemplateServerPackageProcessor : IPackageProcessor
     {
+        private readonly IBuildingTemplateOrders mOrders;
         private readonly IBuildingTemplateInfo mInfo;
 
-        public BuildingTemplatePackageProcessor(IBuildingTemplateOrders orders, IBuildingTemplateInfo info)
+        public BuildingTemplateServerPackageProcessor(IBuildingTemplateOrders orders, IBuildingTemplateInfo info)
         {
+            mOrders = orders;
             mInfo = info;
         }
 
-        public void Process(JObject package)
+        public void Process(JObject data)
         {
+            var des = JsonUtils.Serializer.Deserialize(new JTokenReader(data));
+            if (des is CancelBuildingTemplateData)
+                mOrders.Cancel();
         }
 
         public void SendState(JsonTextWriter writer)

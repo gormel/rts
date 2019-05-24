@@ -9,6 +9,7 @@ using Assets.Core.GameObjects.Base;
 using Assets.Core.GameObjects.Final;
 using Assets.Core.Map;
 using Assets.Networking;
+using Assets.Networking.NetworkCustoms;
 using Assets.Networking.ServerClientPackages;
 using Assets.Utils;
 using Assets.Views;
@@ -17,8 +18,85 @@ using UnityEngine;
 using GameObject = UnityEngine.GameObject;
 using Random = UnityEngine.Random;
 
-class Root : MonoBehaviour, IGameObjectFactory
+class Root : MonoBehaviour
 {
+    private class Factory : IGameObjectFactory
+    {
+        private readonly Game mGame;
+        private readonly MapView mMap;
+        private readonly GameObject mWorkerPrefab;
+        private readonly GameObject mBuildingTemplatePrefab;
+        private readonly GameObject mCentralBuildingPrefab;
+        private readonly NetworkManager mNetworkManager;
+
+        public event Action<SelectableView> ViewCreated;
+
+        public Factory(Game game, MapView map, GameObject workerPrefab, GameObject buildingTemplatePrefab, GameObject centralBuildingPrefab, NetworkManager networkManager)
+        {
+            mGame = game;
+            mMap = map;
+            mWorkerPrefab = workerPrefab;
+            mBuildingTemplatePrefab = buildingTemplatePrefab;
+            mCentralBuildingPrefab = centralBuildingPrefab;
+            mNetworkManager = networkManager;
+        }
+
+        private TModel CreateModelAndView<TView, TModel, TOrders, TInfo>(GameObject prefab, Func<TView, TModel> createModel, Vector2 position)
+            where TView : ModelSelectableView<TOrders, TInfo>
+            where TOrders : IGameObjectOrders
+            where TInfo : IGameObjectInfo
+            where TModel : RtsGameObject, TOrders, TInfo
+        {
+            var instance = Instantiate(prefab);
+            var view = instance.GetComponent<TView>();
+            if (view == null)
+                throw new Exception("Prefab not contains View script.");
+
+            var result = createModel(view);
+            view.Map = mMap;
+            view.LoadModel(result, result);
+
+            instance.transform.parent = mMap.ChildContainer.transform;
+            instance.transform.localPosition = mMap.GetWorldPosition(position);
+
+            return result;
+        }
+
+        public Worker CreateWorker(Vector2 position)
+        {
+            var worker = CreateModelAndView<WorkerView, Worker, IWorkerOrders, IWorkerInfo>(
+                mWorkerPrefab,
+                view => new Worker(mGame, view, position),
+                position
+            );
+            var t = mNetworkManager.Server.ObjectCreated(worker, worker, null);
+            return worker;
+        }
+
+        public BuildingTemplate CreateBuildingTemplate(Vector2 position, Func<Vector2, Building> building, TimeSpan buildTime, Vector2 size, float maxHealth)
+        {
+            var template = CreateModelAndView<BuildingTemplateView, BuildingTemplate, IBuildingTemplateOrders, IBuildingTemplateInfo>(
+                mBuildingTemplatePrefab,
+                view => new BuildingTemplate(mGame, building, buildTime, size, position, maxHealth, view),
+                position
+            );
+
+            var t = mNetworkManager.Server.ObjectCreated(template, template, new BuildingTemplateServerPackageProcessor(template, template));
+            return template;
+        }
+
+        public CentralBuilding CreateCentralBuilding(Vector2 position)
+        {
+            var centralBuilding = CreateModelAndView<CentralBuildingView, CentralBuilding, ICentralBuildingOrders, ICentralBuildingInfo>(
+                mCentralBuildingPrefab,
+                view => new CentralBuilding(mGame, position, view),
+                position
+            );
+
+            var t = mNetworkManager.Server.ObjectCreated(centralBuilding, centralBuilding, null);
+            return centralBuilding;
+        }
+    }
     public GameObject MapPrefab;
     public GameObject WorkerPrefab;
     public GameObject BuildingTemplatePrefab;
@@ -31,27 +109,34 @@ class Root : MonoBehaviour, IGameObjectFactory
 
     void Start()
     {
-        Game = new Game();
-        MapView = CreateMap(Game.Map);
+        if (GameUtils.CurrentMode == GameMode.Server)
+        {
+            NetworkManager.Server.LoadMap(Game.Map.Data);
+            NetworkManager.Server.OnConnected += ServerOnOnConnected;
 
-        Player = new Player(this);
-        Player.Money.Store(100000);
-        Game.AddPlayer(Player);
-        Game.PlaceObject(Player.CreateWorker(new Vector2(14, 10)));
+            Game = new Game();
+            MapView = CreateMap(Game.Map);
 
-        NetworkManager.Server.OnConnected += ServerOnOnConnected;
+            var controlledFactory = new Factory(Game, MapView, WorkerPrefab, BuildingTemplatePrefab, CentralBuildingPrefab, NetworkManager);
+            controlledFactory.ViewCreated += ControlledFactoryOnViewCreated;
+            Player = new Player(controlledFactory);
+            Player.Money.Store(100000);
+            Game.AddPlayer(Player);
+            Game.PlaceObject(Player.CreateWorker(new Vector2(14, 10)));
+        }
+    }
+
+    private void ControlledFactoryOnViewCreated(SelectableView selectableView)
+    {
+        selectableView.IsControlable = true;
     }
 
     private void ServerOnOnConnected(TcpClient tcpClient)
     {
-        var clientPlayer = new Player(this);
+        var clientPlayer = new Player(new Factory(Game, MapView, WorkerPrefab, BuildingTemplatePrefab, CentralBuildingPrefab, NetworkManager));
         clientPlayer.Money.Store(10000);
         Game.AddPlayer(clientPlayer);
         Game.PlaceObject(clientPlayer.CreateWorker(new Vector2(Random.Range(0, 20), Random.Range(0, 20))));
-
-        //send map
-        //send game state
-        //create player
     }
 
     private MapView CreateMap(Map map)
@@ -72,64 +157,5 @@ class Root : MonoBehaviour, IGameObjectFactory
     void Update()
     {
         Game.Update(TimeSpan.FromSeconds(Time.deltaTime));
-    }
-
-    private TModel CreateModelAndView<TView, TModel, TOrders, TInfo>(GameObject prefab, Func<TView, TModel> createModel, Vector2 position)
-        where TView : ModelSelectableView<TOrders, TInfo>
-        where TOrders : IGameObjectOrders
-        where TInfo : IGameObjectInfo
-        where TModel : RtsGameObject, TOrders, TInfo
-    {
-        if (WorkerPrefab == null)
-            throw new Exception("Worker prefab is not set.");
-
-        var instance = Instantiate(prefab);
-        var view = instance.GetComponent<TView>();
-        if (view == null)
-            throw new Exception("Worker prefab not contains WorkerView.");
-
-        var result = createModel(view);
-        view.Map = MapView;
-        view.LoadModel(result, result);
-
-        instance.transform.parent = MapView.ChildContainer.transform;
-        instance.transform.localPosition = MapView.GetWorldPosition(position);
-
-        return result;
-    }
-
-    public Worker CreateWorker(Vector2 position)
-    {
-        var worker = CreateModelAndView<WorkerView, Worker, IWorkerOrders, IWorkerInfo>(
-            WorkerPrefab, 
-            view => new Worker(Game, view, position),
-            position
-        );
-        var t = NetworkManager.Server.ObjectCreated(worker, worker, null);
-        return worker;
-    }
-
-    public BuildingTemplate CreateBuildingTemplate(Vector2 position, Func<Vector2, Building> building, TimeSpan buildTime, Vector2 size, float maxHealth)
-    {
-        var template = CreateModelAndView<BuildingTemplateView, BuildingTemplate, IBuildingTemplateOrders, IBuildingTemplateInfo>(
-            BuildingTemplatePrefab,
-            view => new BuildingTemplate(Game, building, buildTime, size, position, maxHealth, view),
-            position
-        );
-
-        var t = NetworkManager.Server.ObjectCreated(template, template, new BuildingTemplatePackageProcessor(template, template));
-        return template;
-    }
-
-    public CentralBuilding CreateCentralBuilding(Vector2 position)
-    {
-        var centralBuilding = CreateModelAndView<CentralBuildingView, CentralBuilding, ICentralBuildingOrders, ICentralBuildingInfo>(
-            CentralBuildingPrefab,
-            view => new CentralBuilding(Game, position, view), 
-            position
-        );
-
-        var t = NetworkManager.Server.ObjectCreated(centralBuilding, centralBuilding, null);
-        return centralBuilding;
     }
 }

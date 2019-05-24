@@ -24,6 +24,8 @@ namespace Assets.Views.Base
             }
         }
 
+        public bool IsControlable { get; set; }
+
         public GameObject SelectionObject;
 
         private List<SelectableViewProperty> mProperties = new List<SelectableViewProperty>();

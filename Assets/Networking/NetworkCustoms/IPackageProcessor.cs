@@ -5,7 +5,7 @@ namespace Assets.Networking
 {
     interface IPackageProcessor
     {
-        void Process(JObject package);
+        void Process(JObject data);
         void SendState(JsonTextWriter writer);
     }
 }

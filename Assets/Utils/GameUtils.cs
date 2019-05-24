@@ -1,15 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Assets.Core.Map;
+﻿using Assets.Core.Map;
 using UnityEngine;
 
 namespace Assets.Utils
 {
+    enum GameMode
+    {
+        Server,
+        Client
+    }
     static class GameUtils
     {
+        public static GameMode CurrentMode { get; }
+
+        static GameUtils()
+        {
+            //read cmd or editor config & set CurrentMode
+        }
+
         public static Vector3 GetPosition(Vector2 flatPosition, IMapData mapData)
         {
             return new Vector3(flatPosition.x, mapData.GetHeightAt(flatPosition), flatPosition.y);

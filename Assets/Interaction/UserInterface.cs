@@ -200,6 +200,9 @@ namespace Assets.Interaction
                         if (selectableView == null)
                             continue;
 
+                        if (!selectableView.IsControlable)
+                            continue;
+
                         var projected = Camera.main.WorldToScreenPoint(child.position);
                         if (selectionRect.Contains((Vector2) projected, true))
                             toSelect.Add(selectableView);
@@ -282,7 +285,7 @@ namespace Assets.Interaction
                 }
 
                 var viewHit = Raycast<SelectableView>(Input.mousePosition);
-                if (viewHit != null)
+                if (viewHit != null && viewHit.Object.IsControlable)
                 {
                     viewHit.Object.IsSelected = true;
                     if (!Selected.Contains(viewHit.Object))
