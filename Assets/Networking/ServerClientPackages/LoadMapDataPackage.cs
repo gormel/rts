@@ -1,15 +1,26 @@
 using System;
 using Assets.Core.Map;
+using Newtonsoft.Json;
 
 namespace Assets.Networking.ServerClientPackages
 {
     class LoadMapDataPackage : ServerClientPackage
     {
+        [JsonIgnore]
         public override ServerClientPackageType PackageType => ServerClientPackageType.LoadMap;
 
-        public float[] Heights { get; }
-        public int Width { get; }
-        public int Length { get; }
+        [JsonProperty]
+        public float[] Heights { get; private set; }
+        [JsonProperty]
+        public int Width { get; private set; }
+        [JsonProperty]
+        public int Length { get; private set; }
+
+        [JsonConstructor]
+        private LoadMapDataPackage()
+            : base(Guid.Empty)
+        {
+        }
 
         public LoadMapDataPackage(IMapData mapData)
             : base(Guid.Empty)

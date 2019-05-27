@@ -16,6 +16,8 @@ namespace Assets.Views.Base
         public Vector2 CurrentPosition => GameUtils.GetFlatPosition(transform.localPosition);
         public Vector2 CurrentDirection => GameUtils.GetFlatPosition(transform.localRotation * Vector3.forward);
 
+        public bool IsClient { get; set; }
+
         private NavMeshAgent mNavMeshAgent;
         private Vector3 mTarget;
 
@@ -28,22 +30,32 @@ namespace Assets.Views.Base
                 throw new Exception("NavMeshAgent is missing on unit.");
 
             mNavMeshAgent.updateRotation = false;
+
+            if (IsClient)
+            {
+                Destroy(mNavMeshAgent);
+                mNavMeshAgent = null;
+            }
         }
 
         protected virtual void OnUpdate()
         {
             UpdateExecutions();
 
-            mNavMeshAgent.speed = Info.Speed;
-
-            if (!mNavMeshAgent.pathPending)
+            if (!IsClient)
             {
-                Active = Vector3.Distance(mTarget, transform.position) > 0.05;
+                mNavMeshAgent.speed = Info.Speed;
+
+                if (!mNavMeshAgent.pathPending)
+                {
+                    Active = Vector3.Distance(mTarget, transform.position) > 0.05;
+                }
             }
+
 
             TargetLine.gameObject.SetActive(IsSelected);
             TargetLine.SetPosition(0, transform.position);
-            TargetLine.SetPosition(1, mNavMeshAgent.destination);
+            TargetLine.SetPosition(1, Map.GetWorldPosition(Info.Destignation));
 
             UpdateProperties();
         }

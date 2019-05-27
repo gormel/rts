@@ -31,13 +31,13 @@ namespace Assets.Networking
             }
         }
         private TcpListener mTcpListener;
-        private ConcurrentDictionary<TcpClient, TcpClient> mClients = new ConcurrentDictionary<TcpClient, TcpClient>();
-        private ConcurrentDictionary<Guid, IPackageProcessor> mPackageProcessors = new ConcurrentDictionary<Guid, IPackageProcessor>();
+        private ConcurrentDictionary<TcpClient, bool> mClients = new ConcurrentDictionary<TcpClient, bool>();
+        private ConcurrentDictionary<Guid, IServerPackageProcessor> mPackageProcessors = new ConcurrentDictionary<Guid, IServerPackageProcessor>();
 
         private ConcurrentBag<CreatedObjectInfo> mCreatedObjects = new ConcurrentBag<CreatedObjectInfo>();
         private IMapData mMapData;
 
-        public event Action<TcpClient> OnConnected;
+        public event Action<TcpClient> ClientConnected;
 
         public NetworkServer(int port)
         {
@@ -58,17 +58,20 @@ namespace Assets.Networking
         {
             try
             {
-                while (!mClients.TryAdd(client, client))
+                while (!mClients.TryAdd(client, false))
                     if (mClients.ContainsKey(client))
                         break;
 
-                OnConnected?.Invoke(client);
                 using (var textWriter = new StreamWriter(client.GetStream()))
                 using (var jsonWriter = new JsonTextWriter(textWriter))
                 {
                     SendMapData(jsonWriter, mMapData);
                     SendCreatedObjectInfo(jsonWriter, mCreatedObjects.ToArray());
                 }
+
+                mClients.TryUpdate(client, true, false);
+
+                ClientConnected?.Invoke(client);
 
                 using (var streamReader = new StreamReader(client.GetStream()))
                 using (var reader = new JsonTextReader(streamReader))
@@ -80,15 +83,18 @@ namespace Assets.Networking
                         var id = token["ID"].ToObject<Guid>();
                         var data = token.Property("Data").Value<JObject>();
 
-                        IPackageProcessor processor;
+                        IServerPackageProcessor processor;
                         if (mPackageProcessors.TryGetValue(id, out processor))
                             processor.Process(data);
                     }
                 }
             }
+            catch (Exception ex)
+            {
+            }
             finally
             {
-                TcpClient notUsed;
+                bool notUsed;
                 while (!mClients.TryRemove(client, out notUsed))
                     if (!mClients.ContainsKey(client))
                         break;
@@ -100,18 +106,18 @@ namespace Assets.Networking
             mMapData = data;
         }
 
-        public async Task ObjectCreated<TOrder, TInfo>(TOrder orders, TInfo info, IPackageProcessor packageProcessor)
+        public void ObjectCreated<TOrder, TInfo>(TOrder orders, TInfo info, IServerPackageProcessor serverPackageProcessor)
             where TOrder : IGameObjectOrders
             where TInfo : IGameObjectInfo
         {
-            while (!mPackageProcessors.TryAdd(info.ID, packageProcessor))
+            while (!mPackageProcessors.TryAdd(info.ID, serverPackageProcessor))
                 if (mPackageProcessors.ContainsKey(info.ID))
                     break;
             
-            var creationInfo = new CreatedObjectInfo(info.ID, info.Position, nameof(TOrder) + nameof(TInfo));
+            var creationInfo = new CreatedObjectInfo(info.ID, info.Position, typeof(TOrder).Name + typeof(TInfo).Name);
             mCreatedObjects.Add(creationInfo);
 
-            foreach (var client in mClients.Values)
+            foreach (var client in mClients.Keys)
             {
                 using (var textWriter = new StreamWriter(client.GetStream()))
                 using (var jsonWriter = new JsonTextWriter(textWriter))
@@ -139,8 +145,12 @@ namespace Assets.Networking
 
         public void Update()
         {
-            foreach (var client in mClients.Values)
+            foreach (var client in mClients.Keys)
             {
+                bool ready;
+                if (!mClients.TryGetValue(client, out ready) || !ready)
+                    continue;
+
                 using (var textWriter = new StreamWriter(client.GetStream()))
                 using (var jsonWriter = new JsonTextWriter(textWriter))
                 {

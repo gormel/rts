@@ -15,6 +15,7 @@ namespace Assets.Core.GameObjects.Base
     {
         float Speed { get; }
         Vector2 Direction { get; }
+        Vector2 Destignation { get; }
     }
 
     abstract class Unit : RtsGameObject, IUnitInfo, IUnitOrders
@@ -33,6 +34,7 @@ namespace Assets.Core.GameObjects.Base
             protected override void OnBegin()
             {
                 mUnit.mPathFinder.SetTarget(mPosition, mUnit.mGame.Map.Data);
+                mUnit.Destignation = mPosition;
             }
 
             protected override void OnUpdate(TimeSpan deltaTime)
@@ -54,6 +56,7 @@ namespace Assets.Core.GameObjects.Base
 
         public float Speed { get; protected set; }
         public Vector2 Direction { get; protected set; }
+        public Vector2 Destignation { get; protected set; }
 
         private UnitOrder mOrder;
 

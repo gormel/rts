@@ -1,4 +1,5 @@
-﻿using Assets.Core.Map;
+﻿using System.Net;
+using Assets.Core.Map;
 using UnityEngine;
 
 namespace Assets.Utils
@@ -10,7 +11,9 @@ namespace Assets.Utils
     }
     static class GameUtils
     {
-        public static GameMode CurrentMode { get; }
+        public static GameMode CurrentMode { get; set; } = GameMode.Client;
+        public static IPAddress IP { get; } = IPAddress.Parse("127.0.0.1");
+        public static int Port { get; } = 15656;
 
         static GameUtils()
         {

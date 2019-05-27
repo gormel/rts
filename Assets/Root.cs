@@ -59,6 +59,8 @@ class Root : MonoBehaviour
             instance.transform.parent = mMap.ChildContainer.transform;
             instance.transform.localPosition = mMap.GetWorldPosition(position);
 
+            ViewCreated?.Invoke(view);
+
             return result;
         }
 
@@ -69,7 +71,7 @@ class Root : MonoBehaviour
                 view => new Worker(mGame, view, position),
                 position
             );
-            var t = mNetworkManager.Server.ObjectCreated(worker, worker, null);
+            mNetworkManager.Server.ObjectCreated<IWorkerOrders, IWorkerInfo>(worker, worker, new WorkerServerPackageProcessor(worker, worker));
             return worker;
         }
 
@@ -81,7 +83,8 @@ class Root : MonoBehaviour
                 position
             );
 
-            var t = mNetworkManager.Server.ObjectCreated(template, template, new BuildingTemplateServerPackageProcessor(template, template));
+            mNetworkManager.Server.ObjectCreated<IBuildingTemplateOrders, IBuildingTemplateInfo>(template, template, 
+                new BuildingTemplateServerPackageProcessor(template, template));
             return template;
         }
 
@@ -93,7 +96,7 @@ class Root : MonoBehaviour
                 position
             );
 
-            var t = mNetworkManager.Server.ObjectCreated(centralBuilding, centralBuilding, null);
+            mNetworkManager.Server.ObjectCreated<ICentralBuildingOrders, ICentralBuildingInfo>(centralBuilding, centralBuilding, null);
             return centralBuilding;
         }
     }
@@ -111,19 +114,75 @@ class Root : MonoBehaviour
     {
         if (GameUtils.CurrentMode == GameMode.Server)
         {
-            NetworkManager.Server.LoadMap(Game.Map.Data);
-            NetworkManager.Server.OnConnected += ServerOnOnConnected;
-
             Game = new Game();
-            MapView = CreateMap(Game.Map);
+            MapView = CreateMap(Game.Map.Data);
+
+            NetworkManager.Listen(GameUtils.Port);
+
+            NetworkManager.Server.LoadMap(Game.Map.Data);
+            NetworkManager.Server.ClientConnected += ServerOnClientConnected;
 
             var controlledFactory = new Factory(Game, MapView, WorkerPrefab, BuildingTemplatePrefab, CentralBuildingPrefab, NetworkManager);
             controlledFactory.ViewCreated += ControlledFactoryOnViewCreated;
             Player = new Player(controlledFactory);
             Player.Money.Store(100000);
             Game.AddPlayer(Player);
-            Game.PlaceObject(Player.CreateWorker(new Vector2(14, 10)));
+            Game.PlaceObject(Player.CreateWorker(new Vector2(Random.Range(0, 20), Random.Range(0, 20))));
         }
+
+        if (GameUtils.CurrentMode == GameMode.Client)
+        {
+            NetworkManager.Connect(GameUtils.IP, GameUtils.Port);
+
+            NetworkManager.Client.LoadMapData += ClientOnLoadMapData;
+            NetworkManager.Client.ListenObjectType<IBuildingTemplateOrders, IBuildingTemplateInfo>(
+                OnCreateBuildingTemplate, 
+                new BuildingTemplateClientOrdersFactory(), 
+                new BuildingTemplateClientInfoFactory()
+            );
+            NetworkManager.Client.ListenObjectType<IWorkerOrders, IWorkerInfo>(
+                OnWorkerCreate, 
+                new WorkerClientOrderFactory(), 
+                new WorkerClientInfoFactory()
+            );
+
+            NetworkManager.Client.Connect();
+        }
+    }
+
+    private static TView CreateClientView<TView, TOrders, TInfo>(GameObject prefab, TOrders orders, TInfo info, Vector2 position, MapView map)
+        where TView : ModelSelectableView<TOrders, TInfo>
+        where TOrders : IGameObjectOrders
+        where TInfo : IGameObjectInfo
+    {
+        var instance = Instantiate(prefab);
+        var view = instance.GetComponent<TView>();
+        if (view == null)
+            throw new Exception("Prefab not contains View script.");
+
+        view.Map = map;
+        view.LoadModel(orders, info);
+
+        instance.transform.parent = map.ChildContainer.transform;
+        instance.transform.localPosition = map.GetWorldPosition(position);
+
+        return view;
+    }
+
+    private void OnWorkerCreate(IWorkerOrders orders, IWorkerInfo info, float x, float y)
+    {
+        var view = CreateClientView<WorkerView, IWorkerOrders, IWorkerInfo>(WorkerPrefab, orders, info, new Vector2(x, y), MapView);
+        view.IsClient = true;
+        view.IsControlable = true;
+    }
+
+    private void ClientOnLoadMapData(LoadMapDataPackage obj)
+    {
+        MapView = CreateMap(new MapData(obj.Width, obj.Length, obj.Heights));
+    }
+
+    private void OnCreateBuildingTemplate(IBuildingTemplateOrders orders, IBuildingTemplateInfo info, float x, float y)
+    {
     }
 
     private void ControlledFactoryOnViewCreated(SelectableView selectableView)
@@ -131,7 +190,7 @@ class Root : MonoBehaviour
         selectableView.IsControlable = true;
     }
 
-    private void ServerOnOnConnected(TcpClient tcpClient)
+    private void ServerOnClientConnected(TcpClient tcpClient)
     {
         var clientPlayer = new Player(new Factory(Game, MapView, WorkerPrefab, BuildingTemplatePrefab, CentralBuildingPrefab, NetworkManager));
         clientPlayer.Money.Store(10000);
@@ -139,7 +198,7 @@ class Root : MonoBehaviour
         Game.PlaceObject(clientPlayer.CreateWorker(new Vector2(Random.Range(0, 20), Random.Range(0, 20))));
     }
 
-    private MapView CreateMap(Map map)
+    private MapView CreateMap(IMapData map)
     {
         if (MapPrefab == null)
             throw new Exception("Map prefab is not set.");
@@ -149,13 +208,16 @@ class Root : MonoBehaviour
         if (view == null)
             throw new Exception("Map prefab not contains MapView.");
 
-        view.LoadMap(map.Data);
+        view.LoadMap(map);
         mapInstance.transform.parent = transform;
         return view;
     }
 
     void Update()
     {
-        Game.Update(TimeSpan.FromSeconds(Time.deltaTime));
+        if (GameUtils.CurrentMode == GameMode.Server)
+        {
+            Game.Update(TimeSpan.FromSeconds(Time.deltaTime));
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using Newtonsoft.Json;
 
 namespace Assets.Networking.ServerClientPackages
 {
@@ -11,7 +12,10 @@ namespace Assets.Networking.ServerClientPackages
 
     abstract class ServerClientPackage
     {
-        public Guid ObjectID { get; }
+        [JsonProperty]
+        public Guid ObjectID { get; private set; }
+
+        [JsonIgnore]
         public abstract ServerClientPackageType PackageType { get; }
 
         public ServerClientPackage(Guid objectID)
