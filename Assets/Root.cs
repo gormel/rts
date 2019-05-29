@@ -2,18 +2,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Net.Sockets;
+using System.Threading.Tasks;
 using Assets.Core;
 using Assets.Core.Game;
 using Assets.Core.GameObjects;
 using Assets.Core.GameObjects.Base;
 using Assets.Core.GameObjects.Final;
 using Assets.Core.Map;
-using Assets.Networking;
-using Assets.Networking.NetworkCustoms;
-using Assets.Networking.ServerClientPackages;
 using Assets.Utils;
 using Assets.Views;
 using Assets.Views.Base;
+using Grpc.Core;
 using UnityEngine;
 using GameObject = UnityEngine.GameObject;
 using Random = UnityEngine.Random;
@@ -27,18 +26,16 @@ class Root : MonoBehaviour
         private readonly GameObject mWorkerPrefab;
         private readonly GameObject mBuildingTemplatePrefab;
         private readonly GameObject mCentralBuildingPrefab;
-        private readonly NetworkManager mNetworkManager;
 
         public event Action<SelectableView> ViewCreated;
 
-        public Factory(Game game, MapView map, GameObject workerPrefab, GameObject buildingTemplatePrefab, GameObject centralBuildingPrefab, NetworkManager networkManager)
+        public Factory(Game game, MapView map, GameObject workerPrefab, GameObject buildingTemplatePrefab, GameObject centralBuildingPrefab)
         {
             mGame = game;
             mMap = map;
             mWorkerPrefab = workerPrefab;
             mBuildingTemplatePrefab = buildingTemplatePrefab;
             mCentralBuildingPrefab = centralBuildingPrefab;
-            mNetworkManager = networkManager;
         }
 
         private TModel CreateModelAndView<TView, TModel, TOrders, TInfo>(GameObject prefab, Func<TView, TModel> createModel, Vector2 position)
@@ -71,7 +68,6 @@ class Root : MonoBehaviour
                 view => new Worker(mGame, view, position),
                 position
             );
-            mNetworkManager.Server.ObjectCreated<IWorkerOrders, IWorkerInfo>(worker, worker, new WorkerServerPackageProcessor(worker, worker));
             return worker;
         }
 
@@ -82,9 +78,7 @@ class Root : MonoBehaviour
                 view => new BuildingTemplate(mGame, building, buildTime, size, position, maxHealth, view),
                 position
             );
-
-            mNetworkManager.Server.ObjectCreated<IBuildingTemplateOrders, IBuildingTemplateInfo>(template, template, 
-                new BuildingTemplateServerPackageProcessor(template, template));
+            
             return template;
         }
 
@@ -95,17 +89,32 @@ class Root : MonoBehaviour
                 view => new CentralBuilding(mGame, position, view),
                 position
             );
-
-            mNetworkManager.Server.ObjectCreated<ICentralBuildingOrders, ICentralBuildingInfo>(centralBuilding, centralBuilding, null);
+            
             return centralBuilding;
         }
     }
+
+    private class WOROET : TestService.TestServiceBase
+    {
+        public override async Task GetMessages(Message request, IServerStreamWriter<Message> responseStream, ServerCallContext context)
+        {
+            int a = 0;
+            while (true)
+            {
+                await responseStream.WriteAsync(new Message()
+                {
+                    Text = (a++).ToString()
+                });
+                await Task.Delay(3000);
+            }
+        }
+    }
+
     public GameObject MapPrefab;
     public GameObject WorkerPrefab;
     public GameObject BuildingTemplatePrefab;
     public GameObject CentralBuildingPrefab;
-
-    public NetworkManager NetworkManager;
+    
     public Player Player { get; private set; }
     private Game Game { get; set; }
     public MapView MapView { get; private set; }
@@ -114,15 +123,25 @@ class Root : MonoBehaviour
     {
         if (GameUtils.CurrentMode == GameMode.Server)
         {
+            Task.Run(() =>
+            {
+                try
+                {
+                    new Server()
+                    {
+                        Services = { TestService.BindService(new WOROET()) },
+                        Ports = { new ServerPort(GameUtils.IP.ToString(), GameUtils.Port, ServerCredentials.Insecure) }
+                    }.Start();
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError(e);
+                }
+            });
+
             Game = new Game();
             MapView = CreateMap(Game.Map.Data);
-
-            NetworkManager.Listen(GameUtils.Port);
-
-            NetworkManager.Server.LoadMap(Game.Map.Data);
-            NetworkManager.Server.ClientConnected += ServerOnClientConnected;
-
-            var controlledFactory = new Factory(Game, MapView, WorkerPrefab, BuildingTemplatePrefab, CentralBuildingPrefab, NetworkManager);
+            var controlledFactory = new Factory(Game, MapView, WorkerPrefab, BuildingTemplatePrefab, CentralBuildingPrefab);
             controlledFactory.ViewCreated += ControlledFactoryOnViewCreated;
             Player = new Player(controlledFactory);
             Player.Money.Store(100000);
@@ -132,70 +151,23 @@ class Root : MonoBehaviour
 
         if (GameUtils.CurrentMode == GameMode.Client)
         {
-            NetworkManager.Connect(GameUtils.IP, GameUtils.Port);
-
-            NetworkManager.Client.LoadMapData += ClientOnLoadMapData;
-            NetworkManager.Client.ListenObjectType<IBuildingTemplateOrders, IBuildingTemplateInfo>(
-                OnCreateBuildingTemplate, 
-                new BuildingTemplateClientOrdersFactory(), 
-                new BuildingTemplateClientInfoFactory()
-            );
-            NetworkManager.Client.ListenObjectType<IWorkerOrders, IWorkerInfo>(
-                OnWorkerCreate, 
-                new WorkerClientOrderFactory(), 
-                new WorkerClientInfoFactory()
-            );
-
-            NetworkManager.Client.Connect();
+            ProcessMessage(new TestService.TestServiceClient(new Channel(GameUtils.IP.ToString(), GameUtils.Port, ChannelCredentials.Insecure)));
         }
     }
 
-    private static TView CreateClientView<TView, TOrders, TInfo>(GameObject prefab, TOrders orders, TInfo info, Vector2 position, MapView map)
-        where TView : ModelSelectableView<TOrders, TInfo>
-        where TOrders : IGameObjectOrders
-        where TInfo : IGameObjectInfo
+    private async void ProcessMessage(TestService.TestServiceClient client)
     {
-        var instance = Instantiate(prefab);
-        var view = instance.GetComponent<TView>();
-        if (view == null)
-            throw new Exception("Prefab not contains View script.");
-
-        view.Map = map;
-        view.LoadModel(orders, info);
-
-        instance.transform.parent = map.ChildContainer.transform;
-        instance.transform.localPosition = map.GetWorldPosition(position);
-
-        return view;
-    }
-
-    private void OnWorkerCreate(IWorkerOrders orders, IWorkerInfo info, float x, float y)
-    {
-        var view = CreateClientView<WorkerView, IWorkerOrders, IWorkerInfo>(WorkerPrefab, orders, info, new Vector2(x, y), MapView);
-        view.IsClient = true;
-        view.IsControlable = true;
-    }
-
-    private void ClientOnLoadMapData(LoadMapDataPackage obj)
-    {
-        MapView = CreateMap(new MapData(obj.Width, obj.Length, obj.Heights));
-    }
-
-    private void OnCreateBuildingTemplate(IBuildingTemplateOrders orders, IBuildingTemplateInfo info, float x, float y)
-    {
+        var stream = client.GetMessages(new Message()).ResponseStream;
+        while (await stream.MoveNext())
+        {
+            var mess = stream.Current;
+            Debug.Log(mess.Text);
+        }
     }
 
     private void ControlledFactoryOnViewCreated(SelectableView selectableView)
     {
         selectableView.IsControlable = true;
-    }
-
-    private void ServerOnClientConnected(TcpClient tcpClient)
-    {
-        var clientPlayer = new Player(new Factory(Game, MapView, WorkerPrefab, BuildingTemplatePrefab, CentralBuildingPrefab, NetworkManager));
-        clientPlayer.Money.Store(10000);
-        Game.AddPlayer(clientPlayer);
-        Game.PlaceObject(clientPlayer.CreateWorker(new Vector2(Random.Range(0, 20), Random.Range(0, 20))));
     }
 
     private MapView CreateMap(IMapData map)

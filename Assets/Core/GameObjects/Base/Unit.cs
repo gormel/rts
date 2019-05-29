@@ -64,7 +64,7 @@ namespace Assets.Core.GameObjects.Base
         {
             mGame = game;
             mPathFinder = pathFinder;
-            Position = position;
+            Destignation = Position = position;
         }
 
         protected void SetOrder(UnitOrder order)

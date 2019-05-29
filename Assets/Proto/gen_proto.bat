@@ -1,0 +1,1 @@
+.\tools\protoc.exe -I .\src .\src\test.proto --csharp_out=.\dst --plugin=protoc-gen-grpc=.\tools\grpc_csharp_plugin.exe --grpc_out=.\dst
