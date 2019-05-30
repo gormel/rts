@@ -50,7 +50,6 @@ namespace Assets.Views
         {
             if (view is BuildingTemplateView)
                 AttachAsBuilder(((BuildingTemplateView)view).Info.ID);
-
         }
     }
 }

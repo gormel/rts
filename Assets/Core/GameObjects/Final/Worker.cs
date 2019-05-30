@@ -23,7 +23,6 @@ namespace Assets.Core.GameObjects.Final
         {
             private readonly BuildingTemplate mTemplate;
             private readonly PlacementPoint mPlacementPoint;
-            private bool mBegan;
 
             public BuildOrder(BuildingTemplate template, PlacementPoint placementPoint)
             {
@@ -31,10 +30,10 @@ namespace Assets.Core.GameObjects.Final
                 mPlacementPoint = placementPoint;
             }
 
-            protected override void OnBegin()
+            protected override Task OnBegin()
             {
                 mTemplate.AttachedWorkers++;
-                mBegan = true;
+                return Task.CompletedTask;
             }
 
             protected override void OnUpdate(TimeSpan deltaTime)
@@ -50,7 +49,7 @@ namespace Assets.Core.GameObjects.Final
             {
                 mTemplate.PlacementService.ReleasePoint(mPlacementPoint.ID);
 
-                if (mBegan)
+                if (State == OrderState.Work)
                     mTemplate.AttachedWorkers--;
             }
         }
@@ -63,7 +62,7 @@ namespace Assets.Core.GameObjects.Final
             if (!Player.Money.Spend(CentralBuildingCost))
                 return Guid.Empty;
 
-            if (!mGame.GetIsAreaFree(position, CentralBuilding.BuildingSize))
+            if (!Game.GetIsAreaFree(position, CentralBuilding.BuildingSize))
                 return Guid.Empty;
 
             var template = Player.CreateBuildingTemplate(
@@ -74,7 +73,7 @@ namespace Assets.Core.GameObjects.Final
                 CentralBuilding.MaximumHealthConst
             );
 
-            var id = await mGame.PlaceObject(template);
+            var id = await Game.PlaceObject(template);
             await AttachAsBuilder(id);
             return id;
         }
@@ -88,15 +87,12 @@ namespace Assets.Core.GameObjects.Final
 
         public async Task AttachAsBuilder(Guid templateId)
         {
-            var template = mGame.GetObject<BuildingTemplate>(templateId);
+            var template = Game.GetObject<BuildingTemplate>(templateId);
             PlacementPoint point;
             if (!template.PlacementService.TryAllocatePoint(out point))
                 return;
 
-            SetOrder(new OrderSequence(
-                new GoToOrder(this, point.Position), 
-                new BuildOrder(template, point))
-            );
+            SetOrder(new GoToOrder(this, point.Position).Then(new BuildOrder(template, point)));
         }
     }
 }

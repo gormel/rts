@@ -31,7 +31,6 @@ namespace Assets.Views.Base
         private List<SelectableViewProperty> mProperties = new List<SelectableViewProperty>();
         public IReadOnlyList<SelectableViewProperty> Properties => mProperties;
 
-        private Queue<Action> mExecutions = new Queue<Action>();
 
         protected void RegisterProperty(SelectableViewProperty prop)
         {
@@ -44,19 +43,6 @@ namespace Assets.Views.Base
 
         public virtual void OnRightClick(SelectableView view)
         {
-        }
-
-        protected void UpdateExecutions()
-        {
-            while (mExecutions.Count > 0)
-            {
-                mExecutions.Dequeue()();
-            }
-        }
-
-        protected void Execute(Action action)
-        {
-            mExecutions.Enqueue(action);
         }
 
         protected void UpdateProperties()

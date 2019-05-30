@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 170076734}
-  m_IndirectSpecularColor: {r: 0.44535434, g: 0.48936307, b: 0.5436173, a: 1}
+  m_IndirectSpecularColor: {r: 0.44535416, g: 0.48936248, b: 0.5436173, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -3433,6 +3433,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1480507268}
   - component: {fileID: 1480507267}
+  - component: {fileID: 1480507265}
   m_Layer: 0
   m_Name: GameRoot
   m_TagString: Untagged
@@ -3440,6 +3441,18 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &1480507265
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1480507264}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe3ea6a933e35764991196ce6e3aa3cd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &1480507267
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3460,6 +3473,7 @@ MonoBehaviour:
     type: 3}
   CentralBuildingPrefab: {fileID: 6336972600780252368, guid: aee752105fb43104bb89051f6bd2b0ce,
     type: 3}
+  SyncContext: {fileID: 1480507265}
 --- !u!4 &1480507268
 Transform:
   m_ObjectHideFlags: 0

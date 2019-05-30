@@ -1,38 +1,56 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace Assets.Core.GameObjects.Utils
 {
+    enum OrderState
+    {
+        Uninitialized,
+        Initialization,
+        Work,
+        Completed
+    }
     abstract class UnitOrder
     {
-        public bool Active { get; private set; }
-
-        public void Begin()
-        {
-            Active = true;
-            OnBegin();
-        }
+        public UnitOrder Next { get; private set; }
+        public OrderState State { get; private set; } = OrderState.Uninitialized;
 
         protected void End()
         {
-            Active = false;
+            State = OrderState.Completed;
         }
 
         public void Cancel()
         {
-            OnCancel();
-            End();
+            if (State != OrderState.Completed)
+            {
+                OnCancel();
+                End();
+            }
         }
 
         public void Update(TimeSpan deltaTime)
         {
-            if (!Active)
-                return;
-
-            OnUpdate(deltaTime);
+            switch (State)
+            {
+                case OrderState.Uninitialized:
+                    State = OrderState.Initialization;
+                    OnBegin().ContinueWith(t => { State = OrderState.Work; });
+                    break;
+                case OrderState.Work:
+                    OnUpdate(deltaTime);
+                    break;
+            }
         }
 
-        protected abstract void OnBegin();
+        protected abstract Task OnBegin();
         protected abstract void OnUpdate(TimeSpan deltaTime);
         protected abstract void OnCancel();
+
+        public UnitOrder Then(UnitOrder next)
+        {
+            Next = next;
+            return this;
+        }
     }
 }

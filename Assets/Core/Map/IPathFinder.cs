@@ -1,15 +1,18 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Threading.Tasks;
+using UnityEngine;
 
 namespace Assets.Core.Map
 {
     interface IPathFinder
     {
-        bool Active { get; }
+        event Action Arrived;
+
         Vector2 CurrentPosition { get; }
         Vector2 CurrentDirection { get; }
 
-        void SetTarget(Vector2 position, IMapData mapData);
+        Task SetTarget(Vector2 position, IMapData mapData);
 
-        void Stop();
+        Task Stop();
     }
 }

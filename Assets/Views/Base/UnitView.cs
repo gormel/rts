@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Assets.Core.GameObjects.Base;
 using Assets.Core.Map;
 using Assets.Utils;
@@ -11,8 +12,7 @@ namespace Assets.Views.Base
         where TOrders : IUnitOrders
         where TInfo : IUnitInfo
     {
-        public bool Active { get; private set; }
-        
+        public event Action Arrived;
         public Vector2 CurrentPosition => GameUtils.GetFlatPosition(transform.localPosition);
         public Vector2 CurrentDirection => GameUtils.GetFlatPosition(transform.localRotation * Vector3.forward);
 
@@ -20,8 +20,10 @@ namespace Assets.Views.Base
 
         private NavMeshAgent mNavMeshAgent;
         private Vector3 mTarget;
+        private float mLastDistance;
 
         public LineRenderer TargetLine;
+        public UnitySyncContext SyncContext;
 
         protected virtual void OnStart()
         {
@@ -40,15 +42,18 @@ namespace Assets.Views.Base
 
         protected virtual void OnUpdate()
         {
-            UpdateExecutions();
-
             if (!IsClient)
             {
                 mNavMeshAgent.speed = Info.Speed;
 
                 if (!mNavMeshAgent.pathPending)
                 {
-                    Active = Vector3.Distance(mTarget, transform.position) > 0.05;
+                    var distance = Vector3.Distance(mTarget, transform.position);
+
+                    if (mLastDistance > 0.05 && distance <= 0.05)
+                        Arrived?.Invoke();
+
+                    mLastDistance = distance;
                 }
             }
 
@@ -66,19 +71,17 @@ namespace Assets.Views.Base
                 transform.rotation = Quaternion.LookRotation(mNavMeshAgent.velocity.normalized);
         }
 
-        public void SetTarget(Vector2 position, IMapData mapData)
+        public Task SetTarget(Vector2 position, IMapData mapData)
         {
-            Active = true;
-            Execute(() =>
+            return SyncContext.Execute(() =>
             {
                 mNavMeshAgent.SetDestination(mTarget = GameUtils.GetPosition(position, mapData));
             });
         }
 
-        public void Stop()
+        public Task Stop()
         {
-            Active = false;
-            Execute(() =>
+            return SyncContext.Execute(() =>
             {
                 mNavMeshAgent.ResetPath();
             });

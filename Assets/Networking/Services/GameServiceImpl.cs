@@ -1,7 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Assets.Core.Game;
 using Grpc.Core;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Assets.Networking.Services
 {
@@ -9,20 +11,22 @@ namespace Assets.Networking.Services
     {
         private readonly Game mGame;
         private readonly IGameObjectFactory mServerFactory;
+        private readonly UnitySyncContext mSyncContext;
 
-        public GameServiceImpl(Game game, IGameObjectFactory serverFactory)
+        public GameServiceImpl(Game game, IGameObjectFactory serverFactory, UnitySyncContext syncContext)
         {
             mGame = game;
             mServerFactory = serverFactory;
+            mSyncContext = syncContext;
         }
 
-        private GameState CollectGameState(IPlayerState player)
+        private Task<GameState> CollectGameState(IPlayerState player)
         {
-            lock(mGame)
+            return mSyncContext.Execute(() =>
             {
                 var playerState = new PlayerState()
                 {
-                    ID = new ID() { Value = player.ID.ToString() },
+                    ID = new ID() {Value = player.ID.ToString()},
                     Money = player.Money
                 };
 
@@ -33,34 +37,38 @@ namespace Assets.Networking.Services
                 };
 
                 for (int y = 0; y < mGame.Map.Length; y++)
-                    for (int x = 0; x < mGame.Map.Width; x++)
-                        mapState.Heights.Add(mGame.Map.Data.GetHeightAt(x, y));
+                for (int x = 0; x < mGame.Map.Width; x++)
+                    mapState.Heights.Add(mGame.Map.Data.GetHeightAt(x, y));
 
                 return new GameState()
                 {
                     Player = playerState,
                     Map = mapState
                 };
-            }
+            });
         }
 
         public override async Task ConnectAndListenState(Empty request, IServerStreamWriter<GameState> responseStream, ServerCallContext context)
         {
-            var player = new Player(mServerFactory);
-            mGame.AddPlayer(player);
-            player.CreateWorker(new Vector2(Random.Range(0, 20), Random.Range(0, 20)));
-
             try
             {
+                var player = await mSyncContext.Execute(() =>
+                {
+                    var pl = new Player(mServerFactory);
+                    mGame.AddPlayer(pl);
+                    pl.CreateWorker(new Vector2(10, 10));
+                    return pl;
+                });
+
                 while (true)
                 {
-                    await responseStream.WriteAsync(CollectGameState(player));
+                    await responseStream.WriteAsync(await CollectGameState(player));
                     await Task.Delay(16);
                 }
             }
-            catch (RpcException ex)
+            catch (Exception ex)
             {
-                //disconnect player
+                Debug.LogError(ex);
             }
         }
     }

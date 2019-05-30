@@ -122,6 +122,8 @@ class Root : MonoBehaviour
     public GameObject WorkerPrefab;
     public GameObject BuildingTemplatePrefab;
     public GameObject CentralBuildingPrefab;
+    public UnitySyncContext SyncContext;
+
     private Server mServer;
     private Channel mChannel;
 
@@ -142,10 +144,13 @@ class Root : MonoBehaviour
             player.Money.Store(100000);
             Game.AddPlayer(player);
             Game.PlaceObject(player.CreateWorker(new Vector2(Random.Range(0, 20), Random.Range(0, 20))));
-            
+
+            var enemyFactory = new Factory(Game, MapView, WorkerPrefab, BuildingTemplatePrefab, CentralBuildingPrefab);
+
             mServer = new Server();
             mServer.Ports.Add(new ServerPort(GameUtils.IP.ToString(), GameUtils.Port, ServerCredentials.Insecure));
-            mServer.Services.Add(GameService.BindService(new GameServiceImpl(Game, new Factory(Game, MapView, WorkerPrefab, BuildingTemplatePrefab, CentralBuildingPrefab))));
+            mServer.Services.Add(GameService.BindService(new GameServiceImpl(Game, enemyFactory, SyncContext)));
+
             mServer.Start();
         }
 
@@ -156,7 +161,7 @@ class Root : MonoBehaviour
         }
     }
     
-    private async void ListenGameState(Channel channel)
+    private async Task ListenGameState(Channel channel)
     {
         var mapState = new ClientMapData();
         var playerState = new ClientPlayerState();
@@ -167,13 +172,15 @@ class Root : MonoBehaviour
         {
             while (await stateStream.MoveNext())
             {
+                channel.ShutdownToken.ThrowIfCancellationRequested();
                 var state = stateStream.Current;
                 mapState.State.MergeFrom(state.Map);
                 playerState.PlayerState.MergeFrom(state.Player);
+                channel.ShutdownToken.ThrowIfCancellationRequested();
 
                 if (MapView == null)
                 {
-                    MapView = CreateMap(mapState);
+                    await SyncContext.Execute(() => { MapView = CreateMap(mapState); }, channel.ShutdownToken);
                 }
             }
         }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Assets.Core.GameObjects.Utils;
 using Assets.Core.Map;
@@ -31,18 +32,23 @@ namespace Assets.Core.GameObjects.Base
                 mPosition = position;
             }
 
-            protected override void OnBegin()
+            protected override async Task OnBegin()
             {
-                mUnit.mPathFinder.SetTarget(mPosition, mUnit.mGame.Map.Data);
+                await mUnit.mPathFinder.SetTarget(mPosition, mUnit.Game.Map.Data);
                 mUnit.Destignation = mPosition;
+                mUnit.mPathFinder.Arrived += PathFinderOnArrived;
+            }
+
+            private void PathFinderOnArrived()
+            {
+                mUnit.mPathFinder.Arrived -= PathFinderOnArrived;
+                End();
             }
 
             protected override void OnUpdate(TimeSpan deltaTime)
             {
                 mUnit.Position = mUnit.mPathFinder.CurrentPosition;
                 mUnit.Direction = mUnit.mPathFinder.CurrentDirection;
-                if (!mUnit.mPathFinder.Active)
-                    End();
             }
 
             protected override void OnCancel()
@@ -51,7 +57,7 @@ namespace Assets.Core.GameObjects.Base
             }
         }
 
-        protected readonly Game.Game mGame;
+        protected Game.Game Game { get; }
         private readonly IPathFinder mPathFinder;
 
         public float Speed { get; protected set; }
@@ -62,18 +68,21 @@ namespace Assets.Core.GameObjects.Base
 
         public Unit(Game.Game game, IPathFinder pathFinder, Vector2 position)
         {
-            mGame = game;
+            Game = game;
             mPathFinder = pathFinder;
             Destignation = Position = position;
         }
 
         protected void SetOrder(UnitOrder order)
         {
-            if (mOrder != null && mOrder.Active)
-                mOrder.Cancel();
+            var o = mOrder;
+            while (o != null)
+            {
+                o.Cancel();
+                o = o.Next;
+            }
 
             mOrder = order;
-            mOrder.Begin();
         }
 
         public async Task GoTo(Vector2 position)
@@ -84,7 +93,11 @@ namespace Assets.Core.GameObjects.Base
         public override void Update(TimeSpan deltaTime)
         {
             if (mOrder != null)
+            {
                 mOrder.Update(deltaTime);
+                if (mOrder.State == OrderState.Completed)
+                    mOrder = mOrder.Next;
+            }
         }
     }
 }
