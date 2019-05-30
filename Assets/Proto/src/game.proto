@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+import "base.proto";
+
+service GameService {
+    rpc ConnectAndListenState(Empty) returns (stream GameState);
+}
+
+message GameState {
+	PlayerState Player = 1;
+	MapState Map = 2;
+}
+
+message PlayerState {
+	ID ID = 1;
+	int32 Money = 2;
+}
+
+message MapState {
+    int32 Width = 1;
+    int32 Lenght = 2;
+    repeated float Heights = 3;
+}

@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+import "base.proto";
+
+service CentralBuildingService {
+    rpc ListenCreation (Empty) returns (stream CentralBuildingState);
+    rpc ListenState(ID) returns (stream CentralBuildingState);
+
+    rpc QueueWorker(QueueWorkerRequest) returns (QueueWorkerResult);
+    rpc SetWaypoint(SetWaypointRequest) returns (Empty);
+}
+
+message SetWaypointRequest {
+    ID CentralBuildingID = 1;
+    Vector Waypoint = 2;
+}
+
+message QueueWorkerRequest {
+    ID CentralBuildingID = 1;
+}
+
+message QueueWorkerResult {
+    bool Result = 1;
+}
+
+message CentralBuildingState {
+    BuildingState Base = 1;
+    float Progress = 2;
+    int32 WorkersQueued = 3;
+}

@@ -1,9 +1,0 @@
-﻿syntax = "proto3";
-
-service TestService {
-	rpc GetMessages(Message) returns (stream Message) {}
-}
-
-message Message {
-	string Text = 1;
-}

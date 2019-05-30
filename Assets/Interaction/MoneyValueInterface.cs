@@ -17,7 +17,7 @@ namespace Assets.Interaction
         {
             var money = Interface.Root.Player?.Money;
             if (money != null)
-                Text.text = money.Resources.ToString();
+                Text.text = money.ToString();
         }
     }
 }

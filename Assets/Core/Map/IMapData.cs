@@ -7,8 +7,6 @@ namespace Assets.Core.Map
         int Length { get; }
         int Width { get; }
 
-        float GetHeightAt(Vector2 position);
         float GetHeightAt(int x, int y);
-        bool GetIsAreaFree(Vector2 position, Vector2 size);
     }
 }

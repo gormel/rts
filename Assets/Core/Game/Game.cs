@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Assets.Core.GameObjects;
 using Assets.Core.GameObjects.Base;
+using Assets.Core.Map;
 using UnityEngine;
 
 namespace Assets.Core.Game

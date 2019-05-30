@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+import "base.proto";
+
+service BuildingTemplateService {
+    rpc ListenCreation (Empty) returns (stream BuildingTemplateState);
+    rpc ListenState (ID) returns (stream BuildingTemplateState);
+
+    rpc Cancel(CancelRequest) returns (Empty);
+}
+
+message CancelRequest {
+    ID BuildingTemplateID = 1;
+}
+
+message BuildingTemplateState {
+	BuildingState Base = 1;
+	float Progress = 2;
+	int32 AttachedWorkers = 3;
+}

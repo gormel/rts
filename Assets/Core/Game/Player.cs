@@ -5,10 +5,20 @@ using UnityEngine;
 
 namespace Assets.Core.Game
 {
-    class Player : IGameObjectFactory
+    interface IPlayerState
+    {
+        Guid ID { get; }
+        int Money { get; }
+    }
+
+    class Player : IGameObjectFactory, IPlayerState
     {
         private readonly IGameObjectFactory mExternalFactory;
         public ResourceStorage Money { get; } = new ResourceStorage();
+
+        public Guid ID { get; } = Guid.NewGuid();
+
+        int IPlayerState.Money => Money.Resources;
 
         public Player(IGameObjectFactory externalFactory)
         {

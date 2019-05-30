@@ -9,6 +9,7 @@ using Assets.Core.GameObjects;
 using Assets.Core.GameObjects.Base;
 using Assets.Core.GameObjects.Final;
 using Assets.Core.Map;
+using Assets.Networking.Services;
 using Assets.Utils;
 using Assets.Views;
 using Assets.Views.Base;
@@ -94,28 +95,37 @@ class Root : MonoBehaviour
         }
     }
 
-    private class WOROET : TestService.TestServiceBase
+    private class ClientMapData : IMapData
     {
-        public override async Task GetMessages(Message request, IServerStreamWriter<Message> responseStream, ServerCallContext context)
+        public MapState State { get; } = new MapState();
+
+        public int Length => State.Lenght;
+
+        public int Width => State.Width;
+
+        public float GetHeightAt(int x, int y)
         {
-            int a = 0;
-            while (true)
-            {
-                await responseStream.WriteAsync(new Message()
-                {
-                    Text = (a++).ToString()
-                });
-                await Task.Delay(3000);
-            }
+            return State.Heights[y * Width + x];
         }
+    }
+
+    private class ClientPlayerState : IPlayerState
+    {
+        public PlayerState PlayerState { get; } = new PlayerState();
+
+        public Guid ID => Guid.Parse(PlayerState.ID.Value);
+
+        public int Money => PlayerState.Money;
     }
 
     public GameObject MapPrefab;
     public GameObject WorkerPrefab;
     public GameObject BuildingTemplatePrefab;
     public GameObject CentralBuildingPrefab;
-    
-    public Player Player { get; private set; }
+    private Server mServer;
+    private Channel mChannel;
+
+    public IPlayerState Player { get; private set; }
     private Game Game { get; set; }
     public MapView MapView { get; private set; }
 
@@ -123,45 +133,49 @@ class Root : MonoBehaviour
     {
         if (GameUtils.CurrentMode == GameMode.Server)
         {
-            Task.Run(() =>
-            {
-                try
-                {
-                    new Server()
-                    {
-                        Services = { TestService.BindService(new WOROET()) },
-                        Ports = { new ServerPort(GameUtils.IP.ToString(), GameUtils.Port, ServerCredentials.Insecure) }
-                    }.Start();
-                }
-                catch (Exception e)
-                {
-                    Debug.LogError(e);
-                }
-            });
-
             Game = new Game();
             MapView = CreateMap(Game.Map.Data);
             var controlledFactory = new Factory(Game, MapView, WorkerPrefab, BuildingTemplatePrefab, CentralBuildingPrefab);
             controlledFactory.ViewCreated += ControlledFactoryOnViewCreated;
-            Player = new Player(controlledFactory);
-            Player.Money.Store(100000);
-            Game.AddPlayer(Player);
-            Game.PlaceObject(Player.CreateWorker(new Vector2(Random.Range(0, 20), Random.Range(0, 20))));
+            var player = new Player(controlledFactory);
+            Player = player;
+            player.Money.Store(100000);
+            Game.AddPlayer(player);
+            Game.PlaceObject(player.CreateWorker(new Vector2(Random.Range(0, 20), Random.Range(0, 20))));
+            
+            mServer = new Server();
+            mServer.Ports.Add(new ServerPort(GameUtils.IP.ToString(), GameUtils.Port, ServerCredentials.Insecure));
+            mServer.Services.Add(GameService.BindService(new GameServiceImpl(Game, new Factory(Game, MapView, WorkerPrefab, BuildingTemplatePrefab, CentralBuildingPrefab))));
+            mServer.Start();
         }
 
         if (GameUtils.CurrentMode == GameMode.Client)
         {
-            ProcessMessage(new TestService.TestServiceClient(new Channel(GameUtils.IP.ToString(), GameUtils.Port, ChannelCredentials.Insecure)));
+            mChannel = new Channel(GameUtils.IP.ToString(), GameUtils.Port, ChannelCredentials.Insecure);
+            ListenGameState(mChannel);
         }
     }
-
-    private async void ProcessMessage(TestService.TestServiceClient client)
+    
+    private async void ListenGameState(Channel channel)
     {
-        var stream = client.GetMessages(new Message()).ResponseStream;
-        while (await stream.MoveNext())
+        var mapState = new ClientMapData();
+        var playerState = new ClientPlayerState();
+        Player = playerState;
+
+        var client = new GameService.GameServiceClient(channel);
+        using (var stateStream = client.ConnectAndListenState(new Empty()).ResponseStream)
         {
-            var mess = stream.Current;
-            Debug.Log(mess.Text);
+            while (await stateStream.MoveNext())
+            {
+                var state = stateStream.Current;
+                mapState.State.MergeFrom(state.Map);
+                playerState.PlayerState.MergeFrom(state.Player);
+
+                if (MapView == null)
+                {
+                    MapView = CreateMap(mapState);
+                }
+            }
         }
     }
 
@@ -191,5 +205,14 @@ class Root : MonoBehaviour
         {
             Game.Update(TimeSpan.FromSeconds(Time.deltaTime));
         }
+    }
+
+    void OnDestroy()
+    {
+        if (mServer != null)
+            mServer.ShutdownAsync();
+
+        if (mChannel != null)
+            mChannel.ShutdownAsync();
     }
 }

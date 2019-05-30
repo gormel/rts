@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+import "base.proto";
+
+service WorkerService {
+    rpc ListenCreation (Empty) returns (stream WorkerState);
+    rpc ListenState(ID) returns (stream WorkerState);
+
+    rpc GoTo(GoToRequest) returns (Empty);
+    rpc PlaceCentralBuildingTemplate(PlaceCentralBuildingTemplateRequest) returns (ID);
+    rpc AttachAsBuilder(AttachAsBuilderRequest) returns (Empty);
+}
+
+message GoToRequest {
+    ID WorkerID = 1;
+    Vector Destignation = 2;
+}
+
+message PlaceCentralBuildingTemplateRequest {
+    ID WorkerID = 1;
+    Vector Position = 2;
+}
+
+message AttachAsBuilderRequest {
+    ID WorkerID = 1;
+    ID BuildingTemplateID = 2;
+}
+
+message WorkerState {
+    UnitState Base = 1;
+}
