@@ -12,6 +12,15 @@ namespace Assets.Utils
         private readonly object mLocker = new object();
         private readonly Dictionary<TKey, TaskCompletionSource<TValue>> mTaskSources = new Dictionary<TKey, TaskCompletionSource<TValue>>();
 
+        public IReadOnlyCollection<TKey> Keys
+        {
+            get
+            {
+                lock(mLocker)
+                    return new List<TKey>(mTaskSources.Keys);
+            }
+        } 
+
         public void AddOrUpdate(TKey key, TValue value)
         {
             TaskCompletionSource<TValue> taskSource;

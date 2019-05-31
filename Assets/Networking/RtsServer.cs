@@ -23,14 +23,17 @@ namespace Assets.Networking
     {
         private Server mServer;
 
-        public IRegistrator<IWorkerOrders, IWorkerInfo> WorkerRegistrator { get; }
+        public IRegistrator<IWorkerOrders, IWorkerInfo> WorkerRegistrator { get; private set; }
         
         public void Listen(UnitySyncContext syncContext, IGameObjectFactory enemyFactory, Game game)
         {
             mServer = new Server();
             mServer.Ports.Add(new ServerPort(GameUtils.IP.ToString(), GameUtils.Port, ServerCredentials.Insecure));
             mServer.Services.Add(GameService.BindService(new GameServiceImpl(game, enemyFactory, syncContext)));
-            mServer.Services.Add(WorkerService.BindService(new WorkerServiceImpl(syncContext)));
+
+            var workerService = new WorkerServiceImpl(syncContext);
+            WorkerRegistrator = workerService;
+            mServer.Services.Add(WorkerService.BindService(workerService));
 
             mServer.Start();
         }

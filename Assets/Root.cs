@@ -129,9 +129,10 @@ class Root : MonoBehaviour
             Player = player;
             player.Money.Store(100000);
             mGame.AddPlayer(player);
-            mGame.PlaceObject(player.CreateWorker(new Vector2(Random.Range(0, 20), Random.Range(0, 20))));
 
             mServer.Listen(SyncContext, enemyFactory, mGame);
+
+            mGame.PlaceObject(player.CreateWorker(new Vector2(Random.Range(0, 20), Random.Range(0, 20))));
         }
 
         if (GameUtils.CurrentMode == GameMode.Client)
@@ -155,6 +156,7 @@ class Root : MonoBehaviour
         
         view.Map = MapView;
         view.LoadModel(workerOrders, workerInfo);
+        view.IsControlable = true;
 
         instance.transform.parent = MapView.ChildContainer.transform;
         instance.transform.localPosition = MapView.GetWorldPosition(workerInfo.Position);

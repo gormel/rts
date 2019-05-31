@@ -57,6 +57,12 @@ namespace Assets.Networking.Services
 
         public override async Task ListenCreation(Empty request, IServerStreamWriter<WorkerState> responseStream, ServerCallContext context)
         {
+            foreach (var key in mRegistred.Keys)
+            {
+                var reg = await mRegistred.GetValueAsync(key, context.CancellationToken);
+                await responseStream.WriteAsync(await CreateState(reg.Info, context.CancellationToken));
+            }
+
             while (true)
             {
                 var registration = await mRegistrations.DequeueAsync(context.CancellationToken);
