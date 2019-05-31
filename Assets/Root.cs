@@ -154,7 +154,7 @@ class Root : MonoBehaviour
         if (view == null)
             throw new Exception("Prefab not contains View script.");
         
-        view.Map = MapView;
+        view.Map = MapView;//map loaded after first worker created, need ordering those events
         view.LoadModel(workerOrders, workerInfo);
         view.IsControlable = true;
         view.IsClient = true;
