@@ -56,8 +56,13 @@ namespace Assets.Views.Base
                     mLastDistance = distance;
                 }
             }
-
-
+            else
+            {
+                //maybe lerp
+                transform.localPosition = Map.GetWorldPosition(Info.Position);
+                transform.localEulerAngles = new Vector3(0, Mathf.Atan2(Info.Direction.y, Info.Direction.x), 0);
+            }
+            
             TargetLine.gameObject.SetActive(IsSelected);
             TargetLine.SetPosition(0, transform.position);
             TargetLine.SetPosition(1, Map.GetWorldPosition(Info.Destignation));

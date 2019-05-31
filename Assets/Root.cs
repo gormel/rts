@@ -157,6 +157,7 @@ class Root : MonoBehaviour
         view.Map = MapView;
         view.LoadModel(workerOrders, workerInfo);
         view.IsControlable = true;
+        view.IsClient = true;
 
         instance.transform.parent = MapView.ChildContainer.transform;
         instance.transform.localPosition = MapView.GetWorldPosition(workerInfo.Position);
