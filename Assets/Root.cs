@@ -9,6 +9,7 @@ using Assets.Core.GameObjects;
 using Assets.Core.GameObjects.Base;
 using Assets.Core.GameObjects.Final;
 using Assets.Core.Map;
+using Assets.Networking;
 using Assets.Networking.Services;
 using Assets.Utils;
 using Assets.Views;
@@ -17,11 +18,13 @@ using Grpc.Core;
 using UnityEngine;
 using GameObject = UnityEngine.GameObject;
 using Random = UnityEngine.Random;
+using Server = Grpc.Core.Server;
 
 class Root : MonoBehaviour
 {
     private class Factory : IGameObjectFactory
     {
+        private readonly RtsServer mServer;
         private readonly Game mGame;
         private readonly MapView mMap;
         private readonly GameObject mWorkerPrefab;
@@ -30,8 +33,9 @@ class Root : MonoBehaviour
 
         public event Action<SelectableView> ViewCreated;
 
-        public Factory(Game game, MapView map, GameObject workerPrefab, GameObject buildingTemplatePrefab, GameObject centralBuildingPrefab)
+        public Factory(RtsServer server, Game game, MapView map, GameObject workerPrefab, GameObject buildingTemplatePrefab, GameObject centralBuildingPrefab)
         {
+            mServer = server;
             mGame = game;
             mMap = map;
             mWorkerPrefab = workerPrefab;
@@ -69,6 +73,7 @@ class Root : MonoBehaviour
                 view => new Worker(mGame, view, position),
                 position
             );
+            mServer.WorkerRegistrator.Register(worker, worker);
             return worker;
         }
 
@@ -95,95 +100,64 @@ class Root : MonoBehaviour
         }
     }
 
-    private class ClientMapData : IMapData
-    {
-        public MapState State { get; } = new MapState();
-
-        public int Length => State.Lenght;
-
-        public int Width => State.Width;
-
-        public float GetHeightAt(int x, int y)
-        {
-            return State.Heights[y * Width + x];
-        }
-    }
-
-    private class ClientPlayerState : IPlayerState
-    {
-        public PlayerState PlayerState { get; } = new PlayerState();
-
-        public Guid ID => Guid.Parse(PlayerState.ID.Value);
-
-        public int Money => PlayerState.Money;
-    }
-
     public GameObject MapPrefab;
     public GameObject WorkerPrefab;
     public GameObject BuildingTemplatePrefab;
     public GameObject CentralBuildingPrefab;
     public UnitySyncContext SyncContext;
 
-    private Server mServer;
-    private Channel mChannel;
+    private RtsServer mServer;
+    private RtsClient mClient;
+    private Game mGame;
 
     public IPlayerState Player { get; private set; }
-    private Game Game { get; set; }
     public MapView MapView { get; private set; }
 
     void Start()
     {
         if (GameUtils.CurrentMode == GameMode.Server)
         {
-            Game = new Game();
-            MapView = CreateMap(Game.Map.Data);
-            var controlledFactory = new Factory(Game, MapView, WorkerPrefab, BuildingTemplatePrefab, CentralBuildingPrefab);
+            mGame = new Game();
+            mServer = new RtsServer();
+            MapView = CreateMap(mGame.Map.Data);
+
+            var enemyFactory = new Factory(mServer, mGame, MapView, WorkerPrefab, BuildingTemplatePrefab, CentralBuildingPrefab);
+            var controlledFactory = new Factory(mServer, mGame, MapView, WorkerPrefab, BuildingTemplatePrefab, CentralBuildingPrefab);
             controlledFactory.ViewCreated += ControlledFactoryOnViewCreated;
+
             var player = new Player(controlledFactory);
             Player = player;
             player.Money.Store(100000);
-            Game.AddPlayer(player);
-            Game.PlaceObject(player.CreateWorker(new Vector2(Random.Range(0, 20), Random.Range(0, 20))));
+            mGame.AddPlayer(player);
+            mGame.PlaceObject(player.CreateWorker(new Vector2(Random.Range(0, 20), Random.Range(0, 20))));
 
-            var enemyFactory = new Factory(Game, MapView, WorkerPrefab, BuildingTemplatePrefab, CentralBuildingPrefab);
-
-            mServer = new Server();
-            mServer.Ports.Add(new ServerPort(GameUtils.IP.ToString(), GameUtils.Port, ServerCredentials.Insecure));
-            mServer.Services.Add(GameService.BindService(new GameServiceImpl(Game, enemyFactory, SyncContext)));
-
-            mServer.Start();
+            mServer.Listen(SyncContext, enemyFactory, mGame);
         }
 
         if (GameUtils.CurrentMode == GameMode.Client)
         {
-            mChannel = new Channel(GameUtils.IP.ToString(), GameUtils.Port, ChannelCredentials.Insecure);
-            ListenGameState(mChannel);
+            mClient = new RtsClient(SyncContext);
+
+            mClient.MapLoaded += data => MapView = CreateMap(data);
+            mClient.PlayerConnected += state => Player = state;
+            mClient.WorkerCreated += ClientOnWorkerCreated;
+
+            mClient.Listen();
         }
     }
-    
-    private async Task ListenGameState(Channel channel)
+
+    private void ClientOnWorkerCreated(IWorkerOrders workerOrders, IWorkerInfo workerInfo)
     {
-        var mapState = new ClientMapData();
-        var playerState = new ClientPlayerState();
-        Player = playerState;
+        var instance = Instantiate(WorkerPrefab);
+        var view = instance.GetComponent<WorkerView>();
+        if (view == null)
+            throw new Exception("Prefab not contains View script.");
+        
+        view.Map = MapView;
+        view.LoadModel(workerOrders, workerInfo);
 
-        var client = new GameService.GameServiceClient(channel);
-        using (var stateStream = client.ConnectAndListenState(new Empty()).ResponseStream)
-        {
-            while (await stateStream.MoveNext())
-            {
-                channel.ShutdownToken.ThrowIfCancellationRequested();
-                var state = stateStream.Current;
-                mapState.State.MergeFrom(state.Map);
-                playerState.PlayerState.MergeFrom(state.Player);
-                channel.ShutdownToken.ThrowIfCancellationRequested();
-
-                if (MapView == null)
-                {
-                    await SyncContext.Execute(() => { MapView = CreateMap(mapState); }, channel.ShutdownToken);
-                }
-            }
-        }
+        instance.transform.parent = MapView.ChildContainer.transform;
+        instance.transform.localPosition = MapView.GetWorldPosition(workerInfo.Position);
     }
 
     private void ControlledFactoryOnViewCreated(SelectableView selectableView)
@@ -210,16 +184,16 @@ class Root : MonoBehaviour
     {
         if (GameUtils.CurrentMode == GameMode.Server)
         {
-            Game.Update(TimeSpan.FromSeconds(Time.deltaTime));
+            mGame.Update(TimeSpan.FromSeconds(Time.deltaTime));
         }
     }
 
     void OnDestroy()
     {
         if (mServer != null)
-            mServer.ShutdownAsync();
+            mServer.Shutdown();
 
-        if (mChannel != null)
-            mChannel.ShutdownAsync();
+        if (mClient != null)
+            mClient.Shutdown();
     }
 }

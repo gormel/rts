@@ -6,7 +6,7 @@ namespace Assets.Core.GameObjects.Base
 {
     interface IGameObjectInfo
     {
-        Guid ID { get; set; }
+        Guid ID { get; }
         Vector2 Position { get; }
         float Health { get; }
         float MaxHealth { get; }

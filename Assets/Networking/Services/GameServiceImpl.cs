@@ -55,6 +55,7 @@ namespace Assets.Networking.Services
                 var player = await mSyncContext.Execute(() =>
                 {
                     var pl = new Player(mServerFactory);
+                    pl.Money.Store(10000);
                     mGame.AddPlayer(pl);
                     pl.CreateWorker(new Vector2(10, 10));
                     return pl;
