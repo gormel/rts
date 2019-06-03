@@ -24,11 +24,25 @@ namespace Assets.Views.Base
             }
         }
 
-        public bool IsControlable { get; set; }
+        public bool IsControlable
+        {
+            get { return mIsControlable; }
+            set
+            {
+                mIsControlable = value;
+                MaterialTarget.sharedMaterial = mIsControlable ? AllyMaterial : EnemyMaterial;
+            }
+        }
 
         public GameObject SelectionObject;
+        public Material AllyMaterial;
+        public Material EnemyMaterial;
+        public MeshRenderer MaterialTarget;
+
+        public UnitySyncContext SyncContext { get; set; }
 
         private List<SelectableViewProperty> mProperties = new List<SelectableViewProperty>();
+        private bool mIsControlable;
         public IReadOnlyList<SelectableViewProperty> Properties => mProperties;
 
 
@@ -42,6 +56,10 @@ namespace Assets.Views.Base
         }
 
         public virtual void OnRightClick(SelectableView view)
+        {
+        }
+
+        public virtual void OnEnemyRightClick(SelectableView view)
         {
         }
 

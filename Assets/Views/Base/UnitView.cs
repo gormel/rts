@@ -23,7 +23,6 @@ namespace Assets.Views.Base
         private float mLastDistance;
 
         public LineRenderer TargetLine;
-        public UnitySyncContext SyncContext;
 
         protected virtual void OnStart()
         {
@@ -60,7 +59,7 @@ namespace Assets.Views.Base
             {
                 //maybe lerp
                 transform.localPosition = Map.GetWorldPosition(Info.Position);
-                transform.localEulerAngles = new Vector3(0, Mathf.Atan2(Info.Direction.y, Info.Direction.x), 0);
+                transform.localEulerAngles = new Vector3(0, Mathf.Rad2Deg * Mathf.Atan2(Info.Direction.x, Info.Direction.y), 0);
             }
             
             TargetLine.gameObject.SetActive(IsSelected);
@@ -72,7 +71,7 @@ namespace Assets.Views.Base
 
         protected virtual void OnLateUpdate()
         {
-            if (mNavMeshAgent.velocity.sqrMagnitude > 0.01)
+            if (!IsClient && mNavMeshAgent.velocity.sqrMagnitude > 0.01)
                 transform.rotation = Quaternion.LookRotation(mNavMeshAgent.velocity.normalized);
         }
 

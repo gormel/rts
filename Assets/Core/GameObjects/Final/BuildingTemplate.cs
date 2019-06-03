@@ -21,7 +21,7 @@ namespace Assets.Core.GameObjects.Final
     internal class BuildingTemplate : Building, IBuildingTemplateInfo, IBuildingTemplateOrders
     {
         private readonly Game.Game mGame;
-        private readonly Func<Vector2, Building> mCreateBuilding;
+        private readonly Func<Vector2, Task<Building>> mCreateBuilding;
         public IPlacementService PlacementService { get; }
         private TimeSpan mBuildTime;
         private readonly TimeSpan mFullBuildTime;
@@ -33,7 +33,7 @@ namespace Assets.Core.GameObjects.Final
 
         public BuildingTemplate(
             Game.Game game,
-            Func<Vector2, Building> createBuilding, 
+            Func<Vector2, Task<Building>> createBuilding, 
             TimeSpan buildTime, 
             Vector2 size, 
             Vector2 position, 
@@ -60,7 +60,7 @@ namespace Assets.Core.GameObjects.Final
             if (mBuildTime <= TimeSpan.Zero)
             {
                 mGame.RemoveObject(ID);
-                mGame.PlaceObject(mCreateBuilding(Position));
+                mCreateBuilding(Position).ContinueWith(t => mGame.PlaceObject(t.Result));
             }
         }
 

@@ -37,7 +37,8 @@ class UnitySyncContext : MonoBehaviour
 
     void Update()
     {
-        while (mExecutions.Count > 0)
+        int executed = 0;
+        while (mExecutions.Count > 0 || executed++ > 100)
         {
             Execution toExec;
             if (mExecutions.TryDequeue(out toExec))

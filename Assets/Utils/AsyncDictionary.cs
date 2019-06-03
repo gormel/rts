@@ -27,7 +27,7 @@ namespace Assets.Utils
 
             lock(mLocker)
             {
-                if (!mTaskSources.TryGetValue(key, out taskSource) || taskSource.Task.IsCanceled)
+                if (!mTaskSources.TryGetValue(key, out taskSource) || taskSource.Task.IsCanceled || taskSource.Task.IsFaulted || taskSource.Task.IsCompleted)
                 {
                     taskSource = new TaskCompletionSource<TValue>();
                     mTaskSources[key] = taskSource;

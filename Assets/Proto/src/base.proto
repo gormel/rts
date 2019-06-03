@@ -22,6 +22,7 @@ message ObjectState {
 	Vector Position = 2;
 	float Health = 3;
 	float MaxHealth = 4;
+	ID PlayerID = 5;
 }
 
 message Vector {

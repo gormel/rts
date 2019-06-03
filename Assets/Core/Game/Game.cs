@@ -31,10 +31,8 @@ namespace Assets.Core.Game
             var tcs = new TaskCompletionSource<Guid>();
             mRequested.Add(() =>
             {
-                var id = Guid.NewGuid();
-                obj.ID = id;
-                mGameObjects.Add(id, obj);
-                tcs.SetResult(id);
+                mGameObjects.Add(obj.ID, obj);
+                tcs.SetResult(obj.ID);
             });
 
             return tcs.Task;

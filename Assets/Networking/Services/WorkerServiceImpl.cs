@@ -8,84 +8,80 @@ using System.Threading.Tasks;
 using Assets.Core.GameObjects.Final;
 using Assets.Utils;
 using Grpc.Core;
+using UnityEngine;
 
 namespace Assets.Networking.Services
 {
     class WorkerServiceImpl : WorkerService.WorkerServiceBase, IRegistrator<IWorkerOrders, IWorkerInfo>
     {
-        private struct Registration
-        {
-            public IWorkerInfo Info { get; }
-            public IWorkerOrders Orders { get; }
+        private CommonListenCreationService<IWorkerOrders, IWorkerInfo, WorkerState> mCommonService;
 
-            public Registration(IWorkerInfo info, IWorkerOrders orders)
+        public WorkerServiceImpl()
+        {
+            mCommonService = new CommonListenCreationService<IWorkerOrders, IWorkerInfo, WorkerState>(CreateState);
+        }
+
+        private WorkerState CreateState(IWorkerInfo info)
+        {
+            return new WorkerState
             {
-                Info = info;
-                Orders = orders;
-            }
-        }
-
-        private readonly UnitySyncContext mSyncContext;
-        private readonly AsyncQueue<Registration> mRegistrations = new AsyncQueue<Registration>(); 
-        private readonly AsyncDictionary<Guid, Registration> mRegistred = new AsyncDictionary<Guid, Registration>();
-
-        public WorkerServiceImpl(UnitySyncContext syncContext)
-        {
-            mSyncContext = syncContext;
-        }
-
-        private Task<WorkerState> CreateState(IWorkerInfo info, CancellationToken token = default(CancellationToken))
-        {
-            return mSyncContext.Execute(() =>
-                new WorkerState
+                Base = new UnitState
                 {
-                    Base = new UnitState
+                    Base = new ObjectState
                     {
-                        Base = new ObjectState
-                        {
-                            ID = new ID { Value = info.ID.ToString() },
-                            Health = info.Health,
-                            MaxHealth = info.MaxHealth,
-                            Position = info.Position.ToGrpc()
-                        },
-                        Destignation = info.Destignation.ToGrpc(),
-                        Direction = info.Direction.ToGrpc(),
-                        Speed = info.Speed
-                    }
-                }, token);
+                        ID = new ID {Value = info.ID.ToString()},
+                        Health = info.Health,
+                        MaxHealth = info.MaxHealth,
+                        Position = info.Position.ToGrpc(),
+                        PlayerID = new ID { Value = info.PlayerID.ToString() }
+                    },
+                    Destignation = info.Destignation.ToGrpc(),
+                    Direction = info.Direction.ToGrpc(),
+                    Speed = info.Speed
+                }
+            };
         }
 
-        public override async Task ListenCreation(Empty request, IServerStreamWriter<WorkerState> responseStream, ServerCallContext context)
+        public override Task ListenCreation(Empty request, IServerStreamWriter<WorkerState> responseStream, ServerCallContext context)
         {
-            foreach (var key in mRegistred.Keys)
-            {
-                var reg = await mRegistred.GetValueAsync(key, context.CancellationToken);
-                await responseStream.WriteAsync(await CreateState(reg.Info, context.CancellationToken));
-            }
-
-            while (true)
-            {
-                var registration = await mRegistrations.DequeueAsync(context.CancellationToken);
-                mRegistred.AddOrUpdate(registration.Info.ID, registration);
-                await responseStream.WriteAsync(await CreateState(registration.Info, context.CancellationToken));
-            }
+            return mCommonService.ListenCreation(responseStream, context);
         }
 
-        public override async Task ListenState(ID request, IServerStreamWriter<WorkerState> responseStream, ServerCallContext context)
+        public override Task ListenState(ID request, IServerStreamWriter<WorkerState> responseStream, ServerCallContext context)
         {
-            var workerId = Guid.Parse(request.Value);
-            var listening = (await mRegistred.GetValueAsync(workerId, context.CancellationToken)).Info;
-
-            while (true)
-            {
-                await responseStream.WriteAsync(await CreateState(listening, context.CancellationToken));
-                await Task.Delay(16);
-            }
+            return mCommonService.ListenState(request, responseStream, context);
         }
 
+        public override Task<Empty> GoTo(GoToRequest request, ServerCallContext context)
+        {
+            return mCommonService.ExecuteOrder(request.WorkerID, async orders =>
+            {
+                await orders.GoTo(request.Destignation.ToUnity());
+                return new Empty();
+            });
+        }
+
+        public override Task<ID> PlaceCentralBuildingTemplate(PlaceCentralBuildingTemplateRequest request, ServerCallContext context)
+        {
+            return mCommonService.ExecuteOrder(request.WorkerID, async orders =>
+            {
+                var id = await orders.PlaceCentralBuildingTemplate(new Vector2Int((int)request.Position.X, (int)request.Position.Y));
+                return new ID { Value = id.ToString() };
+            });
+        }
+
+        public override Task<Empty> AttachAsBuilder(AttachAsBuilderRequest request, ServerCallContext context)
+        {
+            return mCommonService.ExecuteOrder(request.WorkerID, async orders =>
+            {
+                await orders.AttachAsBuilder(Guid.Parse(request.BuildingTemplateID.Value));
+                return new Empty();
+            });
+        }
+        
         public void Register(IWorkerOrders orders, IWorkerInfo info)
         {
-            mRegistrations.Enqueue(new Registration(info, orders));
+            mCommonService.Register(orders, info);
         }
     }
 }

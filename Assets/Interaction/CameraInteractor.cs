@@ -18,7 +18,7 @@ namespace Assets.Interaction
 
         void Update()
         {
-            if (!mFocused)
+            if (!mFocused || !Input.GetKey(KeyCode.LeftAlt))
                 return;
 
             var velocity = Vector3.zero;

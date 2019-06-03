@@ -73,27 +73,28 @@ namespace Assets.Core.GameObjects.Final
             if (!Player.Money.Spend(WorkerCost))
                 return false;
 
-            PlacementPoint point;
-            if (!mPlacementService.TryAllocatePoint(out point))
+            var point = await mPlacementService.TryAllocatePoint();
+            if (point == PlacementPoint.Invalid)
                 return false;
 
             WorkersQueued++;
             var productionTime = TimeSpan.FromSeconds(10);
-            mOrders.Enqueue(new Order(productionTime, () =>
+            mOrders.Enqueue(new Order(productionTime, async () =>
             {
                 WorkersQueued--;
-                var worker = Player.CreateWorker(point.Position);
-                mGame.PlaceObject(worker);
-                mPlacementService.ReleasePoint(point.ID);
+                var worker = await Player.CreateWorker(point.Position);
+                await mGame.PlaceObject(worker);
+                await mPlacementService.ReleasePoint(point.ID);
                 if (!new Rect(Position, Size).Contains(Waypoint))
-                    worker.GoTo(Waypoint);
+                    await worker.GoTo(Waypoint); ;
             }));
             return true;
         }
 
-        public async Task SetWaypoint(Vector2 waypoint)
+        public Task SetWaypoint(Vector2 waypoint)
         {
             Waypoint = waypoint;
+            return Task.CompletedTask;
         }
 
         public override void Update(TimeSpan deltaTime)

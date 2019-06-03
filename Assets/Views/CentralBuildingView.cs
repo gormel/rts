@@ -53,31 +53,34 @@ namespace Assets.Views
             Orders.SetWaypoint(position);
         }
 
-        public bool TryAllocatePoint(out PlacementPoint point)
+        public Task<PlacementPoint> TryAllocatePoint()
         {
-            point = default(PlacementPoint);
-            if (PlacementPoints == null)
-                return false;
-
-            for (int i = 0; i < PlacementPoints.Length; i++)
+            return SyncContext.Execute(() =>
             {
-                if (mLockedPoints.Contains(i))
-                    continue;
+                if (PlacementPoints == null)
+                    return PlacementPoint.Invalid;
 
-                if (!IsFree(i))
-                    continue;
+                for (int i = 0; i < PlacementPoints.Length; i++)
+                {
+                    if (mLockedPoints.Contains(i))
+                        continue;
 
-                mLockedPoints.Add(i);
-                point = new PlacementPoint(i, GameUtils.GetFlatPosition(transform.localPosition + PlacementPoints[i].transform.position - transform.position));
-                return true;
-            }
+                    if (!IsFree(i))
+                        continue;
 
-            return false;
+                    mLockedPoints.Add(i);
+                    return new PlacementPoint(i,
+                        GameUtils.GetFlatPosition(transform.localPosition + PlacementPoints[i].transform.position -
+                                                  transform.position));
+                }
+
+                return PlacementPoint.Invalid;
+            });
         }
 
-        public void ReleasePoint(int pointId)
+        public Task ReleasePoint(int pointId)
         {
-            mLockedPoints.Remove(pointId);
+            return SyncContext.Execute(() => mLockedPoints.Remove(pointId));
         }
 
         public bool IsFree(int pointId)

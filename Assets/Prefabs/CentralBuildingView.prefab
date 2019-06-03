@@ -862,6 +862,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Icon: {fileID: 21300000, guid: 48533fa99387bdc4481e5e06284b3584, type: 3}
   SelectionObject: {fileID: 1422072730456123942}
+  AllyMaterial: {fileID: 2100000, guid: d1435e2c5dc465247bdbb6b88465a7d5, type: 2}
+  EnemyMaterial: {fileID: 2100000, guid: c9217accbdfa61c40b586bd613264b65, type: 2}
+  MaterialTarget: {fileID: 8744837542182001259}
   WaypointLine: {fileID: 8067011072100529965}
   PlacementPoints:
   - {fileID: 7095510788889603083}
@@ -1167,6 +1170,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2e8acc97d7354844dad95774e369c95c, type: 3}
+--- !u!23 &8744837542182001259 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 2300000, guid: 2e8acc97d7354844dad95774e369c95c,
+    type: 3}
+  m_PrefabInstance: {fileID: 8744837542184026635}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &8744837542184425611 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: 2e8acc97d7354844dad95774e369c95c,

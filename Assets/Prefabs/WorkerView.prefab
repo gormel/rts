@@ -177,8 +177,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Icon: {fileID: 21300000, guid: 1ead6d5aae34d0c4ab49d068527c3613, type: 3}
   SelectionObject: {fileID: 7464195863965916696}
+  AllyMaterial: {fileID: 2100000, guid: d1435e2c5dc465247bdbb6b88465a7d5, type: 2}
+  EnemyMaterial: {fileID: 2100000, guid: c9217accbdfa61c40b586bd613264b65, type: 2}
+  MaterialTarget: {fileID: 4314997959700378518}
   TargetLine: {fileID: 439170720222180087}
-  SyncContext: {fileID: 3490470801072727077}
 --- !u!195 &2302558209796687009
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -394,6 +396,12 @@ PrefabInstance:
 --- !u!4 &4314997959698477430 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: 390457657dd1f8447a72a5e4f0ef0677,
+    type: 3}
+  m_PrefabInstance: {fileID: 4314997959698344950}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &4314997959700378518 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 2300000, guid: 390457657dd1f8447a72a5e4f0ef0677,
     type: 3}
   m_PrefabInstance: {fileID: 4314997959698344950}
   m_PrefabAsset: {fileID: 0}

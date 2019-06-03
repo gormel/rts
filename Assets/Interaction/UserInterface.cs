@@ -299,7 +299,12 @@ namespace Assets.Interaction
                 if (viewHit != null)
                 {
                     foreach (var view in Selected)
-                        view.OnRightClick(viewHit.Object);
+                    {
+                        if (viewHit.Object.IsControlable)
+                            view.OnRightClick(viewHit.Object);
+                        else
+                            view.OnEnemyRightClick(viewHit.Object);
+                    }
 
                     return;
                 }

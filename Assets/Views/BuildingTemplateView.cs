@@ -45,32 +45,33 @@ namespace Assets.Views
             Orders.Cancel();
         }
 
-        public bool TryAllocatePoint(out PlacementPoint point)
+        public Task<PlacementPoint> TryAllocatePoint()
         {
-            point = default(PlacementPoint);
-            if (BuilderPoints == null)
-                return false;
-
-            for (int i = 0; i < BuilderPoints.Length; i++)
+            return SyncContext.Execute(() =>
             {
-                if (!mBusyPoints.Contains(i))
+                if (BuilderPoints == null)
+                    return PlacementPoint.Invalid;
+
+                for (int i = 0; i < BuilderPoints.Length; i++)
                 {
-                    var ray = new Ray(BuilderPoints[i].transform.position, Vector3.up);
-                    if (Physics.Raycast(ray))
-                        continue;
+                    if (!mBusyPoints.Contains(i))
+                    {
+                        var ray = new Ray(BuilderPoints[i].transform.position, Vector3.up);
+                        if (Physics.Raycast(ray))
+                            continue;
 
-                    mBusyPoints.Add(i);
-                    point = new PlacementPoint(i, GameUtils.GetFlatPosition(transform.localPosition + BuilderPoints[i].transform.position - transform.position));
-                    return true;
+                        mBusyPoints.Add(i);
+                        return new PlacementPoint(i, GameUtils.GetFlatPosition(transform.localPosition + BuilderPoints[i].transform.position - transform.position));
+                    }
                 }
-            }
 
-            return false;
+                return PlacementPoint.Invalid;
+            });
         }
 
-        public void ReleasePoint(int pointId)
+        public Task ReleasePoint(int pointId)
         {
-            mBusyPoints.Remove(pointId);
+            return SyncContext.Execute(() => mBusyPoints.Remove(pointId));
         }
     }
 }

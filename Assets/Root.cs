@@ -22,9 +22,15 @@ using Server = Grpc.Core.Server;
 
 class Root : MonoBehaviour
 {
+    private class OrdersAndInfo<TOrders, TInfo>
+    {
+
+    }
+
     private class Factory : IGameObjectFactory
     {
         private readonly RtsServer mServer;
+        private readonly UnitySyncContext mSyncContext;
         private readonly Game mGame;
         private readonly MapView mMap;
         private readonly GameObject mWorkerPrefab;
@@ -33,42 +39,47 @@ class Root : MonoBehaviour
 
         public event Action<SelectableView> ViewCreated;
 
-        public Factory(RtsServer server, Game game, MapView map, GameObject workerPrefab, GameObject buildingTemplatePrefab, GameObject centralBuildingPrefab)
+        public Factory(Root root)
         {
-            mServer = server;
-            mGame = game;
-            mMap = map;
-            mWorkerPrefab = workerPrefab;
-            mBuildingTemplatePrefab = buildingTemplatePrefab;
-            mCentralBuildingPrefab = centralBuildingPrefab;
+            mServer = root.mServer;
+            mSyncContext = root.SyncContext;
+            mGame = root.mGame;
+            mMap = root.MapView;
+            mWorkerPrefab = root.WorkerPrefab;
+            mBuildingTemplatePrefab = root.BuildingTemplatePrefab;
+            mCentralBuildingPrefab = root.CentralBuildingPrefab;
         }
 
-        private TModel CreateModelAndView<TView, TModel, TOrders, TInfo>(GameObject prefab, Func<TView, TModel> createModel, Vector2 position)
+        private Task<TModel> CreateModelAndView<TView, TModel, TOrders, TInfo>(GameObject prefab, Func<TView, TModel> createModel, Vector2 position)
             where TView : ModelSelectableView<TOrders, TInfo>
             where TOrders : IGameObjectOrders
             where TInfo : IGameObjectInfo
             where TModel : RtsGameObject, TOrders, TInfo
         {
-            var instance = Instantiate(prefab);
-            var view = instance.GetComponent<TView>();
-            if (view == null)
-                throw new Exception("Prefab not contains View script.");
+            return mSyncContext.Execute(() =>
+            {
+                var instance = Instantiate(prefab);
+                var view = instance.GetComponent<TView>();
+                if (view == null)
+                    throw new Exception("Prefab not contains View script.");
 
-            var result = createModel(view);
-            view.Map = mMap;
-            view.LoadModel(result, result);
+                var result = createModel(view);
+                view.Map = mMap;
+                view.SyncContext = mSyncContext;
+                view.LoadModel(result, result);
 
-            instance.transform.parent = mMap.ChildContainer.transform;
-            instance.transform.localPosition = mMap.GetWorldPosition(position);
+                instance.transform.parent = mMap.ChildContainer.transform;
+                instance.transform.localPosition = mMap.GetWorldPosition(position);
 
-            ViewCreated?.Invoke(view);
+                ViewCreated?.Invoke(view);
 
-            return result;
+                return result;
+            });
         }
 
-        public Worker CreateWorker(Vector2 position)
+        public async Task<Worker> CreateWorker(Vector2 position)
         {
-            var worker = CreateModelAndView<WorkerView, Worker, IWorkerOrders, IWorkerInfo>(
+            var worker = await CreateModelAndView<WorkerView, Worker, IWorkerOrders, IWorkerInfo>(
                 mWorkerPrefab,
                 view => new Worker(mGame, view, position),
                 position
@@ -77,18 +88,18 @@ class Root : MonoBehaviour
             return worker;
         }
 
-        public BuildingTemplate CreateBuildingTemplate(Vector2 position, Func<Vector2, Building> building, TimeSpan buildTime, Vector2 size, float maxHealth)
+        public async Task<BuildingTemplate> CreateBuildingTemplate(Vector2 position, Func<Vector2, Task<Building>> building, TimeSpan buildTime, Vector2 size, float maxHealth)
         {
-            var template = CreateModelAndView<BuildingTemplateView, BuildingTemplate, IBuildingTemplateOrders, IBuildingTemplateInfo>(
+            var template = await CreateModelAndView<BuildingTemplateView, BuildingTemplate, IBuildingTemplateOrders, IBuildingTemplateInfo>(
                 mBuildingTemplatePrefab,
                 view => new BuildingTemplate(mGame, building, buildTime, size, position, maxHealth, view),
                 position
             );
-            
+            mServer.BuildingTemplateRegistrator.Register(template, template);
             return template;
         }
 
-        public CentralBuilding CreateCentralBuilding(Vector2 position)
+        public Task<CentralBuilding> CreateCentralBuilding(Vector2 position)
         {
             var centralBuilding = CreateModelAndView<CentralBuildingView, CentralBuilding, ICentralBuildingOrders, ICentralBuildingInfo>(
                 mCentralBuildingPrefab,
@@ -121,9 +132,10 @@ class Root : MonoBehaviour
             mServer = new RtsServer();
             MapView = CreateMap(mGame.Map.Data);
 
-            var enemyFactory = new Factory(mServer, mGame, MapView, WorkerPrefab, BuildingTemplatePrefab, CentralBuildingPrefab);
-            var controlledFactory = new Factory(mServer, mGame, MapView, WorkerPrefab, BuildingTemplatePrefab, CentralBuildingPrefab);
+            var enemyFactory = new Factory(this);
+            var controlledFactory = new Factory(this);
             controlledFactory.ViewCreated += ControlledFactoryOnViewCreated;
+            enemyFactory.ViewCreated += EnemyFactoryOnViewCreated;
 
             var player = new Player(controlledFactory);
             Player = player;
@@ -132,7 +144,7 @@ class Root : MonoBehaviour
 
             mServer.Listen(SyncContext, enemyFactory, mGame);
 
-            mGame.PlaceObject(player.CreateWorker(new Vector2(Random.Range(0, 20), Random.Range(0, 20))));
+            player.CreateWorker(new Vector2(Random.Range(0, 20), Random.Range(0, 20))).ContinueWith(t => mGame.PlaceObject(t.Result));
         }
 
         if (GameUtils.CurrentMode == GameMode.Client)
@@ -141,10 +153,33 @@ class Root : MonoBehaviour
 
             mClient.MapLoaded += data => MapView = CreateMap(data);
             mClient.PlayerConnected += state => Player = state;
+
             mClient.WorkerCreated += ClientOnWorkerCreated;
+            mClient.BuildingTemplateCreated += ClientOnBuildingTemplateCreated;
 
             mClient.Listen();
         }
+    }
+
+    private void EnemyFactoryOnViewCreated(SelectableView obj)
+    {
+        obj.IsControlable = false;
+    }
+
+    private void ClientOnBuildingTemplateCreated(IBuildingTemplateOrders arg1, IBuildingTemplateInfo arg2)
+    {
+        var instance = Instantiate(BuildingTemplatePrefab);
+        var view = instance.GetComponent<BuildingTemplateView>();
+        if (view == null)
+            throw new Exception("Prefab not contains View script.");
+
+        view.Map = MapView;
+        view.IsControlable = arg2.PlayerID == Player.ID;
+        view.SyncContext = SyncContext;
+        view.LoadModel(arg1, arg2);
+
+        instance.transform.parent = MapView.ChildContainer.transform;
+        instance.transform.localPosition = MapView.GetWorldPosition(arg2.Position);
     }
 
     private void ClientOnWorkerCreated(IWorkerOrders workerOrders, IWorkerInfo workerInfo)
@@ -154,10 +189,11 @@ class Root : MonoBehaviour
         if (view == null)
             throw new Exception("Prefab not contains View script.");
         
-        view.Map = MapView;//map loaded after first worker created, need ordering those events
-        view.LoadModel(workerOrders, workerInfo);
-        view.IsControlable = true;
+        view.Map = MapView;
+        view.IsControlable = workerInfo.PlayerID == Player.ID;
         view.IsClient = true;
+        view.SyncContext = SyncContext;
+        view.LoadModel(workerOrders, workerInfo);
 
         instance.transform.parent = MapView.ChildContainer.transform;
         instance.transform.localPosition = MapView.GetWorldPosition(workerInfo.Position);

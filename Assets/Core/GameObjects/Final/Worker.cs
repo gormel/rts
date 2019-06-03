@@ -65,9 +65,9 @@ namespace Assets.Core.GameObjects.Final
             if (!Game.GetIsAreaFree(position, CentralBuilding.BuildingSize))
                 return Guid.Empty;
 
-            var template = Player.CreateBuildingTemplate(
+            var template = await Player.CreateBuildingTemplate(
                 position,
-                pos => Player.CreateCentralBuilding(pos),
+                async pos => await Player.CreateCentralBuilding(pos),
                 CentralBuildingBuildTime,
                 CentralBuilding.BuildingSize,
                 CentralBuilding.MaximumHealthConst
@@ -88,8 +88,8 @@ namespace Assets.Core.GameObjects.Final
         public async Task AttachAsBuilder(Guid templateId)
         {
             var template = Game.GetObject<BuildingTemplate>(templateId);
-            PlacementPoint point;
-            if (!template.PlacementService.TryAllocatePoint(out point))
+            var point = await template.PlacementService.TryAllocatePoint();
+            if (point == PlacementPoint.Invalid)
                 return;
 
             SetOrder(new GoToOrder(this, point.Position).Then(new BuildOrder(template, point)));

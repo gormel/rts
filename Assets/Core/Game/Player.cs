@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Assets.Core.GameObjects.Base;
 using Assets.Core.GameObjects.Final;
 using UnityEngine;
@@ -25,12 +26,12 @@ namespace Assets.Core.Game
             mExternalFactory = externalFactory;
         }
 
-        public Worker CreateWorker(Vector2 position)
+        public Task<Worker> CreateWorker(Vector2 position)
         {
             return AssignPlayer(mExternalFactory.CreateWorker(position));
         }
 
-        public BuildingTemplate CreateBuildingTemplate(Vector2 position, Func<Vector2, Building> createBuilding, TimeSpan buildTime, Vector2 size,
+        public Task<BuildingTemplate> CreateBuildingTemplate(Vector2 position, Func<Vector2, Task<Building>> createBuilding, TimeSpan buildTime, Vector2 size,
             float maxHealth)
         {
             return AssignPlayer(mExternalFactory.CreateBuildingTemplate(
@@ -42,18 +43,19 @@ namespace Assets.Core.Game
             ));
         }
 
-        public CentralBuilding CreateCentralBuilding(Vector2 position)
+        public Task<CentralBuilding> CreateCentralBuilding(Vector2 position)
         {
             return AssignPlayer(mExternalFactory.CreateCentralBuilding(position));
         }
 
-        private T AssignPlayer<T>(T controlled) where T : class, IPlayerControlled
+        private async Task<T> AssignPlayer<T>(Task<T> controlled) where T : class, IPlayerControlled
         {
-            if (controlled == null)
+            var obj = await controlled;
+            if (obj == null)
                 return null;
 
-            controlled.Player = this;
-            return controlled;
+            obj.Player = this;
+            return obj;
         }
     }
 }
