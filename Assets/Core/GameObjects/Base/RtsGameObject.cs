@@ -27,14 +27,21 @@ namespace Assets.Core.GameObjects.Base
         public Guid ID { get; } = Guid.NewGuid();
         public Vector2 Position { get; protected set; }
 
-        public float Health { get; set; }
-        public float MaxHealth { get; set; }
-
-        public abstract void Update(TimeSpan deltaTime);
-
         public Guid PlayerID => Player.ID;
 
         protected Player Player => ((IPlayerControlled)this).Player;
         Player IPlayerControlled.Player { get; set; }
+
+        public float Health { get; set; }
+        public float MaxHealth { get; set; }
+
+        public event Action<RtsGameObject> AddedToGame;
+
+        public abstract void Update(TimeSpan deltaTime);
+
+        public void OnAddedToGame()
+        {
+            AddedToGame?.Invoke(this);
+        }
     }
 }

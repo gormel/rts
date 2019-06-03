@@ -84,7 +84,7 @@ class Root : MonoBehaviour
                 view => new Worker(mGame, view, position),
                 position
             );
-            mServer.WorkerRegistrator.Register(worker, worker);
+            worker.AddedToGame += o => mServer.WorkerRegistrator.Register(worker, worker);
             return worker;
         }
 
@@ -95,7 +95,7 @@ class Root : MonoBehaviour
                 view => new BuildingTemplate(mGame, building, buildTime, size, position, maxHealth, view),
                 position
             );
-            mServer.BuildingTemplateRegistrator.Register(template, template);
+            template.AddedToGame += o => mServer.BuildingTemplateRegistrator.Register(template, template);
             return template;
         }
 

@@ -32,6 +32,7 @@ namespace Assets.Core.Game
             mRequested.Add(() =>
             {
                 mGameObjects.Add(obj.ID, obj);
+                obj.OnAddedToGame();
                 tcs.SetResult(obj.ID);
             });
 
