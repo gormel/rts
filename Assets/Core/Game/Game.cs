@@ -49,6 +49,7 @@ namespace Assets.Core.Game
                     tcs.SetException(new ArgumentException("There are no object with this ID."));
 
                 mGameObjects.Remove(objId);
+                obj?.OnRemovedFromGame();
                 tcs.SetResult(obj);
             });
 

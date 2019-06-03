@@ -207,12 +207,15 @@ namespace Assets.Interaction
                         if (selectionRect.Contains((Vector2) projected, true))
                             toSelect.Add(selectableView);
                     }
-
-                    foreach (var selectableView in toSelect)
+                    
+                    if (toSelect.Count > 0)
                     {
-                        selectableView.IsSelected = true;
-                        if (!Selected.Contains(selectableView))
-                            Selected.Add(selectableView);
+                        foreach (var selectableView in toSelect.GroupBy(view => view.SelectionPriority).OrderByDescending(g => g.Key).First())
+                        {
+                            selectableView.IsSelected = true;
+                            if (!Selected.Contains(selectableView))
+                                Selected.Add(selectableView);
+                        }
                     }
                 }
 

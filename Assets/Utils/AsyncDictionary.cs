@@ -39,6 +39,12 @@ namespace Assets.Utils
             taskSource.SetResult(value);
         }
 
+        public void Remove(TKey key)
+        {
+            lock (mLocker)
+                mTaskSources.Remove(key);
+        }
+
         public bool TryGetValue(TKey key, out TValue value)
         {
             value = default(TValue);

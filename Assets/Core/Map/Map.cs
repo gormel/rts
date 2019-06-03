@@ -16,18 +16,24 @@ namespace Assets.Core.Map
 
             for (int i = 0; i < 20; i++)
             {
-                var x = Mathf.FloorToInt(Random.Range(1, width - 1));
-                var y = Mathf.FloorToInt(Random.Range(1, length - 1));
-
-                data[x, y] = 1;
-                for (int x1 = x - 1; x1 <= x + 1; x1++)
+                var x = Random.Range(0, width);
+                var y = Random.Range(0, length);
+                var sizeX = Random.Range(5, 10) / 2;
+                var sizeY = Random.Range(5, 10) / 2;
+                
+                for (int x1 = x - sizeX; x1 <= x + sizeX; x1++)
                 {
-                    for (int y1 = y - 1; y1 <= y + 1; y1++)
+                    for (int y1 = y - sizeY; y1 <= y + sizeY; y1++)
                     {
-                        if (x1 == x && y1 == y)
+                        if (x1 < 0 || y1 < 0 || x1 >= width || y1 >= width)
                             continue;
 
-                        data[x1, y1] = 0.7f;
+                        var h = 1f;
+                        if ((x1 == x - sizeX || x1 == x + sizeX) &&
+                            (y1 == y - sizeY || y1 == y + sizeY))
+                            h = 0.5f;
+
+                        data[x1, y1] = h;
                     }
                 }
             }

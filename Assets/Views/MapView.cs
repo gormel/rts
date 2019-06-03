@@ -16,7 +16,7 @@ namespace Assets.Views
         public GameObject ChildContainer;
         private IMapData mMapData;
 
-        public void LoadMap(IMapData mapData)
+        public void LoadMap(IMapData mapData, bool generateNavMesh)
         {
             var meshFilter = GetComponent<MeshFilter>();
             if (meshFilter == null)
@@ -61,29 +61,37 @@ namespace Assets.Views
 
             gameObject.isStatic = true;
 
-            var settings = NavMesh.CreateSettings();
-            settings.agentTypeID = AgentTypeID;
-            settings.agentRadius = 0;
+            if (generateNavMesh)
+            {
+                var settings = NavMesh.CreateSettings();
+                settings.agentTypeID = AgentTypeID;
+                settings.agentRadius = 0;
+                settings.agentSlope = 60;
 
-            var source = new NavMeshBuildSource();
-            source.shape = NavMeshBuildSourceShape.Mesh;
-            source.sourceObject = meshFilter.mesh;
-            source.transform = transform.localToWorldMatrix;
+                var source = new NavMeshBuildSource();
+                source.shape = NavMeshBuildSourceShape.Mesh;
+                source.sourceObject = meshFilter.mesh;
+                source.transform = transform.localToWorldMatrix;
 
-            var navMeshData = NavMeshBuilder.BuildNavMeshData(
-                settings,
-                new List<NavMeshBuildSource> {source},
-                new Bounds(new Vector3((float) mapData.Width / 2, 0, (float) mapData.Length / 2), new Vector3(mapData.Width, 2, mapData.Length)),
-                transform.position, 
-                transform.rotation
-                );
+                var navMeshData = NavMeshBuilder.BuildNavMeshData(
+                    settings,
+                    new List<NavMeshBuildSource> { source },
+                    new Bounds(new Vector3((float)mapData.Width / 2, 0, (float)mapData.Length / 2), new Vector3(mapData.Width, 2, mapData.Length)),
+                    transform.position,
+                    transform.rotation
+                    );
 
-            NavMesh.AddNavMeshData(navMeshData);
+                NavMesh.AddNavMeshData(navMeshData);
+            }
             mMapData = mapData;
         }
 
         public bool IsAreaFree(Vector2 position, Vector2 size)
         {
+            if (!mMapData.GetIsAreaFree(position, size))
+                return false;
+            
+            //foreach child in childcontainer, check box collisions
             return true;
         }
 

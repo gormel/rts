@@ -22,10 +22,6 @@ using Server = Grpc.Core.Server;
 
 class Root : MonoBehaviour
 {
-    private class OrdersAndInfo<TOrders, TInfo>
-    {
-    }
-
     private class Factory : IGameObjectFactory
     {
         private readonly RtsServer mServer;
@@ -63,6 +59,11 @@ class Root : MonoBehaviour
                     throw new Exception("Prefab not contains View script.");
 
                 var result = createModel(view);
+                result.RemovedFromGame += o =>
+                {
+                    Destroy(instance);
+                    instance.transform.parent = null;
+                };
                 view.Map = mMap;
                 view.SyncContext = mSyncContext;
                 view.LoadModel(result, result);
@@ -84,6 +85,7 @@ class Root : MonoBehaviour
                 position
             );
             worker.AddedToGame += o => mServer.WorkerRegistrator.Register(worker, worker);
+            worker.RemovedFromGame += o => mServer.WorkerRegistrator.Unregister(o.ID);
             return worker;
         }
 
@@ -95,6 +97,7 @@ class Root : MonoBehaviour
                 position
             );
             template.AddedToGame += o => mServer.BuildingTemplateRegistrator.Register(template, template);
+            template.RemovedFromGame += o => mServer.BuildingTemplateRegistrator.Unregister(o.ID);
             return template;
         }
 
@@ -106,6 +109,7 @@ class Root : MonoBehaviour
                 position
             );
             centralBuilding.AddedToGame += o => mServer.CentralBuildingRegistrator.Register(centralBuilding, centralBuilding);
+            centralBuilding.RemovedFromGame += o => mServer.CentralBuildingRegistrator.Unregister(o.ID);
             return centralBuilding;
         }
     }
@@ -129,7 +133,7 @@ class Root : MonoBehaviour
         {
             mGame = new Game();
             mServer = new RtsServer();
-            MapView = CreateMap(mGame.Map.Data);
+            MapView = CreateMap(mGame.Map.Data, true);
 
             var enemyFactory = new Factory(this);
             var controlledFactory = new Factory(this);
@@ -150,31 +154,56 @@ class Root : MonoBehaviour
         {
             mClient = new RtsClient(SyncContext);
 
-            mClient.MapLoaded += data => MapView = CreateMap(data);
+            mClient.MapLoaded += data => MapView = CreateMap(data, false);
             mClient.PlayerConnected += state => Player = state;
 
             mClient.WorkerCreated += ClientOnWorkerCreated;
             mClient.BuildingTemplateCreated += ClientOnBuildingTemplateCreated;
             mClient.CentralBuildingCreated += ClientOnCentralBuildingCreated;
 
+            mClient.ObjectDestroyed += ClientOnObjectDestroyed;
+
             mClient.Listen();
         }
     }
 
-    private void ClientOnCentralBuildingCreated(ICentralBuildingOrders centralBuildingOrders, ICentralBuildingInfo centralBuildingInfo)
+    private void ClientOnObjectDestroyed(IGameObjectInfo objectInfo)
     {
-        var instance = Instantiate(CentralBuildingPrefab);
-        var view = instance.GetComponent<CentralBuildingView>();
+        for (int i = 0; i < MapView.ChildContainer.transform.childCount; i++)
+        {
+            var child = MapView.ChildContainer.transform.GetChild(i);
+            var view = child.GetComponent<IInfoIdProvider>();
+            if (view != null && view.ID == objectInfo.ID)
+            {
+                Destroy(child.gameObject);
+                child.parent = null;
+                break;
+            }
+        }
+    }
+
+    private void CreateClientView<TOrders, TInfo>(TOrders orders, TInfo info, GameObject prefab) 
+        where TOrders : IGameObjectOrders 
+        where TInfo : IGameObjectInfo
+    {
+        var instance = Instantiate(prefab);
+        var view = instance.GetComponent<ModelSelectableView<TOrders, TInfo>>();
         if (view == null)
             throw new Exception("Prefab not contains View script.");
 
         view.Map = MapView;
-        view.IsControlable = centralBuildingInfo.PlayerID == Player.ID;
+        view.IsClient = true;
+        view.IsControlable = info.PlayerID == Player.ID;
         view.SyncContext = SyncContext;
-        view.LoadModel(centralBuildingOrders, centralBuildingInfo);
+        view.LoadModel(orders, info);
 
         instance.transform.parent = MapView.ChildContainer.transform;
-        instance.transform.localPosition = MapView.GetWorldPosition(centralBuildingInfo.Position);
+        instance.transform.localPosition = MapView.GetWorldPosition(info.Position);
+    }
+
+    private void ClientOnCentralBuildingCreated(ICentralBuildingOrders centralBuildingOrders, ICentralBuildingInfo centralBuildingInfo)
+    {
+        CreateClientView(centralBuildingOrders, centralBuildingInfo, CentralBuildingPrefab);
     }
 
     private void EnemyFactoryOnViewCreated(SelectableView obj)
@@ -184,35 +213,12 @@ class Root : MonoBehaviour
 
     private void ClientOnBuildingTemplateCreated(IBuildingTemplateOrders arg1, IBuildingTemplateInfo arg2)
     {
-        var instance = Instantiate(BuildingTemplatePrefab);
-        var view = instance.GetComponent<BuildingTemplateView>();
-        if (view == null)
-            throw new Exception("Prefab not contains View script.");
-
-        view.Map = MapView;
-        view.IsControlable = arg2.PlayerID == Player.ID;
-        view.SyncContext = SyncContext;
-        view.LoadModel(arg1, arg2);
-
-        instance.transform.parent = MapView.ChildContainer.transform;
-        instance.transform.localPosition = MapView.GetWorldPosition(arg2.Position);
+        CreateClientView(arg1, arg2, BuildingTemplatePrefab);
     }
 
     private void ClientOnWorkerCreated(IWorkerOrders workerOrders, IWorkerInfo workerInfo)
     {
-        var instance = Instantiate(WorkerPrefab);
-        var view = instance.GetComponent<WorkerView>();
-        if (view == null)
-            throw new Exception("Prefab not contains View script.");
-        
-        view.Map = MapView;
-        view.IsControlable = workerInfo.PlayerID == Player.ID;
-        view.IsClient = true;
-        view.SyncContext = SyncContext;
-        view.LoadModel(workerOrders, workerInfo);
-
-        instance.transform.parent = MapView.ChildContainer.transform;
-        instance.transform.localPosition = MapView.GetWorldPosition(workerInfo.Position);
+        CreateClientView(workerOrders, workerInfo, WorkerPrefab);
     }
 
     private void ControlledFactoryOnViewCreated(SelectableView selectableView)
@@ -220,7 +226,7 @@ class Root : MonoBehaviour
         selectableView.IsControlable = true;
     }
 
-    private MapView CreateMap(IMapData map)
+    private MapView CreateMap(IMapData map, bool generateNavMesh)
     {
         if (MapPrefab == null)
             throw new Exception("Map prefab is not set.");
@@ -230,7 +236,7 @@ class Root : MonoBehaviour
         if (view == null)
             throw new Exception("Map prefab not contains MapView.");
 
-        view.LoadMap(map);
+        view.LoadMap(map, generateNavMesh);
         mapInstance.transform.parent = transform;
         return view;
     }

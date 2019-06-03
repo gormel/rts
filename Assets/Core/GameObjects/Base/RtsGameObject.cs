@@ -36,12 +36,18 @@ namespace Assets.Core.GameObjects.Base
         public float MaxHealth { get; set; }
 
         public event Action<RtsGameObject> AddedToGame;
+        public event Action<RtsGameObject> RemovedFromGame;
 
         public abstract void Update(TimeSpan deltaTime);
 
         public void OnAddedToGame()
         {
             AddedToGame?.Invoke(this);
+        }
+
+        public void OnRemovedFromGame()
+        {
+            RemovedFromGame?.Invoke(this);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 using Assets.Core.GameObjects.Base;
 using Assets.Utils;
@@ -53,12 +54,15 @@ namespace Assets.Networking.Services
         public async Task ListenState(ID request, IServerStreamWriter<TState> responseStream, ServerCallContext context)
         {
             var workerId = Guid.Parse(request.Value);
-            var listening = (await mRegistred.GetValueAsync(workerId, context.CancellationToken)).Info;
+            var listening = await mRegistred.GetValueAsync(workerId, context.CancellationToken);
 
             while (true)
             {
-                await responseStream.WriteAsync(mCreateState(listening));
-                await Task.Delay(16);
+                await responseStream.WriteAsync(mCreateState(listening.Info));
+                await Task.Delay(30);
+
+                if (!mRegistred.TryGetValue(workerId, out listening))
+                    throw new EndOfStreamException();
             }
         }
 
@@ -74,6 +78,11 @@ namespace Assets.Networking.Services
         public void Register(TOrders orders, TInfo info)
         {
             mRegistrations.Enqueue(new Registration(info, orders));
+        }
+
+        public void Unregister(Guid id)
+        {
+            mRegistred.Remove(id);
         }
     }
 }

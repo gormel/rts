@@ -1,8 +1,9 @@
-﻿using Assets.Core.GameObjects.Base;
+﻿using System;
+using Assets.Core.GameObjects.Base;
 
 namespace Assets.Views.Base
 {
-    abstract class ModelSelectableView<TOrderer, TInfo> : SelectableView 
+    abstract class ModelSelectableView<TOrderer, TInfo> : SelectableView , IInfoIdProvider
         where TOrderer : IGameObjectOrders
         where TInfo : IGameObjectInfo
     {
@@ -13,6 +14,8 @@ namespace Assets.Views.Base
         public TInfo Info { get; private set; }
 
         public MapView Map { get; set; }
+
+        Guid IInfoIdProvider.ID => Info.ID;
 
         protected virtual void OnLoad()
         {

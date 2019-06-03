@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Assets.Core.Game;
+using Assets.Core.GameObjects.Base;
 using Assets.Core.GameObjects.Final;
 using Assets.Core.Map;
 using Assets.Utils;
@@ -46,6 +47,8 @@ namespace Assets.Networking
         public event Action<IBuildingTemplateOrders, IBuildingTemplateInfo> BuildingTemplateCreated;
         public event Action<ICentralBuildingOrders, ICentralBuildingInfo> CentralBuildingCreated;
 
+        public event Action<IGameObjectInfo> ObjectDestroyed;
+
         private bool mMapLoaded;
         private readonly UnitySyncContext mSyncContext;
         private Channel mChannel;
@@ -58,28 +61,16 @@ namespace Assets.Networking
         {
             mSyncContext = syncContext;
             mWorkerCreationStateListener = new WorkerCreationStateListener(syncContext);
-            mWorkerCreationStateListener.Created += WorkerCreationStateListenerOnCreated;
+            mWorkerCreationStateListener.Created += (orders, info) => WorkerCreated?.Invoke(orders, info);
+            mWorkerCreationStateListener.Destroyed += info => ObjectDestroyed?.Invoke(info);
 
             mBuildingTemplateCreationStateListener = new BuildingTemplateCreationStateListener(syncContext);
-            mBuildingTemplateCreationStateListener.Created += BuildingTemplateCreationStateListenerOnCreated;
+            mBuildingTemplateCreationStateListener.Created += (orders, info) => BuildingTemplateCreated?.Invoke(orders, info);
+            mBuildingTemplateCreationStateListener.Destroyed += info => ObjectDestroyed?.Invoke(info);
 
             mCentralBuildingCreationStateListener = new CentralBuildingCreationListener(syncContext);
-            mCentralBuildingCreationStateListener.Created += CentralBuildingCreationStateListenerOnCreated;
-        }
-
-        private void CentralBuildingCreationStateListenerOnCreated(ICentralBuildingOrders centralBuildingOrders, ICentralBuildingInfo centralBuildingInfo)
-        {
-            CentralBuildingCreated?.Invoke(centralBuildingOrders, centralBuildingInfo);
-        }
-
-        private void BuildingTemplateCreationStateListenerOnCreated(IBuildingTemplateOrders arg1, IBuildingTemplateInfo arg2)
-        {
-            BuildingTemplateCreated?.Invoke(arg1, arg2);
-        }
-
-        private void WorkerCreationStateListenerOnCreated(IWorkerOrders arg1, IWorkerInfo arg2)
-        {
-            WorkerCreated?.Invoke(arg1, arg2);
+            mCentralBuildingCreationStateListener.Created += (orders, info) => CentralBuildingCreated?.Invoke(orders, info);
+            mCentralBuildingCreationStateListener.Destroyed += info => ObjectDestroyed?.Invoke(info);
         }
 
         public Task Listen()

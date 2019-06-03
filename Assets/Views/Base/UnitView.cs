@@ -16,8 +16,6 @@ namespace Assets.Views.Base
         public Vector2 CurrentPosition => GameUtils.GetFlatPosition(transform.localPosition);
         public Vector2 CurrentDirection => GameUtils.GetFlatPosition(transform.localRotation * Vector3.forward);
 
-        public bool IsClient { get; set; }
-
         private NavMeshAgent mNavMeshAgent;
         private Vector3 mTarget;
         private float mLastDistance;
@@ -36,6 +34,10 @@ namespace Assets.Views.Base
             {
                 Destroy(mNavMeshAgent);
                 mNavMeshAgent = null;
+            }
+            else
+            {
+                mNavMeshAgent.Warp(transform.position);
             }
         }
 

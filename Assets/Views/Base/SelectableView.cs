@@ -34,12 +34,16 @@ namespace Assets.Views.Base
             }
         }
 
+        public bool IsClient { get; set; }
+
         public GameObject SelectionObject;
         public Material AllyMaterial;
         public Material EnemyMaterial;
         public MeshRenderer MaterialTarget;
 
         public UnitySyncContext SyncContext { get; set; }
+
+        public int SelectionPriority;
 
         private List<SelectableViewProperty> mProperties = new List<SelectableViewProperty>();
         private bool mIsControlable;

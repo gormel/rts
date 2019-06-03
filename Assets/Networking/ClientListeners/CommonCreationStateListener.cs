@@ -17,6 +17,7 @@ namespace Assets.Networking.ClientListeners
     {
         private readonly UnitySyncContext mSyncContext;
         public event Action<TOrdersBase, TInfoBase> Created;
+        public event Action<TInfoBase> Destroyed;
 
         protected abstract IAsyncStreamReader<TState> GetCreationStream(TClient client);
         protected abstract IAsyncStreamReader<TState> GetUpdatesStream(TClient client, ID id);
@@ -70,6 +71,7 @@ namespace Assets.Networking.ClientListeners
             catch (Exception e)
             {
                 Debug.LogError(e);
+                await mSyncContext.Execute(() => Destroyed?.Invoke(state));
             }
         }
     }

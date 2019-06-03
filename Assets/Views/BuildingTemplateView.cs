@@ -30,18 +30,10 @@ namespace Assets.Views
         void Update()
         {
             UpdateProperties();
-
-            if (Info.Progress >= 1)
-            {
-                Destroy(gameObject);
-                transform.parent = null;
-            }
         }
 
         public void Cancel()
         {
-            Destroy(gameObject);
-            transform.parent = null;
             Orders.Cancel();
         }
 

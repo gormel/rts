@@ -83,5 +83,10 @@ namespace Assets.Networking.Services
         {
             mCommonService.Register(orders, info);
         }
+
+        public void Unregister(Guid id)
+        {
+            mCommonService.Unregister(id);
+        }
     }
 }

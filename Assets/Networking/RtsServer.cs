@@ -17,6 +17,7 @@ namespace Assets.Networking
         where TInfo : IGameObjectInfo
     {
         void Register(TOrders orders, TInfo info);
+        void Unregister(Guid id);
     }
     
     class RtsServer
