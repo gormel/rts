@@ -44,6 +44,7 @@ namespace Assets.Networking
 
         public event Action<IWorkerOrders, IWorkerInfo> WorkerCreated;
         public event Action<IBuildingTemplateOrders, IBuildingTemplateInfo> BuildingTemplateCreated;
+        public event Action<ICentralBuildingOrders, ICentralBuildingInfo> CentralBuildingCreated;
 
         private bool mMapLoaded;
         private readonly UnitySyncContext mSyncContext;
@@ -51,6 +52,7 @@ namespace Assets.Networking
 
         private readonly WorkerCreationStateListener mWorkerCreationStateListener;
         private readonly BuildingTemplateCreationStateListener mBuildingTemplateCreationStateListener;
+        private readonly CentralBuildingCreationListener mCentralBuildingCreationStateListener;
 
         public RtsClient(UnitySyncContext syncContext)
         {
@@ -60,6 +62,14 @@ namespace Assets.Networking
 
             mBuildingTemplateCreationStateListener = new BuildingTemplateCreationStateListener(syncContext);
             mBuildingTemplateCreationStateListener.Created += BuildingTemplateCreationStateListenerOnCreated;
+
+            mCentralBuildingCreationStateListener = new CentralBuildingCreationListener(syncContext);
+            mCentralBuildingCreationStateListener.Created += CentralBuildingCreationStateListenerOnCreated;
+        }
+
+        private void CentralBuildingCreationStateListenerOnCreated(ICentralBuildingOrders centralBuildingOrders, ICentralBuildingInfo centralBuildingInfo)
+        {
+            CentralBuildingCreated?.Invoke(centralBuildingOrders, centralBuildingInfo);
         }
 
         private void BuildingTemplateCreationStateListenerOnCreated(IBuildingTemplateOrders arg1, IBuildingTemplateInfo arg2)
@@ -108,6 +118,7 @@ namespace Assets.Networking
                         await mSyncContext.Execute(() => MapLoaded?.Invoke(mapState), channel.ShutdownToken);
                         var t0 = mWorkerCreationStateListener.ListenCreations(mChannel);
                         var t1 = mBuildingTemplateCreationStateListener.ListenCreations(mChannel);
+                        var t2 = mCentralBuildingCreationStateListener.ListenCreations(mChannel);
                     }
                 }
             }

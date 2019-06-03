@@ -24,7 +24,6 @@ class Root : MonoBehaviour
 {
     private class OrdersAndInfo<TOrders, TInfo>
     {
-
     }
 
     private class Factory : IGameObjectFactory
@@ -99,14 +98,14 @@ class Root : MonoBehaviour
             return template;
         }
 
-        public Task<CentralBuilding> CreateCentralBuilding(Vector2 position)
+        public async Task<CentralBuilding> CreateCentralBuilding(Vector2 position)
         {
-            var centralBuilding = CreateModelAndView<CentralBuildingView, CentralBuilding, ICentralBuildingOrders, ICentralBuildingInfo>(
+            var centralBuilding = await CreateModelAndView<CentralBuildingView, CentralBuilding, ICentralBuildingOrders, ICentralBuildingInfo>(
                 mCentralBuildingPrefab,
                 view => new CentralBuilding(mGame, position, view),
                 position
             );
-            
+            centralBuilding.AddedToGame += o => mServer.CentralBuildingRegistrator.Register(centralBuilding, centralBuilding);
             return centralBuilding;
         }
     }
@@ -156,9 +155,26 @@ class Root : MonoBehaviour
 
             mClient.WorkerCreated += ClientOnWorkerCreated;
             mClient.BuildingTemplateCreated += ClientOnBuildingTemplateCreated;
+            mClient.CentralBuildingCreated += ClientOnCentralBuildingCreated;
 
             mClient.Listen();
         }
+    }
+
+    private void ClientOnCentralBuildingCreated(ICentralBuildingOrders centralBuildingOrders, ICentralBuildingInfo centralBuildingInfo)
+    {
+        var instance = Instantiate(CentralBuildingPrefab);
+        var view = instance.GetComponent<CentralBuildingView>();
+        if (view == null)
+            throw new Exception("Prefab not contains View script.");
+
+        view.Map = MapView;
+        view.IsControlable = centralBuildingInfo.PlayerID == Player.ID;
+        view.SyncContext = SyncContext;
+        view.LoadModel(centralBuildingOrders, centralBuildingInfo);
+
+        instance.transform.parent = MapView.ChildContainer.transform;
+        instance.transform.localPosition = MapView.GetWorldPosition(centralBuildingInfo.Position);
     }
 
     private void EnemyFactoryOnViewCreated(SelectableView obj)
