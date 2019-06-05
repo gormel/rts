@@ -30,6 +30,11 @@ namespace Assets.Networking
             {
                 return State.Heights[y * Width + x];
             }
+
+            public MapObject GetMapObjectAt(int x, int y)
+            {
+                return (MapObject)State.Objects[y * Width + x];
+            }
         }
 
         private class ClientPlayerState : IPlayerState
@@ -42,10 +47,13 @@ namespace Assets.Networking
         
         public event Action<IPlayerState> PlayerConnected;
         public event Action<IMapData> MapLoaded;
+        public event Action<Vector2> BaseCreated;
 
         public event Action<IWorkerOrders, IWorkerInfo> WorkerCreated;
         public event Action<IBuildingTemplateOrders, IBuildingTemplateInfo> BuildingTemplateCreated;
         public event Action<ICentralBuildingOrders, ICentralBuildingInfo> CentralBuildingCreated;
+        public event Action<IMinigCampOrders, IMinigCampInfo> MiningCampCreated;
+
 
         public event Action<IGameObjectInfo> ObjectDestroyed;
 
@@ -56,6 +64,7 @@ namespace Assets.Networking
         private readonly WorkerCreationStateListener mWorkerCreationStateListener;
         private readonly BuildingTemplateCreationStateListener mBuildingTemplateCreationStateListener;
         private readonly CentralBuildingCreationListener mCentralBuildingCreationStateListener;
+        private readonly MiningCampCreationListener mMiningCampCreationListener;
 
         public RtsClient(UnitySyncContext syncContext)
         {
@@ -71,6 +80,10 @@ namespace Assets.Networking
             mCentralBuildingCreationStateListener = new CentralBuildingCreationListener(syncContext);
             mCentralBuildingCreationStateListener.Created += (orders, info) => CentralBuildingCreated?.Invoke(orders, info);
             mCentralBuildingCreationStateListener.Destroyed += info => ObjectDestroyed?.Invoke(info);
+
+            mMiningCampCreationListener = new MiningCampCreationListener(syncContext);
+            mMiningCampCreationListener.Created += (orders, info) => MiningCampCreated?.Invoke(orders, info);
+            mMiningCampCreationListener.Destroyed += info => ObjectDestroyed?.Invoke(info);
         }
 
         public Task Listen()
@@ -106,10 +119,15 @@ namespace Assets.Networking
                     if (!mMapLoaded)
                     {
                         mMapLoaded = true;
-                        await mSyncContext.Execute(() => MapLoaded?.Invoke(mapState), channel.ShutdownToken);
+                        await mSyncContext.Execute(() => 
+                        {
+                            MapLoaded?.Invoke(mapState);
+                            BaseCreated?.Invoke(state.BasePos.ToUnity());
+                        }, channel.ShutdownToken);
                         var t0 = mWorkerCreationStateListener.ListenCreations(mChannel);
                         var t1 = mBuildingTemplateCreationStateListener.ListenCreations(mChannel);
                         var t2 = mCentralBuildingCreationStateListener.ListenCreations(mChannel);
+                        var t3 = mMiningCampCreationListener.ListenCreations(mChannel);
                     }
                 }
             }

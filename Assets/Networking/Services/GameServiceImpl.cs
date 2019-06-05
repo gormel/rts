@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Assets.Core.Game;
+using Assets.Utils;
 using Grpc.Core;
 using UnityEngine;
+using UnityEngine.Experimental.XR.Interaction;
 using Random = UnityEngine.Random;
 
 namespace Assets.Networking.Services
@@ -20,12 +22,12 @@ namespace Assets.Networking.Services
             mSyncContext = syncContext;
         }
 
-        private GameState CollectGameState(IPlayerState player)
+        private GameState CollectGameState((IPlayerState player, Vector2 basePose) info)
         {
             var playerState = new PlayerState()
             {
-                ID = new ID() {Value = player.ID.ToString()},
-                Money = player.Money
+                ID = new ID() {Value = info.player.ID.ToString()},
+                Money = info.player.Money
             };
 
             var mapState = new MapState()
@@ -35,13 +37,19 @@ namespace Assets.Networking.Services
             };
 
             for (int y = 0; y < mGame.Map.Length; y++)
-            for (int x = 0; x < mGame.Map.Width; x++)
-                mapState.Heights.Add(mGame.Map.Data.GetHeightAt(x, y));
+            {
+                for (int x = 0; x < mGame.Map.Width; x++)
+                {
+                    mapState.Heights.Add(mGame.Map.Data.GetHeightAt(x, y));
+                    mapState.Objects.Add((int)mGame.Map.Data.GetMapObjectAt(x, y));
+                }
+            }
 
             return new GameState()
             {
                 Player = playerState,
-                Map = mapState
+                Map = mapState,
+                BasePos = info.basePose.ToGrpc()
             };
         }
 
@@ -54,8 +62,8 @@ namespace Assets.Networking.Services
                     var pl = new Player(mServerFactory);
                     pl.Money.Store(10000);
                     mGame.AddPlayer(pl);
-                    pl.CreateWorker(new Vector2(10, 10)).ContinueWith(t => mGame.PlaceObject(t.Result));
-                    return pl;
+                    var basePos = GameUtils.CreateBase(mGame, pl);
+                    return (pl, basePos);
                 });
 
                 while (true)

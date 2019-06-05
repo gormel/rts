@@ -60,6 +60,16 @@ namespace Assets.Networking
                 WorkerID = new ID { Value = mID }
             }).ResponseAsync;
         }
+
+        public async Task<Guid> PlaceMiningCampTemplate(Vector2Int position)
+        {
+            var resp = await mClient.PlaceMiningCampTemplateAsync(new PlaceMiningCampTemplateRequest
+            {
+                Position = new Vector { X = position.x, Y = position.y },
+                WorkerID = new ID { Value = mID }
+            });
+            return Guid.Parse(resp.Value);
+        }
     }
 
     class WorkerCreationStateListener : CommonCreationStateListener<

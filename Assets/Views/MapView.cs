@@ -8,13 +8,20 @@ using Assets.Utils;
 using Assets.Views.Base;
 using UnityEngine;
 using UnityEngine.AI;
+using Random = UnityEngine.Random;
 
 namespace Assets.Views
 {
     class MapView : MonoBehaviour
     {
         public const int AgentTypeID = 0;
+
         public GameObject ChildContainer;
+        public GameObject ObjectsContainer;
+
+        public GameObject TreePrefab;
+        public GameObject CrystalPrefab;
+
         private IMapData mMapData;
 
         public void LoadMap(IMapData mapData, bool generateNavMesh)
@@ -62,6 +69,31 @@ namespace Assets.Views
 
             gameObject.isStatic = true;
 
+            for (int x = 0; x < mapData.Width; x++)
+            {
+                for (int y = 0; y < mapData.Length; y++)
+                {
+                    var pos = GameUtils.GetPosition(new Vector2(x + 0.5f, y + 0.5f), mapData);
+                    GameObject inst = null;
+                    switch (mapData.GetMapObjectAt(x, y))
+                    {
+                        case MapObject.Tree:
+                            inst = Instantiate(TreePrefab);
+                            break;
+                        case MapObject.Crystal:
+                            inst = Instantiate(CrystalPrefab);
+                            break;
+                    }
+
+                    if (inst == null)
+                        continue;
+
+                    inst.transform.parent = ObjectsContainer.transform;
+                    inst.transform.localPosition = pos;
+                    inst.transform.localEulerAngles = new Vector3(0, Random.Range(0, 360), 0);
+                }
+            }
+
             if (generateNavMesh)
             {
                 var settings = NavMesh.CreateSettings();
@@ -74,13 +106,7 @@ namespace Assets.Views
                 source.sourceObject = meshFilter.mesh;
                 source.transform = transform.localToWorldMatrix;
 
-                var navMeshData = NavMeshBuilder.BuildNavMeshData(
-                    settings,
-                    new List<NavMeshBuildSource> { source },
-                    new Bounds(new Vector3((float)mapData.Width / 2, 0, (float)mapData.Length / 2), new Vector3(mapData.Width, 2, mapData.Length)),
-                    transform.position,
-                    transform.rotation
-                    );
+                var navMeshData = NavMeshBuilder.BuildNavMeshData(settings, new List<NavMeshBuildSource> { source }, new Bounds(new Vector3((float)mapData.Width / 2, 0, (float)mapData.Length / 2), new Vector3(mapData.Width, 2, mapData.Length)), transform.position, transform.rotation);
 
                 NavMesh.AddNavMeshData(navMeshData);
             }

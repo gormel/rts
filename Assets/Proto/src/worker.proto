@@ -8,6 +8,7 @@ service WorkerService {
 
     rpc GoTo(GoToRequest) returns (Empty);
     rpc PlaceCentralBuildingTemplate(PlaceCentralBuildingTemplateRequest) returns (ID);
+    rpc PlaceMiningCampTemplate(PlaceMiningCampTemplateRequest) returns (ID);
     rpc AttachAsBuilder(AttachAsBuilderRequest) returns (Empty);
 }
 
@@ -17,6 +18,11 @@ message GoToRequest {
 }
 
 message PlaceCentralBuildingTemplateRequest {
+    ID WorkerID = 1;
+    Vector Position = 2;
+}
+
+message PlaceMiningCampTemplateRequest {
     ID WorkerID = 1;
     Vector Position = 2;
 }

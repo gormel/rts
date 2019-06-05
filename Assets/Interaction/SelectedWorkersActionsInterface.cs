@@ -17,6 +17,14 @@ namespace Assets.Interaction
                 );
         }
 
+        public void StartMiningCampPlacement()
+        {
+            Interface.BeginBuildingPlacement(SelectedViews, (view, position) =>
+                view.PlaceMiningCamp(new Vector2Int(Mathf.FloorToInt(position.x), Mathf.FloorToInt(position.y))),
+                MiningCamp.BuildingSize
+                );
+        }
+
         void OnEnable()
         {
             for (int i = 0; i < transform.childCount; i++)

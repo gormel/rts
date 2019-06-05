@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using TMPro;
+using UnityEngine;
 using Random = UnityEngine.Random;
 
 namespace Assets.Core.Map
@@ -38,7 +39,51 @@ namespace Assets.Core.Map
                 }
             }
 
-            Data = new MapData(width, length, data);
+            var objs = new MapObject[width, length];
+            for (int i = 0; i < 5; i++)
+            {
+                var x = Random.Range(0, width);
+                var y = Random.Range(0, length);
+                GenerateForest(x, y, objs);
+            }
+
+            for (int i = 0; i < 20; i++)
+            {
+                var x = Random.Range(0, width);
+                var y = Random.Range(0, length);
+                if (objs[x, y] != MapObject.None)
+                {
+                    i--;
+                    continue;
+                }
+
+                objs[x, y] = MapObject.Crystal;
+            }
+
+            Data = new MapData(width, length, data, objs);
+        }
+
+        private void GenerateForest(int x, int y, MapObject[,] objs)
+        {
+            if (x < 0 || x >= objs.GetLength(0))
+                return;
+
+            if (y < 0 || y >= objs.GetLength(1))
+                return;
+
+            if (objs[x, y] != MapObject.None)
+                return;
+
+            objs[x, y] = MapObject.Tree;
+
+            var dir = new Vector2Int(-1, 0);
+            for (int i = 0; i < 4; i++)
+            {
+                if (Random.value > 0.56)
+                    GenerateForest(x + dir.x, y + dir.y, objs);
+
+                dir = new Vector2Int(dir.y, -dir.x); //rotate 90 deg
+            }
         }
     }
 }

@@ -57,5 +57,10 @@ namespace Assets.Core.Game
             obj.Player = this;
             return obj;
         }
+
+        public Task<MiningCamp> CreateMiningCamp(Vector2 position)
+        {
+            return AssignPlayer(mExternalFactory.CreateMiningCamp(position));
+        }
     }
 }

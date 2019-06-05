@@ -31,6 +31,7 @@ class Root : MonoBehaviour
         private readonly GameObject mWorkerPrefab;
         private readonly GameObject mBuildingTemplatePrefab;
         private readonly GameObject mCentralBuildingPrefab;
+        private readonly GameObject mMiningCampPrefab;
 
         public event Action<SelectableView> ViewCreated;
 
@@ -43,6 +44,7 @@ class Root : MonoBehaviour
             mWorkerPrefab = root.WorkerPrefab;
             mBuildingTemplatePrefab = root.BuildingTemplatePrefab;
             mCentralBuildingPrefab = root.CentralBuildingPrefab;
+            mMiningCampPrefab = root.MiningCampPrefab;
         }
 
         private Task<TModel> CreateModelAndView<TView, TModel, TOrders, TInfo>(GameObject prefab, Func<TView, TModel> createModel, Vector2 position)
@@ -112,12 +114,25 @@ class Root : MonoBehaviour
             centralBuilding.RemovedFromGame += o => mServer.CentralBuildingRegistrator.Unregister(o.ID);
             return centralBuilding;
         }
+
+        public async Task<MiningCamp> CreateMiningCamp(Vector2 position)
+        {
+            var miningCamp = await CreateModelAndView<MiningCampView, MiningCamp, IMinigCampOrders, IMinigCampInfo>(
+                mMiningCampPrefab,
+                view => new MiningCamp(position),
+                position
+            );
+            miningCamp.AddedToGame += o => mServer.MiningCampRegistrator.Register(miningCamp, miningCamp);
+            miningCamp.RemovedFromGame += o => mServer.MiningCampRegistrator.Unregister(o.ID);
+            return miningCamp;
+        }
     }
 
     public GameObject MapPrefab;
     public GameObject WorkerPrefab;
     public GameObject BuildingTemplatePrefab;
     public GameObject CentralBuildingPrefab;
+    public GameObject MiningCampPrefab;
     public UnitySyncContext SyncContext;
 
     private RtsServer mServer;
@@ -147,7 +162,8 @@ class Root : MonoBehaviour
 
             mServer.Listen(SyncContext, enemyFactory, mGame);
 
-            player.CreateWorker(new Vector2(Random.Range(0, 20), Random.Range(0, 20))).ContinueWith(t => mGame.PlaceObject(t.Result));
+            var basePos = GameUtils.CreateBase(mGame, player);
+            PlaseCamera(basePos);
         }
 
         if (GameUtils.CurrentMode == GameMode.Client)
@@ -155,16 +171,24 @@ class Root : MonoBehaviour
             mClient = new RtsClient(SyncContext);
 
             mClient.MapLoaded += data => MapView = CreateMap(data, false);
+            mClient.BaseCreated += pos => PlaseCamera(pos);
             mClient.PlayerConnected += state => Player = state;
 
             mClient.WorkerCreated += ClientOnWorkerCreated;
             mClient.BuildingTemplateCreated += ClientOnBuildingTemplateCreated;
             mClient.CentralBuildingCreated += ClientOnCentralBuildingCreated;
+            mClient.MiningCampCreated += ClientOnMiningCampCreated;
 
             mClient.ObjectDestroyed += ClientOnObjectDestroyed;
 
             mClient.Listen();
         }
+    }
+
+    private void PlaseCamera(Vector2 pos)
+    {
+        var cameraY = Camera.main.transform.position.y;
+        Camera.main.transform.position = new Vector3(pos.x, cameraY, pos.y - 2);
     }
 
     private void ClientOnObjectDestroyed(IGameObjectInfo objectInfo)
@@ -219,6 +243,11 @@ class Root : MonoBehaviour
     private void ClientOnWorkerCreated(IWorkerOrders workerOrders, IWorkerInfo workerInfo)
     {
         CreateClientView(workerOrders, workerInfo, WorkerPrefab);
+    }
+
+    private void ClientOnMiningCampCreated(IMinigCampOrders orders, IMinigCampInfo info)
+    {
+        CreateClientView(orders, info, MiningCampPrefab);
     }
 
     private void ControlledFactoryOnViewCreated(SelectableView selectableView)

@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+import "base.proto";
+
+service MiningCampService {
+    rpc ListenCreation (Empty) returns (stream MiningCampState);
+    rpc ListenState(ID) returns (stream MiningCampState);
+}
+
+message MiningCampState {
+    BuildingState Base = 1;
+    float MiningSpeed = 2;
+}

@@ -27,7 +27,8 @@ namespace Assets.Networking
         public IRegistrator<IWorkerOrders, IWorkerInfo> WorkerRegistrator { get; private set; }
         public IRegistrator<IBuildingTemplateOrders, IBuildingTemplateInfo> BuildingTemplateRegistrator { get; private set; }
         public IRegistrator<ICentralBuildingOrders, ICentralBuildingInfo> CentralBuildingRegistrator { get; private set; }
-        
+        public IRegistrator<IMinigCampOrders, IMinigCampInfo> MiningCampRegistrator { get; private set; }
+
         public void Listen(UnitySyncContext syncContext, IGameObjectFactory enemyFactory, Game game)
         {
             mServer = new Server();
@@ -45,6 +46,10 @@ namespace Assets.Networking
             var centralBuildingService = new CentralBuildingServiceImpl();
             CentralBuildingRegistrator = centralBuildingService;
             mServer.Services.Add(CentralBuildingService.BindService(centralBuildingService));
+
+            var miningCampService = new MiningCampServiceImpl();
+            MiningCampRegistrator = miningCampService;
+            mServer.Services.Add(MiningCampService.BindService(miningCampService));
 
             mServer.Start();
         }
