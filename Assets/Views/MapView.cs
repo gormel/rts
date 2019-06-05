@@ -90,7 +90,6 @@ namespace Assets.Views
 
                     inst.transform.parent = ObjectsContainer.transform;
                     inst.transform.localPosition = pos;
-                    inst.transform.localEulerAngles = new Vector3(0, Random.Range(0, 360), 0);
                 }
             }
 

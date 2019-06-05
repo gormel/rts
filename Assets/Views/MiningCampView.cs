@@ -1,11 +1,6 @@
 ﻿using Assets.Core.GameObjects.Final;
 using Assets.Views.Base;
 using Assets.Views.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Assets.Views
@@ -22,7 +17,12 @@ namespace Assets.Views
                 transform.localScale.y * Mathf.Min(Info.Size.x, Info.Size.y),
                 transform.localScale.z * Info.Size.y);
 
-            RegisterProperty(new SelectableViewProperty("Mining speed", () => $"{Info.MiningSpeed} money per minute"));
+            RegisterProperty(new SelectableViewProperty("Mining speed", () => $"{Info.MiningSpeed} m/sec"));
+        }
+
+        private void Update()
+        {
+            UpdateProperties();
         }
     }
 }

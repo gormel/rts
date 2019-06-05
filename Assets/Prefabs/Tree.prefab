@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5288006578459774655}
   - component: {fileID: 4159863320845270787}
+  - component: {fileID: 6958497338948978179}
   m_Layer: 0
   m_Name: Tree
   m_TagString: Untagged
@@ -48,6 +49,19 @@ NavMeshObstacle:
   m_CarveOnlyStationary: 1
   m_Center: {x: 0, y: 0.5, z: 0}
   m_TimeToStationary: 0.5
+--- !u!114 &6958497338948978179
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2467745391739718366}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8b8deddb63e31c4bb5c81502450bc0f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  RotationTarget: {fileID: 9047802522516824532}
 --- !u!1001 &636593463345411364
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -122,6 +136,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d35ad8fe868150746b4affa1dba558d2, type: 3}
+--- !u!1 &9047802522516824532 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8450408856348415216, guid: d35ad8fe868150746b4affa1dba558d2,
+    type: 3}
+  m_PrefabInstance: {fileID: 636593463345411364}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &8916780973486639681 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8316854853404720997, guid: d35ad8fe868150746b4affa1dba558d2,
