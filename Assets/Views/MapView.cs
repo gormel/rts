@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Assets.Core.Map;
 using Assets.Utils;
+using Assets.Views.Base;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -90,7 +91,17 @@ namespace Assets.Views
         {
             if (!mMapData.GetIsAreaFree(position, size))
                 return false;
-            
+
+            var bounds = new Rect(position, size);
+
+            for (int i = 0; i < ChildContainer.transform.childCount; i++)
+            {
+                var child = ChildContainer.transform.GetChild(i).gameObject;
+                var boundsOwner = child.GetComponent<IFlatBoundsOwner>();
+
+                if (bounds.Overlaps(boundsOwner.FlatBounds))
+                    return false;
+            }
             //foreach child in childcontainer, check box collisions
             return true;
         }

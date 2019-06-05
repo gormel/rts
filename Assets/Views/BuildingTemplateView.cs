@@ -20,6 +20,8 @@ namespace Assets.Views
         public GameObject[] BuilderPoints;
         private HashSet<int> mBusyPoints = new HashSet<int>();
 
+        public override Rect FlatBounds => new Rect(Info.Position, Info.Size);
+
         protected override void OnLoad()
         {
             transform.localScale = new Vector3(transform.localScale.x * Info.Size.x, transform.localScale.y, transform.localScale.z * Info.Size.y);

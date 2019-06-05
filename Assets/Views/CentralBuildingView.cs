@@ -22,6 +22,8 @@ namespace Assets.Views
         public GameObject[] PlacementPoints;
         private HashSet<int> mLockedPoints = new HashSet<int>();
 
+        public override Rect FlatBounds => new Rect(Info.Position, Info.Size);
+
         protected override void OnLoad()
         {
             transform.localScale = new Vector3(

@@ -22,6 +22,8 @@ namespace Assets.Views.Base
 
         public LineRenderer TargetLine;
 
+        public override Rect FlatBounds => new Rect(CurrentPosition, Vector2.zero);
+
         protected virtual void OnStart()
         {
             mNavMeshAgent = GetComponentInChildren<NavMeshAgent>();

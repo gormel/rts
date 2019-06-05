@@ -5,12 +5,17 @@ using UnityEngine;
 
 namespace Assets.Views.Base
 {
-    abstract class SelectableView : MonoBehaviour
+    interface IFlatBoundsOwner
+    {
+        Rect FlatBounds { get; }
+    }
+    abstract class SelectableView : MonoBehaviour, IFlatBoundsOwner
     {
         public Sprite Icon;
         public abstract string Name { get; }
         public abstract float Health { get; }
         public abstract float MaxHealth { get; }
+        public abstract Rect FlatBounds { get; }
 
         private bool mIsSelected;
 
