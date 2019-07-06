@@ -5,6 +5,7 @@ using Assets.Core.Game;
 using Assets.Core.GameObjects.Base;
 using Assets.Core.GameObjects.Final;
 using Assets.Core.Map;
+using Assets.Networking.ClientListeners;
 using Assets.Utils;
 using Google.Protobuf;
 using Grpc.Core;
@@ -53,7 +54,7 @@ namespace Assets.Networking
         public event Action<IBuildingTemplateOrders, IBuildingTemplateInfo> BuildingTemplateCreated;
         public event Action<ICentralBuildingOrders, ICentralBuildingInfo> CentralBuildingCreated;
         public event Action<IMinigCampOrders, IMinigCampInfo> MiningCampCreated;
-
+        public event Action<IBarrakOrders, IBarrakInfo> BarrakCreated;
 
         public event Action<IGameObjectInfo> ObjectDestroyed;
 
@@ -65,6 +66,7 @@ namespace Assets.Networking
         private readonly BuildingTemplateCreationStateListener mBuildingTemplateCreationStateListener;
         private readonly CentralBuildingCreationListener mCentralBuildingCreationStateListener;
         private readonly MiningCampCreationListener mMiningCampCreationListener;
+        private readonly BarrakCreationListener mBarrakCreationListener;
 
         public RtsClient(UnitySyncContext syncContext)
         {
@@ -84,6 +86,10 @@ namespace Assets.Networking
             mMiningCampCreationListener = new MiningCampCreationListener(syncContext);
             mMiningCampCreationListener.Created += (orders, info) => MiningCampCreated?.Invoke(orders, info);
             mMiningCampCreationListener.Destroyed += info => ObjectDestroyed?.Invoke(info);
+
+            mBarrakCreationListener = new BarrakCreationListener(syncContext);
+            mBarrakCreationListener.Created += (orders, info) => BarrakCreated?.Invoke(orders, info);
+            mBarrakCreationListener.Destroyed += info => ObjectDestroyed?.Invoke(info);
         }
 
         public Task Listen()
@@ -128,6 +134,7 @@ namespace Assets.Networking
                         var t1 = mBuildingTemplateCreationStateListener.ListenCreations(mChannel);
                         var t2 = mCentralBuildingCreationStateListener.ListenCreations(mChannel);
                         var t3 = mMiningCampCreationListener.ListenCreations(mChannel);
+                        var t4 = mBarrakCreationListener.ListenCreations(mChannel);
                     }
                 }
             }

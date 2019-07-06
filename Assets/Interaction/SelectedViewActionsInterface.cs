@@ -12,6 +12,7 @@ namespace Assets.Interaction
         public GameObject WorkerActions;
         public GameObject CentralBuildingActions;
         public GameObject BuildingTemplateActions;
+        public GameObject BarrakActions;
 
         public UserInterface Interface;
 
@@ -20,6 +21,7 @@ namespace Assets.Interaction
             var workerActionsActive = false;
             var centralBuildingActive = false;
             var buildingTemplateActions = false;
+            var barrakActionsActive = false;
             try
             {
                 if (Interface.Selected.Count < 1)
@@ -34,12 +36,16 @@ namespace Assets.Interaction
 
                 if (firstSelected is BuildingTemplateView)
                     buildingTemplateActions = true;
+
+                if (firstSelected is BarrakView)
+                    barrakActionsActive = true;
             }
             finally
             {
                 WorkerActions.SetActive(workerActionsActive);
                 CentralBuildingActions.SetActive(centralBuildingActive);
                 BuildingTemplateActions.SetActive(buildingTemplateActions);
+                BarrakActions.SetActive(barrakActionsActive);
             }
         }
     }

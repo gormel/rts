@@ -1,4 +1,7 @@
-using System;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Assets.Core.GameObjects.Final;
 using Assets.Utils;
@@ -6,18 +9,18 @@ using Grpc.Core;
 
 namespace Assets.Networking.Services
 {
-    class CentralBuildingServiceImpl : CentralBuildingService.CentralBuildingServiceBase, IRegistrator<ICentralBuildingOrders, ICentralBuildingInfo>
+    class BarrakServiceImpl : BarrakService.BarrakServiceBase, IRegistrator<IBarrakOrders, IBarrakInfo>
     {
-        private CommonListenCreationService<ICentralBuildingOrders, ICentralBuildingInfo, CentralBuildingState> mCommonService;
+        private CommonListenCreationService<IBarrakOrders, IBarrakInfo, BarrakState> mCommonService;
 
-        public CentralBuildingServiceImpl()
+        public BarrakServiceImpl()
         {
-            mCommonService = new CommonListenCreationService<ICentralBuildingOrders, ICentralBuildingInfo, CentralBuildingState>(CreateState);
+            mCommonService = new CommonListenCreationService<IBarrakOrders, IBarrakInfo, BarrakState>(CreateState);
         }
 
-        private CentralBuildingState CreateState(ICentralBuildingInfo info)
+        private BarrakState CreateState(IBarrakInfo info)
         {
-            return new CentralBuildingState
+            return new BarrakState
             {
                 Base = new BuildingState
                 {
@@ -31,25 +34,18 @@ namespace Assets.Networking.Services
                     },
                     Size = info.Size.ToGrpc(),
                     Waypoint = info.Waypoint.ToGrpc()
-                },
-                Progress = info.Progress,
-                WorkersQueued = info.WorkersQueued
+                }
             };
         }
 
-        public override Task ListenCreation(Empty request, IServerStreamWriter<CentralBuildingState> responseStream, ServerCallContext context)
+        public override Task ListenCreation(Empty request, IServerStreamWriter<BarrakState> responseStream, ServerCallContext context)
         {
             return mCommonService.ListenCreation(responseStream, context);
         }
 
-        public override Task ListenState(ID request, IServerStreamWriter<CentralBuildingState> responseStream, ServerCallContext context)
+        public override Task ListenState(ID request, IServerStreamWriter<BarrakState> responseStream, ServerCallContext context)
         {
             return mCommonService.ListenState(request, responseStream, context);
-        }
-
-        public override Task<QueueWorkerResult> QueueWorker(QueueWorkerRequest request, ServerCallContext context)
-        {
-            return mCommonService.ExecuteOrder(request.CentralBuildingID, async orders => new QueueWorkerResult { Result = await orders.QueueWorker() });
         }
 
         public override Task<Empty> SetWaypoint(SetWaypointRequest request, ServerCallContext context)
@@ -61,7 +57,7 @@ namespace Assets.Networking.Services
             });
         }
 
-        public void Register(ICentralBuildingOrders orders, ICentralBuildingInfo info)
+        public void Register(IBarrakOrders orders, IBarrakInfo info)
         {
             mCommonService.Register(orders, info);
         }

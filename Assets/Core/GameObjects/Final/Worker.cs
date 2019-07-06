@@ -11,6 +11,7 @@ namespace Assets.Core.GameObjects.Final
     {
         Task<Guid> PlaceCentralBuildingTemplate(Vector2Int position);
         Task<Guid> PlaceMiningCampTemplate(Vector2Int position);
+        Task<Guid> PlaceBarrakTemplate(Vector2Int position);
         Task AttachAsBuilder(Guid templateId);
     }
 
@@ -57,16 +58,18 @@ namespace Assets.Core.GameObjects.Final
 
         public const int CentralBuildingCost = 400;
         public const int MiningCampCost = 100;
+        public const int BarrakCost = 200;
 
         public static TimeSpan CentralBuildingBuildTime { get; } = TimeSpan.FromSeconds(30);
         public static TimeSpan MiningCampBuildTime { get; } = TimeSpan.FromSeconds(20);
+        public static TimeSpan BarrakBuildTime { get; } = TimeSpan.FromSeconds(25);
 
         public async Task<Guid> PlaceCentralBuildingTemplate(Vector2Int position)
         {
-            if (!Player.Money.Spend(CentralBuildingCost))
+            if (!Game.GetIsAreaFree(position, CentralBuilding.BuildingSize))
                 return Guid.Empty;
 
-            if (!Game.GetIsAreaFree(position, CentralBuilding.BuildingSize))
+            if (!Player.Money.Spend(CentralBuildingCost))
                 return Guid.Empty;
 
             var template = await Player.CreateBuildingTemplate(
@@ -84,9 +87,6 @@ namespace Assets.Core.GameObjects.Final
 
         public async Task<Guid> PlaceMiningCampTemplate(Vector2Int position)
         {
-            if (!Player.Money.Spend(MiningCampCost))
-                return Guid.Empty;
-
             if (!Game.GetIsAreaFree(position, MiningCamp.BuildingSize))
                 return Guid.Empty;
 
@@ -107,12 +107,36 @@ namespace Assets.Core.GameObjects.Final
             if (!crystalExist)
                 return Guid.Empty;
 
+            if (!Player.Money.Spend(MiningCampCost))
+                return Guid.Empty;
+
             var template = await Player.CreateBuildingTemplate(
                 position,
                 async pos => await Player.CreateMiningCamp(pos),
                 MiningCampBuildTime,
                 MiningCamp.BuildingSize,
                 MiningCamp.MaximumHealthConst
+            );
+
+            var id = await Game.PlaceObject(template);
+            await AttachAsBuilder(id);
+            return id;
+        }
+
+        public async Task<Guid> PlaceBarrakTemplate(Vector2Int position)
+        {
+            if (!Game.GetIsAreaFree(position, Barrak.BuildingSize))
+                return Guid.Empty;
+
+            if (!Player.Money.Spend(BarrakCost))
+                return Guid.Empty;
+
+            var template = await Player.CreateBuildingTemplate(
+                position,
+                async pos => await Player.CreateBarrak(pos),
+                BarrakBuildTime,
+                Barrak.BuildingSize,
+                Barrak.MaximumHealthConst
             );
 
             var id = await Game.PlaceObject(template);

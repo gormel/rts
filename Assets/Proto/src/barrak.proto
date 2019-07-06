@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+import "base.proto";
+
+service BarrakService {
+    rpc ListenCreation (Empty) returns (stream BarrakState);
+    rpc ListenState(ID) returns (stream BarrakState);
+
+    rpc SetWaypoint(SetWaypointRequest) returns (Empty);
+}
+
+message BarrakState {
+    BuildingState Base = 1;
+}

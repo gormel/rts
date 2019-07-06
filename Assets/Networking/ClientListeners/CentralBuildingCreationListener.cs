@@ -28,7 +28,7 @@ namespace Assets.Networking
 
         public Task SetWaypoint(Vector2 waypoint)
         {
-            return mClient.SetWaypointAsync(new SetWaypointRequest { CentralBuildingID = new ID { Value = mID }, Waypoint = waypoint.ToGrpc() }).ResponseAsync;
+            return mClient.SetWaypointAsync(new SetWaypointRequest { BuildingID = new ID { Value = mID }, Waypoint = waypoint.ToGrpc() }).ResponseAsync;
         }
     }
 

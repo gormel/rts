@@ -31,3 +31,8 @@ message Vector {
 }
 
 message Empty {}
+
+message SetWaypointRequest {
+    ID BuildingID = 1;
+    Vector Waypoint = 2;
+}

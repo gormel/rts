@@ -70,11 +70,11 @@ namespace Assets.Core.GameObjects.Final
 
         public async Task<bool> QueueWorker()
         {
-            if (!Player.Money.Spend(WorkerCost))
-                return false;
-
             var point = await mPlacementService.TryAllocatePoint();
             if (point == PlacementPoint.Invalid)
+                return false;
+
+            if (!Player.Money.Spend(WorkerCost))
                 return false;
 
             WorkersQueued++;

@@ -10,11 +10,6 @@ service CentralBuildingService {
     rpc SetWaypoint(SetWaypointRequest) returns (Empty);
 }
 
-message SetWaypointRequest {
-    ID CentralBuildingID = 1;
-    Vector Waypoint = 2;
-}
-
 message QueueWorkerRequest {
     ID CentralBuildingID = 1;
 }

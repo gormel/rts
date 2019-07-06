@@ -25,6 +25,14 @@ namespace Assets.Interaction
                 );
         }
 
+        public void StartBarrakPlacement()
+        {
+            Interface.BeginBuildingPlacement(SelectedViews, (view, position) => 
+                view.PlaceBarrak(new Vector2Int(Mathf.FloorToInt(position.x), Mathf.FloorToInt(position.y))),
+                Barrak.BuildingSize
+                );
+        }
+
         void OnEnable()
         {
             for (int i = 0; i < transform.childCount; i++)

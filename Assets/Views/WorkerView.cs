@@ -46,6 +46,11 @@ namespace Assets.Views
             return Orders.PlaceCentralBuildingTemplate(position);
         }
 
+        public Task<Guid> PlaceBarrak(Vector2Int position)
+        {
+            return Orders.PlaceBarrakTemplate(position);
+        }
+
         public Task<Guid> PlaceMiningCamp(Vector2Int position)
         {
             return Orders.PlaceMiningCampTemplate(position);
