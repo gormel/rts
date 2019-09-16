@@ -4,18 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Assets.Core.GameObjects.Final;
+using Assets.Core.GameObjects.Utils;
 using Assets.Views.Base;
 using Assets.Views.Utils;
 using UnityEngine;
 
 namespace Assets.Views
 {
-    class BarrakView : ModelSelectableView<IBarrakOrders, IBarrakInfo>
+    class BarrakView : FactoryBuildingView<IBarrakOrders, IBarrakInfo>
     {
         public override string Name { get; } = "Барак";
         public override Rect FlatBounds => new Rect(Info.Position, Info.Size);
-
-        public LineRenderer WaypointLine;
 
         protected override void OnLoad()
         {
@@ -23,16 +22,25 @@ namespace Assets.Views
                 transform.localScale.x * Info.Size.x,
                 transform.localScale.y * Mathf.Min(Info.Size.x, Info.Size.y),
                 transform.localScale.z * Info.Size.y);
+
+            RegisterProperty(new SelectableViewProperty("Current progress", () => $"{Info.Progress * 100:#0}%"));
+            RegisterProperty(new SelectableViewProperty("Queued", () => $"{Info.Queued}"));
         }
 
         private void Update()
         {
-            WaypointLine.gameObject.SetActive(IsSelected);
-
-            WaypointLine.SetPosition(0, Map.GetWorldPosition(Info.Position + Info.Size / 2));
-            WaypointLine.SetPosition(1, Map.GetWorldPosition(Info.Waypoint));
-
+            UpdateWaypointLine();
             UpdateProperties();
+        }
+
+        public override void OnRightClick(Vector2 position)
+        {
+            Orders.SetWaypoint(position);
+        }
+
+        public void QueueRangedWarrior()
+        {
+            Orders.QueueRanged();
         }
     }
 }

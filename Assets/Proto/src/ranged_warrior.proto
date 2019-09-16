@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+import "base.proto";
+
+service RangedWarriorService {
+    rpc ListenCreation (Empty) returns (stream RangedWarriorState);
+    rpc ListenState(ID) returns (stream RangedWarriorState);
+
+    rpc GoTo(GoToRequest) returns (Empty);
+}
+
+message RangedWarriorState {
+    UnitState Base = 1;
+}

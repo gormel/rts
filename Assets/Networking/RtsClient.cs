@@ -50,6 +50,7 @@ namespace Assets.Networking
         public event Action<IMapData> MapLoaded;
         public event Action<Vector2> BaseCreated;
 
+        public event Action<IRangedWarriorOrders, IRangedWarriorInfo> RangedWarriorCreated;
         public event Action<IWorkerOrders, IWorkerInfo> WorkerCreated;
         public event Action<IBuildingTemplateOrders, IBuildingTemplateInfo> BuildingTemplateCreated;
         public event Action<ICentralBuildingOrders, ICentralBuildingInfo> CentralBuildingCreated;
@@ -62,6 +63,7 @@ namespace Assets.Networking
         private readonly UnitySyncContext mSyncContext;
         private Channel mChannel;
 
+        private readonly RangedWarriorCreationStateListener mRangedWarriorCreationStateListener;
         private readonly WorkerCreationStateListener mWorkerCreationStateListener;
         private readonly BuildingTemplateCreationStateListener mBuildingTemplateCreationStateListener;
         private readonly CentralBuildingCreationListener mCentralBuildingCreationStateListener;
@@ -90,6 +92,10 @@ namespace Assets.Networking
             mBarrakCreationListener = new BarrakCreationListener(syncContext);
             mBarrakCreationListener.Created += (orders, info) => BarrakCreated?.Invoke(orders, info);
             mBarrakCreationListener.Destroyed += info => ObjectDestroyed?.Invoke(info);
+
+            mRangedWarriorCreationStateListener = new RangedWarriorCreationStateListener(syncContext);
+            mRangedWarriorCreationStateListener.Created += (orders, info) => RangedWarriorCreated?.Invoke(orders, info);
+            mRangedWarriorCreationStateListener.Destroyed += info => ObjectDestroyed?.Invoke(info);
         }
 
         public Task Listen()
@@ -135,6 +141,7 @@ namespace Assets.Networking
                         var t2 = mCentralBuildingCreationStateListener.ListenCreations(mChannel);
                         var t3 = mMiningCampCreationListener.ListenCreations(mChannel);
                         var t4 = mBarrakCreationListener.ListenCreations(mChannel);
+                        var t5 = mRangedWarriorCreationStateListener.ListenCreations(mChannel);
                     }
                 }
             }

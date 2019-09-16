@@ -19,21 +19,24 @@ namespace Assets.Networking.Services
         {
             return new CentralBuildingState
             {
-                Base = new BuildingState
+                Base = new FactoryBuildingState
                 {
-                    Base = new ObjectState
+                    Base = new BuildingState
                     {
-                        ID = new ID { Value = info.ID.ToString() },
-                        PlayerID = new ID { Value = info.PlayerID.ToString() },
-                        Health = info.Health,
-                        MaxHealth = info.MaxHealth,
-                        Position = info.Position.ToGrpc()
+                        Base = new ObjectState
+                        {
+                            ID = new ID { Value = info.ID.ToString() },
+                            PlayerID = new ID { Value = info.PlayerID.ToString() },
+                            Health = info.Health,
+                            MaxHealth = info.MaxHealth,
+                            Position = info.Position.ToGrpc()
+                        },
+                        Size = info.Size.ToGrpc()
                     },
-                    Size = info.Size.ToGrpc(),
+                    Progress = info.Progress,
+                    Queued = info.Queued,
                     Waypoint = info.Waypoint.ToGrpc()
-                },
-                Progress = info.Progress,
-                WorkersQueued = info.WorkersQueued
+                }
             };
         }
 
@@ -49,7 +52,8 @@ namespace Assets.Networking.Services
 
         public override Task<QueueWorkerResult> QueueWorker(QueueWorkerRequest request, ServerCallContext context)
         {
-            return mCommonService.ExecuteOrder(request.CentralBuildingID, async orders => new QueueWorkerResult { Result = await orders.QueueWorker() });
+            return mCommonService.ExecuteOrder(request.Base.BuildingID, async orders => 
+                new QueueWorkerResult { Base = new QueueUnitResult { Result = await orders.QueueWorker() } });
         }
 
         public override Task<Empty> SetWaypoint(SetWaypointRequest request, ServerCallContext context)

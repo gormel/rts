@@ -38,7 +38,7 @@ namespace Assets.Networking
             return mClient.GoToAsync(new GoToRequest
             {
                 Destignation = position.ToGrpc(),
-                WorkerID = new ID { Value = mID }
+                UnitID = new ID { Value = mID }
             }).ResponseAsync;
         }
 

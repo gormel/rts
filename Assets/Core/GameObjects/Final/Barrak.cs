@@ -4,41 +4,37 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Assets.Core.GameObjects.Base;
+using Assets.Core.GameObjects.Utils;
 using UnityEngine;
 
 namespace Assets.Core.GameObjects.Final
 {
-    interface IBarrakInfo : IBuildingInfo
+    interface IBarrakInfo : IFactoryBuildingInfo
     {
-
     }
 
-    interface IBarrakOrders : IBuildingOrders
+    interface IBarrakOrders : IFactoryBuildingOrders
     {
-        Task SetWaypoint(Vector2 waypoint);
+        Task<bool> QueueRanged();
     }
 
-    internal class Barrak : Building, IBarrakInfo, IBarrakOrders
+    internal class Barrak : FactoryBuilding, IBarrakInfo, IBarrakOrders
     {
         public const int MeleeWarriorCost = 50;
         public const int RangedWarriorCost = 70;
         public static Vector2 BuildingSize { get; } = new Vector2(2, 2);
         public const float MaximumHealthConst = 300;
-
-        public Barrak(Vector2 position)
+        
+        public Barrak(Game.Game game, Vector2 position, IPlacementService placementService)
+            : base(game, position, placementService)
         {
             Size = BuildingSize;
-            Waypoint = Position = position;
             Health = MaxHealth = MaximumHealthConst;
         }
 
-        public override void Update(TimeSpan deltaTime)
+        public Task<bool> QueueRanged()
         {
-        }
-
-        public async Task SetWaypoint(Vector2 waypoint)
-        {
-            Waypoint = waypoint;
+            return QueueUnit(RangedWarriorCost, async (f, p) => await f.CreateRangedWarrior(p));
         }
     }
 }

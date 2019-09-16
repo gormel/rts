@@ -32,8 +32,7 @@ namespace Assets.Networking.Services
                         Position = info.Position.ToGrpc(),
                         PlayerID = new ID { Value = info.PlayerID.ToString() }
                     },
-                    Size = info.Size.ToGrpc(),
-                    Waypoint = info.Waypoint.ToGrpc()
+                    Size = info.Size.ToGrpc()
                 },
                 AttachedWorkers = info.AttachedWorkers,
                 Progress = info.Progress

@@ -22,8 +22,8 @@ namespace Assets.Networking
 
         public async Task<bool> QueueWorker()
         {
-            var result = await mClient.QueueWorkerAsync(new QueueWorkerRequest { CentralBuildingID = new ID { Value = mID } });
-            return result.Result;
+            var result = await mClient.QueueWorkerAsync(new QueueWorkerRequest { Base = new QueueUnitRequest { BuildingID = new ID { Value = mID } } });
+            return result.Base.Result;
         }
 
         public Task SetWaypoint(Vector2 waypoint)
@@ -36,15 +36,16 @@ namespace Assets.Networking
     {
         public CentralBuildingState State { get; } = new CentralBuildingState();
 
-        public Guid ID => Guid.Parse(State.Base.Base.ID.Value);
-        public Guid PlayerID => Guid.Parse(State.Base.Base.PlayerID.Value);
-        public Vector2 Position => State.Base.Base.Position.ToUnity();
-        public float Health => State.Base.Base.Health;
-        public float MaxHealth => State.Base.Base.MaxHealth;
-        public Vector2 Size => State.Base.Size.ToUnity();
+        public Guid ID => Guid.Parse(State.Base.Base.Base.ID.Value);
+        public Guid PlayerID => Guid.Parse(State.Base.Base.Base.PlayerID.Value);
+        public Vector2 Position => State.Base.Base.Base.Position.ToUnity();
+        public float Health => State.Base.Base.Base.Health;
+        public float MaxHealth => State.Base.Base.Base.MaxHealth;
+        public Vector2 Size => State.Base.Base.Size.ToUnity();
         public Vector2 Waypoint => State.Base.Waypoint.ToUnity();
-        public float Progress => State.Progress;
-        public int WorkersQueued => State.WorkersQueued;
+        public int Queued => State.Base.Queued;
+        public float Progress => State.Base.Progress;
+        public int WorkersQueued => State.Base.Queued;
     }
 
     class CentralBuildingCreationListener : CommonCreationStateListener<

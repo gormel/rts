@@ -13,13 +13,15 @@ namespace Assets.Networking.ClientListeners
     class ClientBarrakInfo : IBarrakInfo, IStateHolder<BarrakState> {
         public BarrakState State { get; } = new BarrakState();
 
-        public Guid ID => Guid.Parse(State.Base.Base.ID.Value);
-        public Guid PlayerID => Guid.Parse(State.Base.Base.PlayerID.Value);
-        public Vector2 Position => State.Base.Base.Position.ToUnity();
-        public float Health => State.Base.Base.Health;
-        public float MaxHealth => State.Base.Base.MaxHealth;
-        public Vector2 Size => State.Base.Size.ToUnity();
+        public Guid ID => Guid.Parse(State.Base.Base.Base.ID.Value);
+        public Guid PlayerID => Guid.Parse(State.Base.Base.Base.PlayerID.Value);
+        public Vector2 Position => State.Base.Base.Base.Position.ToUnity();
+        public float Health => State.Base.Base.Base.Health;
+        public float MaxHealth => State.Base.Base.Base.MaxHealth;
+        public Vector2 Size => State.Base.Base.Size.ToUnity();
         public Vector2 Waypoint => State.Base.Waypoint.ToUnity();
+        public int Queued => State.Base.Queued;
+        public float Progress => State.Base.Progress;
     }
 
     class ClientBarrakOrders : IBarrakOrders
@@ -40,6 +42,18 @@ namespace Assets.Networking.ClientListeners
                 BuildingID = new ID { Value = mID },
                 Waypoint = waypoint.ToGrpc()
             }).ResponseAsync;
+        }
+
+        public async Task<bool> QueueRanged()
+        {
+            var resp = await mClient.QueueRangedAsync(new QueueRangedRequest
+            {
+                Base = new QueueUnitRequest
+                {
+                    BuildingID = new ID { Value = mID }
+                }
+            }).ResponseAsync;
+            return resp.Base.Result;
         }
     }
 

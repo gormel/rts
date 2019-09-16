@@ -14,7 +14,6 @@ namespace Assets.Networking
 
         public float MiningSpeed => State.MiningSpeed;
         public Vector2 Size => State.Base.Size.ToUnity();
-        public Vector2 Waypoint => State.Base.Waypoint.ToUnity();
         public Guid ID => Guid.Parse(State.Base.Base.ID.Value);
         public Guid PlayerID => Guid.Parse(State.Base.Base.PlayerID.Value);
         public Vector2 Position => State.Base.Base.Position.ToUnity();

@@ -29,8 +29,7 @@ namespace Assets.Networking.Services
                         MaxHealth = info.MaxHealth,
                         Position = info.Position.ToGrpc()
                     },
-                    Size = info.Size.ToGrpc(),
-                    Waypoint = info.Waypoint.ToGrpc()
+                    Size = info.Size.ToGrpc()
                 },
                 MiningSpeed = info.MiningSpeed
             };

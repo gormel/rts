@@ -22,18 +22,23 @@ namespace Assets.Networking.Services
         {
             return new BarrakState
             {
-                Base = new BuildingState
+                Base = new FactoryBuildingState
                 {
-                    Base = new ObjectState
+                    Base = new BuildingState
                     {
-                        ID = new ID { Value = info.ID.ToString() },
-                        PlayerID = new ID { Value = info.PlayerID.ToString() },
-                        Health = info.Health,
-                        MaxHealth = info.MaxHealth,
-                        Position = info.Position.ToGrpc()
+                        Base = new ObjectState
+                        {
+                            ID = new ID { Value = info.ID.ToString() },
+                            PlayerID = new ID { Value = info.PlayerID.ToString() },
+                            Health = info.Health,
+                            MaxHealth = info.MaxHealth,
+                            Position = info.Position.ToGrpc()
+                        },
+                        Size = info.Size.ToGrpc()
                     },
-                    Size = info.Size.ToGrpc(),
-                    Waypoint = info.Waypoint.ToGrpc()
+                    Waypoint = info.Waypoint.ToGrpc(),
+                    Progress = info.Progress,
+                    Queued = info.Queued
                 }
             };
         }
@@ -54,6 +59,15 @@ namespace Assets.Networking.Services
             {
                 await orders.SetWaypoint(request.Waypoint.ToUnity());
                 return new Empty();
+            });
+        }
+
+        public override Task<QueueRangedResult> QueueRanged(QueueRangedRequest request, ServerCallContext context)
+        {
+            return mCommonService.ExecuteOrder(request.Base.BuildingID, async orders =>
+            {
+                var result = await orders.QueueRanged();
+                return new QueueRangedResult { Base = new QueueUnitResult { Result = result } };
             });
         }
 

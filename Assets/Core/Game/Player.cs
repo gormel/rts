@@ -31,6 +31,11 @@ namespace Assets.Core.Game
             return AssignPlayer(mExternalFactory.CreateWorker(position));
         }
 
+        public Task<RangedWarrior> CreateRangedWarrior(Vector2 position)
+        {
+            return AssignPlayer(mExternalFactory.CreateRangedWarrior(position));
+        }
+
         public Task<BuildingTemplate> CreateBuildingTemplate(Vector2 position, Func<Vector2, Task<Building>> createBuilding, TimeSpan buildTime, Vector2 size,
             float maxHealth)
         {

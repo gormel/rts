@@ -26,8 +26,8 @@ namespace Assets.Core.GameObjects.Final
 
         public MiningCamp(Vector2 position)
         {
+            Position = position;
             Size = BuildingSize;
-            Waypoint = Position = position;
             Health = MaxHealth = MaximumHealthConst;
         }
 

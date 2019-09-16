@@ -11,15 +11,13 @@ service CentralBuildingService {
 }
 
 message QueueWorkerRequest {
-    ID CentralBuildingID = 1;
+    QueueUnitRequest Base = 1;
 }
 
 message QueueWorkerResult {
-    bool Result = 1;
+    QueueUnitResult Base = 1;
 }
 
 message CentralBuildingState {
-    BuildingState Base = 1;
-    float Progress = 2;
-    int32 WorkersQueued = 3;
+    FactoryBuildingState Base = 1;
 }

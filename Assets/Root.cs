@@ -28,6 +28,7 @@ class Root : MonoBehaviour
         private readonly UnitySyncContext mSyncContext;
         private readonly Game mGame;
         private readonly MapView mMap;
+        private readonly GameObject mRangedWarriorPrefab;
         private readonly GameObject mWorkerPrefab;
         private readonly GameObject mBuildingTemplatePrefab;
         private readonly GameObject mCentralBuildingPrefab;
@@ -42,6 +43,7 @@ class Root : MonoBehaviour
             mSyncContext = root.SyncContext;
             mGame = root.mGame;
             mMap = root.MapView;
+            mRangedWarriorPrefab = root.RangedWarriorPrefab;
             mWorkerPrefab = root.WorkerPrefab;
             mBuildingTemplatePrefab = root.BuildingTemplatePrefab;
             mCentralBuildingPrefab = root.CentralBuildingPrefab;
@@ -93,6 +95,18 @@ class Root : MonoBehaviour
             return worker;
         }
 
+        public async Task<RangedWarrior> CreateRangedWarrior(Vector2 position)
+        {
+            var rangedWarrior = await CreateModelAndView<RangedWarriorView, RangedWarrior, IRangedWarriorOrders, IRangedWarriorInfo>(
+                mRangedWarriorPrefab,
+                view => new RangedWarrior(mGame, view, position), 
+                position
+            );
+            rangedWarrior.AddedToGame += o => mServer.RangedWarriorRegistrator.Register(rangedWarrior, rangedWarrior);
+            rangedWarrior.RemovedFromGame += o => mServer.RangedWarriorRegistrator.Unregister(o.ID);
+            return rangedWarrior;
+        }
+
         public async Task<BuildingTemplate> CreateBuildingTemplate(Vector2 position, Func<Vector2, Task<Building>> building, TimeSpan buildTime, Vector2 size, float maxHealth)
         {
             var template = await CreateModelAndView<BuildingTemplateView, BuildingTemplate, IBuildingTemplateOrders, IBuildingTemplateInfo>(
@@ -121,7 +135,7 @@ class Root : MonoBehaviour
         {
             var barrak = await CreateModelAndView<BarrakView, Barrak, IBarrakOrders, IBarrakInfo>(
                 mBarrakPrefab,
-                view => new Barrak(position),
+                view => new Barrak(mGame, position, view),
                 position
             );
 
@@ -146,6 +160,7 @@ class Root : MonoBehaviour
     public GameObject BarrakPrefab;
     public GameObject MapPrefab;
     public GameObject WorkerPrefab;
+    public GameObject RangedWarriorPrefab;
     public GameObject BuildingTemplatePrefab;
     public GameObject CentralBuildingPrefab;
     public GameObject MiningCampPrefab;

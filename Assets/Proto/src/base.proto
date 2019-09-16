@@ -11,10 +11,16 @@ message UnitState {
 	Vector Destignation = 4;
 }
 
+message FactoryBuildingState {
+	BuildingState Base = 1;
+	Vector Waypoint = 2;
+	int32 Queued = 3;
+	float Progress = 4;
+}
+
 message BuildingState {
 	ObjectState Base = 1;
 	Vector Size = 2;
-	Vector Waypoint = 3;
 }
 
 message ObjectState {
@@ -32,7 +38,20 @@ message Vector {
 
 message Empty {}
 
+message GoToRequest {
+    ID UnitID = 1;
+    Vector Destignation = 2;
+}
+
 message SetWaypointRequest {
     ID BuildingID = 1;
     Vector Waypoint = 2;
+}
+
+message QueueUnitRequest {
+    ID BuildingID = 1;
+}
+
+message QueueUnitResult {
+    bool Result = 1;
 }

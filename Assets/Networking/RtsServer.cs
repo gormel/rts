@@ -24,6 +24,7 @@ namespace Assets.Networking
     {
         private Server mServer;
 
+        public IRegistrator<IRangedWarriorOrders, IRangedWarriorInfo> RangedWarriorRegistrator { get; private set; }
         public IRegistrator<IWorkerOrders, IWorkerInfo> WorkerRegistrator { get; private set; }
         public IRegistrator<IBuildingTemplateOrders, IBuildingTemplateInfo> BuildingTemplateRegistrator { get; private set; }
         public IRegistrator<ICentralBuildingOrders, ICentralBuildingInfo> CentralBuildingRegistrator { get; private set; }
@@ -35,6 +36,10 @@ namespace Assets.Networking
             mServer = new Server();
             mServer.Ports.Add(new ServerPort(GameUtils.IP.ToString(), GameUtils.Port, ServerCredentials.Insecure));
             mServer.Services.Add(GameService.BindService(new GameServiceImpl(game, enemyFactory, syncContext)));
+            
+            var rangedWarriorService = new RangedWarriorServiceImpl();
+            RangedWarriorRegistrator = rangedWarriorService;
+            mServer.Services.Add(RangedWarriorService.BindService(rangedWarriorService));
             
             var workerService = new WorkerServiceImpl();
             WorkerRegistrator = workerService;

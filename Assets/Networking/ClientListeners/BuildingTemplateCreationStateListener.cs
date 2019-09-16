@@ -18,7 +18,6 @@ namespace Assets.Networking
         public float Health => State.Base.Base.Health;
         public float MaxHealth => State.Base.Base.MaxHealth;
         public Vector2 Size => State.Base.Size.ToUnity();
-        public Vector2 Waypoint => State.Base.Waypoint.ToUnity();
         public float Progress => State.Progress;
         public int AttachedWorkers => State.AttachedWorkers;
     }

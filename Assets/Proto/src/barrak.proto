@@ -7,8 +7,18 @@ service BarrakService {
     rpc ListenState(ID) returns (stream BarrakState);
 
     rpc SetWaypoint(SetWaypointRequest) returns (Empty);
+
+    rpc QueueRanged(QueueRangedRequest) returns (QueueRangedResult);
+}
+
+message QueueRangedRequest {
+    QueueUnitRequest Base = 1;
+}
+
+message QueueRangedResult {
+    QueueUnitResult Base = 1;
 }
 
 message BarrakState {
-    BuildingState Base = 1;
+    FactoryBuildingState Base = 1;
 }

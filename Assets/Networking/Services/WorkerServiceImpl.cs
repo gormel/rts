@@ -54,7 +54,7 @@ namespace Assets.Networking.Services
 
         public override Task<Empty> GoTo(GoToRequest request, ServerCallContext context)
         {
-            return mCommonService.ExecuteOrder(request.WorkerID, async orders =>
+            return mCommonService.ExecuteOrder(request.UnitID, async orders =>
             {
                 await orders.GoTo(request.Destignation.ToUnity());
                 return new Empty();
