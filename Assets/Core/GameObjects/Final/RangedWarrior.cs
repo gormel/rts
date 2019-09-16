@@ -22,7 +22,7 @@ namespace Assets.Core.GameObjects.Final {
         {
             private readonly RangedWarrior mWarrior;
             private readonly RtsGameObject mTarget;
-            private float mAttackCooldown;
+            private double mAttackCooldown;
 
             public AttackOrder(RangedWarrior warrior, RtsGameObject target)
             {
@@ -52,6 +52,8 @@ namespace Assets.Core.GameObjects.Final {
                             mWarrior.Game.RemoveObject(mTarget.ID);
                         mAttackCooldown = 0;
                     }
+
+                    mAttackCooldown += deltaTime.TotalSeconds;
                 }
             }
 

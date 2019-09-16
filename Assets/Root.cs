@@ -205,6 +205,7 @@ class Root : MonoBehaviour
             mClient.BaseCreated += pos => PlaseCamera(pos);
             mClient.PlayerConnected += state => Player = state;
 
+            mClient.RangedWarriorCreated += ClientOnRangedWarriorCreated;
             mClient.WorkerCreated += ClientOnWorkerCreated;
             mClient.BuildingTemplateCreated += ClientOnBuildingTemplateCreated;
             mClient.CentralBuildingCreated += ClientOnCentralBuildingCreated;
@@ -215,6 +216,11 @@ class Root : MonoBehaviour
 
             mClient.Listen();
         }
+    }
+
+    private void ClientOnRangedWarriorCreated(IRangedWarriorOrders orders, IRangedWarriorInfo info)
+    {
+        CreateClientView(orders, info, RangedWarriorPrefab);
     }
 
     private void PlaseCamera(Vector2 pos)
