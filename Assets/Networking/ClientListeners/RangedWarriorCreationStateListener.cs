@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Assets.Core.GameObjects.Base;
 using Assets.Core.GameObjects.Final;
 using Assets.Networking.ClientListeners;
 using Assets.Utils;
@@ -41,6 +42,15 @@ namespace Assets.Networking
                 UnitID = new ID { Value = mID }
             }).ResponseAsync;
         }
+
+        public Task Attack(Guid targetID)
+        {
+            return mClient.AttackAsync(new AttackRequest
+            {
+                TargetID = new ID { Value = targetID.ToString() },
+                WarriorID = new ID { Value = mID }
+            }).ResponseAsync;
+        }
     }
 
     class RangedWarriorCreationStateListener : CommonCreationStateListener<
@@ -56,22 +66,22 @@ namespace Assets.Networking
 
         protected override IAsyncStreamReader<RangedWarriorState> GetCreationStream(RangedWarriorService.RangedWarriorServiceClient client)
         {
-            throw new NotImplementedException();
+            return client.ListenCreation(new Empty()).ResponseStream;
         }
 
         protected override IAsyncStreamReader<RangedWarriorState> GetUpdatesStream(RangedWarriorService.RangedWarriorServiceClient client, ID id)
         {
-            throw new NotImplementedException();
+            return client.ListenState(id).ResponseStream;
         }
 
         protected override RangedWarriorService.RangedWarriorServiceClient CreateClient(Channel channel)
         {
-            throw new NotImplementedException();
+            return new RangedWarriorService.RangedWarriorServiceClient(channel);
         }
 
         protected override ClientRangedWarriorOrders CreateOrders(RangedWarriorService.RangedWarriorServiceClient client, Guid id)
         {
-            throw new NotImplementedException();
+            return new ClientRangedWarriorOrders(client, id);
         }
     }
 }

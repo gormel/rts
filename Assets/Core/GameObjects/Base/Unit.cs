@@ -34,42 +34,43 @@ namespace Assets.Core.GameObjects.Base
 
             protected override async Task OnBegin()
             {
-                await mUnit.mPathFinder.SetTarget(mPosition, mUnit.Game.Map.Data);
+                await mUnit.PathFinder.SetTarget(mPosition, mUnit.Game.Map.Data);
                 mUnit.Destignation = mPosition;
-                mUnit.mPathFinder.Arrived += PathFinderOnArrived;
+                mUnit.PathFinder.Arrived += PathFinderOnArrived;
             }
 
             private void PathFinderOnArrived()
             {
-                mUnit.mPathFinder.Arrived -= PathFinderOnArrived;
+                mUnit.PathFinder.Arrived -= PathFinderOnArrived;
                 End();
             }
 
             protected override void OnUpdate(TimeSpan deltaTime)
             {
-                mUnit.Position = mUnit.mPathFinder.CurrentPosition;
-                mUnit.Direction = mUnit.mPathFinder.CurrentDirection;
+                mUnit.Position = mUnit.PathFinder.CurrentPosition;
+                mUnit.Direction = mUnit.PathFinder.CurrentDirection;
             }
 
             protected override void OnCancel()
             {
-                mUnit.mPathFinder.Stop();
+                mUnit.PathFinder.Stop();
             }
         }
 
         protected Game.Game Game { get; }
-        private readonly IPathFinder mPathFinder;
 
         public float Speed { get; protected set; }
         public Vector2 Direction { get; protected set; }
         public Vector2 Destignation { get; protected set; }
+
+        protected IPathFinder PathFinder { get; }
 
         private UnitOrder mOrder;
 
         public Unit(Game.Game game, IPathFinder pathFinder, Vector2 position)
         {
             Game = game;
-            mPathFinder = pathFinder;
+            PathFinder = pathFinder;
             Destignation = Position = position;
         }
 

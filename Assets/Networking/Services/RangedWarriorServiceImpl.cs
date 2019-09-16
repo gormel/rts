@@ -54,6 +54,15 @@ namespace Assets.Networking.Services {
             });
         }
 
+        public override Task<Empty> Attack(AttackRequest request, ServerCallContext context)
+        {
+            return mCreationService.ExecuteOrder(request.WarriorID, async orders =>
+            {
+                await orders.Attack(Guid.Parse(request.TargetID.Value));
+                return new Empty();
+            });
+        }
+
         public void Register(IRangedWarriorOrders orders, IRangedWarriorInfo info)
         {
             mCreationService.Register(orders, info);

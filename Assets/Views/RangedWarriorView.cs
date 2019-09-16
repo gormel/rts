@@ -21,5 +21,11 @@ namespace Assets.Views {
         {
             OnLateUpdate();
         }
+
+        public override void OnEnemyRightClick(SelectableView view)
+        {
+            if (view is IInfoIdProvider)
+                Orders.Attack(((IInfoIdProvider)view).ID);
+        }
     }
 }

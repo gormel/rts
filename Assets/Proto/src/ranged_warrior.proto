@@ -7,6 +7,13 @@ service RangedWarriorService {
     rpc ListenState(ID) returns (stream RangedWarriorState);
 
     rpc GoTo(GoToRequest) returns (Empty);
+
+    rpc Attack(AttackRequest) returns (Empty);
+}
+
+message AttackRequest {
+    ID TargetID = 1;
+    ID WarriorID = 2;
 }
 
 message RangedWarriorState {

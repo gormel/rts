@@ -87,7 +87,16 @@ namespace Assets.Networking.Services
                 return new Empty();
             });
         }
-        
+
+        public override Task<ID> PlaceBarrakTemplate(PlaceBarrakTemplateRequest request, ServerCallContext context)
+        {
+            return mCommonService.ExecuteOrder(request.WorkerID, async orders =>
+            {
+                var id = await orders.PlaceBarrakTemplate(new Vector2Int((int)request.Position.X, (int)request.Position.Y));
+                return new ID { Value = id.ToString() };
+            });
+        }
+
         public void Register(IWorkerOrders orders, IWorkerInfo info)
         {
             mCommonService.Register(orders, info);
