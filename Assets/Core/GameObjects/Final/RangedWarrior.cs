@@ -43,6 +43,7 @@ namespace Assets.Core.GameObjects.Final {
                 var d = Vector2.Distance(mWarrior.Position, mTarget.Position);
                 if (d > mWarrior.AttackRange)
                 {
+                    mWarrior.IsAttacks = false;
                     mAttackCooldown = 0;
                     mWarrior.PathFinder.SetTarget(mTarget.Position, mWarrior.Game.Map.Data);
                 }
@@ -58,15 +59,18 @@ namespace Assets.Core.GameObjects.Final {
                     }
 
                     mAttackCooldown += deltaTime.TotalSeconds;
+                    mWarrior.IsAttacks = true;
                 }
             }
 
             protected override void OnCancel()
             {
+                mWarrior.IsAttacks = false;
                 mWarrior.PathFinder.Stop();
             }
         }
 
+        public bool IsAttacks { get; protected set; }
         public float AttackRange { get; protected set; }
         public float AttackSpeed { get; protected set; }
         public int Damage { get; protected set; }

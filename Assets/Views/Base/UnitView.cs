@@ -40,10 +40,6 @@ namespace Assets.Views.Base
             {
                 Destroy(mNavMeshAgent);
                 mNavMeshAgent = null;
-
-                var rb = gameObject.GetComponentInChildren<Rigidbody>();
-                if (rb != null)
-                    Destroy(rb);
             }
             else
             {
