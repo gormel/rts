@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Assets.Core.GameObjects.Base;
 using Assets.Core.Map;
@@ -12,19 +13,22 @@ namespace Assets.Views.Base
         where TOrders : IUnitOrders
         where TInfo : IUnitInfo
     {
+        public bool IsArrived { get; private set; } = true;
         public event Action Arrived;
         public Vector2 CurrentPosition => GameUtils.GetFlatPosition(transform.localPosition);
         public Vector2 CurrentDirection => GameUtils.GetFlatPosition(transform.localRotation * Vector3.forward);
 
         private NavMeshAgent mNavMeshAgent;
-        private Vector3 mTarget;
         private float mLastDistance;
 
         public LineRenderer TargetLine;
+        public GameObject WaypointPrefab;
+
+        private GameObject mWaypointInst;
 
         public override Rect FlatBounds => new Rect(CurrentPosition, Vector2.zero);
 
-        protected virtual void OnStart()
+        protected virtual void Start()
         {
             mNavMeshAgent = GetComponentInChildren<NavMeshAgent>();
             if (mNavMeshAgent == null)
@@ -36,28 +40,24 @@ namespace Assets.Views.Base
             {
                 Destroy(mNavMeshAgent);
                 mNavMeshAgent = null;
+
+                var rb = gameObject.GetComponentInChildren<Rigidbody>();
+                if (rb != null)
+                    Destroy(rb);
             }
             else
             {
                 mNavMeshAgent.Warp(transform.position);
+                mWaypointInst = Instantiate(WaypointPrefab);
+                mWaypointInst.SetActive(false);
             }
         }
 
-        protected virtual void OnUpdate()
+        protected virtual void Update()
         {
             if (!IsClient)
             {
                 mNavMeshAgent.speed = Info.Speed;
-
-                if (!mNavMeshAgent.pathPending)
-                {
-                    var distance = Vector3.Distance(mTarget, transform.position);
-
-                    if (mLastDistance > 0.05 && distance <= 0.05)
-                        Arrived?.Invoke();
-
-                    mLastDistance = distance;
-                }
             }
             else
             {
@@ -73,7 +73,25 @@ namespace Assets.Views.Base
             UpdateProperties();
         }
 
-        protected virtual void OnLateUpdate()
+        protected virtual void OnTriggerEnter(Collider other)
+        {
+            if (IsClient)
+                return;
+
+            if (IsArrived)
+                return;
+
+            var pf = other.gameObject.GetComponentInChildren<IPathFinder>();
+            if (pf != null && pf.IsArrived && other.gameObject.activeSelf)
+            {
+                mNavMeshAgent.ResetPath();
+                Arrived?.Invoke();
+                IsArrived = true;
+                mWaypointInst.SetActive(false);
+            }
+        }
+
+        protected virtual void LateUpdate()
         {
             if (!IsClient && mNavMeshAgent.velocity.sqrMagnitude > 0.01)
                 transform.rotation = Quaternion.LookRotation(mNavMeshAgent.velocity.normalized);
@@ -83,7 +101,11 @@ namespace Assets.Views.Base
         {
             return SyncContext.Execute(() =>
             {
-                mNavMeshAgent.SetDestination(mTarget = GameUtils.GetPosition(position, mapData));
+                IsArrived = false;
+                var target = GameUtils.GetPosition(position, mapData);
+                mWaypointInst.transform.position = target;
+                mWaypointInst.SetActive(true);
+                mNavMeshAgent.SetDestination(target);
             });
         }
 

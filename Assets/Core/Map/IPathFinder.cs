@@ -7,6 +7,7 @@ namespace Assets.Core.Map
     interface IPathFinder
     {
         event Action Arrived;
+        bool IsArrived { get; }
 
         Vector2 CurrentPosition { get; }
         Vector2 CurrentDirection { get; }

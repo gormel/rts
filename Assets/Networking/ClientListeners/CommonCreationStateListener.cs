@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Assets.Core.GameObjects.Base;
 using Google.Protobuf;
@@ -39,14 +40,16 @@ namespace Assets.Networking.ClientListeners
                 {
                     while (await creationsStream.MoveNext())
                     {
+                        channel.ShutdownToken.ThrowIfCancellationRequested();
+
                         var createdState = creationsStream.Current;
                         var info = new TInfo();
                         info.State.MergeFrom(createdState);
 
                         var orders = CreateOrders(client, info.ID);
-
+                        
                         await mSyncContext.Execute(() => Created?.Invoke(orders, info));
-                        var t = ListenStateUpdates(info, client);
+                        var t = ListenStateUpdates(info, client, channel.ShutdownToken);
                     }
                 }
             }
@@ -56,7 +59,7 @@ namespace Assets.Networking.ClientListeners
             }
         }
 
-        private async Task ListenStateUpdates(TInfo state, TClient client)
+        private async Task ListenStateUpdates(TInfo state, TClient client, CancellationToken token)
         {
             try
             {
@@ -64,6 +67,7 @@ namespace Assets.Networking.ClientListeners
                 {
                     while (await updateStream.MoveNext())
                     {
+                        token.ThrowIfCancellationRequested();
                         state.State.MergeFrom(updateStream.Current);
                     }
                 }

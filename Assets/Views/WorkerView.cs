@@ -21,21 +21,6 @@ namespace Assets.Views
             RegisterProperty(new SelectableViewProperty("Y position", () => Info.Position.y.ToString("##.##")));
         }
 
-        void Start()
-        {
-            OnStart();
-        }
-
-        void Update()
-        {
-            OnUpdate();
-        }
-
-        void LateUpdate()
-        {
-            OnLateUpdate();
-        }
-
         public void AttachAsBuilder(Guid templateId)
         {
             Orders.AttachAsBuilder(templateId);

@@ -68,6 +68,7 @@ namespace Assets.Networking.Services
 
                 while (true)
                 {
+                    context.CancellationToken.ThrowIfCancellationRequested();
                     await responseStream.WriteAsync(CollectGameState(player));
                     await Task.Delay(16);
                 }

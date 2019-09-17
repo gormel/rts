@@ -37,17 +37,26 @@ namespace Assets.Networking.Services
 
         public async Task ListenCreation(IServerStreamWriter<TState> responseStream, ServerCallContext context)
         {
-            foreach (var key in mRegistred.Keys)
+            try
             {
-                var reg = await mRegistred.GetValueAsync(key, context.CancellationToken);
-                await responseStream.WriteAsync(mCreateState(reg.Info));
-            }
+                foreach (var key in mRegistred.Keys)
+                {
+                    var reg = await mRegistred.GetValueAsync(key, context.CancellationToken);
+                    await responseStream.WriteAsync(mCreateState(reg.Info));
+                }
 
-            while (true)
+                while (true)
+                {
+                    var registration = await mRegistrations.DequeueAsync(context.CancellationToken);
+                    context.CancellationToken.ThrowIfCancellationRequested();
+                    mRegistred.AddOrUpdate(registration.Info.ID, registration);
+                    await responseStream.WriteAsync(mCreateState(registration.Info));
+                }
+            }
+            catch (Exception e)
             {
-                var registration = await mRegistrations.DequeueAsync(context.CancellationToken);
-                mRegistred.AddOrUpdate(registration.Info.ID, registration);
-                await responseStream.WriteAsync(mCreateState(registration.Info));
+                Debug.LogError(e);
+                throw;
             }
         }
 
@@ -56,13 +65,22 @@ namespace Assets.Networking.Services
             var workerId = Guid.Parse(request.Value);
             var listening = await mRegistred.GetValueAsync(workerId, context.CancellationToken);
 
-            while (true)
+            try
             {
-                await responseStream.WriteAsync(mCreateState(listening.Info));
-                await Task.Delay(30);
+                while (true)
+                {
+                    context.CancellationToken.ThrowIfCancellationRequested();
+                    await responseStream.WriteAsync(mCreateState(listening.Info));
+                    await Task.Delay(30);
 
-                if (!mRegistred.TryGetValue(workerId, out listening))
-                    throw new EndOfStreamException();
+                    if (!mRegistred.TryGetValue(workerId, out listening))
+                        throw new EndOfStreamException();
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e);
+                throw;
             }
         }
 

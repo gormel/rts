@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Assets.Core.GameObjects;
 using Assets.Core.GameObjects.Base;
@@ -46,11 +47,15 @@ namespace Assets.Core.Game
             {
                 RtsGameObject obj;
                 if (!mGameObjects.TryGetValue(objId, out obj))
+                {
                     tcs.SetException(new ArgumentException("There are no object with this ID."));
-
-                mGameObjects.Remove(objId);
-                obj?.OnRemovedFromGame();
-                tcs.SetResult(obj);
+                }
+                else
+                {
+                    mGameObjects.Remove(objId);
+                    obj?.OnRemovedFromGame();
+                    tcs.SetResult(obj);
+                }
             });
 
             return tcs.Task;
@@ -73,7 +78,7 @@ namespace Assets.Core.Game
             foreach (var o in mGameObjects.Values)
                 o.Update(elapsed);
 
-            foreach (var request in mRequested)
+            foreach (var request in mRequested.ToList())
                 request();
 
             mRequested.Clear();

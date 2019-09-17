@@ -36,6 +36,10 @@ namespace Assets.Core.GameObjects.Final {
 
             protected override void OnUpdate(TimeSpan deltaTime)
             {
+                mWarrior.Position = mWarrior.PathFinder.CurrentPosition;
+                mWarrior.Direction = mWarrior.PathFinder.CurrentDirection;
+                mWarrior.Destignation = mTarget.Position;
+
                 var d = Vector2.Distance(mWarrior.Position, mTarget.Position);
                 if (d > mWarrior.AttackRange)
                 {

@@ -7,21 +7,6 @@ namespace Assets.Views {
     {
         public override string Name => "Стрелятель";
 
-        void Start()
-        {
-            OnStart();
-        }
-
-        void Update()
-        {
-            OnUpdate();
-        }
-
-        void LateUpdate()
-        {
-            OnLateUpdate();
-        }
-
         public override void OnEnemyRightClick(SelectableView view)
         {
             if (view is IInfoIdProvider)

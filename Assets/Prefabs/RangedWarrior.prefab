@@ -104,6 +104,7 @@ GameObject:
   - component: {fileID: 7577527119141330009}
   - component: {fileID: 248576389723375657}
   - component: {fileID: 2450253556523132173}
+  - component: {fileID: -5170046428292097643}
   m_Layer: 0
   m_Name: RangedWarrior
   m_TagString: Untagged
@@ -147,6 +148,8 @@ MonoBehaviour:
   MaterialTarget: {fileID: 8479426486627286063}
   SelectionPriority: 1
   TargetLine: {fileID: 2452205665881685402}
+  WaypointPrefab: {fileID: 8652561010937020211, guid: 49ffc32afbe32134f9aed77c684ad460,
+    type: 3}
 --- !u!195 &248576389723375657
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -182,6 +185,22 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.5, y: 0.3957516, z: 0.9}
   m_Center: {x: 0, y: 0.11159009, z: 0}
+--- !u!54 &-5170046428292097643
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5781137047576643736}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &8384106431256651001
 GameObject:
   m_ObjectHideFlags: 0
