@@ -4,6 +4,14 @@ message ID {
 	string Value = 1;
 }
 
+message WarriorUnitState {
+	UnitState Base = 1;
+    bool IsAttacks = 2;
+    float AttackRange = 3;
+    float AttackSpeed = 4;
+    int32 Damage = 5;
+}
+
 message UnitState {
 	ObjectState Base = 1;
 	float Speed = 2;
@@ -54,4 +62,9 @@ message QueueUnitRequest {
 
 message QueueUnitResult {
     bool Result = 1;
+}
+
+message AttackRequest {
+    ID TargetID = 1;
+    ID WarriorID = 2;
 }

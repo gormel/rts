@@ -12,8 +12,9 @@ namespace Assets.Core.Map
         Vector2 CurrentPosition { get; }
         Vector2 CurrentDirection { get; }
 
-        Task SetTarget(Vector2 position, IMapData mapData);
+        Vector2 Target { get; }
 
+        Task SetTarget(Vector2 position, IMapData mapData);
         Task Stop();
     }
 }

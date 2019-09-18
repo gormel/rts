@@ -14,8 +14,8 @@ namespace Assets.Utils
     static class GameUtils
     {
         public static GameMode CurrentMode { get; set; } = GameMode.Server;
-        public static IPAddress IP { get; } = IPAddress.Parse("127.0.0.1");
-        public static int Port { get; } = 15656;
+        public static IPAddress IP { get; set; } = IPAddress.Parse("127.0.0.1");
+        public static int Port { get; set; } = 15656;
 
         static GameUtils()
         {

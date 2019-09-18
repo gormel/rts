@@ -17,23 +17,27 @@ namespace Assets.Core.GameObjects.Final
 
     interface IWorkerInfo : IUnitInfo
     {
+        bool IsBuilding { get; }
     }
 
     internal class Worker : Unit, IWorkerInfo, IWorkerOrders
     {
         private class BuildOrder : UnitOrder
         {
+            private readonly Worker mWorker;
             private readonly BuildingTemplate mTemplate;
             private readonly PlacementPoint mPlacementPoint;
 
-            public BuildOrder(BuildingTemplate template, PlacementPoint placementPoint)
+            public BuildOrder(Worker worker, BuildingTemplate template, PlacementPoint placementPoint)
             {
+                mWorker = worker;
                 mTemplate = template;
                 mPlacementPoint = placementPoint;
             }
 
             protected override Task OnBegin()
             {
+                mWorker.IsBuilding = true;
                 mTemplate.AttachedWorkers++;
                 return Task.CompletedTask;
             }
@@ -50,6 +54,7 @@ namespace Assets.Core.GameObjects.Final
             protected override void OnCancel()
             {
                 mTemplate.PlacementService.ReleasePoint(mPlacementPoint.ID);
+                mWorker.IsBuilding = false;
 
                 if (State == OrderState.Work)
                     mTemplate.AttachedWorkers--;
@@ -63,6 +68,8 @@ namespace Assets.Core.GameObjects.Final
         public static TimeSpan CentralBuildingBuildTime { get; } = TimeSpan.FromSeconds(30);
         public static TimeSpan MiningCampBuildTime { get; } = TimeSpan.FromSeconds(20);
         public static TimeSpan BarrakBuildTime { get; } = TimeSpan.FromSeconds(25);
+
+        public bool IsBuilding { get; private set; }
 
         public async Task<Guid> PlaceCentralBuildingTemplate(Vector2Int position)
         {
@@ -158,7 +165,7 @@ namespace Assets.Core.GameObjects.Final
             if (point == PlacementPoint.Invalid)
                 return;
 
-            SetOrder(new GoToOrder(this, point.Position).Then(new BuildOrder(template, point)));
+            SetOrder(new GoToOrder(this, point.Position).Then(new BuildOrder(this, template, point)));
         }
     }
 }

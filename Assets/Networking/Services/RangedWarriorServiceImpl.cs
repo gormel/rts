@@ -18,19 +18,26 @@ namespace Assets.Networking.Services {
         {
             return new RangedWarriorState
             {
-                Base = new UnitState
+                Base = new WarriorUnitState
                 {
-                    Base = new ObjectState
+                    Base = new UnitState
                     {
-                        ID = new ID { Value = info.ID.ToString() },
-                        Health =  info.Health,
-                        MaxHealth = info.MaxHealth,
-                        PlayerID = new ID { Value = info.PlayerID.ToString() },
-                        Position = info.Position.ToGrpc()
+                        Base = new ObjectState
+                        {
+                            ID = new ID { Value = info.ID.ToString() },
+                            Health = info.Health,
+                            MaxHealth = info.MaxHealth,
+                            PlayerID = new ID { Value = info.PlayerID.ToString() },
+                            Position = info.Position.ToGrpc()
+                        },
+                        Destignation = info.Destignation.ToGrpc(),
+                        Direction = info.Direction.ToGrpc(),
+                        Speed = info.Speed
                     },
-                    Destignation = info.Destignation.ToGrpc(),
-                    Direction = info.Direction.ToGrpc(),
-                    Speed = info.Speed
+                    AttackRange = info.AttackRange,
+                    AttackSpeed = info.AttackSpeed,
+                    Damage = info.Damage,
+                    IsAttacks = info.IsAttacks
                 }
             };
         }

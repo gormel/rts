@@ -17,6 +17,7 @@ namespace Assets.Views.Base
         public event Action Arrived;
         public Vector2 CurrentPosition => GameUtils.GetFlatPosition(transform.localPosition);
         public Vector2 CurrentDirection => GameUtils.GetFlatPosition(transform.localRotation * Vector3.forward);
+        public Vector2 Target { get; private set; }
 
         private NavMeshAgent mNavMeshAgent;
         private float mLastDistance;
@@ -78,7 +79,7 @@ namespace Assets.Views.Base
                 return;
 
             var pf = other.gameObject.GetComponentInChildren<IPathFinder>();
-            if (pf != null && pf.IsArrived && other.gameObject.activeSelf)
+            if (pf != null && pf.IsArrived && other.gameObject.activeSelf && pf.Target == Target)
             {
                 mNavMeshAgent.ResetPath();
                 Arrived?.Invoke();
@@ -97,6 +98,7 @@ namespace Assets.Views.Base
         {
             return SyncContext.Execute(() =>
             {
+                Target = position;
                 IsArrived = false;
                 var target = GameUtils.GetPosition(position, mapData);
                 mWaypointInst.transform.position = target;

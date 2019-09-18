@@ -38,7 +38,8 @@ namespace Assets.Networking.Services
                     Destignation = info.Destignation.ToGrpc(),
                     Direction = info.Direction.ToGrpc(),
                     Speed = info.Speed
-                }
+                },
+                IsBuilding = info.IsBuilding
             };
         }
 

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Assets.Core.Map;
+using Assets.Utils;
 using UnityEngine;
 
 namespace Assets.Views.Utils
@@ -12,8 +13,10 @@ namespace Assets.Views.Utils
     {
         public event Action Arrived;
         public bool IsArrived { get; } = true;
-        public Vector2 CurrentPosition { get; }
-        public Vector2 CurrentDirection { get; }
+        public Vector2 CurrentPosition => GameUtils.GetFlatPosition(transform.localPosition);
+        public Vector2 CurrentDirection { get; } = Vector2.zero;
+        public Vector2 Target => GameUtils.GetFlatPosition(transform.localPosition);
+
         public Task SetTarget(Vector2 position, IMapData mapData)
         {
             return Task.CompletedTask;

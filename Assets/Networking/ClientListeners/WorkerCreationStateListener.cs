@@ -20,6 +20,7 @@ namespace Assets.Networking
         public float Speed => State.Base.Speed;
         public Vector2 Direction => State.Base.Direction.ToUnity();
         public Vector2 Destignation => State.Base.Destignation.ToUnity();
+        public bool IsBuilding => State.IsBuilding;
     }
 
     class ClientWorkerOrders : IWorkerOrders

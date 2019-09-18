@@ -13,14 +13,18 @@ namespace Assets.Networking
     {
         public RangedWarriorState State { get; } = new RangedWarriorState();
 
-        public Guid ID => Guid.Parse(State.Base.Base.ID.Value);
-        public Guid PlayerID => Guid.Parse(State.Base.Base.PlayerID.Value);
-        public Vector2 Position => State.Base.Base.Position.ToUnity();
-        public float Health => State.Base.Base.Health;
-        public float MaxHealth => State.Base.Base.MaxHealth;
-        public float Speed => State.Base.Speed;
-        public Vector2 Direction => State.Base.Direction.ToUnity();
-        public Vector2 Destignation => State.Base.Destignation.ToUnity();
+        public Guid ID => Guid.Parse(State.Base.Base.Base.ID.Value);
+        public Guid PlayerID => Guid.Parse(State.Base.Base.Base.PlayerID.Value);
+        public Vector2 Position => State.Base.Base.Base.Position.ToUnity();
+        public float Health => State.Base.Base.Base.Health;
+        public float MaxHealth => State.Base.Base.Base.MaxHealth;
+        public float Speed => State.Base.Base.Speed;
+        public Vector2 Direction => State.Base.Base.Direction.ToUnity();
+        public Vector2 Destignation => State.Base.Base.Destignation.ToUnity();
+        public bool IsAttacks => State.Base.IsAttacks;
+        public float AttackRange => State.Base.AttackRange;
+        public float AttackSpeed => State.Base.AttackSpeed;
+        public int Damage => State.Base.Damage;
     }
 
     class ClientRangedWarriorOrders : IRangedWarriorOrders

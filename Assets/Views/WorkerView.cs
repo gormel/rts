@@ -15,10 +15,19 @@ namespace Assets.Views
     {
         public override string Name => "Рабочий";
 
+        public GameObject BuildingIndicator;
+
         protected override void OnLoad()
         {
             RegisterProperty(new SelectableViewProperty("X position", () => Info.Position.x.ToString("##.##")));
             RegisterProperty(new SelectableViewProperty("Y position", () => Info.Position.y.ToString("##.##")));
+        }
+
+        protected override void Update()
+        {
+            base.Update();
+
+            BuildingIndicator.SetActive(Info.IsBuilding);
         }
 
         public void AttachAsBuilder(Guid templateId)

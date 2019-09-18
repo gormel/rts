@@ -11,11 +11,6 @@ service RangedWarriorService {
     rpc Attack(AttackRequest) returns (Empty);
 }
 
-message AttackRequest {
-    ID TargetID = 1;
-    ID WarriorID = 2;
-}
-
 message RangedWarriorState {
-    UnitState Base = 1;
+    WarriorUnitState Base = 1;
 }
