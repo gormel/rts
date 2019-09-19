@@ -20,7 +20,7 @@ namespace Assets.Networking
         public float Speed => State.Base.Speed;
         public Vector2 Direction => State.Base.Direction.ToUnity();
         public Vector2 Destignation => State.Base.Destignation.ToUnity();
-        public bool IsBuilding => State.IsBuilding;
+        public bool IsBuilding => State.IsBuilding == Boolean.True;
     }
 
     class ClientWorkerOrders : IWorkerOrders
@@ -95,14 +95,14 @@ namespace Assets.Networking
         {
         }
 
-        protected override IAsyncStreamReader<WorkerState> GetCreationStream(WorkerService.WorkerServiceClient client)
+        protected override AsyncServerStreamingCall<WorkerState> GetCreationCall(WorkerService.WorkerServiceClient client)
         {
-            return client.ListenCreation(new Empty()).ResponseStream;
+            return client.ListenCreation(new Empty());
         }
 
-        protected override IAsyncStreamReader<WorkerState> GetUpdatesStream(WorkerService.WorkerServiceClient client, ID id)
+        protected override AsyncServerStreamingCall<WorkerState> GetUpdatesCall(WorkerService.WorkerServiceClient client, ID id)
         {
-            return client.ListenState(id).ResponseStream;
+            return client.ListenState(id);
         }
 
         protected override WorkerService.WorkerServiceClient CreateClient(Channel channel)

@@ -90,8 +90,22 @@ namespace Assets.Views.Base
 
         protected virtual void LateUpdate()
         {
-            if (!IsClient && mNavMeshAgent.velocity.sqrMagnitude > 0.01)
+            if (!IsClient && !IsArrived && mNavMeshAgent.velocity.sqrMagnitude > 0)
                 transform.rotation = Quaternion.LookRotation(mNavMeshAgent.velocity.normalized);
+        }
+
+        public Task LookAt(Vector2 position, IMapData mapData)
+        {
+            if (IsArrived)
+            {
+                return SyncContext.Execute(() =>
+                {
+                    var target = GameUtils.GetPosition(position, mapData);
+                    transform.rotation = Quaternion.LookRotation(target - transform.localPosition);
+                });
+            }
+
+            return Task.CompletedTask;
         }
 
         public Task SetTarget(Vector2 position, IMapData mapData)

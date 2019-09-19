@@ -56,7 +56,12 @@ namespace Assets.Core.GameObjects.Base
                 }
                 else
                 {
-                    mWarrior.PathFinder.Stop();
+                    if (!mWarrior.IsAttacks)
+                    {
+                        mWarrior.PathFinder.Stop();
+                        mWarrior.PathFinder.LookAt(mTarget.Position, mWarrior.Game.Map.Data);
+                    }
+
                     if (mAttackCooldown > 1 / mWarrior.AttackSpeed)
                     {
                         mTarget.Health -= mWarrior.Damage;

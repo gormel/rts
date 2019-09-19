@@ -202,7 +202,7 @@ namespace Assets.Interaction
 
                         if (!selectableView.IsControlable)
                             continue;
-
+                        
                         var projected = Camera.main.WorldToScreenPoint(child.position);
                         if (selectionRect.Contains((Vector2) projected, true))
                             toSelect.Add(selectableView);
@@ -288,7 +288,7 @@ namespace Assets.Interaction
                 }
 
                 var viewHit = Raycast<SelectableView>(Input.mousePosition);
-                if (viewHit != null && viewHit.Object.IsControlable)
+                if (viewHit != null && (Selected.Count == 0 || Selected[0].IsControlable == viewHit.Object.IsControlable))
                 {
                     viewHit.Object.IsSelected = true;
                     if (!Selected.Contains(viewHit.Object))
@@ -303,6 +303,9 @@ namespace Assets.Interaction
                 {
                     foreach (var view in Selected)
                     {
+                        if (!view.IsControlable)
+                            continue;
+
                         if (viewHit.Object.IsControlable)
                             view.OnRightClick(viewHit.Object);
                         else
@@ -317,7 +320,12 @@ namespace Assets.Interaction
                 {
                     var mapPoint = GameUtils.GetFlatPosition(mapHit.HitPoint);
                     foreach (var view in Selected)
+                    {
+                        if (!view.IsControlable)
+                            continue;
+
                         view.OnRightClick(mapPoint);
+                    }
 
                     return;
                 }

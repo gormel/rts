@@ -71,14 +71,14 @@ namespace Assets.Networking.ClientListeners
         {
         }
 
-        protected override IAsyncStreamReader<BarrakState> GetCreationStream(BarrakService.BarrakServiceClient client)
+        protected override AsyncServerStreamingCall<BarrakState> GetCreationCall(BarrakService.BarrakServiceClient client)
         {
-            return client.ListenCreation(new Empty()).ResponseStream;
+            return client.ListenCreation(new Empty());
         }
 
-        protected override IAsyncStreamReader<BarrakState> GetUpdatesStream(BarrakService.BarrakServiceClient client, ID id)
+        protected override AsyncServerStreamingCall<BarrakState> GetUpdatesCall(BarrakService.BarrakServiceClient client, ID id)
         {
-            return client.ListenState(id).ResponseStream;
+            return client.ListenState(id);
         }
 
         protected override BarrakService.BarrakServiceClient CreateClient(Channel channel)

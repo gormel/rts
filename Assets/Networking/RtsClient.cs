@@ -118,7 +118,8 @@ namespace Assets.Networking
             await mSyncContext.Execute(() => PlayerConnected?.Invoke(playerState), channel.ShutdownToken);
 
             var client = new GameService.GameServiceClient(channel);
-            using (var stateStream = client.ConnectAndListenState(new Empty()).ResponseStream)
+            using (var call = client.ConnectAndListenState(new Empty()))
+            using (var stateStream = call.ResponseStream)
             {
                 while (await stateStream.MoveNext())
                 {
@@ -131,7 +132,7 @@ namespace Assets.Networking
                     if (!mMapLoaded)
                     {
                         mMapLoaded = true;
-                        await mSyncContext.Execute(() => 
+                        await mSyncContext.Execute(() =>
                         {
                             MapLoaded?.Invoke(mapState);
                             BaseCreated?.Invoke(state.BasePos.ToUnity());

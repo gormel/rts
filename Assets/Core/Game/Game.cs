@@ -79,7 +79,7 @@ namespace Assets.Core.Game
                 o.Update(elapsed);
 
             foreach (var request in mRequested.ToList())
-                request();
+                request?.Invoke();
 
             mRequested.Clear();
         }

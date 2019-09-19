@@ -6,7 +6,7 @@ message ID {
 
 message WarriorUnitState {
 	UnitState Base = 1;
-    bool IsAttacks = 2;
+    Boolean IsAttacks = 2;
     float AttackRange = 3;
     float AttackSpeed = 4;
     int32 Damage = 5;
@@ -42,6 +42,11 @@ message ObjectState {
 message Vector {
 	float X = 1;
 	float Y = 2;
+}
+
+enum Boolean {
+	TRUE = 0;
+	FALSE = 1;
 }
 
 message Empty {}

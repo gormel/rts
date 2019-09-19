@@ -1,14 +1,36 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using Assets.Views;
+﻿using Assets.Views;
+using Assets.Views.Base;
 using UnityEngine;
 
 namespace Assets.Interaction
 {
     class SelectedViewActionsInterface : MonoBehaviour
     {
+        interface IActivator
+        {
+            void UpdateActive(UserInterface userInterface);
+        }
+
+        private class Activator<T> : IActivator where T : SelectableView
+        {
+            private readonly GameObject mTarget;
+
+            public Activator(GameObject target)
+            {
+                mTarget = target;
+            }
+
+            public void UpdateActive(UserInterface userInterface)
+            {
+                var active = false;
+
+                if (userInterface.Selected.Count > 0 && userInterface.Selected[0].IsControlable)
+                    active = userInterface.Selected[0] is T;
+
+                mTarget.SetActive(active);
+            }
+        }
+
         public GameObject WorkerActions;
         public GameObject CentralBuildingActions;
         public GameObject BuildingTemplateActions;
@@ -16,36 +38,24 @@ namespace Assets.Interaction
 
         public UserInterface Interface;
 
+        private IActivator[] mActivators;
+
+        void Start()
+        {
+            mActivators = new IActivator[]
+            {
+                new Activator<WorkerView>(WorkerActions), 
+                new Activator<CentralBuildingView>(CentralBuildingActions), 
+                new Activator<BuildingTemplateView>(BuildingTemplateActions), 
+                new Activator<BarrakView>(BarrakActions)
+            };
+        }
+
         void Update()
         {
-            var workerActionsActive = false;
-            var centralBuildingActive = false;
-            var buildingTemplateActions = false;
-            var barrakActionsActive = false;
-            try
+            for (int i = 0; i < mActivators.Length; i++)
             {
-                if (Interface.Selected.Count < 1)
-                    return;
-                
-                var firstSelected = Interface.Selected[0];
-                if (firstSelected is WorkerView)
-                    workerActionsActive = true;
-
-                if (firstSelected is CentralBuildingView)
-                    centralBuildingActive = true;
-
-                if (firstSelected is BuildingTemplateView)
-                    buildingTemplateActions = true;
-
-                if (firstSelected is BarrakView)
-                    barrakActionsActive = true;
-            }
-            finally
-            {
-                WorkerActions.SetActive(workerActionsActive);
-                CentralBuildingActions.SetActive(centralBuildingActive);
-                BuildingTemplateActions.SetActive(buildingTemplateActions);
-                BarrakActions.SetActive(barrakActionsActive);
+                mActivators[i].UpdateActive(Interface);
             }
         }
     }

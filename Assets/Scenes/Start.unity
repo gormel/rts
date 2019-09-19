@@ -1491,9 +1491,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   GameSceneName: SampleScene
-  HostPortField: {fileID: 0}
-  ConnectIPField: {fileID: 0}
-  ConnectPortField: {fileID: 0}
+  HostPortField: {fileID: 525946596}
+  ConnectIPField: {fileID: 2063148419}
+  ConnectPortField: {fileID: 318621242}
 --- !u!1 &2063148417
 GameObject:
   m_ObjectHideFlags: 0

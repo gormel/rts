@@ -17,6 +17,11 @@ namespace Assets.Views.Utils
         public Vector2 CurrentDirection { get; } = Vector2.zero;
         public Vector2 Target => GameUtils.GetFlatPosition(transform.localPosition);
 
+        public Task LookAt(Vector2 position, IMapData mapData)
+        {
+            return Task.CompletedTask;
+        }
+
         public Task SetTarget(Vector2 position, IMapData mapData)
         {
             return Task.CompletedTask;

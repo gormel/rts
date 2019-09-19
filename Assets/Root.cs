@@ -223,7 +223,7 @@ class Root : MonoBehaviour
         CreateClientView(orders, info, RangedWarriorPrefab);
     }
 
-    private void PlaseCamera(Vector2 pos)
+    public void PlaseCamera(Vector2 pos)
     {
         var cameraY = Camera.main.transform.position.y;
         Camera.main.transform.position = new Vector3(pos.x, cameraY, pos.y - 2);

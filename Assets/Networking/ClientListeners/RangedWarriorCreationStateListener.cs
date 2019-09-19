@@ -21,7 +21,7 @@ namespace Assets.Networking
         public float Speed => State.Base.Base.Speed;
         public Vector2 Direction => State.Base.Base.Direction.ToUnity();
         public Vector2 Destignation => State.Base.Base.Destignation.ToUnity();
-        public bool IsAttacks => State.Base.IsAttacks;
+        public bool IsAttacks => State.Base.IsAttacks == Boolean.True;
         public float AttackRange => State.Base.AttackRange;
         public float AttackSpeed => State.Base.AttackSpeed;
         public int Damage => State.Base.Damage;
@@ -68,14 +68,14 @@ namespace Assets.Networking
         public RangedWarriorCreationStateListener(UnitySyncContext syncContext)
             : base(syncContext) { }
 
-        protected override IAsyncStreamReader<RangedWarriorState> GetCreationStream(RangedWarriorService.RangedWarriorServiceClient client)
+        protected override AsyncServerStreamingCall<RangedWarriorState> GetCreationCall(RangedWarriorService.RangedWarriorServiceClient client)
         {
-            return client.ListenCreation(new Empty()).ResponseStream;
+            return client.ListenCreation(new Empty());
         }
 
-        protected override IAsyncStreamReader<RangedWarriorState> GetUpdatesStream(RangedWarriorService.RangedWarriorServiceClient client, ID id)
+        protected override AsyncServerStreamingCall<RangedWarriorState> GetUpdatesCall(RangedWarriorService.RangedWarriorServiceClient client, ID id)
         {
-            return client.ListenState(id).ResponseStream;
+            return client.ListenState(id);
         }
 
         protected override RangedWarriorService.RangedWarriorServiceClient CreateClient(Channel channel)

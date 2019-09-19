@@ -46,14 +46,14 @@ namespace Assets.Networking
             return new ClientMiningCampOrders();
         }
 
-        protected override IAsyncStreamReader<MiningCampState> GetCreationStream(MiningCampService.MiningCampServiceClient client)
+        protected override AsyncServerStreamingCall<MiningCampState> GetCreationCall(MiningCampService.MiningCampServiceClient client)
         {
-            return client.ListenCreation(new Empty()).ResponseStream;
+            return client.ListenCreation(new Empty());
         }
 
-        protected override IAsyncStreamReader<MiningCampState> GetUpdatesStream(MiningCampService.MiningCampServiceClient client, ID id)
+        protected override AsyncServerStreamingCall<MiningCampState> GetUpdatesCall(MiningCampService.MiningCampServiceClient client, ID id)
         {
-            return client.ListenState(id).ResponseStream;
+            return client.ListenState(id);
         }
     }
 }

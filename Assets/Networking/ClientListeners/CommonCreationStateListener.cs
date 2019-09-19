@@ -20,8 +20,8 @@ namespace Assets.Networking.ClientListeners
         public event Action<TOrdersBase, TInfoBase> Created;
         public event Action<TInfoBase> Destroyed;
 
-        protected abstract IAsyncStreamReader<TState> GetCreationStream(TClient client);
-        protected abstract IAsyncStreamReader<TState> GetUpdatesStream(TClient client, ID id);
+        protected abstract AsyncServerStreamingCall<TState> GetCreationCall(TClient client);
+        protected abstract AsyncServerStreamingCall<TState> GetUpdatesCall(TClient client, ID id);
         protected abstract TClient CreateClient(Channel channel);
         protected abstract TOrders CreateOrders(TClient client, Guid id);
 
@@ -36,7 +36,8 @@ namespace Assets.Networking.ClientListeners
 
             try
             {
-                using (var creationsStream = GetCreationStream(client))
+                using (var call = GetCreationCall(client))
+                using (var creationsStream = call.ResponseStream)
                 {
                     while (await creationsStream.MoveNext())
                     {
@@ -56,6 +57,7 @@ namespace Assets.Networking.ClientListeners
             catch (Exception e)
             {
                 Debug.LogError(e);
+                throw;
             }
         }
 
@@ -63,7 +65,8 @@ namespace Assets.Networking.ClientListeners
         {
             try
             {
-                using (var updateStream = GetUpdatesStream(client, new ID { Value = state.ID.ToString() }))
+                using (var call = GetUpdatesCall(client, new ID { Value = state.ID.ToString() }))
+                using (var updateStream = call.ResponseStream)
                 {
                     while (await updateStream.MoveNext())
                     {
@@ -76,6 +79,7 @@ namespace Assets.Networking.ClientListeners
             {
                 Debug.LogError(e);
                 await mSyncContext.Execute(() => Destroyed?.Invoke(state));
+                throw;
             }
         }
     }

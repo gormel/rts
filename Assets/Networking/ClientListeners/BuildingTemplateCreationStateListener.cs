@@ -52,14 +52,14 @@ namespace Assets.Networking
         {
         }
 
-        protected override IAsyncStreamReader<BuildingTemplateState> GetCreationStream(BuildingTemplateService.BuildingTemplateServiceClient client)
+        protected override AsyncServerStreamingCall<BuildingTemplateState> GetCreationCall(BuildingTemplateService.BuildingTemplateServiceClient client)
         {
-            return client.ListenCreation(new Empty()).ResponseStream;
+            return client.ListenCreation(new Empty());
         }
 
-        protected override IAsyncStreamReader<BuildingTemplateState> GetUpdatesStream(BuildingTemplateService.BuildingTemplateServiceClient client, ID id)
+        protected override AsyncServerStreamingCall<BuildingTemplateState> GetUpdatesCall(BuildingTemplateService.BuildingTemplateServiceClient client, ID id)
         {
-            return client.ListenState(id).ResponseStream;
+            return client.ListenState(id);
         }
 
         protected override BuildingTemplateService.BuildingTemplateServiceClient CreateClient(Channel channel)

@@ -60,14 +60,14 @@ namespace Assets.Networking
         public CentralBuildingCreationListener(UnitySyncContext syncContext)
             : base(syncContext) {}
 
-        protected override IAsyncStreamReader<CentralBuildingState> GetCreationStream(CentralBuildingService.CentralBuildingServiceClient client)
+        protected override AsyncServerStreamingCall<CentralBuildingState> GetCreationCall(CentralBuildingService.CentralBuildingServiceClient client)
         {
-            return client.ListenCreation(new Empty()).ResponseStream;
+            return client.ListenCreation(new Empty());
         }
 
-        protected override IAsyncStreamReader<CentralBuildingState> GetUpdatesStream(CentralBuildingService.CentralBuildingServiceClient client, ID id)
+        protected override AsyncServerStreamingCall<CentralBuildingState> GetUpdatesCall(CentralBuildingService.CentralBuildingServiceClient client, ID id)
         {
-            return client.ListenState(id).ResponseStream;
+            return client.ListenState(id);
         }
 
         protected override CentralBuildingService.CentralBuildingServiceClient CreateClient(Channel channel)

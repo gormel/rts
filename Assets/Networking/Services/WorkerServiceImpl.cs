@@ -39,7 +39,7 @@ namespace Assets.Networking.Services
                     Direction = info.Direction.ToGrpc(),
                     Speed = info.Speed
                 },
-                IsBuilding = info.IsBuilding
+                IsBuilding = info.IsBuilding ? Boolean.True : Boolean.False
             };
         }
 
