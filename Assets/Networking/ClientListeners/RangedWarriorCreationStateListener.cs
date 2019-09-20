@@ -11,7 +11,7 @@ namespace Assets.Networking
 {
     class ClientRangedWarriorState : IRangedWarriorInfo, IStateHolder<RangedWarriorState>
     {
-        public RangedWarriorState State { get; } = new RangedWarriorState();
+        public RangedWarriorState State { get; private set; } = new RangedWarriorState();
 
         public Guid ID => Guid.Parse(State.Base.Base.Base.ID.Value);
         public Guid PlayerID => Guid.Parse(State.Base.Base.Base.PlayerID.Value);
@@ -21,10 +21,15 @@ namespace Assets.Networking
         public float Speed => State.Base.Base.Speed;
         public Vector2 Direction => State.Base.Base.Direction.ToUnity();
         public Vector2 Destignation => State.Base.Base.Destignation.ToUnity();
-        public bool IsAttacks => State.Base.IsAttacks == Boolean.True;
+        public bool IsAttacks => State.Base.IsAttacks;
         public float AttackRange => State.Base.AttackRange;
         public float AttackSpeed => State.Base.AttackSpeed;
         public int Damage => State.Base.Damage;
+
+        public void ResetState()
+        {
+            State = new RangedWarriorState();
+        }
     }
 
     class ClientRangedWarriorOrders : IRangedWarriorOrders

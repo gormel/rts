@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 170076734}
-  m_IndirectSpecularColor: {r: 0.44535434, g: 0.48936307, b: 0.5436173, a: 1}
+  m_IndirectSpecularColor: {r: 0.44535416, g: 0.48936248, b: 0.5436173, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -5764,6 +5764,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b29b1cfe87938514fb8ecfe46ab117dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  GuiSceneName: Start
   BarrakPrefab: {fileID: 2455255279190240296, guid: 5cb3324b9aa3a0e459f2cc1426e14aa9,
     type: 3}
   MapPrefab: {fileID: 4844293696897799696, guid: 782dd5f3fdeca324c8711fbe98d9155f,

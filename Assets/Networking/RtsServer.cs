@@ -66,7 +66,7 @@ namespace Assets.Networking
 
         public Task Shutdown()
         {
-            return mServer.ShutdownAsync();
+            return mServer.KillAsync();
         }
     }
 }

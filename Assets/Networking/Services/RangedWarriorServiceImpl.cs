@@ -37,7 +37,7 @@ namespace Assets.Networking.Services {
                     AttackRange = info.AttackRange,
                     AttackSpeed = info.AttackSpeed,
                     Damage = info.Damage,
-                    IsAttacks = info.IsAttacks ? Boolean.True : Boolean.False
+                    IsAttacks = info.IsAttacks
                 }
             };
         }

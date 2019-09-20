@@ -39,7 +39,7 @@ namespace Assets.Networking.ClientListeners
                 using (var call = GetCreationCall(client))
                 using (var creationsStream = call.ResponseStream)
                 {
-                    while (await creationsStream.MoveNext())
+                    while (await creationsStream.MoveNext(channel.ShutdownToken))
                     {
                         channel.ShutdownToken.ThrowIfCancellationRequested();
 
@@ -68,9 +68,10 @@ namespace Assets.Networking.ClientListeners
                 using (var call = GetUpdatesCall(client, new ID { Value = state.ID.ToString() }))
                 using (var updateStream = call.ResponseStream)
                 {
-                    while (await updateStream.MoveNext())
+                    while (await updateStream.MoveNext(token))
                     {
                         token.ThrowIfCancellationRequested();
+                        state.ResetState();
                         state.State.MergeFrom(updateStream.Current);
                     }
                 }
@@ -78,7 +79,9 @@ namespace Assets.Networking.ClientListeners
             catch (Exception e)
             {
                 Debug.LogError(e);
-                await mSyncContext.Execute(() => Destroyed?.Invoke(state));
+                if (mSyncContext.isActiveAndEnabled)
+                    await mSyncContext.Execute(() => Destroyed?.Invoke(state), token);
+
                 throw;
             }
         }

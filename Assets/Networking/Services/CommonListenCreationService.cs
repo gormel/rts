@@ -71,10 +71,10 @@ namespace Assets.Networking.Services
                 {
                     context.CancellationToken.ThrowIfCancellationRequested();
                     await responseStream.WriteAsync(mCreateState(listening.Info));
-                    await Task.Delay(30);
+                    await Task.Delay(30, context.CancellationToken);
                     
                     if (!mRegistred.TryGetValue(workerId, out listening))
-                        return;
+                        throw new EndOfStreamException();
                 }
             }
             catch (Exception e)

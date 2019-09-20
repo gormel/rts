@@ -16,13 +16,14 @@ namespace Assets.Networking
     interface IStateHolder<TState> where TState : IMessage<TState>
     {
         TState State { get; }
+        void ResetState();
     }
 
     class RtsClient
     {
         private class ClientMapData : IMapData
         {
-            public MapState State { get; } = new MapState();
+            public MapState State { get; set; } = new MapState();
 
             public int Length => State.Lenght;
             public int Width => State.Width;
@@ -40,7 +41,7 @@ namespace Assets.Networking
 
         private class ClientPlayerState : IPlayerState
         {
-            public PlayerState PlayerState { get; } = new PlayerState();
+            public PlayerState PlayerState { get; set; } = new PlayerState();
 
             public Guid ID => Guid.Parse(PlayerState.ID.Value);
             public int Money => PlayerState.Money;
@@ -49,6 +50,7 @@ namespace Assets.Networking
         public event Action<IPlayerState> PlayerConnected;
         public event Action<IMapData> MapLoaded;
         public event Action<Vector2> BaseCreated;
+        public event Action DisconnectedFromServer;
 
         public event Action<IRangedWarriorOrders, IRangedWarriorInfo> RangedWarriorCreated;
         public event Action<IWorkerOrders, IWorkerInfo> WorkerCreated;
@@ -117,34 +119,48 @@ namespace Assets.Networking
             var playerState = new ClientPlayerState();
             await mSyncContext.Execute(() => PlayerConnected?.Invoke(playerState), channel.ShutdownToken);
 
-            var client = new GameService.GameServiceClient(channel);
-            using (var call = client.ConnectAndListenState(new Empty()))
-            using (var stateStream = call.ResponseStream)
+            try
             {
-                while (await stateStream.MoveNext())
+                var client = new GameService.GameServiceClient(channel);
+                using (var call = client.ConnectAndListenState(new Empty()))
+                using (var stateStream = call.ResponseStream)
                 {
-                    channel.ShutdownToken.ThrowIfCancellationRequested();
-                    var state = stateStream.Current;
-                    mapState.State.MergeFrom(state.Map);
-                    playerState.PlayerState.MergeFrom(state.Player);
-                    channel.ShutdownToken.ThrowIfCancellationRequested();
-
-                    if (!mMapLoaded)
+                    while (await stateStream.MoveNext(channel.ShutdownToken))
                     {
-                        mMapLoaded = true;
-                        await mSyncContext.Execute(() =>
+                        channel.ShutdownToken.ThrowIfCancellationRequested();
+                        var state = stateStream.Current;
+
+                        if (state.Map != null)
+                            mapState.State = new MapState(state.Map);
+
+                        if (state.Player != null)
+                            playerState.PlayerState = new PlayerState(state.Player);
+
+                        channel.ShutdownToken.ThrowIfCancellationRequested();
+
+                        if (!mMapLoaded)
                         {
-                            MapLoaded?.Invoke(mapState);
-                            BaseCreated?.Invoke(state.BasePos.ToUnity());
-                        }, channel.ShutdownToken);
-                        var t0 = mWorkerCreationStateListener.ListenCreations(mChannel);
-                        var t1 = mBuildingTemplateCreationStateListener.ListenCreations(mChannel);
-                        var t2 = mCentralBuildingCreationStateListener.ListenCreations(mChannel);
-                        var t3 = mMiningCampCreationListener.ListenCreations(mChannel);
-                        var t4 = mBarrakCreationListener.ListenCreations(mChannel);
-                        var t5 = mRangedWarriorCreationStateListener.ListenCreations(mChannel);
+                            mMapLoaded = true;
+                            await mSyncContext.Execute(() =>
+                            {
+                                MapLoaded?.Invoke(mapState);
+                                BaseCreated?.Invoke(state.BasePos.ToUnity());
+                            }, channel.ShutdownToken);
+                            var t0 = mWorkerCreationStateListener.ListenCreations(mChannel);
+                            var t1 = mBuildingTemplateCreationStateListener.ListenCreations(mChannel);
+                            var t2 = mCentralBuildingCreationStateListener.ListenCreations(mChannel);
+                            var t3 = mMiningCampCreationListener.ListenCreations(mChannel);
+                            var t4 = mBarrakCreationListener.ListenCreations(mChannel);
+                            var t5 = mRangedWarriorCreationStateListener.ListenCreations(mChannel);
+                        }
                     }
                 }
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e);
+                DisconnectedFromServer?.Invoke();
+                throw;
             }
         }
     }

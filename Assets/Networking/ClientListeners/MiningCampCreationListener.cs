@@ -10,7 +10,7 @@ namespace Assets.Networking
     class ClientMiningCampOrders : IMinigCampOrders {}
     class ClientMiningCampInfo : IMinigCampInfo, IStateHolder<MiningCampState>
     {
-        public MiningCampState State { get; } = new MiningCampState();
+        public MiningCampState State { get; private set; } = new MiningCampState();
 
         public float MiningSpeed => State.MiningSpeed;
         public Vector2 Size => State.Base.Size.ToUnity();
@@ -20,6 +20,10 @@ namespace Assets.Networking
         public float Health => State.Base.Base.Health;
         public float MaxHealth => State.Base.Base.MaxHealth;
 
+        public void ResetState()
+        {
+            State = new MiningCampState();
+        }
     }
 
     class MiningCampCreationListener : CommonCreationStateListener<

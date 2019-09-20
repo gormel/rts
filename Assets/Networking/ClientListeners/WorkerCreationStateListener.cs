@@ -10,7 +10,7 @@ namespace Assets.Networking
 {
     class ClientWorkerState : IWorkerInfo, IStateHolder<WorkerState>
     {
-        public WorkerState State { get; } = new WorkerState();
+        public WorkerState State { get; private set; } = new WorkerState();
 
         public Guid ID => Guid.Parse(State.Base.Base.ID.Value);
         public Guid PlayerID => Guid.Parse(State.Base.Base.PlayerID.Value);
@@ -20,7 +20,12 @@ namespace Assets.Networking
         public float Speed => State.Base.Speed;
         public Vector2 Direction => State.Base.Direction.ToUnity();
         public Vector2 Destignation => State.Base.Destignation.ToUnity();
-        public bool IsBuilding => State.IsBuilding == Boolean.True;
+        public bool IsBuilding => State.IsBuilding;
+
+        public void ResetState()
+        {
+            State = new WorkerState();
+        }
     }
 
     class ClientWorkerOrders : IWorkerOrders

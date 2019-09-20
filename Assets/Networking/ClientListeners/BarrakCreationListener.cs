@@ -11,7 +11,11 @@ using UnityEngine;
 namespace Assets.Networking.ClientListeners
 {
     class ClientBarrakInfo : IBarrakInfo, IStateHolder<BarrakState> {
-        public BarrakState State { get; } = new BarrakState();
+        public BarrakState State { get; private set; } = new BarrakState();
+        public void ResetState()
+        {
+            State = new BarrakState();
+        }
 
         public Guid ID => Guid.Parse(State.Base.Base.Base.ID.Value);
         public Guid PlayerID => Guid.Parse(State.Base.Base.Base.PlayerID.Value);

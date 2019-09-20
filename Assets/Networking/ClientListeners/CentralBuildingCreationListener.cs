@@ -34,7 +34,7 @@ namespace Assets.Networking
 
     class ClientCentralBuildingState : ICentralBuildingInfo, IStateHolder<CentralBuildingState>
     {
-        public CentralBuildingState State { get; } = new CentralBuildingState();
+        public CentralBuildingState State { get; private set; } = new CentralBuildingState();
 
         public Guid ID => Guid.Parse(State.Base.Base.Base.ID.Value);
         public Guid PlayerID => Guid.Parse(State.Base.Base.Base.PlayerID.Value);
@@ -46,6 +46,11 @@ namespace Assets.Networking
         public int Queued => State.Base.Queued;
         public float Progress => State.Base.Progress;
         public int WorkersQueued => State.Base.Queued;
+
+        public void ResetState()
+        {
+            State = new CentralBuildingState();
+        }
     }
 
     class CentralBuildingCreationListener : CommonCreationStateListener<

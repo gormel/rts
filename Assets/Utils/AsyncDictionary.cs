@@ -63,7 +63,7 @@ namespace Assets.Utils
             return true;
         }
 
-        public Task<TValue> GetValueAsync(TKey key, CancellationToken token = default(CancellationToken))
+        public async Task<TValue> GetValueAsync(TKey key, CancellationToken token = default(CancellationToken))
         {
             TaskCompletionSource<TValue> taskSource;
             lock (mLocker)
@@ -71,8 +71,9 @@ namespace Assets.Utils
                 if (!mTaskSources.TryGetValue(key, out taskSource))
                     taskSource = mTaskSources[key] = new TaskCompletionSource<TValue>();
             }
-            token.Register(() => taskSource.SetCanceled());
-            return taskSource.Task;
+
+            using (token.Register(() => taskSource.SetCanceled()))
+                return await taskSource.Task;
         }
     }
 }

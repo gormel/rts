@@ -35,5 +35,5 @@ message AttachAsBuilderRequest {
 
 message WorkerState {
     UnitState Base = 1;
-    Boolean IsBuilding = 2;
+    bool IsBuilding = 2;
 }

@@ -20,12 +20,13 @@ class UnitySyncContext : MonoBehaviour
 
     private ConcurrentQueue<Execution> mExecutions = new ConcurrentQueue<Execution>();
 
-    public Task Execute(Action action, CancellationToken token = default)
+    public async Task Execute(Action action, CancellationToken token = default)
     {
         var exec = new Execution(action);
         mExecutions.Enqueue(exec);
-        token.Register(() => exec.TaskSource.TrySetCanceled(token));
-        return exec.TaskSource.Task;
+        token.ThrowIfCancellationRequested();
+        using (token.Register(() => exec.TaskSource.TrySetCanceled(token)))
+            await exec.TaskSource.Task;
     }
 
     public async Task<T> Execute<T>(Func<T> func, CancellationToken token = default)
@@ -53,6 +54,21 @@ class UnitySyncContext : MonoBehaviour
                     toExec.TaskSource.TrySetException(ex);
                 }
 
+            }
+        }
+
+        if (executed > 100)
+            Debug.LogError("Sync context overloaded!", this);
+    }
+
+    void OnDestroy()
+    {
+        while (mExecutions.Count > 0)
+        {
+            Execution toExec;
+            if (mExecutions.TryDequeue(out toExec))
+            {
+                toExec.TaskSource.TrySetCanceled();
             }
         }
     }

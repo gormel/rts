@@ -16,6 +16,7 @@ using Assets.Views;
 using Assets.Views.Base;
 using Grpc.Core;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using GameObject = UnityEngine.GameObject;
 using Random = UnityEngine.Random;
 using Server = Grpc.Core.Server;
@@ -157,6 +158,8 @@ class Root : MonoBehaviour
         }
     }
 
+    public string GuiSceneName;
+
     public GameObject BarrakPrefab;
     public GameObject MapPrefab;
     public GameObject WorkerPrefab;
@@ -204,6 +207,7 @@ class Root : MonoBehaviour
             mClient.MapLoaded += data => MapView = CreateMap(data, false);
             mClient.BaseCreated += pos => PlaseCamera(pos);
             mClient.PlayerConnected += state => Player = state;
+            mClient.DisconnectedFromServer +=() => SceneManager.LoadScene(GuiSceneName);
 
             mClient.RangedWarriorCreated += ClientOnRangedWarriorCreated;
             mClient.WorkerCreated += ClientOnWorkerCreated;

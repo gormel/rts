@@ -10,7 +10,7 @@ namespace Assets.Networking
 {
     class ClientBuildingTemplateState : IBuildingTemplateInfo, IStateHolder<BuildingTemplateState>
     {
-        public BuildingTemplateState State { get; } = new BuildingTemplateState();
+        public BuildingTemplateState State { get; private set; } = new BuildingTemplateState();
 
         public Guid ID => Guid.Parse(State.Base.Base.ID.Value);
         public Guid PlayerID => Guid.Parse(State.Base.Base.PlayerID.Value);
@@ -20,6 +20,11 @@ namespace Assets.Networking
         public Vector2 Size => State.Base.Size.ToUnity();
         public float Progress => State.Progress;
         public int AttachedWorkers => State.AttachedWorkers;
+
+        public void ResetState()
+        {
+            State = new BuildingTemplateState();
+        }
     }
 
     class ClientBuildingTemplateOrders : IBuildingTemplateOrders

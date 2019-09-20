@@ -6,7 +6,7 @@ message ID {
 
 message WarriorUnitState {
 	UnitState Base = 1;
-    Boolean IsAttacks = 2;
+    bool IsAttacks = 2;
     float AttackRange = 3;
     float AttackSpeed = 4;
     int32 Damage = 5;
