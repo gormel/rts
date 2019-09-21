@@ -35,7 +35,6 @@ namespace Assets.Core.GameObjects.Base
             protected override async Task OnBegin()
             {
                 await mUnit.PathFinder.SetTarget(mPosition, mUnit.Game.Map.Data);
-                mUnit.Destignation = mPosition;
                 mUnit.PathFinder.Arrived += PathFinderOnArrived;
             }
 
@@ -47,8 +46,6 @@ namespace Assets.Core.GameObjects.Base
 
             protected override void OnUpdate(TimeSpan deltaTime)
             {
-                mUnit.Position = mUnit.PathFinder.CurrentPosition;
-                mUnit.Direction = mUnit.PathFinder.CurrentDirection;
             }
 
             protected override void OnCancel()
@@ -99,6 +96,10 @@ namespace Assets.Core.GameObjects.Base
                 if (mOrder.State == OrderState.Completed)
                     mOrder = mOrder.Next;
             }
+
+            Position = PathFinder.CurrentPosition;
+            Direction = PathFinder.CurrentDirection;
+            Destignation = PathFinder.Target;
         }
     }
 }

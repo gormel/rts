@@ -35,7 +35,16 @@ namespace Assets.Core.GameObjects.Base
             {
                 mWarrior = warrior;
                 mTarget = target;
+                mTarget.RemovedFromGame += TargetOnRemovedFromGame;
             }
+
+            private void TargetOnRemovedFromGame(RtsGameObject obj)
+            {
+                mTarget.RemovedFromGame -= TargetOnRemovedFromGame;
+                End();
+                OnCancel();
+            }
+
             protected override Task OnBegin()
             {
                 return Task.CompletedTask;
@@ -43,10 +52,6 @@ namespace Assets.Core.GameObjects.Base
 
             protected override void OnUpdate(TimeSpan deltaTime)
             {
-                mWarrior.Position = mWarrior.PathFinder.CurrentPosition;
-                mWarrior.Direction = mWarrior.PathFinder.CurrentDirection;
-                mWarrior.Destignation = mTarget.Position;
-
                 var d = Vector2.Distance(mWarrior.Position, mTarget.Position);
                 if (d > mWarrior.AttackRange)
                 {

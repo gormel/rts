@@ -44,6 +44,32 @@ namespace Assets.Interaction
             }
         }
 
+        private class AttackInterfaceAction<TOrders, TInfo> : InterfaceAction
+            where TOrders : IWarriorOrders
+            where TInfo : IWarriorInfo
+        {
+            private IEnumerable<UnitView<TOrders, TInfo>> mViews;
+
+            public AttackInterfaceAction(IEnumerable<UnitView<TOrders, TInfo>> views)
+            {
+                mViews = views;
+            }
+
+            public override void Resolve(Vector2 position)
+            {
+                var hit = Raycast<SelectableView>(Input.mousePosition);
+                if (hit == null)
+                    return;
+
+                var target = hit.Object as IInfoIdProvider;
+                if (target == null)
+                    return;
+
+                foreach (var view in mViews)
+                    view.Orders.Attack(target.ID);
+            }
+        }
+
         private class GoToInterfaceAction<TOrders, TInfo> : InterfaceAction
             where TOrders : IUnitOrders
             where TInfo : IUnitInfo
@@ -135,7 +161,7 @@ namespace Assets.Interaction
         private bool mSelectionInProgress;
         private Vector3 mSelectionStartPosition;
 
-        private RaycastResult<T> RaycastBase<T>(Vector2 mouse, Func<Ray, RaycastHit[]> raycaster) where T : class
+        private static RaycastResult<T> RaycastBase<T>(Vector2 mouse, Func<Ray, RaycastHit[]> raycaster) where T : class
         {
             var ray = Camera.main.ScreenPointToRay(mouse);
             var hits = raycaster(ray);
@@ -152,7 +178,7 @@ namespace Assets.Interaction
             return null;
         }
 
-        private RaycastResult<T> Raycast<T>(Vector2 mouse) where T : class
+        private static RaycastResult<T> Raycast<T>(Vector2 mouse) where T : class
         {
             return RaycastBase<T>(mouse, Physics.RaycastAll);
         }
@@ -165,6 +191,16 @@ namespace Assets.Interaction
                 mCurrentAction.Cancel();
 
             mCurrentAction = new GoToInterfaceAction<TOrders, TInfo>(views);
+        }
+
+        public void BeginAttack<TOrders, TInfo>(IEnumerable<UnitView<TOrders, TInfo>> views)
+            where TOrders : IWarriorOrders
+            where TInfo : IWarriorInfo
+        {
+            if (mCurrentAction != null)
+                mCurrentAction.Cancel();
+
+            mCurrentAction = new AttackInterfaceAction<TOrders, TInfo>(views);
         }
 
         public void BeginBuildingPlacement(IEnumerable<WorkerView> workers, Func<WorkerView, Vector2, Task<Guid>> createTemplate, Vector2 size)
