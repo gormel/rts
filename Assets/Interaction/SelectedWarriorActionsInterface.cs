@@ -1,11 +1,12 @@
 ﻿using Assets.Core.GameObjects.Base;
-using Assets.Core.GameObjects.Final;
-using Assets.Views;
 using Assets.Views.Base;
 
 namespace Assets.Interaction
 {
-    sealed class SelectedWarriorActionsInterface : SelectedUnitsActionsInterface<IRangedWarriorOrders, IRangedWarriorInfo, RangedWarriorView>
+    class SelectedWarriorActionsInterface<TOrders, TInfo, TView> : SelectedUnitsActionsInterface<TOrders, TInfo, TView>
+        where TOrders : IWarriorOrders
+        where TInfo : IWarriorInfo
+        where TView : UnitView<TOrders, TInfo>
     {
         public void BeginAttack()
         {
