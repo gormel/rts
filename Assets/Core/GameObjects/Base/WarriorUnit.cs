@@ -56,7 +56,6 @@ namespace Assets.Core.GameObjects.Base
                 if (d > mWarrior.AttackRange)
                 {
                     mWarrior.IsAttacks = false;
-                    mAttackCooldown = 0;
                     mWarrior.PathFinder.SetTarget(mTarget.Position, mWarrior.Game.Map.Data);
                 }
                 else
@@ -75,9 +74,9 @@ namespace Assets.Core.GameObjects.Base
                         mAttackCooldown = 0;
                     }
 
-                    mAttackCooldown += deltaTime.TotalSeconds;
                     mWarrior.IsAttacks = true;
                 }
+                mAttackCooldown += deltaTime.TotalSeconds;
             }
 
             protected override void OnCancel()
