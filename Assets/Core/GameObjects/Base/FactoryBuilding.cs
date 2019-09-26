@@ -76,7 +76,10 @@ namespace Assets.Core.GameObjects.Base {
                 return false;
 
             if (!Player.Money.Spend(cost))
+            {
+                await mPlacementService.ReleasePoint(point.ID);
                 return false;
+            }
 
             Queued++;
             var productionTime = TimeSpan.FromSeconds(10);

@@ -13,7 +13,7 @@ using UnityEngine;
 
 namespace Assets.Views
 {
-    sealed class BuildingTemplateView : ModelSelectableView<IBuildingTemplateOrders, IBuildingTemplateInfo>, IPlacementService
+    sealed class BuildingTemplateView : BuildingView<IBuildingTemplateOrders, IBuildingTemplateInfo>, IPlacementService
     {
         public override string Name => "Строительство";
 

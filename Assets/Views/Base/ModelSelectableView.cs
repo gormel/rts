@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using Assets.Core.GameObjects.Base;
+using UnityEngine;
 
 namespace Assets.Views.Base
 {
@@ -17,8 +19,32 @@ namespace Assets.Views.Base
 
         Guid IInfoIdProvider.ID => Info.ID;
 
+        public GameObject ExplosionPrefab;
+
         protected virtual void OnLoad()
         {
+        }
+
+        protected virtual Vector2 Position => Info.Position;
+
+        public virtual void OnDestroy()
+        {
+            if (Map.isActiveAndEnabled)
+                Map.StartCoroutine(ShowExplosion());
+        }
+
+        private IEnumerator ShowExplosion()
+        {
+            if (ExplosionPrefab == null)
+                yield break;
+
+            var inst = Instantiate(ExplosionPrefab);
+            inst.transform.parent = Map.transform;
+            inst.transform.localPosition = Map.GetWorldPosition(Position);
+
+            yield return new WaitForSeconds(2);
+
+            Destroy(inst);
         }
 
         public void LoadModel(TOrderer orderer, TInfo info)

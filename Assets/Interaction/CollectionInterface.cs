@@ -25,7 +25,7 @@ namespace Assets.Interaction
             {
                 var tr = transform.GetChild(transform.childCount - 1);
                 Destroy(tr.gameObject);
-                tr.parent = null;
+                tr.SetParent(null, false);
             }
         }
     }

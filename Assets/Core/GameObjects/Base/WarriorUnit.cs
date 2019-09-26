@@ -30,12 +30,50 @@ namespace Assets.Core.GameObjects.Base
             private readonly WarriorUnit mWarrior;
             private readonly RtsGameObject mTarget;
             private double mAttackCooldown;
+            private float mTimeToAttack;
+
+            private Vector2 TargetPosition
+            {
+                get
+                {
+                    if (mTarget is Building)
+                        return ((Building)mTarget).Size / 2 + mTarget.Position;
+
+                    return mTarget.Position;
+                }
+            }
+
+            private float TargetDistance
+            {
+                get
+                {
+                    if (mTarget is Building)
+                    {
+                        var p = TargetPosition;
+                        var s = ((Building)mTarget).Size;
+                        var dx = Math.Max(Math.Abs(mWarrior.Position.x - p.x) - s.x / 2, 0);
+                        var dy = Math.Max(Math.Abs(mWarrior.Position.y - p.y) - s.y / 2, 0);
+
+                        return dx * dx + dy * dy;
+                    }
+
+                    return Vector2.Distance(mWarrior.Position, TargetPosition);
+                }
+            }
 
             public AttackOrder(WarriorUnit warrior, RtsGameObject target)
             {
                 mWarrior = warrior;
                 mTarget = target;
                 mTarget.RemovedFromGame += TargetOnRemovedFromGame;
+                mWarrior.PathFinder.Arrived += WarriorOnArrived;
+                mTimeToAttack = 1 / mWarrior.AttackSpeed;
+                mAttackCooldown = mTimeToAttack;
+            }
+
+            private void WarriorOnArrived()
+            {
+                mWarrior.PathFinder.LookAt(mTarget.Position, mWarrior.Game.Map.Data);
             }
 
             private void TargetOnRemovedFromGame(RtsGameObject obj)
@@ -52,23 +90,22 @@ namespace Assets.Core.GameObjects.Base
 
             protected override void OnUpdate(TimeSpan deltaTime)
             {
-                var timeToAttack = 1 / mWarrior.AttackSpeed;
-                var d = Vector2.Distance(mWarrior.Position, mTarget.Position);
-                if (d > mWarrior.AttackRange)
+                if (TargetDistance > mWarrior.AttackRange)
                 {
                     mWarrior.IsAttacks = false;
-                    if (mAttackCooldown > timeToAttack)
-                        mWarrior.PathFinder.SetTarget(mTarget.Position, mWarrior.Game.Map.Data);
+                    if (mAttackCooldown > mTimeToAttack)
+                        mWarrior.PathFinder.SetTarget(TargetPosition, mWarrior.Game.Map.Data);
                 }
                 else
                 {
                     if (!mWarrior.IsAttacks)
                     {
                         mWarrior.PathFinder.Stop();
-                        mWarrior.PathFinder.LookAt(mTarget.Position, mWarrior.Game.Map.Data);
                     }
 
-                    if (mAttackCooldown > timeToAttack)
+                    mWarrior.PathFinder.LookAt(TargetPosition, mWarrior.Game.Map.Data);
+
+                    if (mAttackCooldown > mTimeToAttack)
                     {
                         mTarget.Health -= mWarrior.Damage;
                         if (mTarget.Health <= 0)

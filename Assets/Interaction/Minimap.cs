@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Assets.Core.Map;
 using Assets.Utils;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -22,6 +23,15 @@ namespace Assets.Interaction
         void OnEnable()
         {
             mRectTransform = GetComponent<RectTransform>();
+            Root.MapLoaded += RootOnMapLoaded;
+        }
+
+        private void RootOnMapLoaded(IMapData obj)
+        {
+            var x = (obj.Width - 1) / 2f;
+            var z = (obj.Length - 1) / 2f;
+            MinimapCamera.transform.localPosition = new Vector3(x, 50, z);
+            MinimapCamera.orthographicSize = Mathf.Max(x, z);
         }
 
         void Update()

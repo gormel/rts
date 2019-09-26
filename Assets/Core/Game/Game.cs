@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,12 +15,12 @@ namespace Assets.Core.Game
         public Map.Map Map { get; }
 
         private IDictionary<Guid, RtsGameObject> mGameObjects = new Dictionary<Guid, RtsGameObject>();
-        private ICollection<Action> mRequested = new List<Action>();
+        private ConcurrentBag<Action> mRequested = new ConcurrentBag<Action>();
         private ICollection<Player> mPlayers = new List<Player>();
 
         public Game()
         {
-            Map = new Map.Map(50, 50);
+            Map = new Map.Map(70, 70);
         }
 
         public void AddPlayer(Player player)
@@ -79,9 +80,10 @@ namespace Assets.Core.Game
                 o.Update(elapsed);
 
             foreach (var request in mRequested.ToList())
-                request?.Invoke();
+                request.Invoke();
 
-            mRequested.Clear();
+            while (!mRequested.IsEmpty)
+                mRequested.TryTake(out Action a);
         }
 
         public bool GetIsAreaFree(Vector2 position, Vector2 size)

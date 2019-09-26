@@ -191,6 +191,8 @@ class Root : MonoBehaviour
     public IPlayerState Player { get; private set; }
     public MapView MapView { get; private set; }
 
+    public event Action<IMapData> MapLoaded;
+
     void Start()
     {
         if (GameUtils.CurrentMode == GameMode.Server)
@@ -335,6 +337,7 @@ class Root : MonoBehaviour
 
         view.LoadMap(map, generateNavMesh);
         mapInstance.transform.parent = transform;
+        MapLoaded?.Invoke(map);
         return view;
     }
 

@@ -7,12 +7,12 @@ using Assets.Utils;
 using UnityEngine;
 
 namespace Assets.Views.Base {
-    abstract class FactoryBuildingView<TOrderer, TInfo> : ModelSelectableView<TOrderer, TInfo>, IPlacementService
+    abstract class FactoryBuildingView<TOrderer, TInfo> : BuildingView<TOrderer, TInfo>, IPlacementService
         where TOrderer : IFactoryBuildingOrders
         where TInfo : IFactoryBuildingInfo
     {
         public GameObject[] PlacementPoints;
-        private HashSet<int> mLockedPoints = new HashSet<int>();
+        public HashSet<int> mLockedPoints = new HashSet<int>();
 
         public LineRenderer WaypointLine;
 

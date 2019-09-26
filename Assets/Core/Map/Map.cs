@@ -40,7 +40,7 @@ namespace Assets.Core.Map
             }
 
             var objs = new MapObject[width, length];
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 10; i++)
             {
                 var x = Random.Range(0, width);
                 var y = Random.Range(0, length);

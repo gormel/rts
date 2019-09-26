@@ -530,6 +530,8 @@ MonoBehaviour:
   EnemyMaterial: {fileID: 2100000, guid: c9217accbdfa61c40b586bd613264b65, type: 2}
   MaterialTarget: {fileID: 4291373647655705811}
   SelectionPriority: 0
+  ExplosionPrefab: {fileID: 4269541658022102700, guid: aa65bcd20538a464bbb22a2733200282,
+    type: 3}
   PlacementPoints:
   - {fileID: 5493772397482835932}
   - {fileID: 19536421629711886}
@@ -1109,6 +1111,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 6298486135613592611}
     m_Modifications:
+    - target: {fileID: 100000, guid: d438405843a4772489eb806967ffa384, type: 3}
+      propertyPath: m_Name
+      value: Barrack
+      objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: d438405843a4772489eb806967ffa384, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.5
@@ -1164,10 +1170,6 @@ PrefabInstance:
     - target: {fileID: 400000, guid: d438405843a4772489eb806967ffa384, type: 3}
       propertyPath: m_LocalScale.z
       value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 100000, guid: d438405843a4772489eb806967ffa384, type: 3}
-      propertyPath: m_Name
-      value: Barrack
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d438405843a4772489eb806967ffa384, type: 3}

@@ -174,6 +174,8 @@ MonoBehaviour:
   EnemyMaterial: {fileID: 2100000, guid: c9217accbdfa61c40b586bd613264b65, type: 2}
   MaterialTarget: {fileID: 143175771840911817}
   SelectionPriority: 0
+  ExplosionPrefab: {fileID: 4269541658022102700, guid: aa65bcd20538a464bbb22a2733200282,
+    type: 3}
 --- !u!1001 &143175771843068329
 PrefabInstance:
   m_ObjectHideFlags: 0
