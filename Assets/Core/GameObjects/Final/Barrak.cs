@@ -16,12 +16,13 @@ namespace Assets.Core.GameObjects.Final
     interface IBarrakOrders : IFactoryBuildingOrders
     {
         Task<bool> QueueRanged();
+        Task<bool> QueueMeelee();
     }
 
     internal class Barrak : FactoryBuilding, IBarrakInfo, IBarrakOrders
     {
         public const int MeleeWarriorCost = 50;
-        public const int RangedWarriorCost = 70;
+        public const int RangedWarriorCost = 130;
         public static Vector2 BuildingSize { get; } = new Vector2(2, 2);
         public const float MaximumHealthConst = 300;
         
@@ -35,6 +36,11 @@ namespace Assets.Core.GameObjects.Final
         public Task<bool> QueueRanged()
         {
             return QueueUnit(RangedWarriorCost, async (f, p) => await f.CreateRangedWarrior(p));
+        }
+
+        public Task<bool> QueueMeelee()
+        {
+            return QueueUnit(MeleeWarriorCost, async (f, p) => await f.CreateMeeleeWarrior(p));
         }
     }
 }

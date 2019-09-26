@@ -20,9 +20,9 @@ namespace Assets.Core.GameObjects.Final {
         public RangedWarrior(Game.Game game, IPathFinder pathFinder, Vector2 position)
             : base(game, pathFinder, position)
         {
-            Speed = 4;
-            MaxHealth = Health = 50;
-            AttackRange = 5;
+            Speed = 2;
+            MaxHealth = Health = 75;
+            AttackRange = 6;
             AttackSpeed = 2;
             Damage = 5;
         }

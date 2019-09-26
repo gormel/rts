@@ -15,5 +15,14 @@ namespace Assets.Interaction {
                 buildingView.QueueRangedWarrior();
             }
         }
+
+        public void BuildMeelee()
+        {
+            var views = Interface.Selected.OfType<BarrakView>();
+            foreach (var buildingView in views)
+            {
+                buildingView.QueueMeeleeWarrior();
+            }
+        }
     }
 }

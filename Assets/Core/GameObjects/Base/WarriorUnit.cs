@@ -52,11 +52,13 @@ namespace Assets.Core.GameObjects.Base
 
             protected override void OnUpdate(TimeSpan deltaTime)
             {
+                var timeToAttack = 1 / mWarrior.AttackSpeed;
                 var d = Vector2.Distance(mWarrior.Position, mTarget.Position);
                 if (d > mWarrior.AttackRange)
                 {
                     mWarrior.IsAttacks = false;
-                    mWarrior.PathFinder.SetTarget(mTarget.Position, mWarrior.Game.Map.Data);
+                    if (mAttackCooldown > timeToAttack)
+                        mWarrior.PathFinder.SetTarget(mTarget.Position, mWarrior.Game.Map.Data);
                 }
                 else
                 {
@@ -66,7 +68,7 @@ namespace Assets.Core.GameObjects.Base
                         mWarrior.PathFinder.LookAt(mTarget.Position, mWarrior.Game.Map.Data);
                     }
 
-                    if (mAttackCooldown > 1 / mWarrior.AttackSpeed)
+                    if (mAttackCooldown > timeToAttack)
                     {
                         mTarget.Health -= mWarrior.Damage;
                         if (mTarget.Health <= 0)

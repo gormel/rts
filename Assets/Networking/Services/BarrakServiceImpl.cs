@@ -71,6 +71,15 @@ namespace Assets.Networking.Services
             });
         }
 
+        public override Task<QueueMeeleeResult> QueueMeelee(QueueMeeleeRequest request, ServerCallContext context)
+        {
+            return mCommonService.ExecuteOrder(request.Base.BuildingID, async orders =>
+            {
+                var result = await orders.QueueMeelee();
+                return new QueueMeeleeResult { Base = new QueueUnitResult { Result = result } };
+            });
+        }
+
         public void Register(IBarrakOrders orders, IBarrakInfo info)
         {
             mCommonService.Register(orders, info);

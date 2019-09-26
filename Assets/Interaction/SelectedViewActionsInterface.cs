@@ -33,6 +33,7 @@ namespace Assets.Interaction
 
         public GameObject WorkerActions;
         public GameObject RangedWarriorActions;
+        public GameObject MeeleeWarriorActions;
         public GameObject CentralBuildingActions;
         public GameObject BuildingTemplateActions;
         public GameObject BarrakActions;
@@ -47,6 +48,7 @@ namespace Assets.Interaction
             {
                 new Activator<WorkerView>(WorkerActions), 
                 new Activator<RangedWarriorView>(RangedWarriorActions), 
+                new Activator<MeeleeWarriorView>(MeeleeWarriorActions), 
                 new Activator<CentralBuildingView>(CentralBuildingActions), 
                 new Activator<BuildingTemplateView>(BuildingTemplateActions), 
                 new Activator<BarrakView>(BarrakActions)

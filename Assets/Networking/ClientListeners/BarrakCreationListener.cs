@@ -59,6 +59,18 @@ namespace Assets.Networking.ClientListeners
             }).ResponseAsync;
             return resp.Base.Result;
         }
+
+        public async Task<bool> QueueMeelee()
+        {
+            var resp = await mClient.QueueMeeleeAsync(new QueueMeeleeRequest
+            {
+                Base = new QueueUnitRequest
+                {
+                    BuildingID = new ID { Value = mID }
+                }
+            }).ResponseAsync;
+            return resp.Base.Result;
+        }
     }
 
     class BarrakCreationListener : CommonCreationStateListener<

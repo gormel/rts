@@ -30,6 +30,7 @@ class Root : MonoBehaviour
         private readonly Game mGame;
         private readonly MapView mMap;
         private readonly GameObject mRangedWarriorPrefab;
+        private readonly GameObject mMeeleeWarriorPrefab;
         private readonly GameObject mWorkerPrefab;
         private readonly GameObject mBuildingTemplatePrefab;
         private readonly GameObject mCentralBuildingPrefab;
@@ -45,6 +46,7 @@ class Root : MonoBehaviour
             mGame = root.mGame;
             mMap = root.MapView;
             mRangedWarriorPrefab = root.RangedWarriorPrefab;
+            mMeeleeWarriorPrefab = root.MeeleeWarriorPrefab;
             mWorkerPrefab = root.WorkerPrefab;
             mBuildingTemplatePrefab = root.BuildingTemplatePrefab;
             mCentralBuildingPrefab = root.CentralBuildingPrefab;
@@ -108,6 +110,18 @@ class Root : MonoBehaviour
             return rangedWarrior;
         }
 
+        public async Task<MeeleeWarrior> CreateMeeleeWarrior(Vector2 position)
+        {
+            var meeleeWarrior = await CreateModelAndView<MeeleeWarriorView, MeeleeWarrior, IMeeleeWarriorOrders, IMeeleeWarriorInfo> (
+                mMeeleeWarriorPrefab,
+                view => new MeeleeWarrior(mGame, view, position), 
+                position
+            );
+            meeleeWarrior.AddedToGame += o => mServer.MeeleeWarriorRegistrator.Register(meeleeWarrior, meeleeWarrior);
+            meeleeWarrior.RemovedFromGame += o => mServer.MeeleeWarriorRegistrator.Unregister(o.ID);
+            return meeleeWarrior;
+        }
+
         public async Task<BuildingTemplate> CreateBuildingTemplate(Vector2 position, Func<Vector2, Task<Building>> building, TimeSpan buildTime, Vector2 size, float maxHealth)
         {
             var template = await CreateModelAndView<BuildingTemplateView, BuildingTemplate, IBuildingTemplateOrders, IBuildingTemplateInfo>(
@@ -164,6 +178,7 @@ class Root : MonoBehaviour
     public GameObject MapPrefab;
     public GameObject WorkerPrefab;
     public GameObject RangedWarriorPrefab;
+    public GameObject MeeleeWarriorPrefab;
     public GameObject BuildingTemplatePrefab;
     public GameObject CentralBuildingPrefab;
     public GameObject MiningCampPrefab;
@@ -209,6 +224,7 @@ class Root : MonoBehaviour
             mClient.PlayerConnected += state => Player = state;
             mClient.DisconnectedFromServer +=() => SceneManager.LoadScene(GuiSceneName);
 
+            mClient.MeeleeWarriorCreated += ClientOnMeeleeWarriorCreated;
             mClient.RangedWarriorCreated += ClientOnRangedWarriorCreated;
             mClient.WorkerCreated += ClientOnWorkerCreated;
             mClient.BuildingTemplateCreated += ClientOnBuildingTemplateCreated;
@@ -220,6 +236,11 @@ class Root : MonoBehaviour
 
             mClient.Listen();
         }
+    }
+
+    private void ClientOnMeeleeWarriorCreated(IMeeleeWarriorOrders orders, IMeeleeWarriorInfo info)
+    {
+        CreateClientView(orders, info, MeeleeWarriorPrefab);
     }
 
     private void ClientOnRangedWarriorCreated(IRangedWarriorOrders orders, IRangedWarriorInfo info)

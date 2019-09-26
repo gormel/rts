@@ -42,5 +42,10 @@ namespace Assets.Views
         {
             Orders.QueueRanged();
         }
+
+        public void QueueMeeleeWarrior()
+        {
+            Orders.QueueMeelee();
+        }
     }
 }

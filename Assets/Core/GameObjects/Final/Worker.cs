@@ -155,7 +155,7 @@ namespace Assets.Core.GameObjects.Final
         public Worker(Game.Game game, IPathFinder pathFinder, Vector2 position)
             : base(game, pathFinder, position)
         {
-            Speed = 3;
+            Speed = 1.8f;
             MaxHealth = Health = 40;
         }
 

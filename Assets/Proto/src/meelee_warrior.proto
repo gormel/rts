@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+import "base.proto";
+
+service MeeleeWarriorService {
+    rpc ListenCreation (Empty) returns (stream MeeleeWarriorState);
+    rpc ListenState(ID) returns (stream MeeleeWarriorState);
+
+    rpc GoTo(GoToRequest) returns (Empty);
+
+    rpc Attack(AttackRequest) returns (Empty);
+}
+
+message MeeleeWarriorState {
+    WarriorUnitState Base = 1;
+}

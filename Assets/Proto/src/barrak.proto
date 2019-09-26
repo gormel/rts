@@ -9,6 +9,7 @@ service BarrakService {
     rpc SetWaypoint(SetWaypointRequest) returns (Empty);
 
     rpc QueueRanged(QueueRangedRequest) returns (QueueRangedResult);
+    rpc QueueMeelee(QueueMeeleeRequest) returns (QueueMeeleeResult);
 }
 
 message QueueRangedRequest {
@@ -16,6 +17,14 @@ message QueueRangedRequest {
 }
 
 message QueueRangedResult {
+    QueueUnitResult Base = 1;
+}
+
+message QueueMeeleeRequest {
+    QueueUnitRequest Base = 1;
+}
+
+message QueueMeeleeResult {
     QueueUnitResult Base = 1;
 }
 
