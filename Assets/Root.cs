@@ -208,7 +208,7 @@ class Root : MonoBehaviour
 
             var player = new Player(controlledFactory);
             Player = player;
-            player.Money.Store(100000);
+            player.Money.Store(100);
             mGame.AddPlayer(player);
 
             mServer.Listen(SyncContext, enemyFactory, mGame);
