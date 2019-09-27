@@ -19,10 +19,24 @@ namespace Assets.Views
         public GameObject ChildContainer;
         public GameObject ObjectsContainer;
 
+        public GameObject FogOfWar;
+        public Camera FogOfWarCamera;
+        public RenderTexture FogOfWarTexture;
+
         public GameObject TreePrefab;
         public GameObject CrystalPrefab;
 
         private IMapData mMapData;
+
+        private static void ApplyMesh(MeshFilter filter, List<Vector3> verts, int[] indices, List<Vector2> uv)
+        {
+            filter.mesh.SetVertices(verts);
+            filter.mesh.SetIndices(indices, MeshTopology.Quads, 0);
+            filter.mesh.SetUVs(0, uv);
+            filter.mesh.RecalculateNormals();
+            filter.mesh.RecalculateTangents();
+            filter.mesh.RecalculateBounds();
+        }
 
         public void LoadMap(IMapData mapData, bool generateNavMesh)
         {
@@ -33,16 +47,24 @@ namespace Assets.Views
             if (meshFilter.mesh == null)
                 meshFilter.mesh = new Mesh();
 
+            var fowMeshFilter = FogOfWar.GetComponent<MeshFilter>();
+            if (fowMeshFilter.mesh == null)
+                fowMeshFilter.mesh = new Mesh();
+
+            var fowVertices = new List<Vector3>();
             var mapVertices = new List<Vector3>();
             var mapUVs = new List<Vector2>();
+            var fowUVs = new List<Vector2>();
             var i = 0;
             var mapIndices = new int[(mapData.Width - 1) * (mapData.Length - 1) * 4];
             for (int x = 0; x < mapData.Width; x++)
             {
                 for (int y = 0; y < mapData.Length; y++)
                 {
+                    fowVertices.Add(GameUtils.GetPosition(new Vector2(x, y), mapData));
                     mapVertices.Add(GameUtils.GetPosition(new Vector2(x, y), mapData));
                     mapUVs.Add(new Vector2(x, y) / 4);
+                    fowUVs.Add(new Vector2((float)x / mapData.Width, (float)y / mapData.Length));
 
                     if (y == mapData.Length - 1 || x == mapData.Width - 1)
                         continue;
@@ -54,18 +76,16 @@ namespace Assets.Views
                 }
             }
 
-            meshFilter.mesh.SetVertices(mapVertices);
-            meshFilter.mesh.SetIndices(mapIndices, MeshTopology.Quads, 0);
-            meshFilter.mesh.SetUVs(0, mapUVs);
-            meshFilter.mesh.RecalculateNormals();
-            meshFilter.mesh.RecalculateTangents();
-            meshFilter.mesh.RecalculateBounds();
+            ApplyMesh(meshFilter, mapVertices, mapIndices, mapUVs);
+            ApplyMesh(fowMeshFilter, fowVertices, mapIndices, fowUVs);
 
-            var collider = GetComponent<MeshCollider>();
-            if (collider != null)
-            {
-                collider.sharedMesh = meshFilter.mesh;
-            }
+            var mapCollider = GetComponent<MeshCollider>();
+            if (mapCollider != null)
+                mapCollider.sharedMesh = meshFilter.mesh;
+
+            var fowCollider = FogOfWar.GetComponent<MeshCollider>();
+            if (fowCollider != null)
+                fowCollider.sharedMesh = fowMeshFilter.mesh;
 
             gameObject.isStatic = true;
 
@@ -110,6 +130,10 @@ namespace Assets.Views
                 NavMesh.AddNavMeshData(navMeshData);
             }
             mMapData = mapData;
+            FogOfWarTexture.width = mapData.Width;
+            FogOfWarTexture.height = mapData.Length;
+            FogOfWarCamera.orthographicSize = Mathf.Max(mapData.Width - 1, mapData.Length - 1) / 2f;
+            FogOfWarCamera.transform.localPosition = new Vector3((mapData.Width - 1) / 2f, 10, (mapData.Length - 1) / 2f);
         }
 
         public bool IsAreaFree(Vector2 position, Vector2 size)

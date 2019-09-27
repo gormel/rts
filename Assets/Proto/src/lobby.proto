@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+import "base.proto";
+
+service LobbyService {
+    rpc ListenUserState(Empty) returns (stream UserState);
+    rpc ListenStart(Empty) returns (stream StartState);
+}
+
+message StartState {
+    bool Start = 1;
+}
+
+message UserState {
+    string ID = 1;
+    bool Connected = 2;
+}

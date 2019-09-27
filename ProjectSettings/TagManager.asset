@@ -14,7 +14,7 @@ TagManager:
   - 
   - 
   - PostProcessing
-  - 
+  - FogOfWar
   - 
   - 
   - 
@@ -40,4 +40,13 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Terrain
+    uniqueID: 3628906205
+    locked: 0
+  - name: GameUI
+    uniqueID: 3004823291
+    locked: 0
+  - name: Object
+    uniqueID: 1671480249
     locked: 0

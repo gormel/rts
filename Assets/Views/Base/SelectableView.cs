@@ -36,11 +36,13 @@ namespace Assets.Views.Base
             {
                 mIsControlable = value;
                 MaterialTarget.sharedMaterial = mIsControlable ? AllyMaterial : EnemyMaterial;
+                FogOfWarBrush.SetActive(mIsControlable);
             }
         }
 
         public bool IsClient { get; set; }
 
+        public GameObject FogOfWarBrush;
         public GameObject SelectionObject;
         public Material AllyMaterial;
         public Material EnemyMaterial;

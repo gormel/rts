@@ -100,7 +100,7 @@ namespace Assets.Networking
             mRangedWarriorCreationStateListener = new RangedWarriorCreationStateListener(syncContext);
             mRangedWarriorCreationStateListener.Created += (orders, info) => RangedWarriorCreated?.Invoke(orders, info);
             mRangedWarriorCreationStateListener.Destroyed += info => ObjectDestroyed?.Invoke(info);
-
+            
             mMeeleeWarriorCreationStateListener = new MeeleeWarriorCreationStateListener(syncContext);
             mMeeleeWarriorCreationStateListener.Created += (orders, info) => MeeleeWarriorCreated?.Invoke(orders, info);
             mMeeleeWarriorCreationStateListener.Destroyed += info => ObjectDestroyed?.Invoke(info);
