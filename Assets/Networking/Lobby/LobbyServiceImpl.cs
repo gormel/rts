@@ -57,7 +57,7 @@ namespace Assets.Networking.Lobby
 
         public override async Task ListenStart(UserState request, IServerStreamWriter<StartState> responseStream, ServerCallContext context)
         {
-            if (mStartRequests.ContainsKey(request.ID))
+            if (mStartRequests.ContainsKey(request.ID) || request.ID == mHostID)
                 throw new AuthenticationException("This nickname already busy");
 
             ReportUserState(request.ID, true);
