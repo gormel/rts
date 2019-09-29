@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Assets.Core.GameObjects.Final;
 using Assets.Networking.ClientListeners;
@@ -65,14 +66,14 @@ namespace Assets.Networking
         public CentralBuildingCreationListener(UnitySyncContext syncContext)
             : base(syncContext) {}
 
-        protected override AsyncServerStreamingCall<CentralBuildingState> GetCreationCall(CentralBuildingService.CentralBuildingServiceClient client)
+        protected override AsyncServerStreamingCall<CentralBuildingState> GetCreationCall(CentralBuildingService.CentralBuildingServiceClient client, CancellationToken token)
         {
-            return client.ListenCreation(new Empty());
+            return client.ListenCreation(new Empty(), cancellationToken: token);
         }
 
-        protected override AsyncServerStreamingCall<CentralBuildingState> GetUpdatesCall(CentralBuildingService.CentralBuildingServiceClient client, ID id)
+        protected override AsyncServerStreamingCall<CentralBuildingState> GetUpdatesCall(CentralBuildingService.CentralBuildingServiceClient client, ID id, CancellationToken token)
         {
-            return client.ListenState(id);
+            return client.ListenState(id, cancellationToken: token);
         }
 
         protected override CentralBuildingService.CentralBuildingServiceClient CreateClient(Channel channel)

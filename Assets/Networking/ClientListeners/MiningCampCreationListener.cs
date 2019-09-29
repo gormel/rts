@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using Assets.Core.GameObjects.Final;
 using Assets.Networking.ClientListeners;
 using Assets.Utils;
@@ -50,14 +51,14 @@ namespace Assets.Networking
             return new ClientMiningCampOrders();
         }
 
-        protected override AsyncServerStreamingCall<MiningCampState> GetCreationCall(MiningCampService.MiningCampServiceClient client)
+        protected override AsyncServerStreamingCall<MiningCampState> GetCreationCall(MiningCampService.MiningCampServiceClient client, CancellationToken token)
         {
-            return client.ListenCreation(new Empty());
+            return client.ListenCreation(new Empty(), cancellationToken: token);
         }
 
-        protected override AsyncServerStreamingCall<MiningCampState> GetUpdatesCall(MiningCampService.MiningCampServiceClient client, ID id)
+        protected override AsyncServerStreamingCall<MiningCampState> GetUpdatesCall(MiningCampService.MiningCampServiceClient client, ID id, CancellationToken token)
         {
-            return client.ListenState(id);
+            return client.ListenState(id, cancellationToken: token);
         }
     }
 }

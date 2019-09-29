@@ -13,13 +13,20 @@ namespace Assets.Utils
     }
     static class GameUtils
     {
+        public static string Nickname { get; set; } = "Player";
         public static GameMode CurrentMode { get; set; } = GameMode.Server;
         public static IPAddress IP { get; set; } = IPAddress.Parse("127.0.0.1");
-        public static int Port { get; set; } = 15656;
+        public static int GamePort { get; set; } = 15656;
+        public static int LobbyPort { get; set; } = 15657;
 
         static GameUtils()
         {
-            //read cmd or editor config & set CurrentMode
+            Nickname += Random.Range(0, 10);
+            //save & restore settings;
+        }
+
+        public static void SaveSettings()
+        {
         }
 
         public static Vector3 GetPosition(Vector2 flatPosition, IMapData mapData)

@@ -108,7 +108,7 @@ namespace Assets.Networking
 
         public Task Listen()
         {
-            mChannel = new Channel(GameUtils.IP.ToString(), GameUtils.Port, ChannelCredentials.Insecure);
+            mChannel = new Channel(GameUtils.IP.ToString(), GameUtils.GamePort, ChannelCredentials.Insecure);
             return Task.WhenAll(
                 ListenGameState(mChannel)
             );
@@ -127,39 +127,54 @@ namespace Assets.Networking
 
             try
             {
-                var client = new GameService.GameServiceClient(channel);
-                using (var call = client.ConnectAndListenState(new Empty()))
-                using (var stateStream = call.ResponseStream)
+                while (true)
                 {
-                    while (await stateStream.MoveNext(channel.ShutdownToken))
+                    try
                     {
-                        channel.ShutdownToken.ThrowIfCancellationRequested();
-                        var state = stateStream.Current;
-
-                        if (state.Map != null)
-                            mapState.State = new MapState(state.Map);
-
-                        if (state.Player != null)
-                            playerState.PlayerState = new PlayerState(state.Player);
-
-                        channel.ShutdownToken.ThrowIfCancellationRequested();
-
-                        if (!mMapLoaded)
+                        var client = new GameService.GameServiceClient(channel);
+                        using (var call = client.ConnectAndListenState(new Empty()))
+                        using (var stateStream = call.ResponseStream)
                         {
-                            mMapLoaded = true;
-                            await mSyncContext.Execute(() =>
+                            while (await stateStream.MoveNext(channel.ShutdownToken))
                             {
-                                MapLoaded?.Invoke(mapState);
-                                BaseCreated?.Invoke(state.BasePos.ToUnity());
-                            }, channel.ShutdownToken);
-                            var t0 = mWorkerCreationStateListener.ListenCreations(mChannel);
-                            var t1 = mBuildingTemplateCreationStateListener.ListenCreations(mChannel);
-                            var t2 = mCentralBuildingCreationStateListener.ListenCreations(mChannel);
-                            var t3 = mMiningCampCreationListener.ListenCreations(mChannel);
-                            var t4 = mBarrakCreationListener.ListenCreations(mChannel);
-                            var t5 = mRangedWarriorCreationStateListener.ListenCreations(mChannel);
-                            var t6 = mMeeleeWarriorCreationStateListener.ListenCreations(mChannel);
+                                channel.ShutdownToken.ThrowIfCancellationRequested();
+                                var state = stateStream.Current;
+
+                                if (state.Map != null)
+                                    mapState.State = new MapState(state.Map);
+
+                                if (state.Player != null)
+                                    playerState.PlayerState = new PlayerState(state.Player);
+
+                                channel.ShutdownToken.ThrowIfCancellationRequested();
+
+                                if (!mMapLoaded)
+                                {
+                                    mMapLoaded = true;
+                                    await mSyncContext.Execute(() =>
+                                    {
+                                        MapLoaded?.Invoke(mapState);
+                                        BaseCreated?.Invoke(state.BasePos.ToUnity());
+                                    }, channel.ShutdownToken);
+                                    var t0 = mWorkerCreationStateListener.ListenCreations(mChannel);
+                                    var t1 = mBuildingTemplateCreationStateListener.ListenCreations(mChannel);
+                                    var t2 = mCentralBuildingCreationStateListener.ListenCreations(mChannel);
+                                    var t3 = mMiningCampCreationListener.ListenCreations(mChannel);
+                                    var t4 = mBarrakCreationListener.ListenCreations(mChannel);
+                                    var t5 = mRangedWarriorCreationStateListener.ListenCreations(mChannel);
+                                    var t6 = mMeeleeWarriorCreationStateListener.ListenCreations(mChannel);
+                                }
+                            }
                         }
+
+                        break;
+                    }
+                    catch (RpcException e)
+                    {
+                        if (e.Status.StatusCode != StatusCode.Unavailable)
+                            throw;
+
+                        await Task.Delay(TimeSpan.FromSeconds(0.5));
                     }
                 }
             }

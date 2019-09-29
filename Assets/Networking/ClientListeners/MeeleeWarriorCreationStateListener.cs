@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Assets.Core.GameObjects.Final;
 using Assets.Utils;
@@ -75,14 +76,14 @@ namespace Assets.Networking.ClientListeners
         public MeeleeWarriorCreationStateListener(UnitySyncContext syncContext)
             : base(syncContext) { }
 
-        protected override AsyncServerStreamingCall<MeeleeWarriorState> GetCreationCall(MeeleeWarriorService.MeeleeWarriorServiceClient client)
+        protected override AsyncServerStreamingCall<MeeleeWarriorState> GetCreationCall(MeeleeWarriorService.MeeleeWarriorServiceClient client, CancellationToken token)
         {
-            return client.ListenCreation(new Empty());
+            return client.ListenCreation(new Empty(), cancellationToken: token);
         }
 
-        protected override AsyncServerStreamingCall<MeeleeWarriorState> GetUpdatesCall(MeeleeWarriorService.MeeleeWarriorServiceClient client, ID id)
+        protected override AsyncServerStreamingCall<MeeleeWarriorState> GetUpdatesCall(MeeleeWarriorService.MeeleeWarriorServiceClient client, ID id, CancellationToken token)
         {
-            return client.ListenState(id);
+            return client.ListenState(id, cancellationToken: token);
         }
 
         protected override MeeleeWarriorService.MeeleeWarriorServiceClient CreateClient(Channel channel)

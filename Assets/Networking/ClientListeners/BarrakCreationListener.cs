@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Assets.Core.GameObjects.Final;
 using Assets.Utils;
@@ -87,14 +88,14 @@ namespace Assets.Networking.ClientListeners
         {
         }
 
-        protected override AsyncServerStreamingCall<BarrakState> GetCreationCall(BarrakService.BarrakServiceClient client)
+        protected override AsyncServerStreamingCall<BarrakState> GetCreationCall(BarrakService.BarrakServiceClient client, CancellationToken token)
         {
-            return client.ListenCreation(new Empty());
+            return client.ListenCreation(new Empty(), cancellationToken: token);
         }
 
-        protected override AsyncServerStreamingCall<BarrakState> GetUpdatesCall(BarrakService.BarrakServiceClient client, ID id)
+        protected override AsyncServerStreamingCall<BarrakState> GetUpdatesCall(BarrakService.BarrakServiceClient client, ID id, CancellationToken token)
         {
-            return client.ListenState(id);
+            return client.ListenState(id, cancellationToken: token);
         }
 
         protected override BarrakService.BarrakServiceClient CreateClient(Channel channel)

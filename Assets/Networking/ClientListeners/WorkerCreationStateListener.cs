@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Assets.Core.GameObjects.Final;
 using Assets.Networking.ClientListeners;
@@ -100,14 +101,14 @@ namespace Assets.Networking
         {
         }
 
-        protected override AsyncServerStreamingCall<WorkerState> GetCreationCall(WorkerService.WorkerServiceClient client)
+        protected override AsyncServerStreamingCall<WorkerState> GetCreationCall(WorkerService.WorkerServiceClient client, CancellationToken token)
         {
-            return client.ListenCreation(new Empty());
+            return client.ListenCreation(new Empty(), cancellationToken: token);
         }
 
-        protected override AsyncServerStreamingCall<WorkerState> GetUpdatesCall(WorkerService.WorkerServiceClient client, ID id)
+        protected override AsyncServerStreamingCall<WorkerState> GetUpdatesCall(WorkerService.WorkerServiceClient client, ID id, CancellationToken token)
         {
-            return client.ListenState(id);
+            return client.ListenState(id, cancellationToken: token);
         }
 
         protected override WorkerService.WorkerServiceClient CreateClient(Channel channel)

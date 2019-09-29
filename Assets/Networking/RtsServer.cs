@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Assets.Core.Game;
@@ -35,7 +36,7 @@ namespace Assets.Networking
         public void Listen(UnitySyncContext syncContext, IGameObjectFactory enemyFactory, Game game)
         {
             mServer = new Server();
-            mServer.Ports.Add(new ServerPort(GameUtils.IP.ToString(), GameUtils.Port, ServerCredentials.Insecure));
+            mServer.Ports.Add(new ServerPort(IPAddress.Any.ToString(), GameUtils.GamePort, ServerCredentials.Insecure));
             mServer.Services.Add(GameService.BindService(new GameServiceImpl(game, enemyFactory, syncContext)));
 
             var meeleeWarriorService = new MeeleeWarriorServiceImpl();

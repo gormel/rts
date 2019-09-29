@@ -15,29 +15,24 @@ namespace Assets.Interaction
 {
     class StartGui : MonoBehaviour
     {
-        public string GameSceneName;//нужен нормальный эдитор
+        public string LobbySceneName;//нужен нормальный эдитор
 
-        public InputField HostPortField;
         public InputField ConnectIPField;
-        public InputField ConnectPortField;
+        public InputField NicknameField;
 
         void Start()
         {
-            HostPortField.text = "15656";
-            ConnectIPField.text = "127.0.0.1";
-            ConnectPortField.text = "15656";
+            ConnectIPField.text = GameUtils.IP.ToString();
+            NicknameField.text = GameUtils.Nickname;
         }
 
         public void Host()
         {
-            int port;
-            if (!int.TryParse(ConnectPortField.text, out port))
-                return;
-
-            GameUtils.IP = IPAddress.Any;
-            GameUtils.Port = port;
             GameUtils.CurrentMode = GameMode.Server;
-            SceneManager.LoadScene(GameSceneName);
+            if (!string.IsNullOrEmpty(NicknameField.text))
+                GameUtils.Nickname = NicknameField.text;
+
+            SceneManager.LoadScene(LobbySceneName);
         }
 
         public void Connect()
@@ -46,14 +41,17 @@ namespace Assets.Interaction
             if (!IPAddress.TryParse(ConnectIPField.text, out ip))
                 return;
 
-            int port;
-            if (!int.TryParse(ConnectPortField.text, out port))
-                return;
-
             GameUtils.IP = ip;
-            GameUtils.Port = port;
             GameUtils.CurrentMode = GameMode.Client;
-            SceneManager.LoadScene(GameSceneName);
+            if (!string.IsNullOrEmpty(NicknameField.text))
+                GameUtils.Nickname = NicknameField.text;
+
+            SceneManager.LoadScene(LobbySceneName);
+        }
+
+        void OnDestroy()
+        {
+            GameUtils.SaveSettings();
         }
     }
 }

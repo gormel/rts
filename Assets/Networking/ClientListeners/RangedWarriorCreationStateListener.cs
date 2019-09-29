@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Assets.Core.GameObjects.Base;
 using Assets.Core.GameObjects.Final;
@@ -73,14 +74,14 @@ namespace Assets.Networking
         public RangedWarriorCreationStateListener(UnitySyncContext syncContext)
             : base(syncContext) { }
 
-        protected override AsyncServerStreamingCall<RangedWarriorState> GetCreationCall(RangedWarriorService.RangedWarriorServiceClient client)
+        protected override AsyncServerStreamingCall<RangedWarriorState> GetCreationCall(RangedWarriorService.RangedWarriorServiceClient client, CancellationToken token)
         {
-            return client.ListenCreation(new Empty());
+            return client.ListenCreation(new Empty(), cancellationToken: token);
         }
 
-        protected override AsyncServerStreamingCall<RangedWarriorState> GetUpdatesCall(RangedWarriorService.RangedWarriorServiceClient client, ID id)
+        protected override AsyncServerStreamingCall<RangedWarriorState> GetUpdatesCall(RangedWarriorService.RangedWarriorServiceClient client, ID id, CancellationToken token)
         {
-            return client.ListenState(id);
+            return client.ListenState(id, cancellationToken: token);
         }
 
         protected override RangedWarriorService.RangedWarriorServiceClient CreateClient(Channel channel)

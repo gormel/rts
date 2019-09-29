@@ -20,8 +20,8 @@ namespace Assets.Networking.ClientListeners
         public event Action<TOrdersBase, TInfoBase> Created;
         public event Action<TInfoBase> Destroyed;
 
-        protected abstract AsyncServerStreamingCall<TState> GetCreationCall(TClient client);
-        protected abstract AsyncServerStreamingCall<TState> GetUpdatesCall(TClient client, ID id);
+        protected abstract AsyncServerStreamingCall<TState> GetCreationCall(TClient client, CancellationToken token);
+        protected abstract AsyncServerStreamingCall<TState> GetUpdatesCall(TClient client, ID id, CancellationToken token);
         protected abstract TClient CreateClient(Channel channel);
         protected abstract TOrders CreateOrders(TClient client, Guid id);
 
@@ -36,7 +36,7 @@ namespace Assets.Networking.ClientListeners
 
             try
             {
-                using (var call = GetCreationCall(client))
+                using (var call = GetCreationCall(client, channel.ShutdownToken))
                 using (var creationsStream = call.ResponseStream)
                 {
                     while (await creationsStream.MoveNext(channel.ShutdownToken))
@@ -65,7 +65,7 @@ namespace Assets.Networking.ClientListeners
         {
             try
             {
-                using (var call = GetUpdatesCall(client, new ID { Value = state.ID.ToString() }))
+                using (var call = GetUpdatesCall(client, new ID { Value = state.ID.ToString() }, token))
                 using (var updateStream = call.ResponseStream)
                 {
                     while (await updateStream.MoveNext(token))
