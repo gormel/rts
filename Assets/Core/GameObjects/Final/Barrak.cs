@@ -22,7 +22,11 @@ namespace Assets.Core.GameObjects.Final
     internal class Barrak : FactoryBuilding, IBarrakInfo, IBarrakOrders
     {
         public const int MeleeWarriorCost = 50;
+        public static readonly TimeSpan MeeleeWarriorProductionTime = TimeSpan.FromSeconds(5);
+
         public const int RangedWarriorCost = 130;
+        public static readonly TimeSpan RangedWarriorProductionTime = TimeSpan.FromSeconds(13);
+
         public static Vector2 BuildingSize { get; } = new Vector2(2, 2);
         public const float MaximumHealthConst = 300;
         
@@ -35,12 +39,12 @@ namespace Assets.Core.GameObjects.Final
 
         public Task<bool> QueueRanged()
         {
-            return QueueUnit(RangedWarriorCost, async (f, p) => await f.CreateRangedWarrior(p));
+            return QueueUnit(RangedWarriorCost, RangedWarriorProductionTime, async (f, p) => await f.CreateRangedWarrior(p));
         }
 
         public Task<bool> QueueMeelee()
         {
-            return QueueUnit(MeleeWarriorCost, async (f, p) => await f.CreateMeeleeWarrior(p));
+            return QueueUnit(MeleeWarriorCost, MeeleeWarriorProductionTime, async (f, p) => await f.CreateMeeleeWarrior(p));
         }
     }
 }

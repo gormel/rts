@@ -69,7 +69,7 @@ namespace Assets.Core.GameObjects.Base {
             return Task.CompletedTask;
         }
 
-        protected async Task<bool> QueueUnit(int cost, Func<IGameObjectFactory, Vector2, Task<Unit>> createUnit)
+        protected async Task<bool> QueueUnit(int cost, TimeSpan productionTime, Func<IGameObjectFactory, Vector2, Task<Unit>> createUnit)
         {
             var point = await mPlacementService.TryAllocatePoint();
             if (point == PlacementPoint.Invalid)
@@ -82,7 +82,6 @@ namespace Assets.Core.GameObjects.Base {
             }
 
             Queued++;
-            var productionTime = TimeSpan.FromSeconds(10);
             mOrders.Enqueue(new Order(productionTime, async () =>
             {
                 Queued--;

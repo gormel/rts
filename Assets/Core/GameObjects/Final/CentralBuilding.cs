@@ -19,10 +19,12 @@ namespace Assets.Core.GameObjects.Final
     internal class CentralBuilding : FactoryBuilding, ICentralBuildingInfo, ICentralBuildingOrders
     {
         public const int WorkerCost = 30;
+        public static readonly TimeSpan WorkerProductionTime = TimeSpan.FromSeconds(10);
+
         public static Vector2 BuildingSize { get; } = new Vector2(2, 2);
         public const float MaximumHealthConst = 400;
 
-        public float MiningSpeed { get; } = 2;
+        public float MiningSpeed { get; } = 0.5f;
         private double mMinedTemp;
 
         public CentralBuilding(Game.Game game, Vector2 position, IPlacementService placementService)
@@ -34,7 +36,7 @@ namespace Assets.Core.GameObjects.Final
 
         public Task<bool> QueueWorker()
         {
-            return QueueUnit(WorkerCost, async (f, p) => await f.CreateWorker(p));
+            return QueueUnit(WorkerCost, WorkerProductionTime, async (f, p) => await f.CreateWorker(p));
         }
 
         public override void Update(TimeSpan deltaTime)

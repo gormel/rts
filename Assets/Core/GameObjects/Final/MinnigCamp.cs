@@ -19,7 +19,7 @@ namespace Assets.Core.GameObjects.Final
         public static Vector2 BuildingSize { get; } = new Vector2(1, 1);
         public const float MaximumHealthConst = 100;
 
-        public float MiningSpeed { get; } = 10;
+        public float MiningSpeed { get; } = 2.5f;
 
         private double mMinedTemp;
         private int mMinedTotal;

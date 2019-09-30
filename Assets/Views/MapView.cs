@@ -127,6 +127,7 @@ namespace Assets.Views
 
                 var navMeshData = NavMeshBuilder.BuildNavMeshData(settings, new List<NavMeshBuildSource> { source }, new Bounds(new Vector3((float)mapData.Width / 2, 0, (float)mapData.Length / 2), new Vector3(mapData.Width, 2, mapData.Length)), transform.position, transform.rotation);
 
+                NavMesh.RemoveAllNavMeshData();
                 NavMesh.AddNavMeshData(navMeshData);
             }
             mMapData = mapData;
