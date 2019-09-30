@@ -35,7 +35,9 @@ namespace Assets.Views.Base
             set
             {
                 mIsControlable = value;
-                MaterialTarget.sharedMaterial = mIsControlable ? AllyMaterial : EnemyMaterial;
+                for (int i = 0; i < MaterialTarget.Length; i++)
+                    MaterialTarget[i].sharedMaterial = mIsControlable ? AllyMaterial : EnemyMaterial;
+
                 FogOfWarBrush.SetActive(mIsControlable);
             }
         }
@@ -46,7 +48,7 @@ namespace Assets.Views.Base
         public GameObject SelectionObject;
         public Material AllyMaterial;
         public Material EnemyMaterial;
-        public MeshRenderer MaterialTarget;
+        public MeshRenderer[] MaterialTarget;
 
         public UnitySyncContext SyncContext { get; set; }
 

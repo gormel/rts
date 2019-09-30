@@ -263,7 +263,7 @@ GameObject:
   - component: {fileID: 6632785505189669822}
   - component: {fileID: 6464518844039800622}
   - component: {fileID: 6545460995442815094}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: FogOfWar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
