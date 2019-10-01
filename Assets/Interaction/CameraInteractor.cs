@@ -9,7 +9,7 @@ namespace Assets.Interaction
 {
     class CameraInteractor : MonoBehaviour
     {
-        private bool mFocused;
+        private bool mFocused = true;
 
         public Vector3 UpMove;
         public Vector3 RightMove;
@@ -33,16 +33,16 @@ namespace Assets.Interaction
             var mouseX = Input.mousePosition.x;
             var mouseY = Input.mousePosition.y;
 
-            if (mouseX <= Border)
+            if (mouseX <= Border || Input.GetKey(KeyCode.LeftArrow))
                 velocity -= RightMove;
 
-            if (mouseX >= Screen.width - Border)
+            if (mouseX >= Screen.width - Border || Input.GetKey(KeyCode.RightArrow))
                 velocity += RightMove;
 
-            if (mouseY <= Border)
+            if (mouseY <= Border || Input.GetKey(KeyCode.DownArrow))
                 velocity -= UpMove;
 
-            if (mouseY >= Screen.height - Border)
+            if (mouseY >= Screen.height - Border || Input.GetKey(KeyCode.UpArrow))
                 velocity += UpMove;
 
             velocity.Normalize();
