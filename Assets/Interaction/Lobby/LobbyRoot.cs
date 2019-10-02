@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Assets.Networking.Lobby;
@@ -40,7 +41,7 @@ namespace Assets.Interaction.Lobby
             if (GameUtils.CurrentMode == GameMode.Server)
             {
                 mServer = new Server();
-                mServer.Ports.Add(new ServerPort(GameUtils.IP.ToString(), GameUtils.LobbyPort, ServerCredentials.Insecure));
+                mServer.Ports.Add(new ServerPort(IPAddress.Any.ToString(), GameUtils.LobbyPort, ServerCredentials.Insecure));
                 mService = new LobbyServiceImpl(GameUtils.Nickname);
                 mServer.Services.Add(LobbyService.BindService(mService));
                 mService.OnUserStateChanged += ServiceOnOnUserStateChanged;
