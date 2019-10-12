@@ -27,7 +27,7 @@ namespace Assets.Interaction
             if (!Input.GetKey(KeyCode.LeftAlt))
                 return;
 #endif
-
+            
             var velocity = Vector3.zero;
 
             var mouseX = Input.mousePosition.x;

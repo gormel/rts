@@ -11,6 +11,9 @@ namespace Assets.Utils
         Server,
         Client
     }
+
+    
+
     static class GameUtils
     {
         public static string Nickname { get; set; } = "Player";
@@ -22,11 +25,18 @@ namespace Assets.Utils
         static GameUtils()
         {
             Nickname += Random.Range(0, 10);
+            if (PlayerPrefs.HasKey("Nickname"))
+                Nickname = PlayerPrefs.GetString("Nickname");
+            if (PlayerPrefs.HasKey("IP"))
+                IP = IPAddress.Parse(PlayerPrefs.GetString("IP"));
             //save & restore settings;
         }
 
         public static void SaveSettings()
         {
+            PlayerPrefs.SetString("Nickname", Nickname);
+            PlayerPrefs.GetString("IP", IP.ToString());
+            PlayerPrefs.Save();
         }
 
         public static Vector3 GetPosition(Vector2 flatPosition, IMapData mapData)
