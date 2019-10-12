@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 170076734}
-  m_IndirectSpecularColor: {r: 0.44535434, g: 0.48936307, b: 0.5436173, a: 1}
+  m_IndirectSpecularColor: {r: 0.44535416, g: 0.48936248, b: 0.5436173, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -211,6 +211,7 @@ MonoBehaviour:
   MinimapCamera: {fileID: 1229197139}
   MinimapTexture: {fileID: 8400000, guid: ee780a1ae1e3a4e4d95fbef4371d5ca2, type: 2}
   Root: {fileID: 1480507267}
+  Interface: {fileID: 1098300459}
 --- !u!1 &23530370
 GameObject:
   m_ObjectHideFlags: 0

@@ -17,6 +17,7 @@ namespace Assets.Interaction
         public Camera MinimapCamera;
         public RenderTexture MinimapTexture;
         public Root Root;
+        public UserInterface Interface;
 
         private RectTransform mRectTransform;
 
@@ -45,15 +46,21 @@ namespace Assets.Interaction
 
         public void OnPointerClick(PointerEventData eventData)
         {
-            if (eventData.button != PointerEventData.InputButton.Left)
-                return;
-
-            var local = (mRectTransform.InverseTransformPoint(eventData.position) / mRectTransform.rect.size + new Vector2(0.5f, 0.5f)) * 
+            var local = (mRectTransform.InverseTransformPoint(eventData.position) / mRectTransform.rect.size +
+                         new Vector2(0.5f, 0.5f)) *
                         new Vector2(MinimapTexture.width, MinimapTexture.height);
 
             var world = MinimapCamera.ScreenToWorldPoint(local);
 
-            Root.PlaseCamera(new Vector2(world.x, world.z));
+            if (eventData.button == PointerEventData.InputButton.Left)
+            {
+                Root.PlaseCamera(new Vector2(world.x, world.z));
+            }
+
+            if (eventData.button == PointerEventData.InputButton.Right)
+            {
+                Interface.ForwardRightClick(new Vector2(world.x, world.z));
+            }
         }
     }
 }

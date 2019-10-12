@@ -211,6 +211,17 @@ namespace Assets.Interaction
             mCurrentAction = new BuildingPlacementInterfaceAction(this, workers, createTemplate, size);
         }
 
+        public void ForwardRightClick(Vector2 mapPoint)
+        {
+            foreach (var view in Selected)
+            {
+                if (!view.IsControlable)
+                    continue;
+
+                view.OnRightClick(mapPoint);
+            }
+        }
+
         void Update()
         {
             Selected.RemoveAll(view => view == null || view.gameObject == null);
@@ -355,13 +366,7 @@ namespace Assets.Interaction
                 if (mapHit != null)
                 {
                     var mapPoint = GameUtils.GetFlatPosition(mapHit.HitPoint);
-                    foreach (var view in Selected)
-                    {
-                        if (!view.IsControlable)
-                            continue;
-
-                        view.OnRightClick(mapPoint);
-                    }
+                    ForwardRightClick(mapPoint);
 
                     return;
                 }
