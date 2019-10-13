@@ -38,7 +38,7 @@ namespace Assets.Core.GameObjects.Final
             protected override Task OnBegin()
             {
                 mWorker.IsBuilding = true;
-                mWorker.PathFinder.LookAt(mTemplate.Position + mTemplate.Size / 2f, mWorker.Game.Map.Data);
+                mWorker.PathFinder.SetLookAt(mTemplate.Position + mTemplate.Size / 2f, mWorker.Game.Map.Data);
                 mTemplate.AttachedWorkers++;
                 return Task.CompletedTask;
             }

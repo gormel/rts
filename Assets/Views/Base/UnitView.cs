@@ -26,6 +26,7 @@ namespace Assets.Views.Base
         public GameObject WaypointPrefab;
 
         private GameObject mWaypointInst;
+        private Vector3? mLookTarget;
 
         public override Rect FlatBounds => new Rect(CurrentPosition, Vector2.zero);
 
@@ -78,7 +79,7 @@ namespace Assets.Views.Base
             if (IsArrived)
                 return;
 
-            var pf = other.gameObject.GetComponentInChildren<IPathFinder>();
+            var pf = other.gameObject.GetComponentInChildren<IPathFinderBase>();
             if (pf != null && pf.IsArrived && other.gameObject.activeSelf && pf.Target == Target)
             {
                 mNavMeshAgent.ResetPath();
@@ -92,26 +93,24 @@ namespace Assets.Views.Base
         {
             if (!IsClient && !IsArrived && mNavMeshAgent.velocity.sqrMagnitude > 0)
                 transform.rotation = Quaternion.LookRotation(mNavMeshAgent.velocity.normalized);
+            else if (mLookTarget.HasValue)
+                transform.rotation = Quaternion.LookRotation(mLookTarget.Value - transform.localPosition);
         }
 
-        public Task LookAt(Vector2 position, IMapData mapData)
+        public Task SetLookAt(Vector2 position, IMapData mapData)
         {
-            if (IsArrived)
+            return SyncContext.Execute(() =>
             {
-                return SyncContext.Execute(() =>
-                {
-                    var target = GameUtils.GetPosition(position, mapData);
-                    transform.rotation = Quaternion.LookRotation(target - transform.localPosition);
-                });
-            }
-
-            return Task.CompletedTask;
+                mLookTarget = GameUtils.GetPosition(position, mapData);
+                transform.rotation = Quaternion.LookRotation(mLookTarget.Value - transform.localPosition);
+            });
         }
 
         public Task SetTarget(Vector2 position, IMapData mapData)
         {
             return SyncContext.Execute(() =>
             {
+                mLookTarget = null;
                 Target = position;
                 IsArrived = false;
                 var target = GameUtils.GetPosition(position, mapData);

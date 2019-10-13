@@ -9,27 +9,10 @@ using UnityEngine;
 
 namespace Assets.Views.Utils
 {
-    class Waypoint : MonoBehaviour, IPathFinder
+    class Waypoint : MonoBehaviour, IPathFinderBase
     {
-        public event Action Arrived;
-        public bool IsArrived { get; } = true;
         public Vector2 CurrentPosition => GameUtils.GetFlatPosition(transform.localPosition);
-        public Vector2 CurrentDirection { get; } = Vector2.zero;
-        public Vector2 Target => GameUtils.GetFlatPosition(transform.localPosition);
-
-        public Task LookAt(Vector2 position, IMapData mapData)
-        {
-            return Task.CompletedTask;
-        }
-
-        public Task SetTarget(Vector2 position, IMapData mapData)
-        {
-            return Task.CompletedTask;
-        }
-
-        public Task Stop()
-        {
-            return Task.CompletedTask;
-        }
+        public bool IsArrived => true;
+        public Vector2 Target => CurrentPosition;
     }
 }

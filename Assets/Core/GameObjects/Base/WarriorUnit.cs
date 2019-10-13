@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Assets.Core.GameObjects.Final;
 using Assets.Core.GameObjects.Utils;
 using Assets.Core.Map;
 using UnityEngine;
@@ -73,7 +69,8 @@ namespace Assets.Core.GameObjects.Base
 
             private void WarriorOnArrived()
             {
-                mWarrior.PathFinder.LookAt(mTarget.Position, mWarrior.Game.Map.Data);
+                mWarrior.PathFinder.SetLookAt(mTarget.Position, mWarrior.Game.Map.Data);
+                mWarrior.PathFinder.Arrived -= WarriorOnArrived;
             }
 
             private void TargetOnRemovedFromGame(RtsGameObject obj)
@@ -101,9 +98,8 @@ namespace Assets.Core.GameObjects.Base
                     if (!mWarrior.IsAttacks)
                     {
                         mWarrior.PathFinder.Stop();
+                        mWarrior.PathFinder.SetLookAt(TargetPosition, mWarrior.Game.Map.Data);
                     }
-
-                    mWarrior.PathFinder.LookAt(TargetPosition, mWarrior.Game.Map.Data);
 
                     if (mAttackCooldown > mTimeToAttack)
                     {
@@ -120,6 +116,7 @@ namespace Assets.Core.GameObjects.Base
 
             protected override void OnCancel()
             {
+                mWarrior.PathFinder.Arrived -= WarriorOnArrived;
                 mWarrior.IsAttacks = false;
                 mWarrior.PathFinder.Stop();
             }
@@ -137,6 +134,9 @@ namespace Assets.Core.GameObjects.Base
 
         public Task Attack(Guid targetID)
         {
+            if (targetID == ID)
+                return Task.CompletedTask;
+
             SetOrder(new AttackOrder(this, Game.GetObject<RtsGameObject>(targetID)));
             return Task.CompletedTask;
         }

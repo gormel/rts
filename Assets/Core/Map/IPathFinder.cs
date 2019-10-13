@@ -4,17 +4,20 @@ using UnityEngine;
 
 namespace Assets.Core.Map
 {
-    interface IPathFinder
+    interface IPathFinderBase
+    {
+        Vector2 CurrentPosition { get; }
+        bool IsArrived { get; }
+        Vector2 Target { get; }
+    }
+    interface IPathFinder : IPathFinderBase
     {
         event Action Arrived;
-        bool IsArrived { get; }
 
-        Vector2 CurrentPosition { get; }
         Vector2 CurrentDirection { get; }
 
-        Vector2 Target { get; }
 
-        Task LookAt(Vector2 position, IMapData mapData);
+        Task SetLookAt(Vector2 position, IMapData mapData);
         Task SetTarget(Vector2 position, IMapData mapData);
         Task Stop();
     }
