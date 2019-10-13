@@ -33,12 +33,6 @@ namespace Assets.Views
             Orders.QueueWorker();
         }
 
-        void Update()
-        {
-            UpdateWaypointLine();
-            UpdateProperties();
-        }
-
         public override void OnRightClick(Vector2 position)
         {
             Orders.SetWaypoint(position);

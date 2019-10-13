@@ -27,12 +27,6 @@ namespace Assets.Views
             RegisterProperty(new SelectableViewProperty("Queued", () => $"{Info.Queued}"));
         }
 
-        private void Update()
-        {
-            UpdateWaypointLine();
-            UpdateProperties();
-        }
-
         public override void OnRightClick(Vector2 position)
         {
             Orders.SetWaypoint(position);

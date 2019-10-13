@@ -19,10 +19,5 @@ namespace Assets.Views
 
             RegisterProperty(new SelectableViewProperty("Mining speed", () => $"{Info.MiningSpeed} m/sec"));
         }
-
-        private void Update()
-        {
-            UpdateProperties();
-        }
     }
 }

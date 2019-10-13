@@ -29,11 +29,6 @@ namespace Assets.Views
             RegisterProperty(new SelectableViewProperty("Progress", () => $"{Info.Progress * 100:#0}%"));
         }
 
-        void Update()
-        {
-            UpdateProperties();
-        }
-
         public void Cancel()
         {
             Orders.Cancel();

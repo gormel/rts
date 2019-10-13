@@ -50,6 +50,8 @@ namespace Assets.Views.Base
         public Material EnemyMaterial;
         public MeshRenderer[] MaterialTarget;
 
+        public ProgressBar HpBar;
+
         public UnitySyncContext SyncContext { get; set; }
 
         public int SelectionPriority;
@@ -76,12 +78,15 @@ namespace Assets.Views.Base
         {
         }
 
-        protected void UpdateProperties()
+        protected virtual void Update()
         {
             foreach (var property in mProperties)
             {
                 property.Update();
             }
+
+            if (HpBar != null)
+                HpBar.Progress = Health / MaxHealth;
         }
     }
 }

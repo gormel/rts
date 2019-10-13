@@ -67,7 +67,7 @@ namespace Assets.Views.Base
             TargetLine.SetPosition(0, transform.position);
             TargetLine.SetPosition(1, Map.GetWorldPosition(Info.Destignation));
 
-            UpdateProperties();
+            base.Update();
         }
 
         protected virtual void OnTriggerEnter(Collider other)

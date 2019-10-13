@@ -43,8 +43,9 @@ namespace Assets.Views.Base {
             });
         }
 
-        protected void UpdateWaypointLine()
+        protected override void Update()
         {
+            base.Update();
             WaypointLine.gameObject.SetActive(IsSelected);
 
             WaypointLine.SetPosition(0, Map.GetWorldPosition(Info.Position + Info.Size / 2));
