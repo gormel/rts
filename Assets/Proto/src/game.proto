@@ -4,6 +4,8 @@ import "base.proto";
 
 service GameService {
     rpc ConnectAndListenState(Empty) returns (stream GameState);
+    rpc SendChatMessage(ChatMessage) returns (Empty);
+    rpc ListenChat(Empty) returns (stream ChatMessage);
 }
 
 message GameState {
@@ -22,4 +24,9 @@ message MapState {
     int32 Lenght = 2;
     repeated float Heights = 3;
     repeated int32 Objects = 4;
+}
+
+message ChatMessage {
+    string Nickname = 1;
+    int32 StickerID = 2;
 }

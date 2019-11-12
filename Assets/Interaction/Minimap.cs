@@ -10,7 +10,7 @@ using UnityEngine.EventSystems;
 
 namespace Assets.Interaction
 {
-    class Minimap : MonoBehaviour, IPointerClickHandler
+    class Minimap : MonoBehaviour, IPointerClickHandler, IPointerUpHandler, IBeginDragHandler, IDragHandler, IPointerExitHandler
     {
         public GameObject PlayerScreen;
         public RectTransform PlayerScreenIndicator;
@@ -20,6 +20,7 @@ namespace Assets.Interaction
         public UserInterface Interface;
 
         private RectTransform mRectTransform;
+        private bool mIsCameraMovement;
 
         void OnEnable()
         {
@@ -44,16 +45,22 @@ namespace Assets.Interaction
                 );
         }
 
-        public void OnPointerClick(PointerEventData eventData)
+        private Vector3 ProjectToWorld(Vector2 screenPosition)
         {
-            var local = (mRectTransform.InverseTransformPoint(eventData.position) / mRectTransform.rect.size +
+            var local = (mRectTransform.InverseTransformPoint(screenPosition) / mRectTransform.rect.size +
                          new Vector2(0.5f, 0.5f)) *
                         new Vector2(MinimapTexture.width, MinimapTexture.height);
 
-            var world = MinimapCamera.ScreenToWorldPoint(local);
+            return MinimapCamera.ScreenToWorldPoint(local);
+        }
+
+        public void OnPointerClick(PointerEventData eventData)
+        {
+            var world = ProjectToWorld(eventData.position);
 
             if (eventData.button == PointerEventData.InputButton.Left)
             {
+                mIsCameraMovement = true;
                 Root.PlaseCamera(new Vector2(world.x, world.z));
             }
 
@@ -61,6 +68,35 @@ namespace Assets.Interaction
             {
                 Interface.ForwardRightClick(new Vector2(world.x, world.z));
             }
+        }
+
+        public void OnPointerUp(PointerEventData eventData)
+        {
+            mIsCameraMovement = false;
+        }
+
+        public void OnBeginDrag(PointerEventData eventData)
+        {
+            if (eventData.button != PointerEventData.InputButton.Left)
+                return;
+            
+            mIsCameraMovement = true;
+            var world = ProjectToWorld(eventData.position);
+            Root.PlaseCamera(new Vector2(world.x, world.z));
+        }
+
+        public void OnDrag(PointerEventData eventData)
+        {
+            if (mIsCameraMovement)
+            {
+                var world = ProjectToWorld(eventData.position);
+                Root.PlaseCamera(new Vector2(world.x, world.z));
+            }
+        }
+
+        public void OnPointerExit(PointerEventData eventData)
+        {
+            mIsCameraMovement = false;
         }
     }
 }

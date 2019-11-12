@@ -24,6 +24,7 @@ namespace Assets.Networking
     class RtsServer
     {
         private Server mServer;
+        private GameServiceImpl mGameService;
 
         public IRegistrator<IRangedWarriorOrders, IRangedWarriorInfo> RangedWarriorRegistrator { get; private set; }
         public IRegistrator<IMeeleeWarriorOrders, IMeeleeWarriorInfo> MeeleeWarriorRegistrator { get; private set; }
@@ -33,11 +34,14 @@ namespace Assets.Networking
         public IRegistrator<IMinigCampOrders, IMinigCampInfo> MiningCampRegistrator { get; private set; }
         public IRegistrator<IBarrakOrders, IBarrakInfo> BarrakRegistrator { get; private set; }
 
+        public event Action<string, int> MessageRecived;
+
         public void Listen(UnitySyncContext syncContext, IGameObjectFactory enemyFactory, Game game)
         {
             mServer = new Server();
             mServer.Ports.Add(new ServerPort(IPAddress.Any.ToString(), GameUtils.GamePort, ServerCredentials.Insecure));
-            mServer.Services.Add(GameService.BindService(new GameServiceImpl(game, enemyFactory, syncContext)));
+            mServer.Services.Add(GameService.BindService(mGameService = new GameServiceImpl(game, enemyFactory, syncContext)));
+            mGameService.MessageRecived += GameServiceOnMessageRecived;
 
             var meeleeWarriorService = new MeeleeWarriorServiceImpl();
             MeeleeWarriorRegistrator = meeleeWarriorService;
@@ -68,6 +72,16 @@ namespace Assets.Networking
             mServer.Services.Add(BarrakService.BindService(barrakService));
 
             mServer.Start();
+        }
+
+        private void GameServiceOnMessageRecived(string nickname, int stickerID)
+        {
+            MessageRecived?.Invoke(nickname, stickerID);
+        }
+
+        public void SendChatMessage(string nickname, int stickerID)
+        {
+            mGameService?.SendChatMessage(new ChatMessage { Nickname = nickname, StickerID = stickerID });
         }
 
         public Task Shutdown()

@@ -29,6 +29,8 @@ namespace Assets.Views.Base
             }
         }
 
+        public bool IsMouseOver { get; set; }
+
         public bool IsControlable
         {
             get { return mIsControlable; }
@@ -46,6 +48,7 @@ namespace Assets.Views.Base
 
         public GameObject FogOfWarBrush;
         public GameObject SelectionObject;
+        public GameObject MouseOverObject;
         public Material AllyMaterial;
         public Material EnemyMaterial;
         public MeshRenderer[] MaterialTarget;
@@ -87,6 +90,9 @@ namespace Assets.Views.Base
 
             if (HpBar != null)
                 HpBar.Progress = Health / MaxHealth;
+
+            if (MouseOverObject != null)
+                MouseOverObject.SetActive(IsMouseOver && !IsSelected);
         }
     }
 }

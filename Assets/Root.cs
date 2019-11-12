@@ -192,6 +192,7 @@ class Root : MonoBehaviour
     public MapView MapView { get; private set; }
 
     public event Action<IMapData> MapLoaded;
+    public event Action<string, int> ChatMessageRecived;
 
     void Start()
     {
@@ -208,8 +209,10 @@ class Root : MonoBehaviour
 
             var player = new Player(controlledFactory);
             Player = player;
-            player.Money.Store(100);
+            player.Money.Store(100000);
             mGame.AddPlayer(player);
+
+            mServer.MessageRecived += OnChatMessageRecived;
 
             mServer.Listen(SyncContext, enemyFactory, mGame);
 
@@ -236,8 +239,24 @@ class Root : MonoBehaviour
 
             mClient.ObjectDestroyed += ClientOnObjectDestroyed;
 
+            mClient.ChatMessageRecived += OnChatMessageRecived;
+
             mClient.Listen();
         }
+    }
+
+    public void SendChatMessage(string nickname, int stickerID)
+    {
+        if (mServer != null)
+            mServer.SendChatMessage(nickname, stickerID);
+
+        if (mClient != null)
+            mClient.SendChatMessage(nickname, stickerID);
+    }
+
+    private void OnChatMessageRecived(string nickname, int stickerID)
+    {
+        ChatMessageRecived?.Invoke(nickname, stickerID);
     }
 
     private void ClientOnMeeleeWarriorCreated(IMeeleeWarriorOrders orders, IMeeleeWarriorInfo info)
@@ -253,7 +272,17 @@ class Root : MonoBehaviour
     public void PlaseCamera(Vector2 pos)
     {
         var cameraY = Camera.main.transform.position.y;
-        Camera.main.transform.position = new Vector3(pos.x, cameraY, pos.y - 2);
+        var dY = cameraY - MapView.transform.position.y;
+        var dX = 0f;
+        var dZ = 0f;
+
+        if (Camera.main.transform.eulerAngles.z > 0)
+            dX = dY / Mathf.Tan(Camera.main.transform.eulerAngles.z * Mathf.Deg2Rad);
+
+        if (Camera.main.transform.eulerAngles.x > 0)
+            dZ = dY / Mathf.Tan(Camera.main.transform.eulerAngles.x * Mathf.Deg2Rad);
+
+        Camera.main.transform.position = new Vector3(pos.x - dX, cameraY, pos.y - dZ);
     }
 
     private void ClientOnObjectDestroyed(IGameObjectInfo objectInfo)

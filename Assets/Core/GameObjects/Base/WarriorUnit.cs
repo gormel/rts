@@ -64,7 +64,7 @@ namespace Assets.Core.GameObjects.Base
                 mTarget.RemovedFromGame += TargetOnRemovedFromGame;
                 mWarrior.PathFinder.Arrived += WarriorOnArrived;
                 mTimeToAttack = 1 / mWarrior.AttackSpeed;
-                mAttackCooldown = mTimeToAttack;
+                mAttackCooldown = 0;
             }
 
             private void WarriorOnArrived()

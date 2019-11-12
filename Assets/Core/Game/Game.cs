@@ -83,7 +83,7 @@ namespace Assets.Core.Game
                 request.Invoke();
 
             while (!mRequested.IsEmpty)
-                mRequested.TryTake(out Action a);
+                mRequested.TryTake(out var a);
         }
 
         public bool GetIsAreaFree(Vector2 position, Vector2 size)

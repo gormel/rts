@@ -62,6 +62,8 @@ namespace Assets.Networking
 
         public event Action<IGameObjectInfo> ObjectDestroyed;
 
+        public event Action<string, int> ChatMessageRecived;
+
         private bool mMapLoaded;
         private readonly UnitySyncContext mSyncContext;
         private Channel mChannel;
@@ -73,6 +75,7 @@ namespace Assets.Networking
         private readonly CentralBuildingCreationListener mCentralBuildingCreationStateListener;
         private readonly MiningCampCreationListener mMiningCampCreationListener;
         private readonly BarrakCreationListener mBarrakCreationListener;
+        private GameService.GameServiceClient mGameService;
 
         public RtsClient(UnitySyncContext syncContext)
         {
@@ -119,6 +122,11 @@ namespace Assets.Networking
             return mChannel.ShutdownAsync();
         }
 
+        public void SendChatMessage(string nickname, int stickerID)
+        {
+            mGameService?.SendChatMessageAsync(new ChatMessage { Nickname = nickname, StickerID = stickerID });
+        }
+
         private async Task ListenGameState(Channel channel)
         {
             var mapState = new ClientMapData();
@@ -131,8 +139,8 @@ namespace Assets.Networking
                 {
                     try
                     {
-                        var client = new GameService.GameServiceClient(channel);
-                        using (var call = client.ConnectAndListenState(new Empty()))
+                        mGameService = new GameService.GameServiceClient(channel);
+                        using (var call = mGameService.ConnectAndListenState(new Empty()))
                         using (var stateStream = call.ResponseStream)
                         {
                             while (await stateStream.MoveNext(channel.ShutdownToken))
@@ -156,6 +164,9 @@ namespace Assets.Networking
                                         MapLoaded?.Invoke(mapState);
                                         BaseCreated?.Invoke(state.BasePos.ToUnity());
                                     }, channel.ShutdownToken);
+
+                                    var tChat = ListenChat(mGameService, channel);
+
                                     var t0 = mWorkerCreationStateListener.ListenCreations(mChannel);
                                     var t1 = mBuildingTemplateCreationStateListener.ListenCreations(mChannel);
                                     var t2 = mCentralBuildingCreationStateListener.ListenCreations(mChannel);
@@ -182,6 +193,26 @@ namespace Assets.Networking
             {
                 Debug.LogError(e);
                 DisconnectedFromServer?.Invoke();
+                throw;
+            }
+        }
+
+        private async Task ListenChat(GameService.GameServiceClient client, Channel channel)
+        {
+            try
+            {
+                using (var call = client.ListenChat(new Empty()))
+                using (var chatStream = call.ResponseStream)
+                {
+                    while (await chatStream.MoveNext(channel.ShutdownToken))
+                    {
+                        ChatMessageRecived?.Invoke(chatStream.Current.Nickname, chatStream.Current.StickerID);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e);
                 throw;
             }
         }
