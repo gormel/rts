@@ -77,9 +77,9 @@ namespace Assets.Core.Map
             objs[x, y] = MapObject.Tree;
 
             var dir = new Vector2Int(-1, 0);
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 9; i++)
             {
-                if (Random.value > depth / 9f + 0.1f)
+                if (Random.value > depth / 15f + 0.1f)
                     GenerateForest(x + dir.x, y + dir.y, objs, depth + 1);
 
                 dir = new Vector2Int(dir.y, -dir.x); //rotate 90 deg
