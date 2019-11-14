@@ -22,9 +22,10 @@ namespace Assets.Core.GameObjects.Final {
         {
             Speed = 2;
             MaxHealth = Health = 75;
-            AttackRange = 6;
+            AttackRange = 3;
             AttackSpeed = 2;
             Damage = 5;
+            ViewRadius = 5;
         }
     }
 }

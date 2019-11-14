@@ -31,15 +31,5 @@ namespace Assets.Views
         {
             Orders.SetWaypoint(position);
         }
-
-        public void QueueRangedWarrior()
-        {
-            Orders.QueueRanged();
-        }
-
-        public void QueueMeeleeWarrior()
-        {
-            Orders.QueueMeelee();
-        }
     }
 }

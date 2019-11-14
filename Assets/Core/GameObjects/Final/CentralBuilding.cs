@@ -32,6 +32,7 @@ namespace Assets.Core.GameObjects.Final
         {
             Size = BuildingSize;
             Health = MaxHealth = MaximumHealthConst;
+            ViewRadius = 3;
         }
 
         public Task<bool> QueueWorker()

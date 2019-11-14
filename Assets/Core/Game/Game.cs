@@ -91,6 +91,39 @@ namespace Assets.Core.Game
             }
         }
 
+        public IEnumerable<RtsGameObject> QueryObjects(Vector2 position, float radius)
+        {
+            foreach (var gameObject in mGameObjects.Values)
+            {
+                if (Vector2.Distance(position, gameObject.Position) < radius)
+                {
+                    yield return gameObject;
+                    continue;
+                }
+
+                if (gameObject is Building)
+                {
+                    var rect = new Rect(gameObject.Position, ((Building) gameObject).Size);
+                    var test = position;
+
+                    if (position.x < rect.min.x)
+                        test.x = rect.min.x;
+                    else if (position.x > rect.max.x)
+                        test.x = rect.max.x;
+                    if (position.y < rect.min.y)
+                        test.y = rect.min.y;
+                    else if (position.y > rect.max.y)
+                        test.y = rect.max.y;
+
+
+                    if (Vector2.Distance(test, position) < radius)
+                    {
+                        yield return gameObject;
+                    }
+                }
+            }
+        }
+
         public bool GetIsAreaFree(Vector2 position, Vector2 size)
         {
             var rect = new Rect(position, size);

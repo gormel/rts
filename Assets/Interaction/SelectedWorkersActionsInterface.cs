@@ -5,30 +5,30 @@ using UnityEngine;
 
 namespace Assets.Interaction
 {
-    sealed class SelectedWorkersActionsInterface : SelectedUnitsActionsInterface<IWorkerOrders, IWorkerInfo, WorkerView>
+    sealed class SelectedWorkersActionsInterface : SelectedUnitsActionsInterface
     {
         public GameObject StartScreen;
 
         public void StartCentralBuildingPlacement()
         {
-            Interface.BeginBuildingPlacement(SelectedViews, (view, position) => 
-                view.PlaceCentralBuilding(new Vector2Int(Mathf.FloorToInt(position.x), Mathf.FloorToInt(position.y))),
+            Interface.BeginBuildingPlacement(FetchSelectedOrders<IWorkerOrders>(), (view, position) => 
+                view.PlaceCentralBuildingTemplate(new Vector2Int(Mathf.FloorToInt(position.x), Mathf.FloorToInt(position.y))),
                 CentralBuilding.BuildingSize
                 );
         }
 
         public void StartMiningCampPlacement()
         {
-            Interface.BeginBuildingPlacement(SelectedViews, (view, position) =>
-                view.PlaceMiningCamp(new Vector2Int(Mathf.FloorToInt(position.x), Mathf.FloorToInt(position.y))),
+            Interface.BeginBuildingPlacement(FetchSelectedOrders<IWorkerOrders>(), (view, position) =>
+                view.PlaceMiningCampTemplate(new Vector2Int(Mathf.FloorToInt(position.x), Mathf.FloorToInt(position.y))),
                 MiningCamp.BuildingSize
                 );
         }
 
         public void StartBarrakPlacement()
         {
-            Interface.BeginBuildingPlacement(SelectedViews, (view, position) => 
-                view.PlaceBarrak(new Vector2Int(Mathf.FloorToInt(position.x), Mathf.FloorToInt(position.y))),
+            Interface.BeginBuildingPlacement(FetchSelectedOrders<IWorkerOrders>(), (view, position) => 
+                view.PlaceBarrakTemplate(new Vector2Int(Mathf.FloorToInt(position.x), Mathf.FloorToInt(position.y))),
                 Barrak.BuildingSize
                 );
         }

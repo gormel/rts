@@ -19,18 +19,7 @@ namespace Assets.Networking.Services
         {
             return new MiningCampState
             {
-                Base = new BuildingState
-                {
-                    Base = new ObjectState
-                    {
-                        ID = new ID { Value = info.ID.ToString() },
-                        PlayerID = new ID { Value = info.PlayerID.ToString() },
-                        Health = info.Health,
-                        MaxHealth = info.MaxHealth,
-                        Position = info.Position.ToGrpc()
-                    },
-                    Size = info.Size.ToGrpc()
-                },
+                Base = StateUtils.CreateBuildingState(info),
                 MiningSpeed = info.MiningSpeed
             };
         }

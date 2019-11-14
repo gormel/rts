@@ -10,6 +10,7 @@ namespace Assets.Interaction.Selection
         private readonly SelectionManager mSelectionManager;
         private readonly Root mRoot;
         public List<SelectableView> Members { get; } = new List<SelectableView>();
+        private int mLastCameraOn;
 
         public SelectionGroup(SelectionManager selectionManager, Root root)
         {
@@ -24,6 +25,8 @@ namespace Assets.Interaction.Selection
                 if (!Members.Contains(view))
                     Members.Add(view);
             }
+
+            mLastCameraOn = 0;
         }
 
         public void Set()
@@ -34,13 +37,12 @@ namespace Assets.Interaction.Selection
 
         public void Select()
         {
-            if (!mSelectionManager.Selected.Except(Members.Where(v => v != null)).Any() &&
-                !Members.Where(v => v != null).Except(mSelectionManager.Selected).Any()
-                && mSelectionManager.Selected.Any())
+            var selected = new HashSet<SelectableView>(mSelectionManager.Selected);
+            var members = new HashSet<SelectableView>(Members.Where(v => v != null));
+            if (selected.SetEquals(members) && mSelectionManager.Selected.Any())
             {
-                var posX = mSelectionManager.Selected.Average(v => v.FlatBounds.center.x);
-                var posY = mSelectionManager.Selected.Average(v => v.FlatBounds.center.y);
-                mRoot.PlaseCamera(new Vector2(posX, posY));
+                mRoot.PlaseCamera(Members[mLastCameraOn].FlatBounds.center);
+                mLastCameraOn = (mLastCameraOn + Members.Count + 1) % Members.Count;
                 return;
             }
 

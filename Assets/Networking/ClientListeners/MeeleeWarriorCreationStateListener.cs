@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Assets.Core.GameObjects.Base;
 using Assets.Core.GameObjects.Final;
 using Assets.Utils;
 using Grpc.Core;
@@ -28,6 +29,8 @@ namespace Assets.Networking.ClientListeners
         public float AttackRange => State.Base.AttackRange;
         public float AttackSpeed => State.Base.AttackSpeed;
         public int Damage => State.Base.Damage;
+        public Strategy Strategy => (Strategy)State.Base.Strategy;
+        public float ViewRadius => State.Base.Base.Base.ViewRadius;
 
         public void ResetState()
         {
@@ -61,6 +64,15 @@ namespace Assets.Networking.ClientListeners
             {
                 TargetID = new ID { Value = targetID.ToString() },
                 WarriorID = new ID { Value = mID }
+            }).ResponseAsync;
+        }
+
+        public Task SetStrategy(Strategy strategy)
+        {
+            return mClient.SetStrategyAsync(new SetStrategyRequest
+            {
+                WarriorID = new ID() { Value = mID },
+                Strategy = (int)strategy
             }).ResponseAsync;
         }
     }

@@ -128,14 +128,9 @@ namespace Assets.Views.Base
             });
         }
 
-        public void GoTo(Vector2 position)
-        {
-            Orders.GoTo(position);
-        }
-
         public override void OnRightClick(Vector2 position)
         {
-            GoTo(position);
+            Orders.GoTo(position);
         }
     }
 }

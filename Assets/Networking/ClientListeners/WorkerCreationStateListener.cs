@@ -22,6 +22,7 @@ namespace Assets.Networking
         public Vector2 Direction => State.Base.Direction.ToUnity();
         public Vector2 Destignation => State.Base.Destignation.ToUnity();
         public bool IsBuilding => State.IsBuilding;
+        public float ViewRadius => State.Base.Base.ViewRadius;
 
         public void ResetState()
         {

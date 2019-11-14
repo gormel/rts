@@ -11,6 +11,7 @@ namespace Assets.Core.GameObjects.Base
         Vector2 Position { get; }
         float Health { get; }
         float MaxHealth { get; }
+        float ViewRadius { get; }
     }
 
     interface IGameObjectOrders
@@ -34,6 +35,7 @@ namespace Assets.Core.GameObjects.Base
 
         public float Health { get; set; }
         public float MaxHealth { get; set; }
+        public float ViewRadius { get; set; }
 
         public event Action<RtsGameObject> AddedToGame;
         public event Action<RtsGameObject> RemovedFromGame;

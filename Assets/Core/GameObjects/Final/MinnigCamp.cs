@@ -29,6 +29,7 @@ namespace Assets.Core.GameObjects.Final
             Position = position;
             Size = BuildingSize;
             Health = MaxHealth = MaximumHealthConst;
+            ViewRadius = 2;
         }
 
         public override void Update(TimeSpan deltaTime)

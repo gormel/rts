@@ -47,6 +47,7 @@ namespace Assets.Networking
         public int Queued => State.Base.Queued;
         public float Progress => State.Base.Progress;
         public int WorkersQueued => State.Base.Queued;
+        public float ViewRadius => State.Base.Base.Base.ViewRadius;
 
         public void ResetState()
         {

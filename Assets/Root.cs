@@ -290,8 +290,8 @@ class Root : MonoBehaviour
         for (int i = 0; i < MapView.ChildContainer.transform.childCount; i++)
         {
             var child = MapView.ChildContainer.transform.GetChild(i);
-            var view = child.GetComponent<IInfoIdProvider>();
-            if (view != null && view.ID == objectInfo.ID)
+            var view = child.GetComponent<SelectableView>();
+            if (view != null && view.InfoBase.ID == objectInfo.ID)
             {
                 Destroy(child.gameObject);
                 child.parent = null;

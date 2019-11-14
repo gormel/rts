@@ -64,6 +64,8 @@ namespace Assets.Core.GameObjects.Base
 
         private UnitOrder mOrder;
 
+        protected bool HasNoOrder => mOrder == null;
+
         public Unit(Game.Game game, IPathFinder pathFinder, Vector2 position)
         {
             Game = game;

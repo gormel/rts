@@ -22,6 +22,7 @@ namespace Assets.Core.GameObjects.Final
             AttackRange = 1;
             AttackSpeed = 2;
             Damage = 3;
+            ViewRadius = 4;
         }
     }
 }

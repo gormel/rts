@@ -559,6 +559,7 @@ MonoBehaviour:
   SelectionPriority: 0
   ExplosionPrefab: {fileID: 4269541658022102700, guid: aa65bcd20538a464bbb22a2733200282,
     type: 3}
+  MinimapBrush: {fileID: 8677732181077557441}
   BuilderPoints:
   - {fileID: 5836753209902870674}
   - {fileID: 1597214990353216672}
@@ -898,12 +899,12 @@ PrefabInstance:
     - target: {fileID: 8796230704300801629, guid: 45f5fff3f9fa0914a939c053e74d6cbf,
         type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.8
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8796230704300801629, guid: 45f5fff3f9fa0914a939c053e74d6cbf,
         type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.8
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 45f5fff3f9fa0914a939c053e74d6cbf, type: 3}
@@ -985,6 +986,10 @@ PrefabInstance:
     - target: {fileID: 400000, guid: cc946ef350fa83248be8c877c7e277b6, type: 3}
       propertyPath: m_LocalScale.z
       value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: cc946ef350fa83248be8c877c7e277b6, type: 3}
+      propertyPath: m_ReceiveShadows
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cc946ef350fa83248be8c877c7e277b6, type: 3}

@@ -4,14 +4,29 @@ using Assets.Views.Base;
 
 namespace Assets.Interaction
 {
-    class SelectedWarriorActionsInterface<TOrders, TInfo, TView> : SelectedUnitsActionsInterface<TOrders, TInfo, TView>
-        where TOrders : IWarriorOrders
-        where TInfo : IWarriorInfo
-        where TView : UnitView<TOrders, TInfo>
+    class SelectedWarriorActionsInterface : SelectedUnitsActionsInterface
     {
         public void BeginAttack()
         {
-            Interface.BeginAttack(SelectedViews);
+            Interface.BeginAttack(FetchSelectedOrders<IWarriorOrders>());
+        }
+
+        public void SetIdle()
+        {
+            foreach (var unitView in FetchSelectedOrders<IWarriorOrders>())
+                unitView.SetStrategy(Strategy.Idle);
+        }
+
+        public void SetAgressive()
+        {
+            foreach (var unitView in FetchSelectedOrders<IWarriorOrders>())
+                unitView.SetStrategy(Strategy.Aggressive);
+        }
+
+        public void SetDefencive()
+        {
+            foreach (var unitView in FetchSelectedOrders<IWarriorOrders>())
+                unitView.SetStrategy(Strategy.Defencive);
         }
     }
 }

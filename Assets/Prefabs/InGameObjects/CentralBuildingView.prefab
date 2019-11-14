@@ -1000,6 +1000,7 @@ MonoBehaviour:
   SelectionPriority: 0
   ExplosionPrefab: {fileID: 4269541658022102700, guid: aa65bcd20538a464bbb22a2733200282,
     type: 3}
+  MinimapBrush: {fileID: 285137693030567745}
   PlacementPoints:
   - {fileID: 7095510788889603083}
   - {fileID: 6523236760102508571}
@@ -1462,6 +1463,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: CentralBuilding
       objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: 2e8acc97d7354844dad95774e369c95c, type: 3}
+      propertyPath: m_ReceiveShadows
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 2e8acc97d7354844dad95774e369c95c, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.5
@@ -1602,12 +1607,12 @@ PrefabInstance:
     - target: {fileID: 8796230704300801629, guid: 45f5fff3f9fa0914a939c053e74d6cbf,
         type: 3}
       propertyPath: m_LocalScale.x
-      value: 4
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8796230704300801629, guid: 45f5fff3f9fa0914a939c053e74d6cbf,
         type: 3}
       propertyPath: m_LocalScale.z
-      value: 4
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 45f5fff3f9fa0914a939c053e74d6cbf, type: 3}

@@ -8,18 +8,18 @@ using UnityEngine;
 
 namespace Assets.Interaction
 {
-    abstract class SelectedUnitsActionsInterface<TOrders, TInfo, TView> : MonoBehaviour 
-        where TOrders : IUnitOrders
-        where TInfo : IUnitInfo
-        where TView : UnitView<TOrders, TInfo>
+    abstract class SelectedUnitsActionsInterface: MonoBehaviour
     {
         public UserInterface Interface;
 
-        protected IEnumerable<TView> SelectedViews => Interface.Selected.OfType<TView>();
+        protected IEnumerable<T> FetchSelectedOrders<T>() where T : class, IUnitOrders
+        {
+            return Interface.Selected.Select(v => v.OrdersBase as T).Where(o => o != null);
+        }
 
         public void BeginGoTo()
         {
-            Interface.BeginGoTo(SelectedViews);
+            Interface.BeginGoTo(FetchSelectedOrders<IUnitOrders>());
         }
     }
 }

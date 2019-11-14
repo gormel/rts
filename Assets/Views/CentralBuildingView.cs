@@ -28,11 +28,6 @@ namespace Assets.Views
             RegisterProperty(new SelectableViewProperty("Queued workers", () => $"{Info.Queued}"));
         }
 
-        public void QueueWorker()
-        {
-            Orders.QueueWorker();
-        }
-
         public override void OnRightClick(Vector2 position)
         {
             Orders.SetWaypoint(position);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Assets.Core.GameObjects.Base;
 using Assets.Core.GameObjects.Final;
 using Assets.Utils;
 using Grpc.Core;
@@ -18,27 +19,7 @@ namespace Assets.Networking.Services {
         {
             return new RangedWarriorState
             {
-                Base = new WarriorUnitState
-                {
-                    Base = new UnitState
-                    {
-                        Base = new ObjectState
-                        {
-                            ID = new ID { Value = info.ID.ToString() },
-                            Health = info.Health,
-                            MaxHealth = info.MaxHealth,
-                            PlayerID = new ID { Value = info.PlayerID.ToString() },
-                            Position = info.Position.ToGrpc()
-                        },
-                        Destignation = info.Destignation.ToGrpc(),
-                        Direction = info.Direction.ToGrpc(),
-                        Speed = info.Speed
-                    },
-                    AttackRange = info.AttackRange,
-                    AttackSpeed = info.AttackSpeed,
-                    Damage = info.Damage,
-                    IsAttacks = info.IsAttacks
-                }
+                Base = StateUtils.CreateWarriorUnitState(info)
             };
         }
 
@@ -66,6 +47,15 @@ namespace Assets.Networking.Services {
             return mCreationService.ExecuteOrder(request.WarriorID, async orders =>
             {
                 await orders.Attack(Guid.Parse(request.TargetID.Value));
+                return new Empty();
+            });
+        }
+
+        public override Task<Empty> SetStrategy(SetStrategyRequest request, ServerCallContext context)
+        {
+            return mCreationService.ExecuteOrder(request.WarriorID, async orders =>
+            {
+                await orders.SetStrategy((Strategy)request.Strategy);
                 return new Empty();
             });
         }

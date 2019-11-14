@@ -157,6 +157,7 @@ namespace Assets.Core.GameObjects.Final
         {
             Speed = 1.8f;
             MaxHealth = Health = 40;
+            ViewRadius = 3;
         }
 
         public async Task AttachAsBuilder(Guid templateId)

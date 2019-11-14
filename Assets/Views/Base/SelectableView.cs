@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Assets.Core.GameObjects.Base;
 using Assets.Views.Utils;
 using UnityEngine;
 
@@ -16,6 +17,9 @@ namespace Assets.Views.Base
         public abstract float Health { get; }
         public abstract float MaxHealth { get; }
         public abstract Rect FlatBounds { get; }
+
+        public abstract IGameObjectInfo InfoBase { get; }
+        public abstract IGameObjectOrders OrdersBase { get; }
 
         private bool mIsSelected;
 

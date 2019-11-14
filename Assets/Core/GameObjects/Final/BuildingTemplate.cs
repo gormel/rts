@@ -48,6 +48,7 @@ namespace Assets.Core.GameObjects.Final
             Position = position;
             MaxHealth = maxHealth;
             Health = 5;
+            ViewRadius = 1;
         }
 
         public override void Update(TimeSpan deltaTime)

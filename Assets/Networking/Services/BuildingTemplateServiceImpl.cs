@@ -22,18 +22,7 @@ namespace Assets.Networking.Services
         {
             return new BuildingTemplateState
             {
-                Base = new BuildingState
-                {
-                    Base = new ObjectState
-                    {
-                        ID = new ID { Value = info.ID.ToString() },
-                        Health = info.Health,
-                        MaxHealth = info.MaxHealth,
-                        Position = info.Position.ToGrpc(),
-                        PlayerID = new ID { Value = info.PlayerID.ToString() }
-                    },
-                    Size = info.Size.ToGrpc()
-                },
+                Base = StateUtils.CreateBuildingState(info),
                 AttachedWorkers = info.AttachedWorkers,
                 Progress = info.Progress
             };

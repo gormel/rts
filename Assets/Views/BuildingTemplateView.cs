@@ -29,11 +29,6 @@ namespace Assets.Views
             RegisterProperty(new SelectableViewProperty("Progress", () => $"{Info.Progress * 100:#0}%"));
         }
 
-        public void Cancel()
-        {
-            Orders.Cancel();
-        }
-
         public Task<PlacementPoint> TryAllocatePoint()
         {
             return SyncContext.Execute(() =>

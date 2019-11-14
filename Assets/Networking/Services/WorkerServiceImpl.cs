@@ -25,20 +25,7 @@ namespace Assets.Networking.Services
         {
             return new WorkerState
             {
-                Base = new UnitState
-                {
-                    Base = new ObjectState
-                    {
-                        ID = new ID {Value = info.ID.ToString()},
-                        Health = info.Health,
-                        MaxHealth = info.MaxHealth,
-                        Position = info.Position.ToGrpc(),
-                        PlayerID = new ID { Value = info.PlayerID.ToString() }
-                    },
-                    Destignation = info.Destignation.ToGrpc(),
-                    Direction = info.Direction.ToGrpc(),
-                    Speed = info.Speed
-                },
+                Base = StateUtils.CreateUnitState(info),
                 IsBuilding = info.IsBuilding
             };
         }

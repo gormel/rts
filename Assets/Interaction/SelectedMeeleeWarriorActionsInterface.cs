@@ -3,7 +3,7 @@ using Assets.Views;
 
 namespace Assets.Interaction
 {
-    class SelectedMeeleeWarriorActionsInterface : SelectedWarriorActionsInterface<IMeeleeWarriorOrders, IMeeleeWarriorInfo, MeeleeWarriorView>
+    class SelectedMeeleeWarriorActionsInterface : SelectedWarriorActionsInterface
     {
     }
 }

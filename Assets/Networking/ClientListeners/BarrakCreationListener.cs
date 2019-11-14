@@ -23,6 +23,7 @@ namespace Assets.Networking.ClientListeners
         public Vector2 Position => State.Base.Base.Base.Position.ToUnity();
         public float Health => State.Base.Base.Base.Health;
         public float MaxHealth => State.Base.Base.Base.MaxHealth;
+        public float ViewRadius => State.Base.Base.Base.ViewRadius;
         public Vector2 Size => State.Base.Base.Size.ToUnity();
         public Vector2 Waypoint => State.Base.Waypoint.ToUnity();
         public int Queued => State.Base.Queued;

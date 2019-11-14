@@ -26,6 +26,8 @@ namespace Assets.Networking
         public float AttackRange => State.Base.AttackRange;
         public float AttackSpeed => State.Base.AttackSpeed;
         public int Damage => State.Base.Damage;
+        public Strategy Strategy => (Strategy)State.Base.Strategy;
+        public float ViewRadius => State.Base.Base.Base.ViewRadius;
 
         public void ResetState()
         {
@@ -59,6 +61,15 @@ namespace Assets.Networking
             {
                 TargetID = new ID { Value = targetID.ToString() },
                 WarriorID = new ID { Value = mID }
+            }).ResponseAsync;
+        }
+
+        public Task SetStrategy(Strategy strategy)
+        {
+            return mClient.SetStrategyAsync(new SetStrategyRequest
+            {
+                WarriorID = new ID() { Value = mID },
+                Strategy = (int)strategy
             }).ResponseAsync;
         }
     }

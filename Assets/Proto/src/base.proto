@@ -9,7 +9,8 @@ message WarriorUnitState {
     bool IsAttacks = 2;
     float AttackRange = 3;
     float AttackSpeed = 4;
-    int32 Damage = 5;
+	int32 Damage = 5;
+	int32 Strategy = 6;
 }
 
 message UnitState {
@@ -37,6 +38,7 @@ message ObjectState {
 	float Health = 3;
 	float MaxHealth = 4;
 	ID PlayerID = 5;
+	float ViewRadius = 6;
 }
 
 message Vector {
@@ -72,4 +74,9 @@ message QueueUnitResult {
 message AttackRequest {
     ID TargetID = 1;
     ID WarriorID = 2;
+}
+
+message SetStrategyRequest {
+	ID WarriorID = 1;
+	int32 Strategy = 2;
 }

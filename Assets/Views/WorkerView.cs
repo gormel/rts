@@ -30,30 +30,10 @@ namespace Assets.Views
             BuildingIndicator.SetActive(Info.IsBuilding);
         }
 
-        public void AttachAsBuilder(Guid templateId)
-        {
-            Orders.AttachAsBuilder(templateId);
-        }
-
-        public Task<Guid> PlaceCentralBuilding(Vector2Int position)
-        {
-            return Orders.PlaceCentralBuildingTemplate(position);
-        }
-
-        public Task<Guid> PlaceBarrak(Vector2Int position)
-        {
-            return Orders.PlaceBarrakTemplate(position);
-        }
-
-        public Task<Guid> PlaceMiningCamp(Vector2Int position)
-        {
-            return Orders.PlaceMiningCampTemplate(position);
-        }
-
         public override void OnRightClick(SelectableView view)
         {
             if (view is BuildingTemplateView)
-                AttachAsBuilder(((BuildingTemplateView)view).Info.ID);
+                Orders.AttachAsBuilder(((BuildingTemplateView)view).Info.ID);
         }
     }
 }

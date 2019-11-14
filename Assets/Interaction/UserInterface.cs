@@ -41,14 +41,12 @@ namespace Assets.Interaction
             }
         }
 
-        private class AttackInterfaceAction<TOrders, TInfo> : InterfaceAction
-            where TOrders : IWarriorOrders
-            where TInfo : IWarriorInfo
+        private class AttackInterfaceAction : InterfaceAction
         {
-            private IEnumerable<UnitView<TOrders, TInfo>> mViews;
+            private IEnumerable<IWarriorOrders> mViews;
             private readonly Raycaster mRaycaster;
 
-            public AttackInterfaceAction(IEnumerable<UnitView<TOrders, TInfo>> views, Raycaster raycaster)
+            public AttackInterfaceAction(IEnumerable<IWarriorOrders> views, Raycaster raycaster)
             {
                 mViews = views;
                 mRaycaster = raycaster;
@@ -60,22 +58,16 @@ namespace Assets.Interaction
                 if (hit.IsEmpty())
                     return;
 
-                var target = hit.Object as IInfoIdProvider;
-                if (target == null)
-                    return;
-
-                foreach (var view in mViews)
-                    view.Orders.Attack(target.ID);
+                foreach (var warriorOrders in mViews)
+                    warriorOrders.Attack(hit.Object.InfoBase.ID);
             }
         }
 
-        private class GoToInterfaceAction<TOrders, TInfo> : InterfaceAction
-            where TOrders : IUnitOrders
-            where TInfo : IUnitInfo
+        private class GoToInterfaceAction : InterfaceAction
         {
-            private readonly IEnumerable<UnitView<TOrders, TInfo>> mViews;
+            private readonly IEnumerable<IUnitOrders> mViews;
 
-            public GoToInterfaceAction(IEnumerable<UnitView<TOrders, TInfo>> views)
+            public GoToInterfaceAction(IEnumerable<IUnitOrders> views)
             {
                 mViews = views;
             }
@@ -89,16 +81,16 @@ namespace Assets.Interaction
         private class BuildingPlacementInterfaceAction : InterfaceAction
         {
             private readonly UserInterface mUserInterface;
-            private readonly IEnumerable<WorkerView> mWorkers;
-            private readonly Func<WorkerView, Vector2, Task<Guid>> mCreateTemplate;
+            private readonly IEnumerable<IWorkerOrders> mWorkers;
+            private readonly Func<IWorkerOrders, Vector2, Task<Guid>> mCreateTemplate;
             private readonly Vector2 mSize;
             private GameObject cursorObj;
             private BuildCursorColorer colorer;
 
             public BuildingPlacementInterfaceAction(
                 UserInterface userInterface, 
-                IEnumerable<WorkerView> workers, 
-                Func<WorkerView, Vector2, Task<Guid>> createTemplate, 
+                IEnumerable<IWorkerOrders> workers, 
+                Func<IWorkerOrders, Vector2, Task<Guid>> createTemplate, 
                 Vector2 size
                 )
             {
@@ -126,9 +118,7 @@ namespace Assets.Interaction
                         return;
 
                     var templateId = await createTemplateId;
-
-                    foreach (var view in mWorkers.Skip(1))
-                        view.AttachAsBuilder(templateId);
+                    await Task.WhenAll(mWorkers.Skip(1).Select(o => o.AttachAsBuilder(templateId)));
                 }
                 finally
                 {
@@ -168,28 +158,23 @@ namespace Assets.Interaction
             SelectionManager = new SelectionManager(SelectionBox, this, mRaycaster);
         }
 
-
-        public void BeginGoTo<TOrders, TInfo>(IEnumerable<UnitView<TOrders, TInfo>> views) 
-            where TOrders : IUnitOrders
-            where TInfo : IUnitInfo
+        public void BeginGoTo(IEnumerable<IUnitOrders> views)
         {
             if (mCurrentAction != null)
                 mCurrentAction.Cancel();
 
-            mCurrentAction = new GoToInterfaceAction<TOrders, TInfo>(views);
+            mCurrentAction = new GoToInterfaceAction(views);
         }
 
-        public void BeginAttack<TOrders, TInfo>(IEnumerable<UnitView<TOrders, TInfo>> views)
-            where TOrders : IWarriorOrders
-            where TInfo : IWarriorInfo
+        public void BeginAttack(IEnumerable<IWarriorOrders> views)
         {
             if (mCurrentAction != null)
                 mCurrentAction.Cancel();
 
-            mCurrentAction = new AttackInterfaceAction<TOrders, TInfo>(views, mRaycaster);
+            mCurrentAction = new AttackInterfaceAction(views, mRaycaster);
         }
 
-        public void BeginBuildingPlacement(IEnumerable<WorkerView> workers, Func<WorkerView, Vector2, Task<Guid>> createTemplate, Vector2 size)
+        public void BeginBuildingPlacement(IEnumerable<IWorkerOrders> workers, Func<IWorkerOrders, Vector2, Task<Guid>> createTemplate, Vector2 size)
         {
             if (mCurrentAction != null)
                 mCurrentAction.Cancel();

@@ -13,7 +13,7 @@ namespace Assets.Interaction
             var views = Interface.Selected.OfType<CentralBuildingView>();
             foreach (var buildingView in views)
             {
-                buildingView.QueueWorker();
+                buildingView.Orders.QueueWorker();
             }
         }
     }

@@ -3,7 +3,7 @@ using Assets.Views;
 
 namespace Assets.Interaction
 {
-    class SelectedRangedWarriorActionsInterface : SelectedWarriorActionsInterface<IRangedWarriorOrders, IRangedWarriorInfo, RangedWarriorView>
+    class SelectedRangedWarriorActionsInterface : SelectedWarriorActionsInterface
     {
     }
 }

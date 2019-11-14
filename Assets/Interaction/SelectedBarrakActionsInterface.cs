@@ -12,7 +12,7 @@ namespace Assets.Interaction {
             var views = Interface.Selected.OfType<BarrakView>();
             foreach (var buildingView in views)
             {
-                buildingView.QueueRangedWarrior();
+                buildingView.Orders.QueueRanged();
             }
         }
 
@@ -21,7 +21,7 @@ namespace Assets.Interaction {
             var views = Interface.Selected.OfType<BarrakView>();
             foreach (var buildingView in views)
             {
-                buildingView.QueueMeeleeWarrior();
+                buildingView.Orders.QueueMeelee();
             }
         }
     }

@@ -20,6 +20,7 @@ namespace Assets.Networking
         public Vector2 Position => State.Base.Base.Position.ToUnity();
         public float Health => State.Base.Base.Health;
         public float MaxHealth => State.Base.Base.MaxHealth;
+        public float ViewRadius => State.Base.Base.ViewRadius;
 
         public void ResetState()
         {

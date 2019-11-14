@@ -12,7 +12,7 @@ namespace Assets.Interaction
         {
             var views = Interface.Selected.OfType<BuildingTemplateView>();
             foreach (var templateView in views)
-                templateView.Cancel();
+                templateView.Orders.Cancel();
         }
     }
 }

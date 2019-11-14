@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Assets.Views.Base
 {
-    abstract class ModelSelectableView<TOrderer, TInfo> : SelectableView , IInfoIdProvider
+    abstract class ModelSelectableView<TOrderer, TInfo> : SelectableView
         where TOrderer : IGameObjectOrders
         where TInfo : IGameObjectInfo
     {
@@ -15,11 +15,13 @@ namespace Assets.Views.Base
         public TOrderer Orders { get; private set; }
         public TInfo Info { get; private set; }
 
+        public override IGameObjectOrders OrdersBase => Orders;
+        public override IGameObjectInfo InfoBase => Info;
+
         public MapView Map { get; set; }
 
-        Guid IInfoIdProvider.ID => Info.ID;
-
         public GameObject ExplosionPrefab;
+        public GameObject MinimapBrush;
 
         protected virtual void OnLoad()
         {
@@ -52,6 +54,13 @@ namespace Assets.Views.Base
             Orders = orderer;
             Info = info;
             OnLoad();
+        }
+
+        protected override void Update()
+        {
+            base.Update();
+
+            MinimapBrush.transform.localScale = new Vector3(Info.ViewRadius * 2, 1, Info.ViewRadius * 2);
         }
     }
 }

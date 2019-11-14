@@ -21,6 +21,7 @@ namespace Assets.Networking
         public Vector2 Size => State.Base.Size.ToUnity();
         public float Progress => State.Progress;
         public int AttachedWorkers => State.AttachedWorkers;
+        public float ViewRadius => State.Base.Base.ViewRadius;
 
         public void ResetState()
         {
