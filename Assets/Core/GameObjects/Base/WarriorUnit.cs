@@ -198,7 +198,7 @@ namespace Assets.Core.GameObjects.Base
 
         private RtsGameObject FindEnemy(float radius)
         {
-            return Game.QueryObjects(Position, radius).FirstOrDefault(go => go.PlayerID != PlayerID);
+            return Game.QueryObjects(Position, radius).OrderBy(go => Vector2.Distance(Position, PositionOf(go))).FirstOrDefault(go => go.PlayerID != PlayerID);
         }
 
         private static Vector2 PositionOf(RtsGameObject target)
@@ -215,8 +215,8 @@ namespace Assets.Core.GameObjects.Base
             {
                 var p = PositionOf(target);
                 var s = ((Building)target).Size;
-                var dx = Math.Max(Math.Abs(target.Position.x - p.x) - s.x / 2, 0);
-                var dy = Math.Max(Math.Abs(target.Position.y - p.y) - s.y / 2, 0);
+                var dx = Math.Max(Math.Abs(Position.x - p.x) - s.x / 2, 0);
+                var dy = Math.Max(Math.Abs(Position.y - p.y) - s.y / 2, 0);
 
                 return dx * dx + dy * dy;
             }

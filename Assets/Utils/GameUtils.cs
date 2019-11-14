@@ -58,6 +58,7 @@ namespace Assets.Utils
 
             player.CreateCentralBuilding(pos + Vector2.one).ContinueWith(t => game.PlaceObject(t.Result));
             player.CreateWorker(pos).ContinueWith(t => game.PlaceObject(t.Result));
+            player.CreateMeeleeWarrior(pos + Vector2.right).ContinueWith(t => game.PlaceObject(t.Result));
             return pos;
         }
     }
