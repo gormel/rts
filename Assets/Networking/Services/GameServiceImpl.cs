@@ -104,7 +104,6 @@ namespace Assets.Networking.Services
                 var player = await mSyncContext.Execute(() =>
                 {
                     var pl = new Player(mServerFactory);
-                    pl.Money.Store(100);
                     mGame.AddPlayer(pl);
                     var basePos = GameUtils.CreateBase(mGame, pl);
                     return (pl, basePos);

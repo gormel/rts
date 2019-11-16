@@ -22,9 +22,9 @@ namespace Assets.Core.GameObjects.Final
     internal class Barrak : FactoryBuilding, IBarrakInfo, IBarrakOrders
     {
         public const int MeleeWarriorCost = 50;
-        public static readonly TimeSpan MeeleeWarriorProductionTime = TimeSpan.FromSeconds(5);
+        public static readonly TimeSpan MeeleeWarriorProductionTime = TimeSpan.FromSeconds(9);
 
-        public const int RangedWarriorCost = 130;
+        public const int RangedWarriorCost = 90;
         public static readonly TimeSpan RangedWarriorProductionTime = TimeSpan.FromSeconds(13);
 
         public static Vector2 BuildingSize { get; } = new Vector2(2, 2);

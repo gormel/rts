@@ -198,7 +198,10 @@ namespace Assets.Core.GameObjects.Base
 
         private RtsGameObject FindEnemy(float radius)
         {
-            return Game.QueryObjects(Position, radius).OrderBy(go => Vector2.Distance(Position, PositionOf(go))).FirstOrDefault(go => go.PlayerID != PlayerID);
+            return Game.QueryObjects(Position, radius)
+                .OrderBy(go => go.MaxHealth)
+                .ThenBy(go => Vector2.Distance(Position, PositionOf(go)))
+                .FirstOrDefault(go => go.PlayerID != PlayerID);
         }
 
         private static Vector2 PositionOf(RtsGameObject target)

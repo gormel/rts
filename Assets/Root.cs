@@ -209,7 +209,6 @@ class Root : MonoBehaviour
 
             var player = new Player(controlledFactory);
             Player = player;
-            player.Money.Store(100);
             mGame.AddPlayer(player);
 
             mServer.MessageRecived += OnChatMessageRecived;
