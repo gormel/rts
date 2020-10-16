@@ -43,10 +43,12 @@ namespace Assets.Core.BehaviorTree
         private class Builder : IBTreeBuilder
         {
             private readonly Builder mParent;
+            private readonly Func<Node> mCreateNode;
 
-            public Builder(Builder parent)
+            public Builder(Builder parent, Func<Node> createNode)
             {
                 mParent = parent;
+                mCreateNode = createNode;
             }
 
             public IBTreeBuilder Sequence(Func<IBTreeBuilder, IBTreeBuilder> children)
@@ -84,12 +86,14 @@ namespace Assets.Core.BehaviorTree
                 throw new NotImplementedException();
             }
 
-            private Node[] BuildInner()
+            private List<Node> BuildInner()
             {
+                return null;
             }
 
             public BTree Build()
             {
+                return null;
             }
         }
 
@@ -100,6 +104,7 @@ namespace Assets.Core.BehaviorTree
 
         public static IBTreeBuilder Build()
         {
+            return null;
         }
 
         public void Update(TimeSpan deltaTime)
