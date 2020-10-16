@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Assets.Core.BehaviorTree;
 using Assets.Core.Game;
 using Assets.Core.GameObjects.Utils;
 using UnityEngine;
@@ -26,20 +27,10 @@ namespace Assets.Core.GameObjects.Base {
             public TimeSpan Time { get; }
             private Action mDoing;
 
-            public bool Working => mCurrentRemanding > TimeSpan.Zero;
-            public float Progress => Mathf.Min((float)(1 - mCurrentRemanding.TotalSeconds / Time.TotalSeconds), 1);
-
-            private TimeSpan mCurrentRemanding;
-
             public Order(TimeSpan time, Action doing)
             {
-                mCurrentRemanding = Time = time;
+                Time = time;
                 mDoing = doing;
-            }
-
-            public void Update(TimeSpan deltaTime)
-            {
-                mCurrentRemanding -= deltaTime;
             }
 
             public void Doing()
@@ -48,9 +39,88 @@ namespace Assets.Core.GameObjects.Base {
             }
         }
 
+        private class CheckOrderLeaf : IBTreeLeaf
+        {
+            private readonly FactoryBuilding mBuilding;
+
+            public CheckOrderLeaf(FactoryBuilding building)
+            {
+                mBuilding = building;
+            }
+
+            public BTreeLeafState Update(TimeSpan deltaTime)
+            {
+                return mBuilding.mLockedOrder == null ? BTreeLeafState.Failed : BTreeLeafState.Successed;
+            }
+        }
+
+        private class LockOrderLeaf : IBTreeLeaf
+        {
+            private readonly FactoryBuilding mBuilding;
+
+            public LockOrderLeaf(FactoryBuilding building)
+            {
+                mBuilding = building;
+            }
+
+            public BTreeLeafState Update(TimeSpan deltaTime)
+            {
+                if (mBuilding.mOrders.Count < 1)
+                    return BTreeLeafState.Failed;
+
+                mBuilding.Progress = 0;
+                mBuilding.mLockedOrder = mBuilding.mOrders.Dequeue();
+                mBuilding.mLockedProgress = mBuilding.mLockedOrder.Time;
+                return BTreeLeafState.Successed;
+            }
+        }
+
+        private class WaitOrderLeaf : IBTreeLeaf
+        {
+            private readonly FactoryBuilding mBuilding;
+
+            public WaitOrderLeaf(FactoryBuilding building)
+            {
+                mBuilding = building;
+            }
+
+            public BTreeLeafState Update(TimeSpan deltaTime)
+            {
+                if (mBuilding.mLockedOrder == null)
+                    return BTreeLeafState.Failed;
+
+                mBuilding.mLockedProgress -= deltaTime;
+                mBuilding.Progress = (float)(1 - mBuilding.mLockedProgress.TotalSeconds / mBuilding.mLockedOrder.Time.TotalSeconds);
+                return mBuilding.mLockedProgress.TotalSeconds > 0 ? BTreeLeafState.Processing : BTreeLeafState.Successed;
+            }
+        }
+
+        private class UnlockOrderLeaf : IBTreeLeaf
+        {
+            private readonly FactoryBuilding mBuilding;
+
+            public UnlockOrderLeaf(FactoryBuilding building)
+            {
+                mBuilding = building;
+            }
+
+            public BTreeLeafState Update(TimeSpan deltaTime)
+            {
+                if (mBuilding.mLockedOrder == null)
+                    return BTreeLeafState.Failed;
+
+                mBuilding.mLockedOrder.Doing();
+                mBuilding.mLockedOrder = null;
+                return BTreeLeafState.Successed;
+            }
+        }
+
         private readonly Game.Game mGame;
         private readonly IPlacementService mPlacementService;
         private readonly Queue<Order> mOrders = new Queue<Order>();
+        private readonly BTree mIntelligence;
+        private Order mLockedOrder;
+        private TimeSpan mLockedProgress;
 
         public Vector2 Waypoint { get; protected set; }
         public int Queued { get; private set; }
@@ -61,6 +131,13 @@ namespace Assets.Core.GameObjects.Base {
             mGame = game;
             mPlacementService = placementService;
             Waypoint = Position = position;
+            mIntelligence = BTree.Build().Sequence(b => b
+                .Selector(b1 => b1
+                    .Leaf(new CheckOrderLeaf(this))
+                    .Leaf(new LockOrderLeaf(this)))
+                .Leaf(new WaitOrderLeaf(this))
+                .Leaf(new UnlockOrderLeaf(this))
+            ).Build();
         }
 
         public Task SetWaypoint(Vector2 waypoint)
@@ -96,18 +173,7 @@ namespace Assets.Core.GameObjects.Base {
 
         public override void Update(TimeSpan deltaTime)
         {
-            if (mOrders.Count <= 0)
-                return;
-
-            mOrders.Peek().Update(deltaTime);
-
-            Progress = mOrders.Peek().Progress;
-            if (mOrders.Peek().Working)
-                return;
-
-            var toExecute = mOrders.Dequeue();
-            toExecute.Doing();
-            Progress = 0;
+            mIntelligence.Update(deltaTime);
         }
     }
 }
