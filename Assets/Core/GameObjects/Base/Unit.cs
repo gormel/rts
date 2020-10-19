@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
+using Assets.Core.BehaviorTree;
 using Assets.Core.GameObjects.Utils;
 using Assets.Core.Map;
 using UnityEngine;
@@ -21,36 +23,122 @@ namespace Assets.Core.GameObjects.Base
 
     abstract class Unit : RtsGameObject, IUnitInfo, IUnitOrders
     {
-        protected class GoToOrder : UnitOrder
+        private class CheckOrderLeaf : IBTreeLeaf
         {
-            private Unit mUnit;
-            private readonly Vector2 mPosition;
+            private readonly Unit mOwner;
 
-            public GoToOrder(Unit unit, Vector2 position)
+            public CheckOrderLeaf(Unit owner)
             {
-                mUnit = unit;
-                mPosition = position;
+                mOwner = owner;
             }
 
-            protected override async Task OnBegin()
+            public BTreeLeafState Update(TimeSpan deltaTime)
             {
-                await mUnit.PathFinder.SetTarget(mPosition, mUnit.Game.Map.Data);
-                mUnit.PathFinder.Arrived += PathFinderOnArrived;
+                return mOwner.mOrder == null ? BTreeLeafState.Failed : BTreeLeafState.Successed;
+            }
+        }
+
+        private class TrySetOrderLeaf : IBTreeLeaf
+        {
+            private readonly Unit mOwner;
+
+            public TrySetOrderLeaf(Unit owner)
+            {
+                mOwner = owner;
+            }
+
+            public BTreeLeafState Update(TimeSpan deltaTime)
+            {
+                if (mOwner.mOrder == null)
+                    return BTreeLeafState.Failed;
+
+                if (mOwner.mLockedOrder != null)
+                    mOwner.mLockedOrder.End();
+
+                mOwner.mLockedOrder = mOwner.mOrder;
+                mOwner.mLockedOrder.Begin();
+                return BTreeLeafState.Successed;
+            }
+        }
+
+        private class OrderLeaf : IBTreeLeaf
+        {
+            private readonly Unit mOwner;
+
+            public OrderLeaf(Unit owner)
+            {
+                mOwner = owner;
+            }
+
+            public BTreeLeafState Update(TimeSpan deltaTime)
+            {
+                if (mOwner.mLockedOrder == null)
+                    return BTreeLeafState.Failed;
+
+                return mOwner.mLockedOrder.Update(deltaTime);
+            }
+        }
+
+        private class RemoveOrderLeaf : IBTreeLeaf
+        {
+            private readonly Unit mOwner;
+
+            public RemoveOrderLeaf(Unit owner)
+            {
+                mOwner = owner;
+            }
+
+            public BTreeLeafState Update(TimeSpan deltaTime)
+            {
+                if (mOwner.mOrder == null)
+                    return BTreeLeafState.Failed;
+
+                mOwner.mLockedOrder.End();
+                mOwner.mLockedOrder = null;
+                mOwner.mOrder = null;
+                return BTreeLeafState.Successed;
+            }
+        }
+
+        protected abstract class Order
+        {
+            public abstract BTreeLeafState Update(TimeSpan deltaTime);
+            public abstract void Begin();
+            public abstract void End();
+        }
+
+        private class GoToOrder : Order
+        {
+            private readonly Unit mOwner;
+            private readonly Vector2 mTarget;
+            private bool mArrived = false;
+
+            public GoToOrder(Unit owner, Vector2 target)
+            {
+                mOwner = owner;
+                mTarget = target;
+            }
+
+            public override BTreeLeafState Update(TimeSpan deltaTime)
+            {
+                return mArrived ? BTreeLeafState.Successed : BTreeLeafState.Processing;
+            }
+
+            public override void Begin()
+            {
+                mOwner.PathFinder.Arrived += PathFinderOnArrived;
+                mOwner.PathFinder.SetTarget(mTarget, mOwner.Game.Map.Data);
             }
 
             private void PathFinderOnArrived()
             {
-                mUnit.PathFinder.Arrived -= PathFinderOnArrived;
-                End();
+                mArrived = true;
             }
 
-            protected override void OnUpdate(TimeSpan deltaTime)
+            public override void End()
             {
-            }
-
-            protected override void OnCancel()
-            {
-                mUnit.PathFinder.Stop();
+                mOwner.PathFinder.Arrived -= PathFinderOnArrived;
+                mOwner.PathFinder.Stop();
             }
         }
 
@@ -62,7 +150,9 @@ namespace Assets.Core.GameObjects.Base
 
         protected IPathFinder PathFinder { get; }
 
-        private UnitOrder mOrder;
+        private Order mLockedOrder;
+        private Order mOrder;
+        private BTree mIntelligence;
 
         protected bool HasNoOrder => mOrder == null;
 
@@ -71,17 +161,22 @@ namespace Assets.Core.GameObjects.Base
             Game = game;
             PathFinder = pathFinder;
             Destignation = Position = position;
+            mIntelligence = ExtendLogic(BTree.Build()
+                .Sequence(b => b
+                    .Selector(b1 => b1
+                        .Leaf(new CheckOrderLeaf(this))
+                        .Leaf(new TrySetOrderLeaf(this)))
+                    .Leaf(new OrderLeaf(this))
+                    .Leaf(new RemoveOrderLeaf(this)))).Build();
         }
 
-        protected void SetOrder(UnitOrder order)
+        protected virtual IBTreeBuilder ExtendLogic(IBTreeBuilder baseLogic)
         {
-            var o = mOrder;
-            while (o != null)
-            {
-                o.Cancel();
-                o = o.Next;
-            }
+            return baseLogic;
+        }
 
+        protected void SetOrder(Order order)
+        {
             mOrder = order;
         }
 
@@ -92,12 +187,7 @@ namespace Assets.Core.GameObjects.Base
 
         public override void Update(TimeSpan deltaTime)
         {
-            if (mOrder != null)
-            {
-                mOrder.Update(deltaTime);
-                if (mOrder.State == OrderState.Completed)
-                    mOrder = mOrder.Next;
-            }
+            mIntelligence.Update(deltaTime);
 
             Position = PathFinder.CurrentPosition;
             Direction = PathFinder.CurrentDirection;

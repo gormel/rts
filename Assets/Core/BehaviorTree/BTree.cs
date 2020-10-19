@@ -127,7 +127,6 @@ namespace Assets.Core.BehaviorTree
 
             public IBTreeBuilder Leaf(IBTreeLeaf leaf)
             {
-                var childrenBuilder = new Builder(null, null);
                 return new Builder(this, () => new LeafNode(null, leaf));
             }
 

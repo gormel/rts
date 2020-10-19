@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Assets.Core.BehaviorTree;
 using Assets.Core.GameObjects.Utils;
 using Assets.Core.Map;
 using UnityEngine;
@@ -167,6 +168,29 @@ namespace Assets.Core.GameObjects.Base
                     mTarget = null;
                 }
             }
+        }
+
+        private class CheckStrategyLeaf : IBTreeLeaf
+        {
+            public CheckStrategyLeaf(WarriorUnit unit, Strategy strategy)
+            {
+            }
+        }
+
+        private class CheckTargetDistanceLeaf : IBTreeLeaf
+        {
+        }
+
+        private class CheckLockedTargetLeaf : IBTreeLeaf
+        {
+        }
+
+        private class LockTargetLeaf : IBTreeLeaf
+        {
+        }
+
+        private class AttackTargetLeaf : IBTreeLeaf
+        {
         }
 
         public bool IsAttacks { get; protected set; }
