@@ -172,24 +172,34 @@ namespace Assets.Core.GameObjects.Base
 
         private class CheckStrategyLeaf : IBTreeLeaf
         {
+            private readonly WarriorUnit mUnit;
+            private readonly Strategy mStrategy;
+
             public CheckStrategyLeaf(WarriorUnit unit, Strategy strategy)
             {
+                mUnit = unit;
+                mStrategy = strategy;
             }
-        }
 
-        private class CheckTargetDistanceLeaf : IBTreeLeaf
-        {
-        }
-
-        private class CheckLockedTargetLeaf : IBTreeLeaf
-        {
+            public BTreeLeafState Update(TimeSpan deltaTime)
+            {
+                return mUnit.Strategy == mStrategy ? BTreeLeafState.Successed : BTreeLeafState.Failed;
+            }
         }
 
         private class LockTargetLeaf : IBTreeLeaf
         {
         }
 
+        private class GoToTargetLeaf : IBTreeLeaf
+        {
+        }
+
         private class AttackTargetLeaf : IBTreeLeaf
+        {
+        }
+
+        private class CheckDistanceLeaf : IBTreeLeaf
         {
         }
 
@@ -203,6 +213,24 @@ namespace Assets.Core.GameObjects.Base
             : base(game, pathFinder, position)
         {
             Strategy = Strategy.Aggressive;
+        }
+
+        protected override IBTreeBuilder ExtendLogic(IBTreeBuilder baseLogic)
+        {
+            return BTree.Build()
+                .Selector(b => 
+                    baseLogic
+                    .Sequence(b1 => b1
+                        .Leaf(new CheckStrategyLeaf(this, Strategy.Aggressive))
+                        .Leaf(new LockTargetLeaf()))
+                        .Leaf(new GoToTargetLeaf())
+                        .Leaf(new AttackTargetLeaf()))
+                    .Sequence(b2 => b2
+                        .Leaf(new CheckStrategyLeaf(this, Strategy.Defencive))
+                        .Selector(b21 => b21
+                            .Leaf(new CheckDistanceLeaf())
+                            .Leaf(new LockTargetLeaf()))
+                        .Leaf(new AttackTargetLeaf()));
         }
 
         public Task Attack(Guid targetID)
