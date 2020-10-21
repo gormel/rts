@@ -76,7 +76,7 @@ namespace Assets.Utils
 
         public static Vector2 CreateBase(Game game, Player player)
         {
-            player.Money.Store(170);
+            player.Money.Store(170000);
             var size = CentralBuilding.BuildingSize + Vector2.one * 2;
             var pos = new Vector2(Random.Range(0, game.Map.Width), Random.Range(0, game.Map.Length));
             while (!game.GetIsAreaFree(pos, size) || !HasCrystal(pos + size / 2, (int)(size.x / 2), (int)size.x, game.Map.Data))

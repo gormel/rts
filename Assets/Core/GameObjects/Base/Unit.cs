@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Assets.Core.BehaviorTree;
@@ -23,21 +24,6 @@ namespace Assets.Core.GameObjects.Base
 
     abstract class Unit : RtsGameObject, IUnitInfo, IUnitOrders
     {
-        private class CheckOrderLeaf : IBTreeLeaf
-        {
-            private readonly Unit mOwner;
-
-            public CheckOrderLeaf(Unit owner)
-            {
-                mOwner = owner;
-            }
-
-            public BTreeLeafState Update(TimeSpan deltaTime)
-            {
-                return mOwner.mOrder == null ? BTreeLeafState.Failed : BTreeLeafState.Successed;
-            }
-        }
-
         private class TrySetOrderLeaf : IBTreeLeaf
         {
             private readonly Unit mOwner;
@@ -49,13 +35,13 @@ namespace Assets.Core.GameObjects.Base
 
             public BTreeLeafState Update(TimeSpan deltaTime)
             {
-                if (mOwner.mOrder == null)
-                    return BTreeLeafState.Failed;
+                if (mOwner.mOrders.Count == 0)
+                    return mOwner.mLockedOrder == null ? BTreeLeafState.Failed : BTreeLeafState.Successed;
 
                 if (mOwner.mLockedOrder != null)
-                    mOwner.mLockedOrder.End();
+                    return BTreeLeafState.Successed;
 
-                mOwner.mLockedOrder = mOwner.mOrder;
+                mOwner.mLockedOrder = mOwner.mOrders.Dequeue();
                 mOwner.mLockedOrder.Begin();
                 return BTreeLeafState.Successed;
             }
@@ -90,12 +76,11 @@ namespace Assets.Core.GameObjects.Base
 
             public BTreeLeafState Update(TimeSpan deltaTime)
             {
-                if (mOwner.mOrder == null)
+                if (mOwner.mLockedOrder == null)
                     return BTreeLeafState.Failed;
 
                 mOwner.mLockedOrder.End();
                 mOwner.mLockedOrder = null;
-                mOwner.mOrder = null;
                 return BTreeLeafState.Successed;
             }
         }
@@ -107,7 +92,7 @@ namespace Assets.Core.GameObjects.Base
             public abstract void End();
         }
 
-        private class GoToOrder : Order
+        protected class GoToOrder : Order
         {
             private readonly Unit mOwner;
             private readonly Vector2 mTarget;
@@ -151,11 +136,9 @@ namespace Assets.Core.GameObjects.Base
         protected IPathFinder PathFinder { get; }
 
         private Order mLockedOrder;
-        private Order mOrder;
+        private Queue<Order> mOrders = new Queue<Order>();
         private BTree mIntelligence;
-
-        protected bool HasNoOrder => mOrder == null;
-
+        
         public Unit(Game.Game game, IPathFinder pathFinder, Vector2 position)
         {
             Game = game;
@@ -163,9 +146,7 @@ namespace Assets.Core.GameObjects.Base
             Destignation = Position = position;
             mIntelligence = ExtendLogic(BTree.Build()
                 .Sequence(b => b
-                    .Selector(b1 => b1
-                        .Leaf(new CheckOrderLeaf(this))
-                        .Leaf(new TrySetOrderLeaf(this)))
+                    .Leaf(new TrySetOrderLeaf(this))
                     .Leaf(new OrderLeaf(this))
                     .Leaf(new RemoveOrderLeaf(this)))).Build();
         }
@@ -177,7 +158,15 @@ namespace Assets.Core.GameObjects.Base
 
         protected void SetOrder(Order order)
         {
-            mOrder = order;
+            mLockedOrder?.End();
+            mLockedOrder = null;
+            mOrders.Clear();
+            mOrders.Enqueue(order);
+        }
+
+        protected void AddOrder(Order order)
+        {
+            mOrders.Enqueue(order);
         }
 
         public async Task GoTo(Vector2 position)

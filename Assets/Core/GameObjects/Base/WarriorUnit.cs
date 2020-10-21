@@ -32,144 +32,6 @@ namespace Assets.Core.GameObjects.Base
 
     abstract class WarriorUnit : Unit, IWarriorInfo, IWarriorOrders
     {
-        class AttackOrder : UnitOrder
-        {
-            private readonly WarriorUnit mWarrior;
-            private readonly RtsGameObject mTarget;
-            private double mAttackCooldown;
-            private float mTimeToAttack;
-
-            public AttackOrder(WarriorUnit warrior, RtsGameObject target)
-            {
-                mWarrior = warrior;
-                mTarget = target;
-                mTarget.RemovedFromGame += TargetOnRemovedFromGame;
-                mWarrior.PathFinder.Arrived += WarriorOnArrived;
-                mTimeToAttack = 1 / mWarrior.AttackSpeed;
-                mAttackCooldown = 0;
-            }
-
-            private void WarriorOnArrived()
-            {
-                mWarrior.PathFinder.SetLookAt(mTarget.Position, mWarrior.Game.Map.Data);
-                mWarrior.PathFinder.Arrived -= WarriorOnArrived;
-            }
-
-            private void TargetOnRemovedFromGame(RtsGameObject obj)
-            {
-                mTarget.RemovedFromGame -= TargetOnRemovedFromGame;
-                End();
-                OnCancel();
-            }
-
-            protected override Task OnBegin()
-            {
-                return Task.CompletedTask;
-            }
-
-            protected override void OnUpdate(TimeSpan deltaTime)
-            {
-                if (mWarrior.DistanceTo(mTarget) > mWarrior.AttackRange)
-                {
-                    mWarrior.IsAttacks = false;
-                    if (mAttackCooldown > mTimeToAttack)
-                        mWarrior.PathFinder.SetTarget(PositionOf(mTarget), mWarrior.Game.Map.Data);
-                }
-                else
-                {
-                    if (!mWarrior.IsAttacks)
-                    {
-                        mWarrior.PathFinder.Stop();
-                        mWarrior.PathFinder.SetLookAt(PositionOf(mTarget), mWarrior.Game.Map.Data);
-                    }
-
-                    if (mAttackCooldown > mTimeToAttack)
-                    {
-                        mTarget.Health -= mWarrior.Damage;
-                        if (mTarget.Health <= 0)
-                            mWarrior.Game.RemoveObject(mTarget.ID);
-                        mAttackCooldown = 0;
-                    }
-
-                    mWarrior.IsAttacks = true;
-                }
-                mAttackCooldown += deltaTime.TotalSeconds;
-            }
-
-            protected override void OnCancel()
-            {
-                mWarrior.PathFinder.Arrived -= WarriorOnArrived;
-                mWarrior.IsAttacks = false;
-                mWarrior.PathFinder.Stop();
-            }
-        }
-
-        class StandAttackOrder : UnitOrder
-        {
-            private readonly WarriorUnit mWarrior;
-            private RtsGameObject mTarget;
-            private float mWarriorSpeed;
-            private double mAttackCooldown;
-            private float mTimeToAttack;
-
-            public StandAttackOrder(WarriorUnit warrior)
-            {
-                mWarrior = warrior;
-                mTimeToAttack = 1 / mWarrior.AttackSpeed;
-                mAttackCooldown = 0;
-            }
-
-            protected override Task OnBegin()
-            {
-                mWarriorSpeed = mWarrior.Speed;
-                mWarrior.Speed = 0;
-                return Task.CompletedTask;
-            }
-
-            protected override void OnUpdate(TimeSpan deltaTime)
-            {
-                if (mTarget == null || mWarrior.DistanceTo(mTarget) > mWarrior.AttackRange)
-                {
-                    if (mTarget != null)
-                        mTarget.RemovedFromGame -= TargetOnRemovedFromGame;
-
-                    mTarget = mWarrior.FindEnemy(mWarrior.AttackRange);
-                    if (mTarget != null)
-                        mTarget.RemovedFromGame += TargetOnRemovedFromGame;
-
-                    mWarrior.IsAttacks = mTarget != null;
-                    return;
-                }
-
-                mWarrior.PathFinder.SetLookAt(PositionOf(mTarget), mWarrior.Game.Map.Data);
-                if (mAttackCooldown > mTimeToAttack)
-                {
-                    mTarget.Health -= mWarrior.Damage;
-                    if (mTarget.Health <= 0)
-                        mWarrior.Game.RemoveObject(mTarget.ID);
-                    mAttackCooldown = 0;
-                }
-                mAttackCooldown += deltaTime.TotalSeconds;
-            }
-
-            private void TargetOnRemovedFromGame(RtsGameObject obj)
-            {
-                mTarget.RemovedFromGame -= TargetOnRemovedFromGame;
-                mTarget = null;
-            }
-
-            protected override void OnCancel()
-            {
-                mWarrior.IsAttacks = false;
-                mWarrior.Speed = mWarriorSpeed;
-                if (mTarget != null)
-                {
-                    mTarget.RemovedFromGame -= TargetOnRemovedFromGame;
-                    mTarget = null;
-                }
-            }
-        }
-
         private class CheckStrategyLeaf : IBTreeLeaf
         {
             private readonly WarriorUnit mUnit;
@@ -189,18 +51,148 @@ namespace Assets.Core.GameObjects.Base
 
         private class LockTargetLeaf : IBTreeLeaf
         {
+            private readonly WarriorUnit mUnit;
+            private readonly bool mForce;
+
+            public LockTargetLeaf(WarriorUnit unit, bool force)
+            {
+                mUnit = unit;
+                mForce = force;
+            }
+
+            public BTreeLeafState Update(TimeSpan deltaTime)
+            {
+                if (mUnit.mTarget != null && !mForce)
+                    return BTreeLeafState.Failed;
+
+                mUnit.mTarget = FindEnemy(mUnit.AttackRange);
+                return mUnit.mTarget == null ? BTreeLeafState.Failed : BTreeLeafState.Successed;
+            }
+
+            private RtsGameObject FindEnemy(float radius)
+            {
+                return mUnit.Game.QueryObjects(mUnit.Position, radius)
+                    .OrderBy(go => go.MaxHealth)
+                    .ThenBy(go => Vector2.Distance(mUnit.Position, PositionOf(go)))
+                    .FirstOrDefault(go => go.PlayerID != mUnit.PlayerID);
+            }
         }
 
         private class GoToTargetLeaf : IBTreeLeaf
         {
+            private readonly WarriorUnit mUnit;
+
+            public GoToTargetLeaf(WarriorUnit unit)
+            {
+                mUnit = unit;
+            }
+
+            public BTreeLeafState Update(TimeSpan deltaTime)
+            {
+                if (mUnit.mTarget == null)
+                    return BTreeLeafState.Failed;
+
+                mUnit.PathFinder.SetTarget(PositionOf(mUnit.mTarget), mUnit.Game.Map.Data);
+                if (mUnit.DistanceTo(mUnit.mTarget) <= mUnit.AttackRange)
+                {
+                    mUnit.PathFinder.Stop();
+                    return BTreeLeafState.Successed;
+                }
+
+                return BTreeLeafState.Processing;
+            }
         }
 
-        private class AttackTargetLeaf : IBTreeLeaf
+        private class KillTargetLeaf : IBTreeLeaf
         {
+            private readonly WarriorUnit mUnit;
+            private TimeSpan mAttackTimer;
+
+            public KillTargetLeaf(WarriorUnit unit)
+            {
+                mUnit = unit;
+                mAttackTimer = TimeSpan.Zero;
+            }
+
+            public BTreeLeafState Update(TimeSpan deltaTime)
+            {
+                mUnit.IsAttacks = false;
+                if (mUnit.mTarget == null)
+                    return BTreeLeafState.Failed;
+
+                if (mUnit.DistanceTo(mUnit.mTarget) > mUnit.AttackRange)
+                    return BTreeLeafState.Processing;
+
+                mUnit.PathFinder.SetLookAt(PositionOf(mUnit.mTarget), mUnit.Game.Map.Data);
+                mUnit.IsAttacks = true;
+                mAttackTimer -= deltaTime;
+                if (mAttackTimer > TimeSpan.Zero)
+                    return BTreeLeafState.Processing;
+
+                mUnit.mTarget.Health -= mUnit.Damage;
+                if (mUnit.mTarget.Health <= 0)
+                {
+                    mUnit.Game.RemoveObject(mUnit.mTarget.ID);
+                    mUnit.mTarget = null;
+                    mUnit.IsAttacks = false;
+                    return BTreeLeafState.Successed;
+                }
+
+                mAttackTimer = TimeSpan.FromSeconds(1 / mUnit.AttackSpeed);
+                return BTreeLeafState.Processing;
+            }
         }
 
-        private class CheckDistanceLeaf : IBTreeLeaf
+        private class CheckTargetInRangeLeaf : IBTreeLeaf
         {
+            private readonly WarriorUnit mUnit;
+
+            public CheckTargetInRangeLeaf(WarriorUnit unit)
+            {
+                mUnit = unit;
+            }
+
+            public BTreeLeafState Update(TimeSpan deltaTime)
+            {
+                if (mUnit.mTarget == null)
+                    return BTreeLeafState.Failed;
+
+                return mUnit.DistanceTo(mUnit.mTarget) > mUnit.AttackRange ? BTreeLeafState.Failed : BTreeLeafState.Successed;
+            }
+        }
+
+        private class AttackOrder : Order
+        {
+            private readonly WarriorUnit mUnit;
+            private readonly RtsGameObject mTarget;
+            private BTree mOrderLogic;
+
+            public AttackOrder(WarriorUnit unit, RtsGameObject target)
+            {
+                mUnit = unit;
+                mTarget = target;
+            }
+            public override BTreeLeafState Update(TimeSpan deltaTime)
+            {
+                if (mOrderLogic == null)
+                    return BTreeLeafState.Failed;
+
+                return mOrderLogic.Update(deltaTime);
+            }
+
+            public override void Begin()
+            {
+                mUnit.mTarget = mTarget;
+                mOrderLogic = BTree.Build()
+                    .Sequence(b => b
+                        .Leaf(new GoToTargetLeaf(mUnit))
+                        .Leaf(new KillTargetLeaf(mUnit))).Build();
+            }
+
+            public override void End()
+            {
+                mUnit.IsAttacks = false;
+            }
         }
 
         public bool IsAttacks { get; protected set; }
@@ -208,6 +200,8 @@ namespace Assets.Core.GameObjects.Base
         public float AttackSpeed { get; protected set; }
         public int Damage { get; protected set; }
         public Strategy Strategy { get; private set; }
+
+        private RtsGameObject mTarget;
 
         protected WarriorUnit(Game.Game game, IPathFinder pathFinder, Vector2 position)
             : base(game, pathFinder, position)
@@ -218,19 +212,19 @@ namespace Assets.Core.GameObjects.Base
         protected override IBTreeBuilder ExtendLogic(IBTreeBuilder baseLogic)
         {
             return BTree.Build()
-                .Selector(b => 
+                .Selector(b =>  
                     baseLogic
                     .Sequence(b1 => b1
                         .Leaf(new CheckStrategyLeaf(this, Strategy.Aggressive))
-                        .Leaf(new LockTargetLeaf()))
-                        .Leaf(new GoToTargetLeaf())
-                        .Leaf(new AttackTargetLeaf()))
+                        .Leaf(new LockTargetLeaf(this, false))
+                        .Leaf(new GoToTargetLeaf(this))
+                        .Leaf(new KillTargetLeaf(this)))
                     .Sequence(b2 => b2
                         .Leaf(new CheckStrategyLeaf(this, Strategy.Defencive))
                         .Selector(b21 => b21
-                            .Leaf(new CheckDistanceLeaf())
-                            .Leaf(new LockTargetLeaf()))
-                        .Leaf(new AttackTargetLeaf()));
+                            .Leaf(new CheckTargetInRangeLeaf(this))
+                            .Leaf(new LockTargetLeaf(this, true)))
+                        .Leaf(new KillTargetLeaf(this))));
         }
 
         public Task Attack(Guid targetID)
@@ -246,14 +240,6 @@ namespace Assets.Core.GameObjects.Base
         {
             Strategy = strategy;
             return Task.CompletedTask;
-        }
-
-        private RtsGameObject FindEnemy(float radius)
-        {
-            return Game.QueryObjects(Position, radius)
-                .OrderBy(go => go.MaxHealth)
-                .ThenBy(go => Vector2.Distance(Position, PositionOf(go)))
-                .FirstOrDefault(go => go.PlayerID != PlayerID);
         }
 
         private static Vector2 PositionOf(RtsGameObject target)
@@ -277,26 +263,6 @@ namespace Assets.Core.GameObjects.Base
             }
 
             return Vector2.Distance(Position, PositionOf(target));
-        }
-
-        public override void Update(TimeSpan deltaTime)
-        {
-            base.Update(deltaTime);
-
-            if (HasNoOrder)
-            {
-                if (Strategy == Strategy.Aggressive)
-                {
-                    var queried = Game.QueryObjects(Position, ViewRadius).FirstOrDefault(go => go.PlayerID != PlayerID);
-                    if (queried != null)
-                        SetOrder(new AttackOrder(this, queried));
-                }
-
-                if (Strategy == Strategy.Defencive)
-                {
-                    SetOrder(new StandAttackOrder(this));
-                }
-            }
         }
     }
 }

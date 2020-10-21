@@ -14,6 +14,7 @@ namespace Assets.Core.GameObjects.Utils
         /// Releases allocated point.
         /// </summary>
         /// <param name="pointId">Allocated point id.</param>
-        Task ReleasePoint(int pointId);
+        /// <returns>true, if point succesfully released, otherwise - false.</returns>
+        Task<bool> ReleasePoint(int pointId);
     }
 }

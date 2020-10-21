@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Assets.Core.BehaviorTree;
 using Assets.Core.GameObjects.Base;
 using Assets.Core.GameObjects.Utils;
 using Assets.Core.Map;
@@ -22,42 +23,61 @@ namespace Assets.Core.GameObjects.Final
 
     internal class Worker : Unit, IWorkerInfo, IWorkerOrders
     {
-        private class BuildOrder : UnitOrder
+        private class BuildOrder : Order
         {
             private readonly Worker mWorker;
             private readonly BuildingTemplate mTemplate;
-            private readonly PlacementPoint mPlacementPoint;
+            private PlacementPoint mPlacementPoint = PlacementPoint.Invalid;
+            private bool mAllocating = true;
+            private bool mArrived = false;
 
-            public BuildOrder(Worker worker, BuildingTemplate template, PlacementPoint placementPoint)
+            public BuildOrder(Worker worker, BuildingTemplate template)
             {
                 mWorker = worker;
                 mTemplate = template;
-                mPlacementPoint = placementPoint;
             }
 
-            protected override Task OnBegin()
+            public override BTreeLeafState Update(TimeSpan deltaTime)
             {
+                if (mAllocating)
+                    return BTreeLeafState.Processing;
+
+                if (mPlacementPoint == PlacementPoint.Invalid)
+                    return BTreeLeafState.Failed;
+
+                if (!mArrived)
+                    return BTreeLeafState.Processing;
+
                 mWorker.IsBuilding = true;
-                mWorker.PathFinder.SetLookAt(mTemplate.Position + mTemplate.Size / 2f, mWorker.Game.Map.Data);
-                mTemplate.AttachedWorkers++;
-                return Task.CompletedTask;
+                mWorker.PathFinder.SetLookAt(mTemplate.Position + mTemplate.Size / 2, mWorker.Game.Map.Data);
+
+                return mTemplate.Progress >= 1 ? BTreeLeafState.Successed : BTreeLeafState.Processing;
             }
 
-            protected override void OnUpdate(TimeSpan deltaTime)
+            public override async void Begin()
             {
-                if (mTemplate.Progress >= 1)
+                //pin as unmovable
+                mPlacementPoint = await mTemplate.PlacementService.TryAllocatePoint();
+                mAllocating = false;
+
+                if (mPlacementPoint != PlacementPoint.Invalid)
                 {
-                    End();
-                    OnCancel();
+                    mWorker.PathFinder.Arrived += PathFinderOnArrived;
+                    await mWorker.PathFinder.SetTarget(mPlacementPoint.Position, mWorker.Game.Map.Data);
                 }
             }
 
-            protected override void OnCancel()
+            private void PathFinderOnArrived()
             {
-                mTemplate.PlacementService.ReleasePoint(mPlacementPoint.ID);
-                mWorker.IsBuilding = false;
+                mTemplate.AttachedWorkers++;
+                mArrived = true;
+            }
 
-                if (State == OrderState.Work)
+            public override async void End()
+            {
+                mWorker.PathFinder.Arrived -= PathFinderOnArrived;
+                mWorker.IsBuilding = false;
+                if (await mTemplate.PlacementService.ReleasePoint(mPlacementPoint.ID) && mArrived)
                     mTemplate.AttachedWorkers--;
             }
         }
@@ -163,11 +183,7 @@ namespace Assets.Core.GameObjects.Final
         public async Task AttachAsBuilder(Guid templateId)
         {
             var template = Game.GetObject<BuildingTemplate>(templateId);
-            var point = await template.PlacementService.TryAllocatePoint();
-            if (point == PlacementPoint.Invalid)
-                return;
-
-            SetOrder(new GoToOrder(this, point.Position).Then(new BuildOrder(this, template, point)));
+            SetOrder(new BuildOrder(this, template));
         }
     }
 }
