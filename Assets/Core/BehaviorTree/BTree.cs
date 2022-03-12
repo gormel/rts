@@ -25,6 +25,7 @@ namespace Assets.Core.BehaviorTree
         IBTreeBuilder Selector(Func<IBTreeBuilder, IBTreeBuilder> children);
         IBTreeBuilder Leaf(IBTreeLeaf leaf);
         IBTreeBuilder Fail(Func<IBTreeBuilder, IBTreeBuilder> children);
+        IBTreeBuilder Success(Func<IBTreeBuilder, IBTreeBuilder> children);
         BTree Build();
     }
 
@@ -162,6 +163,12 @@ namespace Assets.Core.BehaviorTree
             {
                 var childrenBuilder = new Builder(null, null);
                 return new Builder(this, () => new FailSuccessNode((children(childrenBuilder) as Builder)?.BuildInner()?.ToArray(), BTreeLeafState.Failed));
+            }
+
+            public IBTreeBuilder Success(Func<IBTreeBuilder, IBTreeBuilder> children)
+            {
+                var childrenBuilder = new Builder(null, null);
+                return new Builder(this, () => new FailSuccessNode((children(childrenBuilder) as Builder)?.BuildInner()?.ToArray(), BTreeLeafState.Successed));
             }
 
             private List<Node> BuildInner()

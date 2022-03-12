@@ -118,7 +118,7 @@ namespace Assets.Core.GameObjects.Base
                 if (mPathFinder.InProgress)
                     return BTreeLeafState.Processing;
 
-                if (mPathFinder.IsArrived && Vector2.Distance(mTarget, mPathFinder.Target) < 0.1f)
+                if (mPathFinder.IsArrived && Vector2.Distance(mTarget, mPathFinder.Target) < 0.01f)
                     return BTreeLeafState.Successed;
                 
                 mPathFinder.SetTarget(mTarget, mMapData);
@@ -156,7 +156,7 @@ namespace Assets.Core.GameObjects.Base
             
             public BTreeLeafState Update(TimeSpan deltaTime)
             {
-                mUnit.mIntelligence = mUnit.GetDefaultIntelligence().Build();
+                mUnit.ApplyDefaultIntelligence();
                 return BTreeLeafState.Successed;
             }
         }
@@ -171,27 +171,36 @@ namespace Assets.Core.GameObjects.Base
         private readonly CommandCancellation mCancellation = new CommandCancellation();
         private BTree mIntelligence;
 
+        private readonly IBTreeBuilder mDefaultIntelligence; 
+
         public Unit(Game.Game game, IPathFinder pathFinder, Vector2 position)
         {
             Game = game;
             PathFinder = pathFinder;
             Destignation = Position = position;
-            mIntelligence = GetDefaultIntelligence().Build();
+            mIntelligence = (mDefaultIntelligence = WrapCancellation(b => b, b => b)).Build();
+            
         }
 
         protected virtual IBTreeBuilder GetDefaultIntelligence()
         {
-            return WrapCancellation(b => b, b => b);
+            return mDefaultIntelligence;
         }
 
         public override void OnAddedToGame()
         {
             base.OnAddedToGame();
 
+            ApplyDefaultIntelligence();
             PathFinder.SetTarget(Position, Game.Map.Data);
         }
 
-        private IBTreeBuilder WrapCancellation(Func<IBTreeBuilder, IBTreeBuilder> createBody, Func<IBTreeBuilder, IBTreeBuilder> createCancel)
+        protected void ApplyDefaultIntelligence()
+        {
+            mIntelligence = GetDefaultIntelligence().Build();
+        }
+
+        protected IBTreeBuilder WrapCancellation(Func<IBTreeBuilder, IBTreeBuilder> createBody, Func<IBTreeBuilder, IBTreeBuilder> createCancel)
         {
             return BTree.Create()
                 .Sequence(b => b

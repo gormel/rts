@@ -67,21 +67,6 @@ namespace Assets.Core.GameObjects.Final
             }
         }
 
-        class CheckTemplateLeaf : IBTreeLeaf
-        {
-            private readonly BuildingTemplate mTemplate;
-
-            public CheckTemplateLeaf(BuildingTemplate template)
-            {
-                mTemplate = template;
-            }
-            
-            public BTreeLeafState Update(TimeSpan deltaTime)
-            {
-                return mTemplate.IsInGame ? BTreeLeafState.Successed : BTreeLeafState.Failed;
-            }
-        }
-
         class StopBuildLeaf : IBTreeLeaf
         {
             private readonly Worker mWorker;
