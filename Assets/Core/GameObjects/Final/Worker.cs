@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Assets.Core.BehaviorTree;
 using Assets.Core.GameObjects.Base;
 using Assets.Core.GameObjects.Utils;
 using Assets.Core.Map;
@@ -22,46 +23,87 @@ namespace Assets.Core.GameObjects.Final
 
     internal class Worker : Unit, IWorkerInfo, IWorkerOrders
     {
-        private class BuildOrder : UnitOrder
+        class FreePlacementPointLeaf : IBTreeLeaf
         {
-            private readonly Worker mWorker;
-            private readonly BuildingTemplate mTemplate;
-            private readonly PlacementPoint mPlacementPoint;
+            private readonly PlacementPoint mPoint;
+            private readonly IPlacementService mPlacementService;
 
-            public BuildOrder(Worker worker, BuildingTemplate template, PlacementPoint placementPoint)
+            public FreePlacementPointLeaf(PlacementPoint point, IPlacementService placementService)
             {
-                mWorker = worker;
-                mTemplate = template;
-                mPlacementPoint = placementPoint;
+                mPoint = point;
+                mPlacementService = placementService;
             }
-
-            protected override Task OnBegin()
+            public BTreeLeafState Update(TimeSpan deltaTime)
             {
-                mWorker.IsBuilding = true;
-                mWorker.PathFinder.SetLookAt(mTemplate.Position + mTemplate.Size / 2f, mWorker.Game.Map.Data);
-                mTemplate.AttachedWorkers++;
-                return Task.CompletedTask;
-            }
-
-            protected override void OnUpdate(TimeSpan deltaTime)
-            {
-                if (mTemplate.Progress >= 1)
-                {
-                    End();
-                    OnCancel();
-                }
-            }
-
-            protected override void OnCancel()
-            {
-                mTemplate.PlacementService.ReleasePoint(mPlacementPoint.ID);
-                mWorker.IsBuilding = false;
-
-                if (State == OrderState.Work)
-                    mTemplate.AttachedWorkers--;
+                mPlacementService.ReleasePoint(mPoint.ID);
+                return BTreeLeafState.Successed;
             }
         }
 
+        class BuildLeaf : IBTreeLeaf
+        {
+            private readonly Worker mWorker;
+            private readonly BuildingTemplate mTemplate;
+
+            public BuildLeaf(Worker worker, BuildingTemplate template)
+            {
+                mWorker = worker;
+                mTemplate = template;
+            }
+            
+            public BTreeLeafState Update(TimeSpan deltaTime)
+            {
+                if (mWorker.IsBuilding)
+                {
+                    if (mTemplate.Progress < 1)
+                        return BTreeLeafState.Processing;
+                    
+                    return BTreeLeafState.Successed;
+                }
+
+                mWorker.IsBuilding = true;
+                mTemplate.AttachedWorkers++;
+                return BTreeLeafState.Processing;
+            }
+        }
+
+        class CheckTemplateLeaf : IBTreeLeaf
+        {
+            private readonly BuildingTemplate mTemplate;
+
+            public CheckTemplateLeaf(BuildingTemplate template)
+            {
+                mTemplate = template;
+            }
+            
+            public BTreeLeafState Update(TimeSpan deltaTime)
+            {
+                return mTemplate.IsInGame ? BTreeLeafState.Successed : BTreeLeafState.Failed;
+            }
+        }
+
+        class StopBuildLeaf : IBTreeLeaf
+        {
+            private readonly Worker mWorker;
+            private readonly BuildingTemplate mTemplate;
+
+            public StopBuildLeaf(Worker worker, BuildingTemplate template)
+            {
+                mWorker = worker;
+                mTemplate = template;
+            }
+
+            public BTreeLeafState Update(TimeSpan deltaTime)
+            {
+                if (!mWorker.IsBuilding)
+                    return BTreeLeafState.Successed;
+                
+                mTemplate.AttachedWorkers--;
+                mWorker.IsBuilding = false;
+                return BTreeLeafState.Successed;
+            }
+        }
+        
         public const int CentralBuildingCost = 400;
         public const int MiningCampCost = 100;
         public const int BarrakCost = 200;
@@ -167,7 +209,20 @@ namespace Assets.Core.GameObjects.Final
             if (point == PlacementPoint.Invalid)
                 return;
 
-            SetOrder(new GoToOrder(this, point.Position).Then(new BuildOrder(this, template, point)));
+            await ApplyIntelligence(
+                b => b
+                    .Sequence(b1 => b1
+                        .Leaf(new GoToTargetLeaf(PathFinder, point.Position, Game.Map.Data))
+                        .Leaf(new RotateToLeaf(PathFinder, template.Position + template.Size / 2, Game.Map.Data))
+                        .Leaf(new BuildLeaf(this, template))
+                        .Leaf(new StopBuildLeaf(this, template))
+                        .Leaf(new FreePlacementPointLeaf(point, template.PlacementService))), 
+                b => b
+                    .Sequence(b1 => b1
+                        .Leaf(new CancelGotoLeaf(PathFinder))
+                        .Leaf(new StopBuildLeaf(this, template))
+                        .Leaf(new FreePlacementPointLeaf(point, template.PlacementService)))
+                );
         }
     }
 }

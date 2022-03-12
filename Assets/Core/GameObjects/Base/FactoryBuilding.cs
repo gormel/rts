@@ -131,7 +131,7 @@ namespace Assets.Core.GameObjects.Base {
             mGame = game;
             mPlacementService = placementService;
             Waypoint = Position = position;
-            mIntelligence = BTree.Build().Sequence(b => b
+            mIntelligence = BTree.Create().Sequence(b => b
                 .Selector(b1 => b1
                     .Leaf(new CheckOrderLeaf(this))
                     .Leaf(new LockOrderLeaf(this)))

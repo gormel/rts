@@ -24,7 +24,16 @@ namespace Assets.Core.BehaviorTree
         IBTreeBuilder Sequence(Func<IBTreeBuilder, IBTreeBuilder> children);
         IBTreeBuilder Selector(Func<IBTreeBuilder, IBTreeBuilder> children);
         IBTreeBuilder Leaf(IBTreeLeaf leaf);
+        IBTreeBuilder Fail(Func<IBTreeBuilder, IBTreeBuilder> children);
         BTree Build();
+    }
+
+    class NopLeaf : IBTreeLeaf
+    {
+        public BTreeLeafState Update(TimeSpan deltaTime)
+        {
+            return BTreeLeafState.Successed;
+        }
     }
 
     class BTree
@@ -83,6 +92,25 @@ namespace Assets.Core.BehaviorTree
             }
         }
 
+        private class FailSuccessNode : Node
+        {
+            private readonly BTreeLeafState mResult;
+
+            public FailSuccessNode(Node[] children, BTreeLeafState result) 
+                : base(children)
+            {
+                mResult = result;
+            }
+
+            public override BTreeLeafState Update(TimeSpan deltaTime)
+            {
+                for (int i = 0; i < Children.Length; i++) 
+                    Children[i].Update(deltaTime);
+
+                return mResult;
+            }
+        }
+
         private class LeafNode : Node
         {
             private readonly IBTreeLeaf mLeaf;
@@ -130,6 +158,12 @@ namespace Assets.Core.BehaviorTree
                 return new Builder(this, () => new LeafNode(null, leaf));
             }
 
+            public IBTreeBuilder Fail(Func<IBTreeBuilder, IBTreeBuilder> children)
+            {
+                var childrenBuilder = new Builder(null, null);
+                return new Builder(this, () => new FailSuccessNode((children(childrenBuilder) as Builder)?.BuildInner()?.ToArray(), BTreeLeafState.Failed));
+            }
+
             private List<Node> BuildInner()
             {
                 var nodes = new List<Node>();
@@ -153,7 +187,7 @@ namespace Assets.Core.BehaviorTree
             mRoot = root;
         }
 
-        public static IBTreeBuilder Build()
+        public static IBTreeBuilder Create()
         {
             return new Builder(null, null);
         }

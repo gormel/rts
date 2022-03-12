@@ -37,18 +37,22 @@ namespace Assets.Core.GameObjects.Base
         public float MaxHealth { get; set; }
         public float ViewRadius { get; set; }
 
+        public bool IsInGame { get; private set; } = false;
+
         public event Action<RtsGameObject> AddedToGame;
         public event Action<RtsGameObject> RemovedFromGame;
 
         public abstract void Update(TimeSpan deltaTime);
 
-        public void OnAddedToGame()
+        public virtual void OnAddedToGame()
         {
+            IsInGame = true;
             AddedToGame?.Invoke(this);
         }
 
-        public void OnRemovedFromGame()
+        public virtual void OnRemovedFromGame()
         {
+            IsInGame = false;
             RemovedFromGame?.Invoke(this);
         }
     }

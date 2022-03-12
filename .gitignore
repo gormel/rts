@@ -25,3 +25,5 @@ sysinfo.txt
 /*.svd
 /Packages/Newtonsoft.Json.12.0.2
 /Assets/Proto/dst
+.idea/
+.vscode/

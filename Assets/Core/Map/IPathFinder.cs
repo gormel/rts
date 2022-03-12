@@ -15,7 +15,8 @@ namespace Assets.Core.Map
         event Action Arrived;
 
         Vector2 CurrentDirection { get; }
-
+        
+        bool InProgress { get; }
 
         Task SetLookAt(Vector2 position, IMapData mapData);
         Task SetTarget(Vector2 position, IMapData mapData);

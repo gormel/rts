@@ -17,6 +17,8 @@ namespace Assets.Views.Base
         public event Action Arrived;
         public Vector2 CurrentPosition => GameUtils.GetFlatPosition(transform.localPosition);
         public Vector2 CurrentDirection => GameUtils.GetFlatPosition(transform.localRotation * Vector3.forward);
+        
+        public bool InProgress { get; private set; }
         public Vector2 Target { get; private set; }
 
         private NavMeshAgent mNavMeshAgent;
@@ -86,6 +88,7 @@ namespace Assets.Views.Base
                 Arrived?.Invoke();
                 IsArrived = true;
                 mWaypointInst.SetActive(false);
+                InProgress = false;
             }
         }
 
@@ -110,6 +113,7 @@ namespace Assets.Views.Base
         {
             return SyncContext.Execute(() =>
             {
+                InProgress = true;
                 mLookTarget = null;
                 Target = position;
                 IsArrived = false;
@@ -124,6 +128,7 @@ namespace Assets.Views.Base
         {
             return SyncContext.Execute(() =>
             {
+                InProgress = false;
                 mNavMeshAgent.ResetPath();
             });
         }

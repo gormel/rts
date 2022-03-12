@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using Assets.Core.BehaviorTree;
@@ -23,125 +24,143 @@ namespace Assets.Core.GameObjects.Base
 
     abstract class Unit : RtsGameObject, IUnitInfo, IUnitOrders
     {
-        private class CheckOrderLeaf : IBTreeLeaf
+        class CommandCancellation
         {
-            private readonly Unit mOwner;
+            private TaskCompletionSource<bool> mTaskSource = null;
 
-            public CheckOrderLeaf(Unit owner)
+            public bool IsCancellationRequested => mTaskSource != null; 
+            
+            public Task Cancel()
             {
-                mOwner = owner;
+                lock(this)
+                {
+                    if (mTaskSource == null)
+                        mTaskSource = new TaskCompletionSource<bool>();
+                }
+                
+                return mTaskSource.Task;
             }
 
-            public BTreeLeafState Update(TimeSpan deltaTime)
+            public void ConfirmCancel()
             {
-                return mOwner.mOrder == null ? BTreeLeafState.Failed : BTreeLeafState.Successed;
+                if (mTaskSource == null)
+                    return;
+                
+                mTaskSource.SetResult(true);
+                mTaskSource = null;
             }
         }
 
-        private class TrySetOrderLeaf : IBTreeLeaf
+        class CheckCancellationLeaf : IBTreeLeaf
         {
-            private readonly Unit mOwner;
+            private readonly CommandCancellation mCancellation;
 
-            public TrySetOrderLeaf(Unit owner)
+            public CheckCancellationLeaf(CommandCancellation cancellation)
             {
-                mOwner = owner;
+                mCancellation = cancellation;
             }
-
+            
             public BTreeLeafState Update(TimeSpan deltaTime)
             {
-                if (mOwner.mOrder == null)
-                    return BTreeLeafState.Failed;
+                return mCancellation.IsCancellationRequested ? BTreeLeafState.Successed : BTreeLeafState.Failed;
+            }
+        }
 
-                if (mOwner.mLockedOrder != null)
-                    mOwner.mLockedOrder.End();
+        class ConfirmCancellationLeaf : IBTreeLeaf
+        {
+            private readonly CommandCancellation mCancellation;
 
-                mOwner.mLockedOrder = mOwner.mOrder;
-                mOwner.mLockedOrder.Begin();
+            public ConfirmCancellationLeaf(CommandCancellation cancellation)
+            {
+                mCancellation = cancellation;
+            }
+            public BTreeLeafState Update(TimeSpan deltaTime)
+            {
+                mCancellation.ConfirmCancel();
                 return BTreeLeafState.Successed;
             }
         }
 
-        private class OrderLeaf : IBTreeLeaf
+        protected class RotateToLeaf : IBTreeLeaf
         {
-            private readonly Unit mOwner;
-
-            public OrderLeaf(Unit owner)
-            {
-                mOwner = owner;
-            }
-
-            public BTreeLeafState Update(TimeSpan deltaTime)
-            {
-                if (mOwner.mLockedOrder == null)
-                    return BTreeLeafState.Failed;
-
-                return mOwner.mLockedOrder.Update(deltaTime);
-            }
-        }
-
-        private class RemoveOrderLeaf : IBTreeLeaf
-        {
-            private readonly Unit mOwner;
-
-            public RemoveOrderLeaf(Unit owner)
-            {
-                mOwner = owner;
-            }
-
-            public BTreeLeafState Update(TimeSpan deltaTime)
-            {
-                if (mOwner.mOrder == null)
-                    return BTreeLeafState.Failed;
-
-                mOwner.mLockedOrder.End();
-                mOwner.mLockedOrder = null;
-                mOwner.mOrder = null;
-                return BTreeLeafState.Successed;
-            }
-        }
-
-        protected abstract class Order
-        {
-            public abstract BTreeLeafState Update(TimeSpan deltaTime);
-            public abstract void Begin();
-            public abstract void End();
-        }
-
-        private class GoToOrder : Order
-        {
-            private readonly Unit mOwner;
+            private readonly IPathFinder mPathFinder;
             private readonly Vector2 mTarget;
-            private bool mArrived = false;
+            private readonly IMapData mMapData;
 
-            public GoToOrder(Unit owner, Vector2 target)
+            public RotateToLeaf(IPathFinder pathFinder, Vector2 target, IMapData mapData)
             {
-                mOwner = owner;
+                mPathFinder = pathFinder;
                 mTarget = target;
+                mMapData = mapData;
             }
-
-            public override BTreeLeafState Update(TimeSpan deltaTime)
+            public BTreeLeafState Update(TimeSpan deltaTime)
             {
-                return mArrived ? BTreeLeafState.Successed : BTreeLeafState.Processing;
-            }
-
-            public override void Begin()
-            {
-                mOwner.PathFinder.Arrived += PathFinderOnArrived;
-                mOwner.PathFinder.SetTarget(mTarget, mOwner.Game.Map.Data);
-            }
-
-            private void PathFinderOnArrived()
-            {
-                mArrived = true;
-            }
-
-            public override void End()
-            {
-                mOwner.PathFinder.Arrived -= PathFinderOnArrived;
-                mOwner.PathFinder.Stop();
+                mPathFinder.SetLookAt(mTarget, mMapData);
+                return BTreeLeafState.Successed;
             }
         }
 
+        protected class GoToTargetLeaf : IBTreeLeaf
+        {
+            private readonly IPathFinder mPathFinder;
+            private readonly Vector2 mTarget;
+            private readonly IMapData mMapData;
+
+            public GoToTargetLeaf(IPathFinder pathFinder, Vector2 target, IMapData mapData)
+            {
+                mPathFinder = pathFinder;
+                mTarget = target;
+                mMapData = mapData;
+            }
+            
+            public BTreeLeafState Update(TimeSpan deltaTime)
+            {
+                if (mPathFinder.InProgress)
+                    return BTreeLeafState.Processing;
+
+                if (mPathFinder.IsArrived && Vector2.Distance(mTarget, mPathFinder.Target) < 0.1f)
+                    return BTreeLeafState.Successed;
+                
+                mPathFinder.SetTarget(mTarget, mMapData);
+                return BTreeLeafState.Processing;
+            }
+        }
+
+        protected class CancelGotoLeaf : IBTreeLeaf
+        {
+            private readonly IPathFinder mPathFinder;
+
+            public CancelGotoLeaf(IPathFinder pathFinder)
+            {
+                mPathFinder = pathFinder;
+            }
+            
+            public BTreeLeafState Update(TimeSpan deltaTime)
+            {
+                if (mPathFinder.IsArrived)
+                    return BTreeLeafState.Successed;
+
+                mPathFinder.Stop();
+                return BTreeLeafState.Successed;
+            }
+        }
+
+        private class FreeIntelligenceLeaf : IBTreeLeaf
+        {
+            private readonly Unit mUnit;
+
+            public FreeIntelligenceLeaf(Unit unit)
+            {
+                mUnit = unit;
+            }
+            
+            public BTreeLeafState Update(TimeSpan deltaTime)
+            {
+                mUnit.mIntelligence = mUnit.GetDefaultIntelligence().Build();
+                return BTreeLeafState.Successed;
+            }
+        }
+        
         protected Game.Game Game { get; }
 
         public float Speed { get; protected set; }
@@ -149,40 +168,56 @@ namespace Assets.Core.GameObjects.Base
         public Vector2 Destignation { get; protected set; }
 
         protected IPathFinder PathFinder { get; }
-
-        private Order mLockedOrder;
-        private Order mOrder;
+        private readonly CommandCancellation mCancellation = new CommandCancellation();
         private BTree mIntelligence;
-
-        protected bool HasNoOrder => mOrder == null;
 
         public Unit(Game.Game game, IPathFinder pathFinder, Vector2 position)
         {
             Game = game;
             PathFinder = pathFinder;
             Destignation = Position = position;
-            mIntelligence = ExtendLogic(BTree.Build()
+            mIntelligence = GetDefaultIntelligence().Build();
+        }
+
+        protected virtual IBTreeBuilder GetDefaultIntelligence()
+        {
+            return WrapCancellation(b => b, b => b);
+        }
+
+        public override void OnAddedToGame()
+        {
+            base.OnAddedToGame();
+
+            PathFinder.SetTarget(Position, Game.Map.Data);
+        }
+
+        private IBTreeBuilder WrapCancellation(Func<IBTreeBuilder, IBTreeBuilder> createBody, Func<IBTreeBuilder, IBTreeBuilder> createCancel)
+        {
+            return BTree.Create()
                 .Sequence(b => b
                     .Selector(b1 => b1
-                        .Leaf(new CheckOrderLeaf(this))
-                        .Leaf(new TrySetOrderLeaf(this)))
-                    .Leaf(new OrderLeaf(this))
-                    .Leaf(new RemoveOrderLeaf(this)))).Build();
+                        .Leaf(new CheckCancellationLeaf(mCancellation))
+                        .Fail(b2 => b2
+                            .Sequence(b3 => 
+                                createBody(b3)
+                                .Leaf(new FreeIntelligenceLeaf(this)))))
+                    .Sequence(b1 => 
+                        createCancel(b1)
+                        .Leaf(new FreeIntelligenceLeaf(this))
+                        .Leaf(new ConfirmCancellationLeaf(mCancellation))));
         }
 
-        protected virtual IBTreeBuilder ExtendLogic(IBTreeBuilder baseLogic)
+        protected async Task ApplyIntelligence(Func<IBTreeBuilder, IBTreeBuilder> createBody, Func<IBTreeBuilder, IBTreeBuilder> createCancel)
         {
-            return baseLogic;
-        }
-
-        protected void SetOrder(Order order)
-        {
-            mOrder = order;
+            await mCancellation.Cancel();
+            mIntelligence = WrapCancellation(createBody, createCancel).Build();
         }
 
         public async Task GoTo(Vector2 position)
         {
-            SetOrder(new GoToOrder(this, position));
+            await ApplyIntelligence(
+                b => b.Leaf(new GoToTargetLeaf(PathFinder, position, Game.Map.Data)),
+                b => b.Leaf(new CancelGotoLeaf(PathFinder)));
         }
 
         public override void Update(TimeSpan deltaTime)
