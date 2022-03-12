@@ -52,7 +52,7 @@ namespace Assets.Views.Base {
             WaypointLine.SetPosition(1, Map.GetWorldPosition(Info.Waypoint));
         }
 
-        public Task ReleasePoint(int pointId)
+        public Task<bool> ReleasePoint(int pointId)
         {
             return SyncContext.Execute(() => mLockedPoints.Remove(pointId));
         }

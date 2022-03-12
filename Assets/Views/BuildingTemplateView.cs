@@ -53,7 +53,7 @@ namespace Assets.Views
             });
         }
 
-        public Task ReleasePoint(int pointId)
+        public Task<bool> ReleasePoint(int pointId)
         {
             return SyncContext.Execute(() => mBusyPoints.Remove(pointId));
         }
