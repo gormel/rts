@@ -11,6 +11,12 @@ service WorkerService {
     rpc PlaceMiningCampTemplate(PlaceMiningCampTemplateRequest) returns (ID);
     rpc PlaceBarrakTemplate(PlaceBarrakTemplateRequest) returns (ID);
     rpc AttachAsBuilder(AttachAsBuilderRequest) returns (Empty);
+    rpc AttachToMiningCamp(AttachToMiningCampRequest) returns(Empty);
+}
+
+message AttachToMiningCampRequest {
+    ID WorkerID = 1;
+    ID CampID = 2;
 }
 
 message PlaceCentralBuildingTemplateRequest {
@@ -36,4 +42,5 @@ message AttachAsBuilderRequest {
 message WorkerState {
     UnitState Base = 1;
     bool IsBuilding = 2;
+    bool IsAttachedToMiningCamp = 3;
 }

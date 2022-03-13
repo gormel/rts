@@ -33,6 +33,11 @@ namespace Assets.Interaction
                 );
         }
 
+        public void AttachToMiningCamp()
+        {
+            Interface.BeginAttachWorkerToMiningCamp(FetchSelectedOrders<IWorkerOrders>());
+        }
+
         void OnEnable()
         {
             for (int i = 0; i < transform.childCount; i++)

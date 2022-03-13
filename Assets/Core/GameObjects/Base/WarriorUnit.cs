@@ -157,7 +157,7 @@ namespace Assets.Core.GameObjects.Base
                 mTargetStorage.Target = mUnit.Game.QueryObjects(mUnit.Position, mUnit.AttackRange)
                     .OrderBy(go => go.MaxHealth)
                     .ThenBy(go => Vector2.Distance(mUnit.Position, PositionOf(go)))
-                    .FirstOrDefault(go => go.ID != mUnit.ID || go.PlayerID != mUnit.PlayerID);
+                    .FirstOrDefault(go => /*go.ID != mUnit.ID ||*/ go.PlayerID != mUnit.PlayerID);
 
                 return mTargetStorage.Target == null ? BTreeLeafState.Failed : BTreeLeafState.Successed;
             }
@@ -309,7 +309,7 @@ namespace Assets.Core.GameObjects.Base
                 var dx = Math.Max(Math.Abs(Position.x - p.x) - s.x / 2, 0);
                 var dy = Math.Max(Math.Abs(Position.y - p.y) - s.y / 2, 0);
 
-                return dx * dx + dy * dy;
+                return Mathf.Sqrt(dx * dx + dy * dy);
             }
 
             return Vector2.Distance(Position, PositionOf(target));

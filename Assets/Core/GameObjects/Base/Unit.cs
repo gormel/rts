@@ -167,7 +167,7 @@ namespace Assets.Core.GameObjects.Base
         public Vector2 Direction { get; protected set; }
         public Vector2 Destignation { get; protected set; }
 
-        protected IPathFinder PathFinder { get; }
+        public IPathFinder PathFinder { get; }
         private readonly CommandCancellation mCancellation = new CommandCancellation();
         private BTree mIntelligence;
 

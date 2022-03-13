@@ -1,25 +1,17 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Net.Sockets;
 using System.Threading.Tasks;
-using Assets.Core;
 using Assets.Core.Game;
-using Assets.Core.GameObjects;
 using Assets.Core.GameObjects.Base;
 using Assets.Core.GameObjects.Final;
 using Assets.Core.Map;
 using Assets.Networking;
-using Assets.Networking.Services;
 using Assets.Utils;
 using Assets.Views;
 using Assets.Views.Base;
-using Grpc.Core;
+using Assets.Views.Utils;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using GameObject = UnityEngine.GameObject;
-using Random = UnityEngine.Random;
-using Server = Grpc.Core.Server;
 
 class Root : MonoBehaviour
 {
@@ -27,6 +19,7 @@ class Root : MonoBehaviour
     {
         private readonly RtsServer mServer;
         private readonly UnitySyncContext mSyncContext;
+        private readonly ExternalUpdater mUpdater;
         private readonly Game mGame;
         private readonly MapView mMap;
         private readonly GameObject mRangedWarriorPrefab;
@@ -43,6 +36,7 @@ class Root : MonoBehaviour
         {
             mServer = root.mServer;
             mSyncContext = root.SyncContext;
+            mUpdater = root.Updater;
             mGame = root.mGame;
             mMap = root.MapView;
             mRangedWarriorPrefab = root.RangedWarriorPrefab;
@@ -75,6 +69,7 @@ class Root : MonoBehaviour
                 };
                 view.Map = mMap;
                 view.SyncContext = mSyncContext;
+                view.Updater = mUpdater;
                 view.LoadModel(result, result);
 
                 instance.transform.parent = mMap.ChildContainer.transform;
@@ -163,7 +158,7 @@ class Root : MonoBehaviour
         {
             var miningCamp = await CreateModelAndView<MiningCampView, MiningCamp, IMinigCampOrders, IMinigCampInfo>(
                 mMiningCampPrefab,
-                view => new MiningCamp(position),
+                view => new MiningCamp(mGame, position, view),
                 position
             );
             miningCamp.AddedToGame += o => mServer.MiningCampRegistrator.Register(miningCamp, miningCamp);
@@ -183,6 +178,7 @@ class Root : MonoBehaviour
     public GameObject CentralBuildingPrefab;
     public GameObject MiningCampPrefab;
     public UnitySyncContext SyncContext;
+    public ExternalUpdater Updater;
 
     private RtsServer mServer;
     private RtsClient mClient;
@@ -311,6 +307,7 @@ class Root : MonoBehaviour
         view.Map = MapView;
         view.IsClient = true;
         view.IsControlable = info.PlayerID == Player.ID;
+        view.Updater = Updater;
         view.SyncContext = SyncContext;
         view.LoadModel(orders, info);
 

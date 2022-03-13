@@ -78,6 +78,27 @@ namespace Assets.Interaction
             }
         }
 
+        private class AttachWorkerToMiningCampAction : InterfaceAction
+        {
+            private readonly IEnumerable<IWorkerOrders> mViews;
+            private readonly Raycaster mRaycaster;
+
+            public AttachWorkerToMiningCampAction(IEnumerable<IWorkerOrders> views, Raycaster raycaster)
+            {
+                mViews = views;
+                mRaycaster = raycaster;
+            }
+            public override void Resolve(Vector2 position)
+            {
+                var hit = mRaycaster.Raycast<MiningCampView>(Input.mousePosition);
+                if (hit.IsEmpty())
+                    return;
+                
+                foreach (var view in mViews)
+                    view.AttachToMiningCamp(hit.Object.InfoBase.ID);
+            }
+        }
+
         private class BuildingPlacementInterfaceAction : InterfaceAction
         {
             private readonly UserInterface mUserInterface;
@@ -166,6 +187,14 @@ namespace Assets.Interaction
             mCurrentAction = new GoToInterfaceAction(views);
         }
 
+        public void BeginAttachWorkerToMiningCamp(IEnumerable<IWorkerOrders> views)
+        {
+            if (mCurrentAction != null)
+                mCurrentAction.Cancel();
+
+            mCurrentAction = new AttachWorkerToMiningCampAction(views, mRaycaster);
+        }
+
         public void BeginAttack(IEnumerable<IWarriorOrders> views)
         {
             if (mCurrentAction != null)
@@ -195,7 +224,7 @@ namespace Assets.Interaction
 
         void Update()
         {
-            Selected.RemoveAll(view => view == null || view.gameObject == null);
+            Selected.RemoveAll(view => view == null || view.gameObject == null || !view.gameObject.activeSelf);
 
             if (mSelectionState == SelectionState.Boxing && Input.GetMouseButtonUp((int)MouseButton.LeftMouse))
             {

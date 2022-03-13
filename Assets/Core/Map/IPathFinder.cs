@@ -21,5 +21,6 @@ namespace Assets.Core.Map
         Task SetLookAt(Vector2 position, IMapData mapData);
         Task SetTarget(Vector2 position, IMapData mapData);
         Task Stop();
+        Task Teleport(Vector2 position, IMapData mapData);
     }
 }

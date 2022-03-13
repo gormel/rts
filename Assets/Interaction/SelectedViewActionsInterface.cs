@@ -37,6 +37,7 @@ namespace Assets.Interaction
         public GameObject CentralBuildingActions;
         public GameObject BuildingTemplateActions;
         public GameObject BarrakActions;
+        public GameObject MiningCampActions;
 
         public UserInterface Interface;
 
@@ -51,7 +52,8 @@ namespace Assets.Interaction
                 new Activator<MeeleeWarriorView>(MeeleeWarriorActions), 
                 new Activator<CentralBuildingView>(CentralBuildingActions), 
                 new Activator<BuildingTemplateView>(BuildingTemplateActions), 
-                new Activator<BarrakView>(BarrakActions)
+                new Activator<BarrakView>(BarrakActions),
+                new Activator<MiningCampView>(MiningCampActions),
             };
         }
 

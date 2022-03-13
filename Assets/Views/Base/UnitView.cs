@@ -53,6 +53,12 @@ namespace Assets.Views.Base
             }
         }
 
+        public override void OnDestroy()
+        {
+            base.OnDestroy();
+            Destroy(mWaypointInst);
+        }
+
         protected virtual void Update()
         {
             if (!IsClient)
@@ -69,7 +75,7 @@ namespace Assets.Views.Base
             TargetLine.gameObject.SetActive(IsSelected);
             TargetLine.SetPosition(0, transform.position);
             TargetLine.SetPosition(1, Map.GetWorldPosition(Info.Destignation));
-
+            
             base.Update();
         }
 
@@ -130,6 +136,14 @@ namespace Assets.Views.Base
             {
                 InProgress = false;
                 mNavMeshAgent.ResetPath();
+            });
+        }
+
+        public Task Teleport(Vector2 position, IMapData mapData)
+        {
+            return SyncContext.Execute(() =>
+            {
+                mNavMeshAgent.Warp(GameUtils.GetPosition(position, mapData));
             });
         }
 

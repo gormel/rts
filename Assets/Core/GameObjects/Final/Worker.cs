@@ -14,11 +14,13 @@ namespace Assets.Core.GameObjects.Final
         Task<Guid> PlaceMiningCampTemplate(Vector2Int position);
         Task<Guid> PlaceBarrakTemplate(Vector2Int position);
         Task AttachAsBuilder(Guid templateId);
+        Task AttachToMiningCamp(Guid campId);
     }
 
     interface IWorkerInfo : IUnitInfo
     {
         bool IsBuilding { get; }
+        bool IsAttachedToMiningCamp { get; }
     }
 
     internal class Worker : Unit, IWorkerInfo, IWorkerOrders
@@ -88,6 +90,26 @@ namespace Assets.Core.GameObjects.Final
                 return BTreeLeafState.Successed;
             }
         }
+
+        class MoveToMiningCampLeaf : IBTreeLeaf
+        {
+            private readonly Worker mWorker;
+            private readonly MiningCamp mCamp;
+
+            public MoveToMiningCampLeaf(Worker worker, MiningCamp camp)
+            {
+                mWorker = worker;
+                mCamp = camp;
+            }
+            public BTreeLeafState Update(TimeSpan deltaTime)
+            {
+                if (!mCamp.TryPutWorker(mWorker))
+                    return BTreeLeafState.Failed;
+
+                mWorker.IsAttachedToMiningCamp = true;
+                return BTreeLeafState.Successed;
+            }
+        }
         
         public const int CentralBuildingCost = 400;
         public const int MiningCampCost = 100;
@@ -98,6 +120,8 @@ namespace Assets.Core.GameObjects.Final
         public static TimeSpan BarrakBuildTime { get; } = TimeSpan.FromSeconds(25);
 
         public bool IsBuilding { get; private set; }
+        
+        public bool IsAttachedToMiningCamp { get; set; }
 
         public async Task<Guid> PlaceCentralBuildingTemplate(Vector2Int position)
         {
@@ -208,6 +232,25 @@ namespace Assets.Core.GameObjects.Final
                         .Leaf(new StopBuildLeaf(this, template))
                         .Leaf(new FreePlacementPointLeaf(point, template.PlacementService)))
                 );
+        }
+
+        public async Task AttachToMiningCamp(Guid campId)
+        {
+            var camp = Game.GetObject<MiningCamp>(campId);
+            var point = await camp.PlacementService.TryAllocatePoint();
+            if (point == PlacementPoint.Invalid)
+                return;
+
+            await ApplyIntelligence(
+                b => b
+                    .Sequence(b1 => b1
+                        .Leaf(new GoToTargetLeaf(PathFinder, point.Position, Game.Map.Data))
+                        .Leaf(new MoveToMiningCampLeaf(this, camp))
+                        .Leaf(new FreePlacementPointLeaf(point, camp.PlacementService))),
+                b => b
+                    .Leaf(new CancelGotoLeaf(PathFinder))
+                    .Leaf(new FreePlacementPointLeaf(point, camp.PlacementService))
+            );
         }
     }
 }

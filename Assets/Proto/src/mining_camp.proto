@@ -5,9 +5,12 @@ import "base.proto";
 service MiningCampService {
     rpc ListenCreation (Empty) returns (stream MiningCampState);
     rpc ListenState(ID) returns (stream MiningCampState);
+
+    rpc FreeWorker(Empty) returns (Empty);
 }
 
 message MiningCampState {
     BuildingState Base = 1;
     float MiningSpeed = 2;
+    int32 WorkerCount = 3;
 }

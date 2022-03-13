@@ -1,11 +1,13 @@
-﻿using Assets.Core.GameObjects.Final;
+﻿using System.Threading.Tasks;
+using Assets.Core.GameObjects.Final;
+using Assets.Core.GameObjects.Utils;
 using Assets.Views.Base;
 using Assets.Views.Utils;
 using UnityEngine;
 
 namespace Assets.Views
 {
-    class MiningCampView : BuildingView<IMinigCampOrders, IMinigCampInfo>
+    class MiningCampView : PlacementServiceBuildingView<IMinigCampOrders, IMinigCampInfo>
     {
         public override string Name => "Добытчик";
         public override Rect FlatBounds => new Rect(Info.Position, Info.Size);
@@ -18,6 +20,7 @@ namespace Assets.Views
                 transform.localScale.z * Info.Size.y);
 
             RegisterProperty(new SelectableViewProperty("Mining speed", () => $"{Info.MiningSpeed} m/sec"));
+            RegisterProperty(new SelectableViewProperty("Workers", () => $"{Info.WorkerCount}"));
         }
     }
 }

@@ -22,6 +22,7 @@ namespace Assets.Networking
         public Vector2 Direction => State.Base.Direction.ToUnity();
         public Vector2 Destignation => State.Base.Destignation.ToUnity();
         public bool IsBuilding => State.IsBuilding;
+        public bool IsAttachedToMiningCamp => State.IsAttachedToMiningCamp;
         public float ViewRadius => State.Base.Base.ViewRadius;
 
         public void ResetState()
@@ -76,6 +77,15 @@ namespace Assets.Networking
             {
                 BuildingTemplateID = new ID { Value = templateId.ToString() },
                 WorkerID = new ID { Value = mID }
+            }).ResponseAsync;
+        }
+
+        public Task AttachToMiningCamp(Guid campId)
+        {
+            return mClient.AttachToMiningCampAsync(new AttachToMiningCampRequest
+            {
+                WorkerID = new ID { Value = mID },
+                CampID = new ID { Value = campId.ToString() }
             }).ResponseAsync;
         }
 

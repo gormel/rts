@@ -60,6 +60,7 @@ namespace Assets.Views.Base
         public ProgressBar HpBar;
 
         public UnitySyncContext SyncContext { get; set; }
+        public ExternalUpdater Updater { get; set; }
 
         public int SelectionPriority;
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Assets.Core.GameObjects.Final;
 using Assets.Networking.ClientListeners;
 using Assets.Utils;
@@ -8,7 +9,22 @@ using UnityEngine;
 
 namespace Assets.Networking
 {
-    class ClientMiningCampOrders : IMinigCampOrders {}
+    class ClientMiningCampOrders : IMinigCampOrders
+    {
+        private readonly MiningCampService.MiningCampServiceClient mClient;
+        private readonly string mID;
+
+        public ClientMiningCampOrders(MiningCampService.MiningCampServiceClient client, Guid id)
+        {
+            mClient = client;
+            mID = id.ToString();
+        }
+        
+        public Task FreeWorker()
+        {
+            return mClient.FreeWorkerAsync(new Empty()).ResponseAsync;
+        }
+    }
     class ClientMiningCampInfo : IMinigCampInfo, IStateHolder<MiningCampState>
     {
         public MiningCampState State { get; private set; } = new MiningCampState();
@@ -21,6 +37,7 @@ namespace Assets.Networking
         public float Health => State.Base.Base.Health;
         public float MaxHealth => State.Base.Base.MaxHealth;
         public float ViewRadius => State.Base.Base.ViewRadius;
+        public int WorkerCount => State.WorkerCount;
 
         public void ResetState()
         {
@@ -49,7 +66,7 @@ namespace Assets.Networking
 
         protected override ClientMiningCampOrders CreateOrders(MiningCampService.MiningCampServiceClient client, Guid id)
         {
-            return new ClientMiningCampOrders();
+            return new ClientMiningCampOrders(client, id);
         }
 
         protected override AsyncServerStreamingCall<MiningCampState> GetCreationCall(MiningCampService.MiningCampServiceClient client, CancellationToken token)

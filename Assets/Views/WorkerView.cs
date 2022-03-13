@@ -21,6 +21,11 @@ namespace Assets.Views
         {
             RegisterProperty(new SelectableViewProperty("X position", () => Info.Position.x.ToString("##.##")));
             RegisterProperty(new SelectableViewProperty("Y position", () => Info.Position.y.ToString("##.##")));
+            
+            Updater.Register(Info.ID, () =>
+            {
+                gameObject.SetActive(!Info.IsAttachedToMiningCamp);
+            });
         }
 
         protected override void Update()
@@ -30,10 +35,20 @@ namespace Assets.Views
             BuildingIndicator.SetActive(Info.IsBuilding);
         }
 
+        public override void OnDestroy()
+        {
+            base.OnDestroy();
+            
+            Updater.Free(Info.ID);
+        }
+
         public override void OnRightClick(SelectableView view)
         {
             if (view is BuildingTemplateView)
                 Orders.AttachAsBuilder(((BuildingTemplateView)view).Info.ID);
+
+            if (view is MiningCampView) 
+                Orders.AttachToMiningCamp(((MiningCampView) view).Info.ID);
         }
     }
 }
