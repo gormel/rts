@@ -13,6 +13,7 @@ namespace Assets.Core.GameObjects.Final
         Task<Guid> PlaceCentralBuildingTemplate(Vector2Int position);
         Task<Guid> PlaceMiningCampTemplate(Vector2Int position);
         Task<Guid> PlaceBarrakTemplate(Vector2Int position);
+        Task<Guid> PlaceTurretTemplate(Vector2Int position);
         Task AttachAsBuilder(Guid templateId);
         Task AttachToMiningCamp(Guid campId);
     }
@@ -117,10 +118,12 @@ namespace Assets.Core.GameObjects.Final
         public const int CentralBuildingCost = 400;
         public const int MiningCampCost = 100;
         public const int BarrakCost = 200;
+        public const int TurretCost = 100;
 
         public static TimeSpan CentralBuildingBuildTime { get; } = TimeSpan.FromSeconds(30);
         public static TimeSpan MiningCampBuildTime { get; } = TimeSpan.FromSeconds(20);
         public static TimeSpan BarrakBuildTime { get; } = TimeSpan.FromSeconds(25);
+        public static TimeSpan TurretBuildTime { get; } = TimeSpan.FromSeconds(15);
 
         public bool IsBuilding { get; private set; }
         
@@ -199,6 +202,27 @@ namespace Assets.Core.GameObjects.Final
                 BarrakBuildTime,
                 Barrak.BuildingSize,
                 Barrak.MaximumHealthConst
+            );
+
+            var id = await Game.PlaceObject(template);
+            await AttachAsBuilder(id);
+            return id;
+        }
+
+        public async Task<Guid> PlaceTurretTemplate(Vector2Int position)
+        {
+            if (!Game.GetIsAreaFree(position, Turret.BuildingSize))
+                return Guid.Empty;
+
+            if (!Player.Money.Spend(TurretCost))
+                return Guid.Empty;
+
+            var template = await Player.CreateBuildingTemplate(
+                position,
+                async pos => await Player.CreateTurret(pos),
+                TurretBuildTime,
+                Turret.BuildingSize,
+                Turret.MaximumHealthConst
             );
 
             var id = await Game.PlaceObject(template);

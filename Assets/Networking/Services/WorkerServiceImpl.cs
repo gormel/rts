@@ -26,7 +26,8 @@ namespace Assets.Networking.Services
             return new WorkerState
             {
                 Base = StateUtils.CreateUnitState(info),
-                IsBuilding = info.IsBuilding
+                IsBuilding = info.IsBuilding,
+                IsAttachedToMiningCamp = info.IsAttachedToMiningCamp,
             };
         }
 
@@ -82,6 +83,24 @@ namespace Assets.Networking.Services
             {
                 var id = await orders.PlaceBarrakTemplate(new Vector2Int((int)request.Position.X, (int)request.Position.Y));
                 return new ID { Value = id.ToString() };
+            });
+        }
+
+        public override Task<ID> PlaceTurretTemplate(PlaceTurretTemplateRequest request, ServerCallContext context)
+        {
+            return mCommonService.ExecuteOrder(request.WorkerID, async orders =>
+            {
+                var id = await orders.PlaceTurretTemplate(new Vector2Int((int)request.Position.X, (int)request.Position.Y));
+                return new ID { Value = id.ToString() };
+            });
+        }
+
+        public override Task<Empty> AttachToMiningCamp(AttachToMiningCampRequest request, ServerCallContext context)
+        {
+            return mCommonService.ExecuteOrder(request.WorkerID, async orders =>
+            {
+                await orders.AttachToMiningCamp(Guid.Parse(request.CampID.Value));
+                return new Empty();
             });
         }
 

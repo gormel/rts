@@ -22,7 +22,10 @@ namespace Assets.Networking
         
         public Task FreeWorker()
         {
-            return mClient.FreeWorkerAsync(new Empty()).ResponseAsync;
+            return mClient.FreeWorkerAsync(new FreeWorkerRequest
+            {
+                CampID = new ID { Value = mID },
+            }).ResponseAsync;
         }
     }
     class ClientMiningCampInfo : IMinigCampInfo, IStateHolder<MiningCampState>

@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+import "base.proto";
+
+service TurretService {
+    rpc ListenCreation (Empty) returns (stream TurretState);
+    rpc ListenState(ID) returns (stream TurretState);
+}
+
+message TurretState {
+    BuildingState Base = 1;
+    bool IsAttacks = 2;
+    float AttackRange = 3;
+    float AttackSpeed = 4;
+	int32 Damage = 5;
+    Vector Direction = 6;
+}

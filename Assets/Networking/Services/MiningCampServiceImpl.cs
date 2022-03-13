@@ -20,7 +20,8 @@ namespace Assets.Networking.Services
             return new MiningCampState
             {
                 Base = StateUtils.CreateBuildingState(info),
-                MiningSpeed = info.MiningSpeed
+                MiningSpeed = info.MiningSpeed,
+                WorkerCount = info.WorkerCount,
             };
         }
 
@@ -32,6 +33,15 @@ namespace Assets.Networking.Services
         public override Task ListenState(ID request, IServerStreamWriter<MiningCampState> responseStream, ServerCallContext context)
         {
             return mCommonService.ListenState(request, responseStream, context);
+        }
+
+        public override Task<Empty> FreeWorker(FreeWorkerRequest request, ServerCallContext context)
+        {
+            return mCommonService.ExecuteOrder(request.CampID, async orders =>
+            {
+                await orders.FreeWorker();
+                return new Empty();
+            });
         }
 
         public void Register(IMinigCampOrders orders, IMinigCampInfo info)

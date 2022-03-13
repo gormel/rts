@@ -6,7 +6,11 @@ service MiningCampService {
     rpc ListenCreation (Empty) returns (stream MiningCampState);
     rpc ListenState(ID) returns (stream MiningCampState);
 
-    rpc FreeWorker(Empty) returns (Empty);
+    rpc FreeWorker(FreeWorkerRequest) returns (Empty);
+}
+
+message FreeWorkerRequest {
+    ID CampID = 1;
 }
 
 message MiningCampState {

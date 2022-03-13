@@ -63,6 +63,11 @@ namespace Assets.Core.Game
             return AssignPlayer(mExternalFactory.CreateBarrak(position));
         }
 
+        public Task<Turret> CreateTurret(Vector2 position)
+        {
+            return AssignPlayer(mExternalFactory.CreateTurret(position));
+        }
+
         private async Task<T> AssignPlayer<T>(Task<T> controlled) where T : class, IPlayerControlled
         {
             var obj = await controlled;

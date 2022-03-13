@@ -41,20 +41,18 @@ namespace Assets.Core.GameObjects.Base
         {
             private readonly WarriorUnit mUnit;
             private readonly TargetStorage mTargetStorage;
-            private readonly float mValue;
 
-            public CheckDistanceLeaf(WarriorUnit unit, TargetStorage targetStorage, float value)
+            public CheckDistanceLeaf(WarriorUnit unit, TargetStorage targetStorage)
             {
                 mUnit = unit;
                 mTargetStorage = targetStorage;
-                mValue = value;
             }
             public BTreeLeafState Update(TimeSpan deltaTime)
             {
                 if (mTargetStorage.Target == null)
                     return BTreeLeafState.Failed;
                 
-                return mUnit.DistanceTo(mTargetStorage.Target) <= mValue ? BTreeLeafState.Successed : BTreeLeafState.Failed;
+                return mUnit.DistanceTo(mTargetStorage.Target) <= mUnit.AttackRange ? BTreeLeafState.Successed : BTreeLeafState.Failed;
             }
         }
 
@@ -74,7 +72,7 @@ namespace Assets.Core.GameObjects.Base
                 if (mTargetStorage.Target == null)
                     return BTreeLeafState.Failed;
                 
-                mUnit.PathFinder.SetTarget(PositionOf(mTargetStorage.Target), mUnit.Game.Map.Data);
+                mUnit.PathFinder.SetTarget(PositionUtils.PositionOf(mTargetStorage.Target), mUnit.Game.Map.Data);
                 return BTreeLeafState.Processing;
             }
         }
@@ -106,7 +104,7 @@ namespace Assets.Core.GameObjects.Base
                 if (!target.IsInGame || target.Health <= 0)
                     return BTreeLeafState.Successed;
 
-                mUnit.PathFinder.SetLookAt(PositionOf(target), mUnit.Game.Map.Data);
+                mUnit.PathFinder.SetLookAt(PositionUtils.PositionOf(target), mUnit.Game.Map.Data);
                 mUnit.IsAttacks = true;
                 mAttackSpeedTimer -= deltaTime;
                 if (mAttackSpeedTimer > TimeSpan.Zero)
@@ -156,7 +154,7 @@ namespace Assets.Core.GameObjects.Base
             {
                 mTargetStorage.Target = mUnit.Game.QueryObjects(mUnit.Position, mUnit.AttackRange)
                     .OrderBy(go => go.MaxHealth)
-                    .ThenBy(go => Vector2.Distance(mUnit.Position, PositionOf(go)))
+                    .ThenBy(go => Vector2.Distance(mUnit.Position, PositionUtils.PositionOf(go)))
                     .FirstOrDefault(go => /*go.ID != mUnit.ID ||*/ go.PlayerID != mUnit.PlayerID);
 
                 return mTargetStorage.Target == null ? BTreeLeafState.Failed : BTreeLeafState.Successed;
@@ -254,7 +252,7 @@ namespace Assets.Core.GameObjects.Base
                         .Selector(b2 => b2
                             .Sequence(b3 => b3
                                 .Selector(b4 => b4
-                                    .Leaf(new CheckDistanceLeaf(this, storage, AttackRange))
+                                    .Leaf(new CheckDistanceLeaf(this, storage))
                                     .Leaf(new QueryEnemyLeaf(this, storage)))
                                 .Leaf(new KillTargetLeaf(this, storage)))
                             .Leaf(new CancelKillLeaf(this)))),
@@ -268,7 +266,7 @@ namespace Assets.Core.GameObjects.Base
             return parent
                 .Sequence(b1 => b1
                     .Selector(b2 => b2
-                        .Leaf(new CheckDistanceLeaf(this, targetStorage, AttackRange))
+                        .Leaf(new CheckDistanceLeaf(this, targetStorage))
                         .Fail(b3 => b3.Leaf(new CancelKillLeaf(this)))
                         .Leaf(new FollowTargetLeaf(this, targetStorage)))
                     .Leaf(new CancelGotoLeaf(PathFinder))
@@ -298,29 +296,6 @@ namespace Assets.Core.GameObjects.Base
         {
             Strategy = strategy;
             return Task.CompletedTask;
-        }
-
-        private float DistanceTo(RtsGameObject target)
-        {
-            if (target is Building)
-            {
-                var p = PositionOf(target);
-                var s = ((Building) target).Size;
-                var dx = Math.Max(Math.Abs(Position.x - p.x) - s.x / 2, 0);
-                var dy = Math.Max(Math.Abs(Position.y - p.y) - s.y / 2, 0);
-
-                return Mathf.Sqrt(dx * dx + dy * dy);
-            }
-
-            return Vector2.Distance(Position, PositionOf(target));
-        }
-
-        private static Vector2 PositionOf(RtsGameObject target)
-        {
-            if (target is Building)
-                return ((Building) target).Size / 2 + target.Position;
-
-            return target.Position;
         }
     }
 }

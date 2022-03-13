@@ -59,6 +59,7 @@ namespace Assets.Networking
         public event Action<ICentralBuildingOrders, ICentralBuildingInfo> CentralBuildingCreated;
         public event Action<IMinigCampOrders, IMinigCampInfo> MiningCampCreated;
         public event Action<IBarrakOrders, IBarrakInfo> BarrakCreated;
+        public event Action<ITurretOrders, ITurretInfo> TurretCreated;
 
         public event Action<IGameObjectInfo> ObjectDestroyed;
 
@@ -75,6 +76,7 @@ namespace Assets.Networking
         private readonly CentralBuildingCreationListener mCentralBuildingCreationStateListener;
         private readonly MiningCampCreationListener mMiningCampCreationListener;
         private readonly BarrakCreationListener mBarrakCreationListener;
+        private readonly TurretCreationListener mTurretCreationListener;
         private GameService.GameServiceClient mGameService;
 
         public RtsClient(UnitySyncContext syncContext)
@@ -99,6 +101,10 @@ namespace Assets.Networking
             mBarrakCreationListener = new BarrakCreationListener(syncContext);
             mBarrakCreationListener.Created += (orders, info) => BarrakCreated?.Invoke(orders, info);
             mBarrakCreationListener.Destroyed += info => ObjectDestroyed?.Invoke(info);
+
+            mTurretCreationListener = new TurretCreationListener(syncContext);
+            mTurretCreationListener.Created += (orders, info) => TurretCreated?.Invoke(orders, info);
+            mTurretCreationListener.Destroyed += info => ObjectDestroyed?.Invoke(info);
 
             mRangedWarriorCreationStateListener = new RangedWarriorCreationStateListener(syncContext);
             mRangedWarriorCreationStateListener.Created += (orders, info) => RangedWarriorCreated?.Invoke(orders, info);
@@ -174,6 +180,7 @@ namespace Assets.Networking
                                     var t4 = mBarrakCreationListener.ListenCreations(mChannel);
                                     var t5 = mRangedWarriorCreationStateListener.ListenCreations(mChannel);
                                     var t6 = mMeeleeWarriorCreationStateListener.ListenCreations(mChannel);
+                                    var t7 = mTurretCreationListener.ListenCreations(mChannel);
                                 }
                             }
                         }

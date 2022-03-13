@@ -71,6 +71,16 @@ namespace Assets.Networking
             return Guid.Parse(resp.Value);
         }
 
+        public async Task<Guid> PlaceTurretTemplate(Vector2Int position)
+        {
+            var resp = await mClient.PlaceTurretTemplateAsync(new PlaceTurretTemplateRequest
+            {
+                Position = new Vector { X = position.x, Y = position.y },
+                WorkerID = new ID { Value = mID }
+            });
+            return Guid.Parse(resp.Value);
+        }
+
         public Task AttachAsBuilder(Guid templateId)
         {
             return mClient.AttachAsBuilderAsync(new AttachAsBuilderRequest

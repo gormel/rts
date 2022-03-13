@@ -33,6 +33,14 @@ namespace Assets.Interaction
                 );
         }
 
+        public void StartTurretPlacement()
+        {
+            Interface.BeginBuildingPlacement(FetchSelectedOrders<IWorkerOrders>(), (view, position) => 
+                    view.PlaceTurretTemplate(new Vector2Int(Mathf.FloorToInt(position.x), Mathf.FloorToInt(position.y))),
+                Turret.BuildingSize
+            );
+        }
+
         public void AttachToMiningCamp()
         {
             Interface.BeginAttachWorkerToMiningCamp(FetchSelectedOrders<IWorkerOrders>());

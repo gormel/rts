@@ -17,6 +17,7 @@ namespace Assets.Core.Game
 
         Task<CentralBuilding> CreateCentralBuilding(Vector2 position);
         Task<Barrak> CreateBarrak(Vector2 position);
+        Task<Turret> CreateTurret(Vector2 position);
         Task<MiningCamp> CreateMiningCamp(Vector2 position);
     }
 }
