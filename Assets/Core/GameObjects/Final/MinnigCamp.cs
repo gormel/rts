@@ -27,14 +27,15 @@ namespace Assets.Core.GameObjects.Final
         public static Vector2 BuildingSize { get; } = new Vector2(1, 1);
         public const float MaximumHealthConst = 100;
         public const int MaxWorkers = 4;
+        public const float BaseMiningSpeed = 2.5f;
 
-        public float MiningSpeed { get; } = 2.5f;
+        public float MiningSpeed => BaseMiningSpeed * (mWorkers.Count + 1);
         public int WorkerCount => mWorkers.Count;
 
         private double mMinedTemp;
         private int mMinedTotal;
 
-        public Stack<Worker> mWorkers = new Stack<Worker>();
+        private Stack<Worker> mWorkers = new Stack<Worker>();
 
         public MiningCamp(Game.Game game, Vector2 position, IPlacementService placementService)
         {
@@ -60,7 +61,7 @@ namespace Assets.Core.GameObjects.Final
         
         public override void Update(TimeSpan deltaTime)
         {
-            mMinedTemp += MiningSpeed * (mWorkers.Count + 1) * deltaTime.TotalSeconds;
+            mMinedTemp += MiningSpeed * deltaTime.TotalSeconds;
             if (mMinedTemp > 1)
             {
                 var ceiled = Mathf.CeilToInt((float)mMinedTemp);
