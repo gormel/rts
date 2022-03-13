@@ -55,6 +55,9 @@ namespace Assets.Core.GameObjects.Final
             
             public BTreeLeafState Update(TimeSpan deltaTime)
             {
+                if (!mTemplate.IsInGame)
+                    return BTreeLeafState.Failed;
+                
                 if (mWorker.IsBuilding)
                 {
                     if (mTemplate.Progress < 1)
@@ -223,7 +226,7 @@ namespace Assets.Core.GameObjects.Final
                     .Sequence(b1 => b1
                         .Leaf(new GoToTargetLeaf(PathFinder, point.Position, Game.Map.Data))
                         .Leaf(new RotateToLeaf(PathFinder, template.Position + template.Size / 2, Game.Map.Data))
-                        .Leaf(new BuildLeaf(this, template))
+                        .Success(b2 => b2.Leaf(new BuildLeaf(this, template)))
                         .Leaf(new StopBuildLeaf(this, template))
                         .Leaf(new FreePlacementPointLeaf(point, template.PlacementService))), 
                 b => b

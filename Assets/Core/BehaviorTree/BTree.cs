@@ -105,8 +105,13 @@ namespace Assets.Core.BehaviorTree
 
             public override BTreeLeafState Update(TimeSpan deltaTime)
             {
-                for (int i = 0; i < Children.Length; i++) 
-                    Children[i].Update(deltaTime);
+                for (int i = 0; i < Children.Length; i++)
+                {
+                    var result = Children[i].Update(deltaTime);
+                    if (result == BTreeLeafState.Processing)
+                        return result;
+
+                }
 
                 return mResult;
             }
