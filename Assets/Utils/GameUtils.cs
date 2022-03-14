@@ -76,17 +76,17 @@ namespace Assets.Utils
 
         public static Vector2 CreateBase(Game game, Player player)
         {
-            player.Money.Store(170000);
+            player.Money.Store(17000);
             var size = CentralBuilding.BuildingSize + Vector2.one * 2;
             var pos = new Vector2(Random.Range(0, game.Map.Width), Random.Range(0, game.Map.Length));
             while (!game.GetIsAreaFree(pos, size) || !HasCrystal(pos + size / 2, (int)(size.x / 2), (int)size.x, game.Map.Data))
                 pos = new Vector2(Random.Range(0, game.Map.Width), Random.Range(0, game.Map.Length));
 
-            //player.CreateCentralBuilding(pos + Vector2.one).ContinueWith(t => game.PlaceObject(t.Result));
-            player.CreateBarrak(pos + Vector2.one).ContinueWith(t => game.PlaceObject(t.Result));
+            player.CreateCentralBuilding(pos + Vector2.one).ContinueWith(t => game.PlaceObject(t.Result));
+            //player.CreateBarrak(pos + Vector2.one).ContinueWith(t => game.PlaceObject(t.Result));
             player.CreateWorker(pos).ContinueWith(t => game.PlaceObject(t.Result));
             //player.CreateWorker(pos + Vector2.right).ContinueWith(t => game.PlaceObject(t.Result));
-            player.CreateMeeleeWarrior(pos + Vector2.right).ContinueWith(t => game.PlaceObject(t.Result));
+            //player.CreateMeeleeWarrior(pos + Vector2.right).ContinueWith(t => game.PlaceObject(t.Result));
             return pos;
         }
     }

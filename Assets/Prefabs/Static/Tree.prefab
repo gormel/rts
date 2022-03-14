@@ -70,11 +70,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 5288006578459774655}
     m_Modifications:
-    - target: {fileID: 8450408856348415216, guid: d35ad8fe868150746b4affa1dba558d2,
-        type: 3}
-      propertyPath: m_Name
-      value: OptimizedTree
-      objectReference: {fileID: 0}
     - target: {fileID: 8316854853404720997, guid: d35ad8fe868150746b4affa1dba558d2,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -130,10 +125,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8858782560238121690, guid: d35ad8fe868150746b4affa1dba558d2,
+    - target: {fileID: 8450408856348415216, guid: d35ad8fe868150746b4affa1dba558d2,
         type: 3}
-      propertyPath: m_SelectedEditorRenderState
-      value: 3
+      propertyPath: m_Name
+      value: OptimizedTree
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d35ad8fe868150746b4affa1dba558d2, type: 3}
@@ -156,11 +151,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 5288006578459774655}
     m_Modifications:
-    - target: {fileID: 8313426323200054325, guid: 81f50a5cc15c24442af5ad1da7064607,
+    - target: {fileID: 4087787186865413559, guid: 81f50a5cc15c24442af5ad1da7064607,
         type: 3}
-      propertyPath: m_Name
-      value: MapQuad
-      objectReference: {fileID: 0}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 57a554a108709894092ee0bc6dbaf3cb, type: 2}
     - target: {fileID: 4737519398911065903, guid: 81f50a5cc15c24442af5ad1da7064607,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -216,11 +211,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4087787186865413559, guid: 81f50a5cc15c24442af5ad1da7064607,
+    - target: {fileID: 8313426323200054325, guid: 81f50a5cc15c24442af5ad1da7064607,
         type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: 57a554a108709894092ee0bc6dbaf3cb, type: 2}
+      propertyPath: m_Name
+      value: MapQuad
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 81f50a5cc15c24442af5ad1da7064607, type: 3}
 --- !u!4 &2263507195000324883 stripped

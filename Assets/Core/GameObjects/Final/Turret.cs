@@ -39,7 +39,7 @@ namespace Assets.Core.GameObjects.Final
             }
             public BTreeLeafState Update(TimeSpan deltaTime)
             {
-                if (mTargetStorage.Target == null)
+                if (mTargetStorage.Target == null || !mTargetStorage.Target.IsInGame)
                     return BTreeLeafState.Failed;
                     
                 return mTurret.DistanceTo(mTargetStorage.Target) <= mTurret.AttackRange ? BTreeLeafState.Successed : BTreeLeafState.Failed;
@@ -120,10 +120,10 @@ namespace Assets.Core.GameObjects.Final
             
             public BTreeLeafState Update(TimeSpan deltaTime)
             {
-                mTargetStorage.Target = mTurret.mGame.QueryObjects(mTurret.Position, mTurret.AttackRange)
+                mTargetStorage.Target = mTurret.mGame.QueryObjects(mTurret.Position + mTurret.Size / 2, mTurret.AttackRange)
                     .OrderBy(go => go.MaxHealth)
                     .ThenBy(go => Vector2.Distance(mTurret.Position, PositionUtils.PositionOf(go)))
-                    .FirstOrDefault(go => /*go.ID != mUnit.ID ||*/ go.PlayerID != mTurret.PlayerID);
+                    .FirstOrDefault(go => /*go.ID != mTurret.ID ||*/ go.PlayerID != mTurret.PlayerID);
 
                 return mTargetStorage.Target == null ? BTreeLeafState.Failed : BTreeLeafState.Successed;
             }
@@ -161,7 +161,7 @@ namespace Assets.Core.GameObjects.Final
             Position = position;
             Size = BuildingSize;
             Health = MaxHealth = MaximumHealthConst;
-            ViewRadius = 2;
+            ViewRadius = 5;
             
             AttackRange = 4;
             AttackSpeed = 2;

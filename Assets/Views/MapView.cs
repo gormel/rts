@@ -131,8 +131,8 @@ namespace Assets.Views
                 NavMesh.AddNavMeshData(navMeshData);
             }
             mMapData = mapData;
-            FogOfWarTexture.width = mapData.Width;
-            FogOfWarTexture.height = mapData.Length;
+            FogOfWarTexture.width = mapData.Width * 10;
+            FogOfWarTexture.height = mapData.Length * 10;
             FogOfWarCamera.orthographicSize = Mathf.Max(mapData.Width - 1, mapData.Length - 1) / 2f;
             FogOfWarCamera.transform.localPosition = new Vector3((mapData.Width - 1) / 2f, 10, (mapData.Length - 1) / 2f);
         }
