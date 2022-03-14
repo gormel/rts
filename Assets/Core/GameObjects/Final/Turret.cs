@@ -144,7 +144,7 @@ namespace Assets.Core.GameObjects.Final
             }
         }
         public static Vector2 BuildingSize { get; } = new Vector2(1, 1);
-        public const float MaximumHealthConst = 100;
+        public const float MaximumHealthConst = 188;
         
         private readonly Game.Game mGame;
         private BTree mIntelligence;
@@ -165,7 +165,7 @@ namespace Assets.Core.GameObjects.Final
             
             AttackRange = 4;
             AttackSpeed = 2;
-            Damage = 3;
+            Damage = 6;
 
             var storage = new TargetStorage();
             mIntelligence = BTree.Create()
