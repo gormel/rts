@@ -51,6 +51,14 @@ namespace Assets.Networking
             }).ResponseAsync;
         }
 
+        public Task Stop()
+        {
+            return mClient.StopAsync(new StopRequest
+            {
+                UnitUD = new ID {Value = mID}
+            }).ResponseAsync;
+        }
+
         public async Task<Guid> PlaceCentralBuildingTemplate(Vector2Int position)
         {
             var resp = await mClient.PlaceCentralBuildingTemplateAsync(new PlaceCentralBuildingTemplateRequest

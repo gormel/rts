@@ -56,7 +56,11 @@ namespace Assets.Interaction
             {
                 var hit = mRaycaster.Raycast<SelectableView>(Input.mousePosition);
                 if (hit.IsEmpty())
+                {
+                    foreach (var warriorOrders in mViews)
+                        warriorOrders.GoToAndAttack(position);
                     return;
+                }
 
                 foreach (var warriorOrders in mViews)
                     warriorOrders.Attack(hit.Object.InfoBase.ID);

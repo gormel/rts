@@ -55,6 +55,26 @@ namespace Assets.Networking
             }).ResponseAsync;
         }
 
+        public Task Stop()
+        {
+            return mClient.StopAsync(new StopRequest
+            {
+                UnitUD = new ID {Value = mID}
+            }).ResponseAsync;
+        }
+
+        public Task GoToAndAttack(Vector2 position)
+        {
+            return mClient.GoToAndAttackAsync(new GoToAndAttackRequest
+            {
+                Base = new GoToRequest
+                {
+                    Destignation = position.ToGrpc(),
+                    UnitID = new ID { Value = mID }
+                }
+            }).ResponseAsync;
+        }
+
         public Task Attack(Guid targetID)
         {
             return mClient.AttackAsync(new AttackRequest

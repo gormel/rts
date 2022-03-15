@@ -50,6 +50,15 @@ namespace Assets.Networking.Services
             });
         }
 
+        public override Task<Empty> Stop(StopRequest request, ServerCallContext context)
+        {
+            return mCommonService.ExecuteOrder(request.UnitUD, async orders =>
+            {
+                await orders.Stop();
+                return new Empty();
+            });
+        }
+
         public override Task<ID> PlaceCentralBuildingTemplate(PlaceCentralBuildingTemplateRequest request, ServerCallContext context)
         {
             return mCommonService.ExecuteOrder(request.WorkerID, async orders =>

@@ -13,6 +13,7 @@ namespace Assets.Core.GameObjects.Base
     interface IUnitOrders : IGameObjectOrders
     {
         Task GoTo(Vector2 position);
+        Task Stop();
     }
 
     interface IUnitInfo : IGameObjectInfo
@@ -227,6 +228,11 @@ namespace Assets.Core.GameObjects.Base
             await ApplyIntelligence(
                 b => b.Leaf(new GoToTargetLeaf(PathFinder, position, Game.Map.Data)),
                 b => b.Leaf(new CancelGotoLeaf(PathFinder)));
+        }
+
+        public Task Stop()
+        {
+            return mCancellation.Cancel();
         }
 
         public override void Update(TimeSpan deltaTime)

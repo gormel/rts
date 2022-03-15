@@ -42,6 +42,24 @@ namespace Assets.Networking.Services {
             });
         }
 
+        public override Task<Empty> Stop(StopRequest request, ServerCallContext context)
+        {
+            return mCreationService.ExecuteOrder(request.UnitUD, async orders =>
+            {
+                await orders.Stop();
+                return new Empty();
+            });
+        }
+
+        public override Task<Empty> GoToAndAttack(GoToAndAttackRequest request, ServerCallContext context)
+        {
+            return mCreationService.ExecuteOrder(request.Base.UnitID, async orders =>
+            {
+                await orders.GoToAndAttack(request.Base.Destignation.ToUnity());
+                return new Empty();
+            });
+        }
+
         public override Task<Empty> Attack(AttackRequest request, ServerCallContext context)
         {
             return mCreationService.ExecuteOrder(request.WarriorID, async orders =>

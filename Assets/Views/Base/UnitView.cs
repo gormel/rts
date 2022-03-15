@@ -135,6 +135,7 @@ namespace Assets.Views.Base
             return SyncContext.Execute(() =>
             {
                 InProgress = false;
+                Target = Info.Position;
                 mNavMeshAgent.ResetPath();
             });
         }

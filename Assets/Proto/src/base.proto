@@ -58,6 +58,14 @@ message GoToRequest {
     Vector Destignation = 2;
 }
 
+message StopRequest {
+	ID UnitUD = 1;
+}
+
+message GoToAndAttackRequest {
+	GoToRequest Base = 1;
+}
+
 message SetWaypointRequest {
     ID BuildingID = 1;
     Vector Waypoint = 2;

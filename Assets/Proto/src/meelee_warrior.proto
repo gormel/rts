@@ -7,7 +7,9 @@ service MeeleeWarriorService {
     rpc ListenState(ID) returns (stream MeeleeWarriorState);
 
     rpc GoTo(GoToRequest) returns (Empty);
+    rpc Stop(StopRequest) returns (Empty);
 
+    rpc GoToAndAttack(GoToAndAttackRequest) returns (Empty);
     rpc Attack(AttackRequest) returns (Empty);
     rpc SetStrategy(SetStrategyRequest) returns (Empty);
 }

@@ -27,6 +27,7 @@ namespace Assets.Core.GameObjects.Base
     interface IWarriorOrders : IUnitOrders
     {
         Task Attack(Guid targetID);
+        Task GoToAndAttack(Vector2 position);
         Task SetStrategy(Strategy strategy);
     }
 
@@ -290,6 +291,27 @@ namespace Assets.Core.GameObjects.Base
 
             var target = Game.GetObject<RtsGameObject>(targetID);
             await ApplyAttackTargetIntelligence(target);
+        }
+
+        public Task GoToAndAttack(Vector2 position)
+        {
+            var storage = new TargetStorage();
+            return ApplyIntelligence(
+                b => b
+                    .Selector(b1 => b1
+                        .Fail(b2 => b2
+                            .Sequence(b3 => CreateFollowAndKillIntelligence(b3
+                                .Selector(b4 => b4
+                                    .Leaf(new CheckTargetLeaf(storage))
+                                    .Leaf(new QueryEnemyLeaf(this, storage))), storage)))
+                        .Sequence(b5 => b5
+                            .Leaf(new CancelKillLeaf(this))
+                            .Leaf(new GoToTargetLeaf(PathFinder, position, Game.Map.Data)))),
+                b => b
+                    .Leaf(new CancelKillLeaf(this))
+                    .Leaf(new CancelGotoLeaf(PathFinder))
+                    .Leaf(new ClearTargetLeaf(storage))
+                );
         }
 
         public Task SetStrategy(Strategy strategy)

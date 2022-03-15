@@ -34,6 +34,24 @@ namespace Assets.Networking.Services
             return mCreationService.ListenState(request, responseStream, context);
         }
 
+        public override Task<Empty> Stop(StopRequest request, ServerCallContext context)
+        {
+            return mCreationService.ExecuteOrder(request.UnitUD, async orders =>
+            {
+                await orders.Stop();
+                return new Empty();
+            });
+        }
+
+        public override Task<Empty> GoToAndAttack(GoToAndAttackRequest request, ServerCallContext context)
+        {
+            return mCreationService.ExecuteOrder(request.Base.UnitID, async orders =>
+            {
+                await orders.GoToAndAttack(request.Base.Destignation.ToUnity());
+                return new Empty();
+            });
+        }
+
         public override Task<Empty> GoTo(GoToRequest request, ServerCallContext context)
         {
             return mCreationService.ExecuteOrder(request.UnitID, async orders =>

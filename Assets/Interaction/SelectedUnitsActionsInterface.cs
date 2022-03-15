@@ -21,5 +21,11 @@ namespace Assets.Interaction
         {
             Interface.BeginGoTo(FetchSelectedOrders<IUnitOrders>());
         }
+
+        public void Stop()
+        {
+            foreach (var orders in FetchSelectedOrders<IUnitOrders>()) 
+                orders.Stop();
+        }
     }
 }
