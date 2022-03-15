@@ -64,7 +64,7 @@ namespace Assets.Views
                     fowVertices.Add(GameUtils.GetPosition(new Vector2(x, y), mapData));
                     mapVertices.Add(GameUtils.GetPosition(new Vector2(x, y), mapData));
                     mapUVs.Add(new Vector2(x, y) / 4);
-                    fowUVs.Add(new Vector2((float)x / mapData.Width, (float)y / mapData.Length));
+                    fowUVs.Add(new Vector2((float)x / (mapData.Width - 1), (float)y / (mapData.Length - 1)));
 
                     if (y == mapData.Length - 1 || x == mapData.Width - 1)
                         continue;

@@ -17,7 +17,7 @@ Shader "FX/Gem"
 		// First pass - here we render the backfaces of the diamonds. Since those diamonds are more-or-less
 		// convex objects, this is effectively rendering the inside of them.
 		Pass {
-
+			Tags { "LightMode" = "PassTwoPostTransparent" }
 			Cull Front
 			ZWrite Off
 
@@ -108,6 +108,6 @@ Shader "FX/Gem"
 
 		// Shadow casting & depth texture support -- so that gems can
         // cast shadows
-        UsePass "VertexLit/SHADOWCASTER"
+        UsePass "Universal Render Pipeline/Lit/ShadowCaster"
 	}
 }

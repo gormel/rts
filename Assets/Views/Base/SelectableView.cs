@@ -94,7 +94,10 @@ namespace Assets.Views.Base
             }
 
             if (HpBar != null)
+            {
                 HpBar.Progress = Health / MaxHealth;
+                HpBar.gameObject.SetActive(HpBar.Progress < 1 || IsSelected);
+            }
 
             if (MouseOverObject != null)
                 MouseOverObject.SetActive(IsMouseOver && !IsSelected);
