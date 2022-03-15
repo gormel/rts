@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -985,7 +985,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 7, y: 1.7e-44, z: 1e-45, w: 1}
+  m_BoundingSphereOverride: {x: -1, y: 11, z: 7, w: -12}
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
@@ -2986,6 +2986,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Key: 109
+  View: {fileID: 1999459742}
 --- !u!1001 &496835292
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4084,6 +4085,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Key: 119
+  View: {fileID: 1507256832}
 --- !u!1 &611317108
 GameObject:
   m_ObjectHideFlags: 0
@@ -4896,6 +4898,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Key: 114
+  View: {fileID: 1987429350}
 --- !u!1 &659052624
 GameObject:
   m_ObjectHideFlags: 0
@@ -5802,6 +5805,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Key: 116
+  View: {fileID: 1693500389}
 --- !u!114 &863416715
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8319,6 +8323,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Key: 99
+  View: {fileID: 1605406416}
 --- !u!1 &1389808705
 GameObject:
   m_ObjectHideFlags: 0
@@ -8729,6 +8734,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Key: 13
+  View: {fileID: 0}
 --- !u!1 &1472705659
 GameObject:
   m_ObjectHideFlags: 0
@@ -10595,6 +10601,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Key: 109
+  View: {fileID: 1052849984}
 --- !u!1 &1693500387
 GameObject:
   m_ObjectHideFlags: 0
@@ -11313,6 +11320,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Key: 98
+  View: {fileID: 700722626}
 --- !u!1 &1803266624
 GameObject:
   m_ObjectHideFlags: 0
@@ -11903,6 +11911,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Key: 98
+  View: {fileID: 0}
 --- !u!1 &1901407508
 GameObject:
   m_ObjectHideFlags: 0
@@ -12901,6 +12910,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Key: 119
+  View: {fileID: 862165191}
 --- !u!114 &2058529671
 MonoBehaviour:
   m_ObjectHideFlags: 0

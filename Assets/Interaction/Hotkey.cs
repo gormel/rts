@@ -12,10 +12,13 @@ namespace Assets.Interaction
     {
         private Button mButton;
         public KeyCode Key;
+        public Text View;
 
         void Start()
         {
             mButton = GetComponent<Button>();
+            if (View != null)
+                View.text = Key.ToString();
         }
 
         void Update()
