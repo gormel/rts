@@ -1,4 +1,5 @@
-﻿using TMPro;
+﻿using System;
+using TMPro;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -11,16 +12,26 @@ namespace Assets.Core.Map
 
         public IMapData Data { get; }
 
+        private const int MountainCount = 20;
+        private const int MountainSizeMin = 5;
+        private const int MountainSizeMax = 10;
+
+        private const int ForestCount = 10;
+        private const float ForestPossibilityFallback = 15f;
+
+        private const int CrystalCount = 20;
+        private const int MaxCrystalPlacementTryes = 30;
+
         public Map(int width, int length)
         {
             var data = new float[width, length];
 
-            for (int i = 0; i < 20; i++)
+            for (int i = 0; i < MountainCount; i++)
             {
                 var x = Random.Range(0, width);
                 var y = Random.Range(0, length);
-                var sizeX = Random.Range(5, 10) / 2;
-                var sizeY = Random.Range(5, 10) / 2;
+                var sizeX = Random.Range(MountainSizeMin, MountainSizeMax) / 2;
+                var sizeY = Random.Range(MountainSizeMin, MountainSizeMax) / 2;
                 
                 for (int x1 = x - sizeX; x1 <= x + sizeX; x1++)
                 {
@@ -40,24 +51,32 @@ namespace Assets.Core.Map
             }
 
             var objs = new MapObject[width, length];
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < ForestCount; i++)
             {
                 var x = Random.Range(0, width);
                 var y = Random.Range(0, length);
                 GenerateForest(x, y, objs, 0);
             }
 
-            for (int i = 0; i < 20; i++)
+            var crystalPartSide = Mathf.Sqrt(CrystalCount);
+            var crystalPartWidth = (length / crystalPartSide);
+            var crystalPartHeight = (width / crystalPartSide);
+            for (float w = 0; w + crystalPartWidth < length; w += crystalPartWidth)
             {
-                var x = Random.Range(0, width - 1);
-                var y = Random.Range(0, length - 1);
-                if (objs[x, y] != MapObject.None)
+                for (float l = 0; l + crystalPartHeight < width; l += crystalPartHeight)
                 {
-                    i--;
-                    continue;
-                }
+                    for (int i = 0; i < MaxCrystalPlacementTryes; i++)
+                    {
+                        var x = (int)Random.Range(w, w + crystalPartWidth);
+                        var y = (int)Random.Range(l, l + crystalPartHeight);
 
-                objs[x, y] = MapObject.Crystal;
+                        if (objs[x, y] == MapObject.None)
+                        {
+                            objs[x, y] = MapObject.Crystal;
+                            break;
+                        }
+                    }
+                }
             }
 
             Data = new MapData(width, length, data, objs);
@@ -79,7 +98,7 @@ namespace Assets.Core.Map
             var dir = new Vector2Int(-1, 0);
             for (int i = 0; i < 9; i++)
             {
-                if (Random.value > depth / 15f + 0.1f)
+                if (Random.value > depth / ForestPossibilityFallback + 0.1f)
                     GenerateForest(x + dir.x, y + dir.y, objs, depth + 1);
 
                 dir = new Vector2Int(dir.y, -dir.x); //rotate 90 deg
