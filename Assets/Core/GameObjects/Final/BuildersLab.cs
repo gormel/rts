@@ -19,23 +19,30 @@ namespace Assets.Core.GameObjects.Base
     {
         public static Vector2 BuildingSize = new Vector2(2, 2);
         public const int MaximumHealthConst = 250;
+
+        protected override float MaxHealthBase => MaximumHealthConst;
         
         public BuildersLab(Vector2 position) 
             : base(position)
         {
-            Size = BuildingSize;
-            Health = MaxHealth = MaximumHealthConst;
-            ViewRadius = 3;
         }
-        
+
+        public override void OnAddedToGame()
+        {
+            Size = BuildingSize;
+            ViewRadius = 3;
+            
+            base.OnAddedToGame();
+        }
+
         public Task QueueAttackUpgrade()
         {
-            return QueueUpgrade();
+            return QueueUpgrade(Player.Upgrades.TurretAttackUpgrade);
         }
 
         public Task QueueDefenceUpgrade()
         {
-            return QueueUpgrade();
+            return QueueUpgrade(Player.Upgrades.BuildingDefenceUpgrade);
         }
     }
 }

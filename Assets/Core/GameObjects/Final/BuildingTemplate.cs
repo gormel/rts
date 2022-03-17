@@ -22,14 +22,19 @@ namespace Assets.Core.GameObjects.Final
     {
         private readonly Game.Game mGame;
         private readonly Func<Vector2, Task<Building>> mCreateBuilding;
+        private readonly Vector2 mInitialSize;
+        private readonly Vector2 mInitialPosition;
         public IPlacementService PlacementService { get; }
         private TimeSpan mBuildTime;
         private readonly TimeSpan mFullBuildTime;
+        private readonly float mMaxHealthBase;
 
         private const float WorkerInvest = 0.3f;
 
         public float Progress { get; private set; }
         public int AttachedWorkers { get; set; }
+
+        protected override float MaxHealthBase => mMaxHealthBase;
 
         public BuildingTemplate(
             Game.Game game,
@@ -42,13 +47,21 @@ namespace Assets.Core.GameObjects.Final
         {
             mGame = game;
             mCreateBuilding = createBuilding;
+            mInitialSize = size;
+            mInitialPosition = position;
             PlacementService = placementService;
             mFullBuildTime = mBuildTime = buildTime;
-            Size = size;
-            Position = position;
-            MaxHealth = maxHealth;
+            mMaxHealthBase = maxHealth;
+        }
+
+        public override void OnAddedToGame()
+        {
+            Size = mInitialSize;
+            Position = mInitialPosition;
             Health = 5;
             ViewRadius = 1;
+            
+            base.OnAddedToGame();
         }
 
         public override void Update(TimeSpan deltaTime)

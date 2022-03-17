@@ -14,15 +14,22 @@ namespace Assets.Core.GameObjects.Final
 
     internal class MeeleeWarrior : WarriorUnit, IMeeleeWarriorInfo, IMeeleeWarriorOrders
     {
+        protected override float MaxHealthBase => 50;
+
         public MeeleeWarrior(Game.Game game, IPathFinder pathFinder, Vector2 position) 
             : base(game, pathFinder, position)
         {
+        }
+
+        public override void OnAddedToGame()
+        {
             Speed = 2.5f;
-            MaxHealth = Health = 50;
             AttackRange = 1;
             AttackSpeed = 2;
             Damage = 3;
             ViewRadius = 4;
+            
+            base.OnAddedToGame();
         }
     }
 }

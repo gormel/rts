@@ -1,15 +1,17 @@
-﻿using Assets.Core.GameObjects;
+﻿using System;
+using Assets.Core.GameObjects;
 using Assets.Core.GameObjects.Base;
 using Assets.Core.GameObjects.Final;
 using Assets.Views;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Assets.Interaction
 {
     sealed class SelectedWorkersActionsInterface : SelectedUnitsActionsInterface
     {
         public GameObject StartScreen;
-
+        public Button PlaceTurretButton;
         public void StartCentralBuildingPlacement()
         {
             Interface.BeginBuildingPlacement(FetchSelectedOrders<IWorkerOrders>(), (view, position) => 
@@ -53,6 +55,11 @@ namespace Assets.Interaction
         public void AttachToMiningCamp()
         {
             Interface.BeginAttachWorkerToMiningCamp(FetchSelectedOrders<IWorkerOrders>());
+        }
+
+        private void Update()
+        {
+            PlaceTurretButton.interactable = Interface.Root.Player.TurretBuildingAvaliable;
         }
 
         void OnEnable()

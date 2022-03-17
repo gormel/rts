@@ -25,6 +25,8 @@ namespace Assets.Core.GameObjects.Base
 
     abstract class Unit : RtsGameObject, IUnitInfo, IUnitOrders
     {
+        private readonly Vector2 mInitialPosition;
+
         class CommandCancellation
         {
             private TaskCompletionSource<bool> mTaskSource = null;
@@ -172,17 +174,18 @@ namespace Assets.Core.GameObjects.Base
         private readonly CommandCancellation mCancellation = new CommandCancellation();
         private BTree mIntelligence;
 
-        private readonly IBTreeBuilder mDefaultIntelligence; 
+        private readonly IBTreeBuilder mDefaultIntelligence;
+
+        public override sealed float MaxHealth => MaxHealthBase;
 
         public Unit(Game.Game game, IPathFinder pathFinder, Vector2 position)
         {
+            mInitialPosition = position;
             Game = game;
             PathFinder = pathFinder;
-            Destignation = Position = position;
             mIntelligence = (mDefaultIntelligence = WrapCancellation(b => b, b => b)).Build();
-            
         }
-
+        
         protected virtual IBTreeBuilder GetDefaultIntelligence()
         {
             return mDefaultIntelligence;
@@ -192,6 +195,8 @@ namespace Assets.Core.GameObjects.Base
         {
             base.OnAddedToGame();
 
+            Destignation = Position = mInitialPosition;
+            Health = MaxHealth;
             ApplyDefaultIntelligence();
             PathFinder.SetTarget(Position, Game.Map.Data);
         }

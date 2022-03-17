@@ -29,13 +29,20 @@ namespace Assets.Core.GameObjects.Final
 
         public static Vector2 BuildingSize { get; } = new Vector2(2, 2);
         public const float MaximumHealthConst = 300;
+
+        protected override float MaxHealthBase => MaximumHealthConst;
         
         public Barrak(Game.Game game, Vector2 position, IPlacementService placementService)
             : base(game, position, placementService)
         {
+        }
+
+        public override void OnAddedToGame()
+        {
             Size = BuildingSize;
-            Health = MaxHealth = MaximumHealthConst;
             ViewRadius = 3;
+            
+            base.OnAddedToGame();
         }
 
         public Task<bool> QueueRanged()

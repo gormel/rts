@@ -14,5 +14,26 @@ namespace Assets.Core.GameObjects.Base
     abstract class Building : RtsGameObject, IBuildingInfo, IBuildingOrders
     {
         public Vector2 Size { get; protected set; }
+
+        public sealed override float MaxHealth => Player.Upgrades.BuildingDefenceUpgrade.Calculate(MaxHealthBase);
+
+        public Building()
+        {
+        }
+
+        public override void OnAddedToGame()
+        {
+            base.OnAddedToGame();
+            
+            Health = MaxHealth;
+            Player.RegisterCreatedBuilding(GetType());
+        }
+
+        public override void OnRemovedFromGame()
+        {
+            base.OnRemovedFromGame();
+            
+            Player.FreeCreatedBuilding(GetType());
+        }
     }
 }

@@ -209,16 +209,20 @@ namespace Assets.Core.GameObjects.Base
 
         private readonly IBTreeBuilder mAgressiveIntelligence;
         private readonly IBTreeBuilder mDefenciveIntelligence;
-
+        
         protected WarriorUnit(Game.Game game, IPathFinder pathFinder, Vector2 position)
             : base(game, pathFinder, position)
         {
-            Strategy = Strategy.Aggressive;
-
             mAgressiveIntelligence = CreateAggressiveIntelligence();
             mDefenciveIntelligence = CreateDefenciveIntelligence();
         }
-        
+
+        public override void OnAddedToGame()
+        {
+            Strategy = Strategy.Aggressive;
+            base.OnAddedToGame();
+        }
+
         protected override IBTreeBuilder GetDefaultIntelligence()
         {
             if (Strategy == Strategy.Aggressive)

@@ -34,7 +34,14 @@ namespace Assets.Networking.Services
             result.Player = new PlayerState()
             {
                 ID = new ID() {Value = info.player.ID.ToString()},
-                Money = info.player.Money
+                Money = info.player.Money,
+                
+                TurretBuildingAvaliable = info.player.TurretBuildingAvaliable,
+                
+                BuildingDefenceUpgradeLevel = info.player.BuildingDefenceUpgradeLevel,
+                TurretAttackUpgradeLevel = info.player.TurretAttackUpgradeLevel,
+                MaxTurretAttackUpgradeLevel = info.player.MaxTurretAttackUpgradeLevel,
+                MaxBuildingDefenceUpgradeLevel = info.player.MaxBuildingDefenceUpgradeLevel,
             };
 
             if (collectMap)

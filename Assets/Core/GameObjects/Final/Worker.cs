@@ -130,6 +130,21 @@ namespace Assets.Core.GameObjects.Final
         
         public bool IsAttachedToMiningCamp { get; set; }
 
+        protected override float MaxHealthBase => 40;
+
+        public Worker(Game.Game game, IPathFinder pathFinder, Vector2 position)
+            : base(game, pathFinder, position)
+        {
+        }
+
+        public override void OnAddedToGame()
+        {
+            Speed = 1.8f;
+            ViewRadius = 3;
+            
+            base.OnAddedToGame();
+        }
+
         public async Task<Guid> PlaceCentralBuildingTemplate(Vector2Int position)
         {
             if (!Game.GetIsAreaFree(position, CentralBuilding.BuildingSize))
@@ -137,7 +152,7 @@ namespace Assets.Core.GameObjects.Final
 
             if (!Player.Money.Spend(CentralBuildingCost))
                 return Guid.Empty;
-
+            
             var template = await Player.CreateBuildingTemplate(
                 position,
                 async pos => await Player.CreateCentralBuilding(pos),
@@ -214,6 +229,9 @@ namespace Assets.Core.GameObjects.Final
         {
             if (!Game.GetIsAreaFree(position, Turret.BuildingSize))
                 return Guid.Empty;
+            
+            if (!Player.TurretBuildingAvaliable)
+                return Guid.Empty;
 
             if (!Player.Money.Spend(TurretCost))
                 return Guid.Empty;
@@ -250,14 +268,6 @@ namespace Assets.Core.GameObjects.Final
             var id = await Game.PlaceObject(template);
             await AttachAsBuilder(id);
             return id;
-        }
-
-        public Worker(Game.Game game, IPathFinder pathFinder, Vector2 position)
-            : base(game, pathFinder, position)
-        {
-            Speed = 1.8f;
-            MaxHealth = Health = 40;
-            ViewRadius = 3;
         }
 
         public async Task AttachAsBuilder(Guid templateId)

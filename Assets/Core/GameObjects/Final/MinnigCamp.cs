@@ -23,6 +23,7 @@ namespace Assets.Core.GameObjects.Final
     class MiningCamp : Building, IMinigCampInfo, IMinigCampOrders
     {
         private readonly Game.Game mGame;
+        private readonly Vector2 mInitialPosition;
         public IPlacementService PlacementService { get; }
         public static Vector2 BuildingSize { get; } = new Vector2(1, 1);
         public const float MaximumHealthConst = 100;
@@ -37,14 +38,22 @@ namespace Assets.Core.GameObjects.Final
 
         private Stack<Worker> mWorkers = new Stack<Worker>();
 
+        protected override float MaxHealthBase => MaximumHealthConst;
+
         public MiningCamp(Game.Game game, Vector2 position, IPlacementService placementService)
         {
             mGame = game;
+            mInitialPosition = position;
             PlacementService = placementService;
-            Position = position;
+        }
+
+        public override void OnAddedToGame()
+        {
+            Position = mInitialPosition;
             Size = BuildingSize;
-            Health = MaxHealth = MaximumHealthConst;
             ViewRadius = 2;
+            
+            base.OnAddedToGame();
         }
 
         public bool TryPutWorker(Worker worker)

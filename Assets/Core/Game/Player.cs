@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Assets.Core.GameObjects.Base;
 using Assets.Core.GameObjects.Final;
+using Assets.Views;
 using UnityEngine;
 
 namespace Assets.Core.Game
@@ -10,17 +12,37 @@ namespace Assets.Core.Game
     {
         Guid ID { get; }
         int Money { get; }
+        
+        bool TurretBuildingAvaliable { get; }
+        int TurretAttackUpgradeLevel { get; }
+        int BuildingDefenceUpgradeLevel { get; }
+        int MaxTurretAttackUpgradeLevel { get; }
+        int MaxBuildingDefenceUpgradeLevel { get; }
     }
 
     class Player : IGameObjectFactory, IPlayerState
     {
+        public class UpgradeStorage
+        {
+            public Upgrade<int> TurretAttackUpgrade { get; } = new Upgrade<int>(1, (atk, lvl) => atk + lvl);
+            public Upgrade<float> BuildingDefenceUpgrade { get; } = new Upgrade<float>(1, (hp, lvl) => hp + 50 * lvl);
+        }
+        
         private readonly IGameObjectFactory mExternalFactory;
+        private readonly Dictionary<Type, int> mCreatedBuildingRegistrations = new Dictionary<Type, int>();
         public ResourceStorage Money { get; } = new ResourceStorage();
+        public bool TurretBuildingAvaliable => GetCreatedBuildingCount<BuildersLab>() > 0;
+        public int TurretAttackUpgradeLevel => Upgrades.TurretAttackUpgrade.Level;
+        public int BuildingDefenceUpgradeLevel => Upgrades.BuildingDefenceUpgrade.Level;
+        public int MaxTurretAttackUpgradeLevel => Upgrades.TurretAttackUpgrade.MaxLevel;
+        public int MaxBuildingDefenceUpgradeLevel => Upgrades.BuildingDefenceUpgrade.MaxLevel;
 
         public Guid ID { get; } = Guid.NewGuid();
 
         int IPlayerState.Money => Money.Resources;
 
+        public UpgradeStorage Upgrades { get; } = new UpgradeStorage();
+        
         public Player(IGameObjectFactory externalFactory)
         {
             mExternalFactory = externalFactory;
@@ -86,6 +108,30 @@ namespace Assets.Core.Game
         public Task<BuildersLab> CreateBuildersLab(Vector2 position)
         {
             return AssignPlayer(mExternalFactory.CreateBuildersLab(position));
+        }
+
+        public void RegisterCreatedBuilding(Type buildingType)
+        {
+            if (!mCreatedBuildingRegistrations.ContainsKey(buildingType))
+                mCreatedBuildingRegistrations[buildingType] = 0;
+            
+            mCreatedBuildingRegistrations[buildingType]++;
+        }
+
+        public void FreeCreatedBuilding(Type buildingType)
+        {
+            if (!mCreatedBuildingRegistrations.ContainsKey(buildingType))
+                return;
+            
+            mCreatedBuildingRegistrations[buildingType]--;
+        }
+
+        public int GetCreatedBuildingCount<TBuilding>() where TBuilding : Building
+        {
+            if (mCreatedBuildingRegistrations.TryGetValue(typeof(TBuilding), out int count))
+                return count;
+
+            return 0;
         }
     }
 }

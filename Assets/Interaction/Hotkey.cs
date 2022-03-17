@@ -23,8 +23,8 @@ namespace Assets.Interaction
 
         void Update()
         {
-            if (Input.GetKeyDown(Key))
-                mButton?.onClick?.Invoke();
+            if (Input.GetKeyDown(Key) && (mButton?.interactable ?? false))
+                mButton.onClick?.Invoke();
         }
     }
 }

@@ -45,6 +45,11 @@ namespace Assets.Networking
 
             public Guid ID => Guid.Parse(PlayerState.ID.Value);
             public int Money => PlayerState.Money;
+            public bool TurretBuildingAvaliable => PlayerState.TurretBuildingAvaliable;
+            public int TurretAttackUpgradeLevel => PlayerState.TurretAttackUpgradeLevel;
+            public int BuildingDefenceUpgradeLevel => PlayerState.BuildingDefenceUpgradeLevel;
+            public int MaxTurretAttackUpgradeLevel => PlayerState.MaxTurretAttackUpgradeLevel;
+            public int MaxBuildingDefenceUpgradeLevel => PlayerState.MaxBuildingDefenceUpgradeLevel;
         }
         
         public event Action<IPlayerState> PlayerConnected;

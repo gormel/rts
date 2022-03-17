@@ -15,6 +15,9 @@ namespace Assets.Interaction
 
         private void Update()
         {
+            var player = Interface.Root.Player;
+            QueueAttackUpgradeButton.SetActive(player.TurretAttackUpgradeLevel < player.MaxTurretAttackUpgradeLevel);
+            QueueDefenceUpgradeButton.SetActive(player.BuildingDefenceUpgradeLevel < player.MaxBuildingDefenceUpgradeLevel);
         }
 
         public void QueueAttackUpgrade()

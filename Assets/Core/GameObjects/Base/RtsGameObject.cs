@@ -34,8 +34,10 @@ namespace Assets.Core.GameObjects.Base
         Player IPlayerControlled.Player { get; set; }
 
         public float Health { get; set; }
-        public float MaxHealth { get; set; }
+        public abstract float MaxHealth { get; }
         public float ViewRadius { get; set; }
+        
+        protected abstract float MaxHealthBase { get; }
 
         public bool IsInGame { get; private set; } = false;
 

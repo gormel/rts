@@ -17,15 +17,22 @@ namespace Assets.Core.GameObjects.Final {
 
     internal class RangedWarrior : WarriorUnit, IRangedWarriorInfo, IRangedWarriorOrders
     {
+        protected override float MaxHealthBase => 75;
+        
         public RangedWarrior(Game.Game game, IPathFinder pathFinder, Vector2 position)
             : base(game, pathFinder, position)
         {
+        }
+
+        public override void OnAddedToGame()
+        {
             Speed = 2;
-            MaxHealth = Health = 75;
             AttackRange = 3;
             AttackSpeed = 2;
             Damage = 5;
             ViewRadius = 5;
+            
+            base.OnAddedToGame();
         }
     }
 }

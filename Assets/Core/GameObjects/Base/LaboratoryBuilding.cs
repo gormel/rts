@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Assets.Core.Game;
 using Assets.Core.GameObjects.Base;
 using UnityEngine;
 
@@ -15,18 +16,26 @@ namespace Assets.Core.GameObjects.Base
     {
     }
 
-    class LaboratoryBuilding : Building, ILaboratoryBuildingInfo, ILaboratoryBuildingOrders
+    abstract class LaboratoryBuilding : Building, ILaboratoryBuildingInfo, ILaboratoryBuildingOrders
     {
+        private readonly Vector2 mInitialPosition;
         public float Progress { get; }
         public int Queued { get; }
 
         public LaboratoryBuilding(Vector2 position)
         {
-            Position = position;
+            mInitialPosition = position;
         }
-        
-        protected Task QueueUpgrade()
+
+        public override void OnAddedToGame()
         {
+            Position = mInitialPosition;
+            base.OnAddedToGame();
+        }
+
+        protected Task QueueUpgrade<T>(Upgrade<T> upgrade)
+        {
+            upgrade.LevelUp();
             return Task.CompletedTask;
         }
 

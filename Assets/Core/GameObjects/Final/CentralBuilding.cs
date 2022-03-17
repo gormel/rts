@@ -27,12 +27,19 @@ namespace Assets.Core.GameObjects.Final
         public float MiningSpeed { get; } = 0.5f;
         private double mMinedTemp;
 
+        protected override float MaxHealthBase => MaximumHealthConst;
+
         public CentralBuilding(Game.Game game, Vector2 position, IPlacementService placementService)
             : base(game, position, placementService)
         {
+        }
+
+        public override void OnAddedToGame()
+        {
             Size = BuildingSize;
-            Health = MaxHealth = MaximumHealthConst;
             ViewRadius = 3;
+            
+            base.OnAddedToGame();
         }
 
         public Task<bool> QueueWorker()

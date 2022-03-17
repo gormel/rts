@@ -147,25 +147,23 @@ namespace Assets.Core.GameObjects.Final
         public const float MaximumHealthConst = 188;
         
         private readonly Game.Game mGame;
+        private readonly Vector2 mInitialPosition;
         private BTree mIntelligence;
 
         public bool IsShooting { get; private set; }
         public Vector2 Direction { get; private set; }
         public float AttackRange { get; private set; }
         public float AttackSpeed { get; private set; }
-        public int Damage { get; private set; }
+        public int Damage => Player.Upgrades.TurretAttackUpgrade.Calculate(BaseDamage);
+
+        private int BaseDamage { get; } = 6;
+
+        protected override float MaxHealthBase => MaximumHealthConst;
 
         public Turret(Game.Game game, Vector2 position)
         {
             mGame = game;
-            Position = position;
-            Size = BuildingSize;
-            Health = MaxHealth = MaximumHealthConst;
-            ViewRadius = 5;
-            
-            AttackRange = 4;
-            AttackSpeed = 2;
-            Damage = 6;
+            mInitialPosition = position;
 
             var storage = new TargetStorage();
             mIntelligence = BTree.Create()
@@ -179,6 +177,19 @@ namespace Assets.Core.GameObjects.Final
                             .Leaf(new KillTargetLeaf(this, storage)))
                         .Leaf(new CancelKillLeaf(this)))).Build();
         }
+
+        public override void OnAddedToGame()
+        {
+            Position = mInitialPosition;
+            Size = BuildingSize;
+            ViewRadius = 5;
+            
+            AttackRange = 4;
+            AttackSpeed = 2;
+            
+            base.OnAddedToGame();
+        }
+
         public override void Update(TimeSpan deltaTime)
         {
             mIntelligence.Update(deltaTime);
