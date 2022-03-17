@@ -39,6 +39,7 @@ namespace Assets.Interaction
         public GameObject BarrakActions;
         public GameObject MiningCampActions;
         public GameObject TurretActions;
+        public GameObject BuildersLabActions;
 
         public UserInterface Interface;
 
@@ -56,6 +57,7 @@ namespace Assets.Interaction
                 new Activator<BarrakView>(BarrakActions),
                 new Activator<MiningCampView>(MiningCampActions),
                 new Activator<TurretView>(TurretActions),
+                new Activator<BuildersLabView>(BuildersLabActions),
             };
         }
 

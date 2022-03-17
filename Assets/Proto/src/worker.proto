@@ -13,6 +13,8 @@ service WorkerService {
     rpc PlaceMiningCampTemplate(PlaceMiningCampTemplateRequest) returns (ID);
     rpc PlaceBarrakTemplate(PlaceBarrakTemplateRequest) returns (ID);
     rpc PlaceTurretTemplate(PlaceTurretTemplateRequest) returns (ID);
+    rpc PlaceBuildersLabTemplate(PlaceBuildersLabTemplateRequest) returns (ID);
+    
     rpc AttachAsBuilder(AttachAsBuilderRequest) returns (Empty);
     rpc AttachToMiningCamp(AttachToMiningCampRequest) returns(Empty);
 }
@@ -28,6 +30,11 @@ message PlaceCentralBuildingTemplateRequest {
 }
 
 message PlaceTurretTemplateRequest {
+    ID WorkerID = 1;
+    Vector Position = 2;
+}
+
+message PlaceBuildersLabTemplateRequest {
     ID WorkerID = 1;
     Vector Position = 2;
 }

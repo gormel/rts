@@ -1,4 +1,5 @@
 ﻿using Assets.Core.GameObjects;
+using Assets.Core.GameObjects.Base;
 using Assets.Core.GameObjects.Final;
 using Assets.Views;
 using UnityEngine;
@@ -36,8 +37,16 @@ namespace Assets.Interaction
         public void StartTurretPlacement()
         {
             Interface.BeginBuildingPlacement(FetchSelectedOrders<IWorkerOrders>(), (view, position) => 
-                    view.PlaceTurretTemplate(new Vector2Int(Mathf.FloorToInt(position.x), Mathf.FloorToInt(position.y))),
+                view.PlaceTurretTemplate(new Vector2Int(Mathf.FloorToInt(position.x), Mathf.FloorToInt(position.y))),
                 Turret.BuildingSize
+            );
+        }
+
+        public void StartBuildersLabPlacement()
+        {
+            Interface.BeginBuildingPlacement(FetchSelectedOrders<IWorkerOrders>(), (view, position) => 
+                view.PlaceBuildersLabTemplate(new Vector2Int(Mathf.FloorToInt(position.x), Mathf.FloorToInt(position.y))),
+                BuildersLab.BuildingSize
             );
         }
 

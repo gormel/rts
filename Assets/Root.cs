@@ -30,6 +30,7 @@ class Root : MonoBehaviour
         private readonly GameObject mMiningCampPrefab;
         private readonly GameObject mBarrakPrefab;
         private readonly GameObject mTurretPrefab;
+        private readonly GameObject mBuildersLabPrefab;
 
         public event Action<SelectableView> ViewCreated;
 
@@ -48,6 +49,7 @@ class Root : MonoBehaviour
             mMiningCampPrefab = root.MiningCampPrefab;
             mBarrakPrefab = root.BarrakPrefab;
             mTurretPrefab = root.TurretPrefab;
+            mBuildersLabPrefab = root.BuildersLabPrefab;
         }
 
         private Task<TModel> CreateModelAndView<TView, TModel, TOrders, TInfo>(GameObject prefab, Func<TView, TModel> createModel, Vector2 position)
@@ -169,6 +171,19 @@ class Root : MonoBehaviour
             return turret;
         }
 
+        public async Task<BuildersLab> CreateBuildersLab(Vector2 position)
+        {
+            var buildersLab = await CreateModelAndView<BuildersLabView, BuildersLab, IBuildersLabOrders, IBuildersLabInfo>(
+                mBuildersLabPrefab,
+                view => new BuildersLab(position),
+                position
+            );
+
+            buildersLab.AddedToGame += o => mServer.BuildersLabRegistrator.Register(buildersLab, buildersLab);
+            buildersLab.RemovedFromGame += o => mServer.BuildersLabRegistrator.Unregister(o.ID);
+            return buildersLab;
+        }
+
         public async Task<MiningCamp> CreateMiningCamp(Vector2 position)
         {
             var miningCamp = await CreateModelAndView<MiningCampView, MiningCamp, IMinigCampOrders, IMinigCampInfo>(
@@ -193,6 +208,8 @@ class Root : MonoBehaviour
     public GameObject CentralBuildingPrefab;
     public GameObject MiningCampPrefab;
     public GameObject TurretPrefab;
+    public GameObject BuildersLabPrefab;
+    
     public UnitySyncContext SyncContext;
     public ExternalUpdater Updater;
 
@@ -248,6 +265,7 @@ class Root : MonoBehaviour
             mClient.MiningCampCreated += ClientOnMiningCampCreated;
             mClient.BarrakCreated += ClientOnBarrakCreated;
             mClient.TurretCreated += ClientOnTurretCreated;
+            mClient.BuildersLabCreated += ClientOnBuildersLabCreated;
 
             mClient.ObjectDestroyed += ClientOnObjectDestroyed;
 
@@ -365,6 +383,11 @@ class Root : MonoBehaviour
     private void ClientOnMiningCampCreated(IMinigCampOrders orders, IMinigCampInfo info)
     {
         CreateClientView(orders, info, MiningCampPrefab);
+    }
+
+    private void ClientOnBuildersLabCreated(IBuildersLabOrders orders, IBuildersLabInfo info)
+    {
+        CreateClientView(orders, info, BuildersLabPrefab);
     }
 
     private void ControlledFactoryOnViewCreated(SelectableView selectableView)

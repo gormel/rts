@@ -14,6 +14,7 @@ namespace Assets.Core.GameObjects.Final
         Task<Guid> PlaceMiningCampTemplate(Vector2Int position);
         Task<Guid> PlaceBarrakTemplate(Vector2Int position);
         Task<Guid> PlaceTurretTemplate(Vector2Int position);
+        Task<Guid> PlaceBuildersLabTemplate(Vector2Int position);
         Task AttachAsBuilder(Guid templateId);
         Task AttachToMiningCamp(Guid campId);
     }
@@ -223,6 +224,27 @@ namespace Assets.Core.GameObjects.Final
                 TurretBuildTime,
                 Turret.BuildingSize,
                 Turret.MaximumHealthConst
+            );
+
+            var id = await Game.PlaceObject(template);
+            await AttachAsBuilder(id);
+            return id;
+        }
+
+        public async Task<Guid> PlaceBuildersLabTemplate(Vector2Int position)
+        {
+            if (!Game.GetIsAreaFree(position, BuildersLab.BuildingSize))
+                return Guid.Empty;
+
+            if (!Player.Money.Spend(TurretCost))
+                return Guid.Empty;
+
+            var template = await Player.CreateBuildingTemplate(
+                position,
+                async pos => await Player.CreateBuildersLab(pos),
+                TurretBuildTime,
+                BuildersLab.BuildingSize,
+                BuildersLab.MaximumHealthConst
             );
 
             var id = await Game.PlaceObject(template);

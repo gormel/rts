@@ -34,6 +34,7 @@ namespace Assets.Networking
         public IRegistrator<IMinigCampOrders, IMinigCampInfo> MiningCampRegistrator { get; private set; }
         public IRegistrator<IBarrakOrders, IBarrakInfo> BarrakRegistrator { get; private set; }
         public IRegistrator<ITurretOrders, ITurretInfo> TurretRegistrator { get; private set; }
+        public IRegistrator<IBuildersLabOrders, IBuildersLabInfo> BuildersLabRegistrator { get; private set; }
 
         public event Action<string, int> MessageRecived;
 
@@ -75,6 +76,10 @@ namespace Assets.Networking
             var turretService = new TurretServiceImpl();
             TurretRegistrator = turretService;
             mServer.Services.Add(TurretService.BindService(turretService));
+
+            var buildersLabService = new BuildersLabServiceImpl();
+            BuildersLabRegistrator = buildersLabService;
+            mServer.Services.Add(BuildersLabService.BindService(buildersLabService));
 
             mServer.Start();
         }

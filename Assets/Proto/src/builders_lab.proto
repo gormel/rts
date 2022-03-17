@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+import "base.proto";
+
+service BuildersLabService {
+    rpc ListenCreation (Empty) returns (stream BuildersLabState);
+    rpc ListenState(ID) returns (stream BuildersLabState);
+
+    rpc QueueAttackUpgrade(QueueAttackUpgradeRequest) returns (Empty);
+    rpc QueueDefenceUpgrade(QueueDefenceUpgradeRequest) returns (Empty);
+}
+
+message QueueAttackUpgradeRequest {
+    ID BuildingID = 1;
+}
+
+message QueueDefenceUpgradeRequest {
+    ID BuildingID = 1;
+}
+
+message BuildersLabState {
+    LaboratoryBuildingState Base = 1;
+
+    bool AttackUpgradeAvaliable = 2;
+    int32 AttackUpgradeCost = 3;
+
+    bool DefenceUpgradeAvaliable = 4;
+    int32 DefenceUpgradeCost = 5;
+}

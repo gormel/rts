@@ -18,6 +18,16 @@ namespace Assets.Networking.Services
             };
         }
 
+        public static LaboratoryBuildingState CreateLaboratoryBuildingState(ILaboratoryBuildingInfo info)
+        {
+            return new LaboratoryBuildingState
+            {
+                Base = CreateBuildingState(info),
+                Progress = info.Progress,
+                Queued = info.Queued,
+            };
+        }
+
         public static BuildingState CreateBuildingState(IBuildingInfo info)
         {
             return new BuildingState

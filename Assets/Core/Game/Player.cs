@@ -82,5 +82,10 @@ namespace Assets.Core.Game
         {
             return AssignPlayer(mExternalFactory.CreateMiningCamp(position));
         }
+
+        public Task<BuildersLab> CreateBuildersLab(Vector2 position)
+        {
+            return AssignPlayer(mExternalFactory.CreateBuildersLab(position));
+        }
     }
 }

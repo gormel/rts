@@ -27,6 +27,12 @@ message FactoryBuildingState {
 	float Progress = 4;
 }
 
+message LaboratoryBuildingState {
+	BuildingState Base = 1;
+	int32 Queued = 3;
+	float Progress = 4;
+}
+
 message BuildingState {
 	ObjectState Base = 1;
 	Vector Size = 2;

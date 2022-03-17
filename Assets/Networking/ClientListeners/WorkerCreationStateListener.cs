@@ -47,7 +47,7 @@ namespace Assets.Networking
             return mClient.GoToAsync(new GoToRequest
             {
                 Destignation = position.ToGrpc(),
-                UnitID = new ID { Value = mID }
+                UnitID = new ID {Value = mID}
             }).ResponseAsync;
         }
 
@@ -63,8 +63,8 @@ namespace Assets.Networking
         {
             var resp = await mClient.PlaceCentralBuildingTemplateAsync(new PlaceCentralBuildingTemplateRequest
             {
-                Position = new Vector { X = position.x, Y = position.y },
-                WorkerID = new ID { Value = mID }
+                Position = new Vector {X = position.x, Y = position.y},
+                WorkerID = new ID {Value = mID}
             });
             return Guid.Parse(resp.Value);
         }
@@ -73,8 +73,8 @@ namespace Assets.Networking
         {
             var resp = await mClient.PlaceBarrakTemplateAsync(new PlaceBarrakTemplateRequest
             {
-                Position = new Vector { X = position.x, Y = position.y },
-                WorkerID = new ID { Value = mID }
+                Position = new Vector {X = position.x, Y = position.y},
+                WorkerID = new ID {Value = mID}
             });
             return Guid.Parse(resp.Value);
         }
@@ -83,8 +83,18 @@ namespace Assets.Networking
         {
             var resp = await mClient.PlaceTurretTemplateAsync(new PlaceTurretTemplateRequest
             {
-                Position = new Vector { X = position.x, Y = position.y },
-                WorkerID = new ID { Value = mID }
+                Position = new Vector {X = position.x, Y = position.y},
+                WorkerID = new ID {Value = mID}
+            });
+            return Guid.Parse(resp.Value);
+        }
+
+        public async Task<Guid> PlaceBuildersLabTemplate(Vector2Int position)
+        {
+            var resp = await mClient.PlaceBuildersLabTemplateAsync(new PlaceBuildersLabTemplateRequest
+            {
+                Position = new Vector {X = position.x, Y = position.y},
+                WorkerID = new ID {Value = mID}
             });
             return Guid.Parse(resp.Value);
         }
@@ -93,8 +103,8 @@ namespace Assets.Networking
         {
             return mClient.AttachAsBuilderAsync(new AttachAsBuilderRequest
             {
-                BuildingTemplateID = new ID { Value = templateId.ToString() },
-                WorkerID = new ID { Value = mID }
+                BuildingTemplateID = new ID {Value = templateId.ToString()},
+                WorkerID = new ID {Value = mID}
             }).ResponseAsync;
         }
 
@@ -102,8 +112,8 @@ namespace Assets.Networking
         {
             return mClient.AttachToMiningCampAsync(new AttachToMiningCampRequest
             {
-                WorkerID = new ID { Value = mID },
-                CampID = new ID { Value = campId.ToString() }
+                WorkerID = new ID {Value = mID},
+                CampID = new ID {Value = campId.ToString()}
             }).ResponseAsync;
         }
 
@@ -111,17 +121,17 @@ namespace Assets.Networking
         {
             var resp = await mClient.PlaceMiningCampTemplateAsync(new PlaceMiningCampTemplateRequest
             {
-                Position = new Vector { X = position.x, Y = position.y },
-                WorkerID = new ID { Value = mID }
+                Position = new Vector {X = position.x, Y = position.y},
+                WorkerID = new ID {Value = mID}
             });
             return Guid.Parse(resp.Value);
         }
     }
 
     class WorkerCreationStateListener : CommonCreationStateListener<
-        IWorkerOrders, 
-        IWorkerInfo, 
-        ClientWorkerOrders, 
+        IWorkerOrders,
+        IWorkerInfo,
+        ClientWorkerOrders,
         ClientWorkerState,
         WorkerState,
         WorkerService.WorkerServiceClient>
@@ -130,12 +140,14 @@ namespace Assets.Networking
         {
         }
 
-        protected override AsyncServerStreamingCall<WorkerState> GetCreationCall(WorkerService.WorkerServiceClient client, CancellationToken token)
+        protected override AsyncServerStreamingCall<WorkerState> GetCreationCall(
+            WorkerService.WorkerServiceClient client, CancellationToken token)
         {
             return client.ListenCreation(new Empty(), cancellationToken: token);
         }
 
-        protected override AsyncServerStreamingCall<WorkerState> GetUpdatesCall(WorkerService.WorkerServiceClient client, ID id, CancellationToken token)
+        protected override AsyncServerStreamingCall<WorkerState> GetUpdatesCall(
+            WorkerService.WorkerServiceClient client, ID id, CancellationToken token)
         {
             return client.ListenState(id, cancellationToken: token);
         }
