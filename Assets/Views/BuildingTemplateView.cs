@@ -24,7 +24,6 @@ namespace Assets.Views
 
         protected override void OnLoad()
         {
-            transform.localScale = new Vector3(transform.localScale.x * Info.Size.x, transform.localScale.y, transform.localScale.z * Info.Size.y);
 
             RegisterProperty(new SelectableViewProperty("Progress", () => $"{Info.Progress * 100:#0}%"));
         }

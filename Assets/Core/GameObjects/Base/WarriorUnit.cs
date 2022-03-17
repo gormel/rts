@@ -102,7 +102,7 @@ namespace Assets.Core.GameObjects.Base
                     return BTreeLeafState.Failed;
                 }
 
-                if (!target.IsInGame || target.Health <= 0)
+                if (!target.IsInGame || target.RecivedDamage >= target.MaxHealth)
                     return BTreeLeafState.Successed;
 
                 mUnit.PathFinder.SetLookAt(PositionUtils.PositionOf(target), mUnit.Game.Map.Data);
@@ -112,9 +112,9 @@ namespace Assets.Core.GameObjects.Base
                     return BTreeLeafState.Processing;
                 
                 mAttackSpeedTimer = TimeSpan.FromSeconds(1 / mUnit.AttackSpeed);
-                target.Health -= mUnit.Damage;
+                target.RecivedDamage += mUnit.Damage;
 
-                if (target.Health <= 0)
+                if (target.RecivedDamage >= target.MaxHealth)
                 {
                     mUnit.IsAttacks = false;
                     mUnit.Game.RemoveObject(target.ID);
@@ -207,19 +207,21 @@ namespace Assets.Core.GameObjects.Base
         public int Damage { get; protected set; }
         public Strategy Strategy { get; private set; }
 
-        private readonly IBTreeBuilder mAgressiveIntelligence;
-        private readonly IBTreeBuilder mDefenciveIntelligence;
+        private IBTreeBuilder mAgressiveIntelligence;
+        private IBTreeBuilder mDefenciveIntelligence;
         
         protected WarriorUnit(Game.Game game, IPathFinder pathFinder, Vector2 position)
             : base(game, pathFinder, position)
         {
-            mAgressiveIntelligence = CreateAggressiveIntelligence();
-            mDefenciveIntelligence = CreateDefenciveIntelligence();
         }
 
         public override void OnAddedToGame()
         {
             Strategy = Strategy.Aggressive;
+            
+            mAgressiveIntelligence = CreateAggressiveIntelligence();
+            mDefenciveIntelligence = CreateDefenciveIntelligence();
+            
             base.OnAddedToGame();
         }
 

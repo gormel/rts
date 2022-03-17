@@ -58,7 +58,7 @@ namespace Assets.Core.GameObjects.Final
         {
             Size = mInitialSize;
             Position = mInitialPosition;
-            Health = 5;
+            RecivedDamage = MaxHealth - 5;
             ViewRadius = 1;
             
             base.OnAddedToGame();
@@ -68,8 +68,10 @@ namespace Assets.Core.GameObjects.Final
         {
             var k = AttachedWorkers <= 0 ? 0 : 1;
             mBuildTime = mBuildTime.Subtract(TimeSpan.FromSeconds(deltaTime.TotalSeconds * MathUtils.Pow(1 + WorkerInvest, AttachedWorkers - 1) * k));
+            var progressBefore = Progress;
             Progress = (float)(1 - mBuildTime.TotalSeconds / mFullBuildTime.TotalSeconds);
-            Health = Math.Max(Progress * MaxHealth, 5);
+            var deltaDamage = (Progress - progressBefore) * MaxHealth;
+            RecivedDamage = Math.Max(0, RecivedDamage - deltaDamage);
 
             if (mBuildTime <= TimeSpan.Zero)
             {

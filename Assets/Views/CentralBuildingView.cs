@@ -19,11 +19,6 @@ namespace Assets.Views
 
         protected override void OnLoad()
         {
-            transform.localScale = new Vector3(
-                transform.localScale.x * Info.Size.x, 
-                transform.localScale.y * Mathf.Min(Info.Size.x, Info.Size.y), 
-                transform.localScale.z * Info.Size.y);
-
             RegisterProperty(new SelectableViewProperty("Current progress", () => $"{Info.Progress * 100:#0}%"));
             RegisterProperty(new SelectableViewProperty("Queued workers", () => $"{Info.Queued}"));
         }

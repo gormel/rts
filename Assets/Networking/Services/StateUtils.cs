@@ -11,7 +11,7 @@ namespace Assets.Networking.Services
             {
                 ID = new ID { Value = info.ID.ToString() },
                 PlayerID = new ID { Value = info.PlayerID.ToString() },
-                Health = info.Health,
+                RecivedDamage = info.RecivedDamage,
                 MaxHealth = info.MaxHealth,
                 Position = info.Position.ToGrpc(),
                 ViewRadius = info.ViewRadius

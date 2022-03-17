@@ -20,7 +20,7 @@ namespace Assets.Networking.ClientListeners
         public Guid ID => Guid.Parse(State.Base.Base.Base.ID.Value);
         public Guid PlayerID => Guid.Parse(State.Base.Base.Base.PlayerID.Value);
         public Vector2 Position => State.Base.Base.Base.Position.ToUnity();
-        public float Health => State.Base.Base.Base.Health;
+        public float RecivedDamage => State.Base.Base.Base.RecivedDamage;
         public float MaxHealth => State.Base.Base.Base.MaxHealth;
         public float Speed => State.Base.Base.Speed;
         public Vector2 Direction => State.Base.Base.Direction.ToUnity();

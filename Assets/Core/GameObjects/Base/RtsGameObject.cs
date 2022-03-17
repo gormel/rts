@@ -9,7 +9,7 @@ namespace Assets.Core.GameObjects.Base
         Guid ID { get; }
         Guid PlayerID { get; }
         Vector2 Position { get; }
-        float Health { get; }
+        float RecivedDamage { get; }
         float MaxHealth { get; }
         float ViewRadius { get; }
     }
@@ -33,7 +33,7 @@ namespace Assets.Core.GameObjects.Base
         protected Player Player => ((IPlayerControlled)this).Player;
         Player IPlayerControlled.Player { get; set; }
 
-        public float Health { get; set; }
+        public float RecivedDamage { get; set; }
         public abstract float MaxHealth { get; }
         public float ViewRadius { get; set; }
         

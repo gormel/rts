@@ -196,7 +196,6 @@ namespace Assets.Core.GameObjects.Base
             base.OnAddedToGame();
 
             Destignation = Position = mInitialPosition;
-            Health = MaxHealth;
             ApplyDefaultIntelligence();
             PathFinder.SetTarget(Position, Game.Map.Data);
         }

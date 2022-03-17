@@ -13,5 +13,16 @@ namespace Assets.Views.Base
         where TInfo : IBuildingInfo
     {
         protected override Vector2 Position => Info.Position + Info.Size / 2;
+
+        protected override void Update()
+        {
+            base.Update();
+            
+            transform.localScale = new Vector3(
+                Info.Size.x,
+                Mathf.Min(Info.Size.x, Info.Size.y),
+                Info.Size.y);
+            
+        }
     }
 }

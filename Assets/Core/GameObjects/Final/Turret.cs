@@ -70,7 +70,7 @@ namespace Assets.Core.GameObjects.Final
                     return BTreeLeafState.Failed;
                 }
 
-                if (!target.IsInGame || target.Health <= 0)
+                if (!target.IsInGame || target.RecivedDamage >= target.MaxHealth)
                     return BTreeLeafState.Successed;
 
                 mTurret.Direction = PositionUtils.PositionOf(target);
@@ -80,9 +80,9 @@ namespace Assets.Core.GameObjects.Final
                     return BTreeLeafState.Processing;
                 
                 mAttackSpeedTimer = TimeSpan.FromSeconds(1 / mTurret.AttackSpeed);
-                target.Health -= mTurret.Damage;
+                target.RecivedDamage += mTurret.Damage;
 
-                if (target.Health <= 0)
+                if (target.RecivedDamage >= target.MaxHealth)
                 {
                     mTurret.IsShooting = false;
                     mTurret.mGame.RemoveObject(target.ID);
@@ -164,6 +164,16 @@ namespace Assets.Core.GameObjects.Final
         {
             mGame = game;
             mInitialPosition = position;
+        }
+
+        public override void OnAddedToGame()
+        {
+            Position = mInitialPosition;
+            Size = BuildingSize;
+            ViewRadius = 5;
+            
+            AttackRange = 4;
+            AttackSpeed = 2;
 
             var storage = new TargetStorage();
             mIntelligence = BTree.Create()
@@ -176,16 +186,6 @@ namespace Assets.Core.GameObjects.Final
                                 .Leaf(new QueryEnemyLeaf(this, storage)))
                             .Leaf(new KillTargetLeaf(this, storage)))
                         .Leaf(new CancelKillLeaf(this)))).Build();
-        }
-
-        public override void OnAddedToGame()
-        {
-            Position = mInitialPosition;
-            Size = BuildingSize;
-            ViewRadius = 5;
-            
-            AttackRange = 4;
-            AttackSpeed = 2;
             
             base.OnAddedToGame();
         }

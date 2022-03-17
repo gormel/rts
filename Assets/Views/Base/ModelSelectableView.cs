@@ -9,7 +9,7 @@ namespace Assets.Views.Base
         where TOrderer : IGameObjectOrders
         where TInfo : IGameObjectInfo
     {
-        public sealed override float Health => Info.Health;
+        public sealed override float Health => Info.MaxHealth - Info.RecivedDamage;
         public sealed override float MaxHealth => Info.MaxHealth;
 
         public TOrderer Orders { get; private set; }

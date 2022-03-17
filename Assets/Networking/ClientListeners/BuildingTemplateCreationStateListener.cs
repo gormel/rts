@@ -16,7 +16,7 @@ namespace Assets.Networking
         public Guid ID => Guid.Parse(State.Base.Base.ID.Value);
         public Guid PlayerID => Guid.Parse(State.Base.Base.PlayerID.Value);
         public Vector2 Position => State.Base.Base.Position.ToUnity();
-        public float Health => State.Base.Base.Health;
+        public float RecivedDamage => State.Base.Base.RecivedDamage;
         public float MaxHealth => State.Base.Base.MaxHealth;
         public Vector2 Size => State.Base.Size.ToUnity();
         public float Progress => State.Progress;

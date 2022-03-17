@@ -14,14 +14,6 @@ namespace Assets.Views
 
         public GameObject RotationTarget;
 
-        protected override void OnLoad()
-        {
-            transform.localScale = new Vector3(
-                transform.localScale.x * Info.Size.x,
-                transform.localScale.y * Mathf.Min(Info.Size.x, Info.Size.y),
-                transform.localScale.z * Info.Size.y);
-        }
-
         protected override void Update()
         {
             base.Update();

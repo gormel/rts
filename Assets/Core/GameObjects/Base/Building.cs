@@ -17,15 +17,10 @@ namespace Assets.Core.GameObjects.Base
 
         public sealed override float MaxHealth => Player.Upgrades.BuildingDefenceUpgrade.Calculate(MaxHealthBase);
 
-        public Building()
-        {
-        }
-
         public override void OnAddedToGame()
         {
             base.OnAddedToGame();
-            
-            Health = MaxHealth;
+
             Player.RegisterCreatedBuilding(GetType());
         }
 
