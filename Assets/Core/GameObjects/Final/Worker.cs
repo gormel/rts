@@ -120,11 +120,13 @@ namespace Assets.Core.GameObjects.Final
         public const int MiningCampCost = 100;
         public const int BarrakCost = 200;
         public const int TurretCost = 100;
+        public const int BuildersLabCost = 200;
 
         public static TimeSpan CentralBuildingBuildTime { get; } = TimeSpan.FromSeconds(30);
         public static TimeSpan MiningCampBuildTime { get; } = TimeSpan.FromSeconds(20);
         public static TimeSpan BarrakBuildTime { get; } = TimeSpan.FromSeconds(25);
         public static TimeSpan TurretBuildTime { get; } = TimeSpan.FromSeconds(15);
+        public static TimeSpan BuildersLabBuildTime { get; } = TimeSpan.FromSeconds(25);
 
         public bool IsBuilding { get; private set; }
         
@@ -254,13 +256,13 @@ namespace Assets.Core.GameObjects.Final
             if (!Game.GetIsAreaFree(position, BuildersLab.BuildingSize))
                 return Guid.Empty;
 
-            if (!Player.Money.Spend(TurretCost))
+            if (!Player.Money.Spend(BuildersLabCost))
                 return Guid.Empty;
 
             var template = await Player.CreateBuildingTemplate(
                 position,
                 async pos => await Player.CreateBuildersLab(pos),
-                TurretBuildTime,
+                BuildersLabBuildTime,
                 BuildersLab.BuildingSize,
                 BuildersLab.MaximumHealthConst
             );

@@ -48,8 +48,8 @@ namespace Assets.Networking
             public bool TurretBuildingAvaliable => PlayerState.TurretBuildingAvaliable;
             public int TurretAttackUpgradeLevel => PlayerState.TurretAttackUpgradeLevel;
             public int BuildingDefenceUpgradeLevel => PlayerState.BuildingDefenceUpgradeLevel;
-            public int MaxTurretAttackUpgradeLevel => PlayerState.MaxTurretAttackUpgradeLevel;
-            public int MaxBuildingDefenceUpgradeLevel => PlayerState.MaxBuildingDefenceUpgradeLevel;
+            public bool TurretAttackUpgradeAvaliable => PlayerState.TurretAttackUpgradeAvaliable;
+            public bool BuildingDefenceUpgradeAvaliable => PlayerState.BuildingDefenceUpgradeAvaliable;
         }
         
         public event Action<IPlayerState> PlayerConnected;

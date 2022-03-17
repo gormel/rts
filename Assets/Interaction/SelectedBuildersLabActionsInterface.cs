@@ -16,8 +16,8 @@ namespace Assets.Interaction
         private void Update()
         {
             var player = Interface.Root.Player;
-            QueueAttackUpgradeButton.SetActive(player.TurretAttackUpgradeLevel < player.MaxTurretAttackUpgradeLevel);
-            QueueDefenceUpgradeButton.SetActive(player.BuildingDefenceUpgradeLevel < player.MaxBuildingDefenceUpgradeLevel);
+            QueueAttackUpgradeButton.SetActive(player.TurretAttackUpgradeAvaliable);
+            QueueDefenceUpgradeButton.SetActive(player.BuildingDefenceUpgradeAvaliable);
         }
 
         public void QueueAttackUpgrade()
@@ -35,6 +35,14 @@ namespace Assets.Interaction
             {
                 view.Orders.QueueDefenceUpgrade();
                 break;
+            }
+        }
+
+        public void CancelUpgrade()
+        {
+            foreach (var view in Interface.Selected.OfType<BuildersLabView>())
+            {
+                view.Orders.CancelResearch();
             }
         }
     }

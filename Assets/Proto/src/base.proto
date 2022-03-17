@@ -94,3 +94,7 @@ message SetStrategyRequest {
 	ID WarriorID = 1;
 	int32 Strategy = 2;
 }
+
+message CancelUpgradeRequest {
+	ID LabID = 1;
+}

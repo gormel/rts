@@ -21,9 +21,9 @@ message PlayerState {
     bool TurretBuildingAvaliable = 3;
 
     int32 TurretAttackUpgradeLevel = 4;
-    int32 MaxTurretAttackUpgradeLevel = 5;
+    bool TurretAttackUpgradeAvaliable = 5;
     int32 BuildingDefenceUpgradeLevel = 6;
-    int32 MaxBuildingDefenceUpgradeLevel = 7;
+    bool BuildingDefenceUpgradeAvaliable = 7;
 }
 
 message MapState {

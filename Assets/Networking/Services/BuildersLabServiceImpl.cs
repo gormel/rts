@@ -50,6 +50,15 @@ namespace Assets.Networking.Services
             });
         }
 
+        public override Task<Empty> CancelUpgrade(CancelUpgradeRequest request, ServerCallContext context)
+        {
+            return mCommonService.ExecuteOrder(request.LabID, async orders =>
+            {
+                await orders.CancelResearch();
+                return new Empty();
+            });
+        }
+
         public void Register(IBuildersLabOrders orders, IBuildersLabInfo info)
         {
             mCommonService.Register(orders, info);

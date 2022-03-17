@@ -40,8 +40,8 @@ namespace Assets.Networking.Services
                 
                 BuildingDefenceUpgradeLevel = info.player.BuildingDefenceUpgradeLevel,
                 TurretAttackUpgradeLevel = info.player.TurretAttackUpgradeLevel,
-                MaxTurretAttackUpgradeLevel = info.player.MaxTurretAttackUpgradeLevel,
-                MaxBuildingDefenceUpgradeLevel = info.player.MaxBuildingDefenceUpgradeLevel,
+                BuildingDefenceUpgradeAvaliable = info.player.BuildingDefenceUpgradeAvaliable,
+                TurretAttackUpgradeAvaliable = info.player.TurretAttackUpgradeAvaliable,
             };
 
             if (collectMap)

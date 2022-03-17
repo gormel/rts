@@ -8,6 +8,10 @@ namespace Assets.Core.Game
         public int Level { get; private set; }
         public int MaxLevel { get; }
 
+        private bool mLevelingUp;
+
+        public bool LevelUpAvaliable => !mLevelingUp && Level < MaxLevel;
+
         public Upgrade(int maxLevel, Func<TStat, int, TStat> calculator)
         {
             mCalculator = calculator;
@@ -18,9 +22,23 @@ namespace Assets.Core.Game
         {
             return mCalculator(baseValue, Level);
         }
-        
-        public void LevelUp()
+
+        public void BeginLevelUp()
         {
+            mLevelingUp = true;
+        }
+
+        public void CancelLevelUp()
+        {
+            mLevelingUp = false;
+        }
+
+        public void EndLevelUp()
+        {
+            if (!mLevelingUp)
+                return;
+
+            mLevelingUp = false;
             Level++;
         }
     }

@@ -16,8 +16,8 @@ namespace Assets.Core.Game
         bool TurretBuildingAvaliable { get; }
         int TurretAttackUpgradeLevel { get; }
         int BuildingDefenceUpgradeLevel { get; }
-        int MaxTurretAttackUpgradeLevel { get; }
-        int MaxBuildingDefenceUpgradeLevel { get; }
+        bool TurretAttackUpgradeAvaliable { get; }
+        bool BuildingDefenceUpgradeAvaliable { get; }
     }
 
     class Player : IGameObjectFactory, IPlayerState
@@ -34,8 +34,8 @@ namespace Assets.Core.Game
         public bool TurretBuildingAvaliable => GetCreatedBuildingCount<BuildersLab>() > 0;
         public int TurretAttackUpgradeLevel => Upgrades.TurretAttackUpgrade.Level;
         public int BuildingDefenceUpgradeLevel => Upgrades.BuildingDefenceUpgrade.Level;
-        public int MaxTurretAttackUpgradeLevel => Upgrades.TurretAttackUpgrade.MaxLevel;
-        public int MaxBuildingDefenceUpgradeLevel => Upgrades.BuildingDefenceUpgrade.MaxLevel;
+        public bool TurretAttackUpgradeAvaliable => Upgrades.TurretAttackUpgrade.LevelUpAvaliable;
+        public bool BuildingDefenceUpgradeAvaliable => Upgrades.BuildingDefenceUpgrade.LevelUpAvaliable;
 
         public Guid ID { get; } = Guid.NewGuid();
 

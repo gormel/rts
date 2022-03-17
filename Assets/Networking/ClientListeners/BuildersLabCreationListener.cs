@@ -34,6 +34,14 @@ namespace Assets.Networking.ClientListeners
                 BuildingID = new ID { Value = mID }
             }).ResponseAsync;
         }
+
+        public Task CancelResearch()
+        {
+            return mClient.CancelUpgradeAsync(new CancelUpgradeRequest
+            {
+                LabID = new ID { Value = mID }
+            }).ResponseAsync;
+        }
     }
     
     internal class ClientBuildersLabInfo : IBuildersLabInfo, IStateHolder<BuildersLabState>
