@@ -12,9 +12,16 @@ namespace Assets.Interaction
     {
         public GameObject StartScreen;
         public Button PlaceTurretButton;
+
+        public Text CentralBuildingCostText;
+        public Text BarrakCostText;
+        public Text TurretCostText;
+        public Text BuildersLabCostText;
+        public Text MiningCampCostText;
+        
         public void StartCentralBuildingPlacement()
         {
-            Interface.BeginBuildingPlacement(FetchSelectedOrders<IWorkerOrders>(), (view, position) => 
+            Interface.BeginBuildingPlacement(Interface.FetchSelectedOrders<IWorkerOrders>(), (view, position) => 
                 view.PlaceCentralBuildingTemplate(new Vector2Int(Mathf.FloorToInt(position.x), Mathf.FloorToInt(position.y))),
                 CentralBuilding.BuildingSize
                 );
@@ -22,7 +29,7 @@ namespace Assets.Interaction
 
         public void StartMiningCampPlacement()
         {
-            Interface.BeginBuildingPlacement(FetchSelectedOrders<IWorkerOrders>(), (view, position) =>
+            Interface.BeginBuildingPlacement(Interface.FetchSelectedOrders<IWorkerOrders>(), (view, position) =>
                 view.PlaceMiningCampTemplate(new Vector2Int(Mathf.FloorToInt(position.x), Mathf.FloorToInt(position.y))),
                 MiningCamp.BuildingSize
                 );
@@ -30,7 +37,7 @@ namespace Assets.Interaction
 
         public void StartBarrakPlacement()
         {
-            Interface.BeginBuildingPlacement(FetchSelectedOrders<IWorkerOrders>(), (view, position) => 
+            Interface.BeginBuildingPlacement(Interface.FetchSelectedOrders<IWorkerOrders>(), (view, position) => 
                 view.PlaceBarrakTemplate(new Vector2Int(Mathf.FloorToInt(position.x), Mathf.FloorToInt(position.y))),
                 Barrak.BuildingSize
                 );
@@ -38,7 +45,7 @@ namespace Assets.Interaction
 
         public void StartTurretPlacement()
         {
-            Interface.BeginBuildingPlacement(FetchSelectedOrders<IWorkerOrders>(), (view, position) => 
+            Interface.BeginBuildingPlacement(Interface.FetchSelectedOrders<IWorkerOrders>(), (view, position) => 
                 view.PlaceTurretTemplate(new Vector2Int(Mathf.FloorToInt(position.x), Mathf.FloorToInt(position.y))),
                 Turret.BuildingSize
             );
@@ -46,7 +53,7 @@ namespace Assets.Interaction
 
         public void StartBuildersLabPlacement()
         {
-            Interface.BeginBuildingPlacement(FetchSelectedOrders<IWorkerOrders>(), (view, position) => 
+            Interface.BeginBuildingPlacement(Interface.FetchSelectedOrders<IWorkerOrders>(), (view, position) => 
                 view.PlaceBuildersLabTemplate(new Vector2Int(Mathf.FloorToInt(position.x), Mathf.FloorToInt(position.y))),
                 BuildersLab.BuildingSize
             );
@@ -54,12 +61,20 @@ namespace Assets.Interaction
 
         public void AttachToMiningCamp()
         {
-            Interface.BeginAttachWorkerToMiningCamp(FetchSelectedOrders<IWorkerOrders>());
+            Interface.BeginAttachWorkerToMiningCamp(Interface.FetchSelectedOrders<IWorkerOrders>());
         }
 
         private void Update()
         {
             PlaceTurretButton.interactable = Interface.Root.Player.TurretBuildingAvaliable;
+
+            var player = Interface.Root.Player;
+            
+            CentralBuildingCostText.text = player.CentralBuildingCost.ToString();
+            BarrakCostText.text = player.BarrakCost.ToString();
+            TurretCostText.text = player.TurretCost.ToString();
+            BuildersLabCostText.text = player.BuildersLabCost.ToString();
+            MiningCampCostText.text = player.MiningCampCost.ToString();
         }
 
         void OnEnable()

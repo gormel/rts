@@ -12,19 +12,14 @@ namespace Assets.Interaction
     {
         public UserInterface Interface;
 
-        protected IEnumerable<T> FetchSelectedOrders<T>() where T : class, IUnitOrders
-        {
-            return Interface.Selected.Select(v => v.OrdersBase as T).Where(o => o != null);
-        }
-
         public void BeginGoTo()
         {
-            Interface.BeginGoTo(FetchSelectedOrders<IUnitOrders>());
+            Interface.BeginGoTo(Interface.FetchSelectedOrders<IUnitOrders>());
         }
 
         public void Stop()
         {
-            foreach (var orders in FetchSelectedOrders<IUnitOrders>()) 
+            foreach (var orders in Interface.FetchSelectedOrders<IUnitOrders>()) 
                 orders.Stop();
         }
     }

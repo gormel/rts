@@ -564,7 +564,7 @@ MonoBehaviour:
   ExplosionPrefab: {fileID: 4269541658022102700, guid: aa65bcd20538a464bbb22a2733200282,
     type: 3}
   MinimapBrush: {fileID: 8677732181077557441}
-  BuilderPoints:
+  PlacementPoints:
   - {fileID: 5836753209902870674}
   - {fileID: 1597214990353216672}
   - {fileID: 661731773215454572}

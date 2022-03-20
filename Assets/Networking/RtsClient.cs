@@ -45,11 +45,22 @@ namespace Assets.Networking
 
             public Guid ID => Guid.Parse(PlayerState.ID.Value);
             public int Money => PlayerState.Money;
+            public int Limit => PlayerState.Limit;
             public bool TurretBuildingAvaliable => PlayerState.TurretBuildingAvaliable;
             public int TurretAttackUpgradeLevel => PlayerState.TurretAttackUpgradeLevel;
             public int BuildingDefenceUpgradeLevel => PlayerState.BuildingDefenceUpgradeLevel;
             public bool TurretAttackUpgradeAvaliable => PlayerState.TurretAttackUpgradeAvaliable;
             public bool BuildingDefenceUpgradeAvaliable => PlayerState.BuildingDefenceUpgradeAvaliable;
+            public int MeleeWarriorCost => PlayerState.MeleeWarriorCost;
+            public int RangedWarriorCost  => PlayerState.RangedWarriorCost;
+            public int WorkerCost  => PlayerState.WorkerCost;
+            public int CentralBuildingCost  => PlayerState.CentralBuildingCost;
+            public int MiningCampCost  => PlayerState.MiningCampCost;
+            public int BarrakCost  => PlayerState.BarrakCost;
+            public int TurretCost  => PlayerState.TurretCost;
+            public int BuildersLabCost  => PlayerState.BuildersLabCost;
+            public int TurretAttackUpgradeCost  => PlayerState.TurretAttackUpgradeCost;
+            public int BuildingDefenceUpgradeCost  => PlayerState.BuildingDefenceUpgradeCost;
         }
         
         public event Action<IPlayerState> PlayerConnected;

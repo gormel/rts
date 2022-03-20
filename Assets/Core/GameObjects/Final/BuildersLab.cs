@@ -23,9 +23,6 @@ namespace Assets.Core.GameObjects.Base
         public static readonly TimeSpan AttackUpgradeTime = TimeSpan.FromSeconds(20); 
         public static readonly TimeSpan DefenceUpgradeTime = TimeSpan.FromSeconds(15);
 
-        public const int AttackUpgradeCost = 250;
-        public const int DefenceUpgradeCost = 200;
-
         protected override float MaxHealthBase => MaximumHealthConst;
         
         public BuildersLab(Vector2 position) 
@@ -43,7 +40,7 @@ namespace Assets.Core.GameObjects.Base
 
         public Task QueueAttackUpgrade()
         {
-            if (!Player.Money.Spend(AttackUpgradeCost))
+            if (!Player.Money.Spend(Player.TurretAttackUpgradeCost))
                 return Task.CompletedTask;
             
             return QueueUpgrade(Player.Upgrades.TurretAttackUpgrade, AttackUpgradeTime);
@@ -51,7 +48,7 @@ namespace Assets.Core.GameObjects.Base
 
         public Task QueueDefenceUpgrade()
         {
-            if (!Player.Money.Spend(DefenceUpgradeCost))
+            if (!Player.Money.Spend(Player.BuildingDefenceUpgradeCost))
                 return Task.CompletedTask;
 
             return QueueUpgrade(Player.Upgrades.BuildingDefenceUpgrade, DefenceUpgradeTime);

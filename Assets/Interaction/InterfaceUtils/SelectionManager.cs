@@ -38,6 +38,15 @@ namespace Assets.Interaction.Selection
             SelectInner(views, false);
         }
 
+        public void RemoveSelection(IEnumerable<SelectableView> views)
+        {
+            foreach (var selectableView in views)
+            {
+                selectableView.IsSelected = false;
+                mUserInterface.Selected.Remove(selectableView);
+            }
+        }
+
         private void SelectInner(IEnumerable<SelectableView> views, bool union)
         {
             if (!union)

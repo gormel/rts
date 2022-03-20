@@ -4,6 +4,15 @@
     {
         public int Resources { get; private set; }
 
+        public ResourceStorage()
+        {
+        }
+
+        public ResourceStorage(int initialResources)
+        {
+            Resources = initialResources;
+        }
+
         public void Store(int amount)
         {
             Resources += amount;

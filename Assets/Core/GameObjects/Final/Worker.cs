@@ -115,12 +115,6 @@ namespace Assets.Core.GameObjects.Final
                 return BTreeLeafState.Successed;
             }
         }
-        
-        public const int CentralBuildingCost = 400;
-        public const int MiningCampCost = 100;
-        public const int BarrakCost = 200;
-        public const int TurretCost = 100;
-        public const int BuildersLabCost = 200;
 
         public static TimeSpan CentralBuildingBuildTime { get; } = TimeSpan.FromSeconds(30);
         public static TimeSpan MiningCampBuildTime { get; } = TimeSpan.FromSeconds(20);
@@ -152,7 +146,7 @@ namespace Assets.Core.GameObjects.Final
             if (!Game.GetIsAreaFree(position, CentralBuilding.BuildingSize))
                 return Guid.Empty;
 
-            if (!Player.Money.Spend(CentralBuildingCost))
+            if (!Player.Money.Spend(Player.CentralBuildingCost))
                 return Guid.Empty;
             
             var template = await Player.CreateBuildingTemplate(
@@ -190,7 +184,7 @@ namespace Assets.Core.GameObjects.Final
             if (!crystalExist)
                 return Guid.Empty;
 
-            if (!Player.Money.Spend(MiningCampCost))
+            if (!Player.Money.Spend(Player.MiningCampCost))
                 return Guid.Empty;
 
             var template = await Player.CreateBuildingTemplate(
@@ -211,7 +205,7 @@ namespace Assets.Core.GameObjects.Final
             if (!Game.GetIsAreaFree(position, Barrak.BuildingSize))
                 return Guid.Empty;
 
-            if (!Player.Money.Spend(BarrakCost))
+            if (!Player.Money.Spend(Player.BarrakCost))
                 return Guid.Empty;
 
             var template = await Player.CreateBuildingTemplate(
@@ -235,7 +229,7 @@ namespace Assets.Core.GameObjects.Final
             if (!Player.TurretBuildingAvaliable)
                 return Guid.Empty;
 
-            if (!Player.Money.Spend(TurretCost))
+            if (!Player.Money.Spend(Player.TurretCost))
                 return Guid.Empty;
 
             var template = await Player.CreateBuildingTemplate(
@@ -256,7 +250,7 @@ namespace Assets.Core.GameObjects.Final
             if (!Game.GetIsAreaFree(position, BuildersLab.BuildingSize))
                 return Guid.Empty;
 
-            if (!Player.Money.Spend(BuildersLabCost))
+            if (!Player.Money.Spend(Player.BuildersLabCost))
                 return Guid.Empty;
 
             var template = await Player.CreateBuildingTemplate(
@@ -275,7 +269,7 @@ namespace Assets.Core.GameObjects.Final
         public async Task AttachAsBuilder(Guid templateId)
         {
             var template = Game.GetObject<BuildingTemplate>(templateId);
-            var point = await template.PlacementService.TryAllocatePoint();
+            var point = await template.PlacementService.TryAllocateNearestPoint(Position);
             if (point == PlacementPoint.Invalid)
                 return;
 
@@ -298,7 +292,7 @@ namespace Assets.Core.GameObjects.Final
         public async Task AttachToMiningCamp(Guid campId)
         {
             var camp = Game.GetObject<MiningCamp>(campId);
-            var point = await camp.PlacementService.TryAllocatePoint();
+            var point = await camp.PlacementService.TryAllocateNearestPoint(Position);
             if (point == PlacementPoint.Invalid)
                 return;
 

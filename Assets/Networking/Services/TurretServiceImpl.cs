@@ -38,6 +38,24 @@ namespace Assets.Networking.Services
             return mCommonService.ListenState(request, responseStream, context);
         }
 
+        public override Task<Empty> Attack(AttackRequest request, ServerCallContext context)
+        {
+            return mCommonService.ExecuteOrder(request.WarriorID, async orders =>
+            {
+                await orders.Attack(Guid.Parse(request.TargetID.Value));
+                return new Empty();
+            });
+        }
+
+        public override Task<Empty> Stop(StopRequest request, ServerCallContext context)
+        {
+            return mCommonService.ExecuteOrder(request.UnitUD, async orders =>
+            {
+                await orders.Stop();
+                return new Empty();
+            });
+        }
+
         public void Register(ITurretOrders orders, ITurretInfo info)
         {
             mCommonService.Register(orders, info);

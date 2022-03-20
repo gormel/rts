@@ -14,6 +14,8 @@ namespace Assets.Interaction
             instInterface.SetIcon(view.Icon);
             instInterface.SetName(view.Name);
             instInterface.SetHealth(view.Health, view.MaxHealth);
+            instInterface.Interface = Interface;
+            instInterface.Owner = view;
         }
 
         void Update()

@@ -13,12 +13,17 @@ namespace Assets.Interaction
     {
         public UserInterface Interface;
         public Text MoneyText;
+        public Text LimitText;
 
         void Update()
         {
             var money = Interface.Root.Player?.Money;
             if (money != null)
-                MoneyText.text = money.ToString();
+                MoneyText.text = $"{money}$";
+
+            var limit = Interface.Root.Player?.Limit;
+            if (limit != null)
+                LimitText.text = $"{limit}/200";
         }
 
         public void Close()

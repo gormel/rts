@@ -25,17 +25,24 @@ namespace Assets.Core.GameObjects.Base {
         private class Order
         {
             public TimeSpan Time { get; }
+            private readonly Func<bool> mPrepare;
             private Action mDoing;
 
-            public Order(TimeSpan time, Action doing)
+            public Order(TimeSpan time, Func<bool> prepare, Action doing)
             {
                 Time = time;
+                mPrepare = prepare;
                 mDoing = doing;
             }
 
             public void Doing()
             {
                 mDoing();
+            }
+
+            public bool Prepare()
+            {
+                return mPrepare();
             }
         }
 
@@ -89,9 +96,14 @@ namespace Assets.Core.GameObjects.Base {
                 if (mBuilding.mLockedOrder == null)
                     return BTreeLeafState.Failed;
 
-                mBuilding.mLockedProgress -= deltaTime;
-                mBuilding.Progress = (float)(1 - mBuilding.mLockedProgress.TotalSeconds / mBuilding.mLockedOrder.Time.TotalSeconds);
-                return mBuilding.mLockedProgress.TotalSeconds > 0 ? BTreeLeafState.Processing : BTreeLeafState.Successed;
+                if (mBuilding.mLockedProgress.TotalSeconds > 0)
+                {
+                    mBuilding.mLockedProgress -= deltaTime;
+                    mBuilding.Progress = (float) (1 - mBuilding.mLockedProgress.TotalSeconds / mBuilding.mLockedOrder.Time.TotalSeconds);
+                    return BTreeLeafState.Processing;
+                }
+
+                return mBuilding.mLockedOrder.Prepare() ? BTreeLeafState.Successed : BTreeLeafState.Processing;
             }
         }
 
@@ -155,25 +167,39 @@ namespace Assets.Core.GameObjects.Base {
 
         protected async Task<bool> QueueUnit(int cost, TimeSpan productionTime, Func<IGameObjectFactory, Vector2, Task<Unit>> createUnit)
         {
-            var point = await mPlacementService.TryAllocatePoint();
-            if (point == PlacementPoint.Invalid)
-                return false;
-
             if (!Player.Money.Spend(cost))
-            {
-                await mPlacementService.ReleasePoint(point.ID);
                 return false;
-            }
 
+            if (!Player.Limit.Spend(1))
+                return false;
+
+            bool taskProcessing = false;
+            var allocatedPoint = PlacementPoint.Invalid;
             Queued++;
-            mOrders.Enqueue(new Order(productionTime, async () =>
+            mOrders.Enqueue(new Order(productionTime, () =>
+            {
+                if (taskProcessing)
+                    return false;
+
+                if (allocatedPoint != PlacementPoint.Invalid)
+                    return true;
+
+                taskProcessing = true;
+                mPlacementService.TryAllocateNearestPoint(Waypoint).ContinueWith(t =>
+                {
+                    allocatedPoint = t.Result;
+                    taskProcessing = false;
+                });
+                return false;
+            }, async () =>
             {
                 Queued--;
-                var unit = await createUnit(Player, point.Position);
+                var unit = await createUnit(Player, allocatedPoint.Position);
+                unit.RemovedFromGame += u => Player.Limit.Store(1);
                 await mGame.PlaceObject(unit);
-                await mPlacementService.ReleasePoint(point.ID);
+                await mPlacementService.ReleasePoint(allocatedPoint.ID);
                 if (!new Rect(Position, Size).Contains(Waypoint))
-                    await unit.GoTo(Waypoint); ;
+                    await unit.GoTo(Waypoint);
             }));
             return true;
         }

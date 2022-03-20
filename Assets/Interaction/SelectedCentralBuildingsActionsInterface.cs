@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using Assets.Views;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Assets.Interaction
 {
@@ -8,6 +9,13 @@ namespace Assets.Interaction
     {
         public UserInterface Interface;
 
+        public Text WorkerCostText;
+
+        void Update()
+        {
+            WorkerCostText.text = Interface.Root.Player.WorkerCost.ToString();
+        }
+        
         public void BuildWorker()
         {
             var views = Interface.Selected.OfType<CentralBuildingView>();

@@ -22,7 +22,7 @@ namespace Assets.Networking.Services
         {
             return new BarrakState
             {
-                Base = StateUtils.CreateFactoryBuildingState(info)
+                Base = StateUtils.CreateFactoryBuildingState(info),
             };
         }
 

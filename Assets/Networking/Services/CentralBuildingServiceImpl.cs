@@ -19,7 +19,7 @@ namespace Assets.Networking.Services
         {
             return new CentralBuildingState
             {
-                Base = StateUtils.CreateFactoryBuildingState(info)
+                Base = StateUtils.CreateFactoryBuildingState(info),
             };
         }
 

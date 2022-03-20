@@ -40,6 +40,23 @@ namespace Assets.Networking.ClientListeners
             mClient = client;
             mID = id;
         }
+
+        public Task Attack(Guid targetId)
+        {
+            return mClient.AttackAsync(new AttackRequest
+            {
+                TargetID = new ID { Value = targetId.ToString() },
+                WarriorID = new ID { Value = mID }
+            }).ResponseAsync;
+        }
+
+        public Task Stop()
+        {
+            return mClient.StopAsync(new StopRequest
+            {
+                UnitUD = new ID { Value = mID }
+            }).ResponseAsync;
+        }
     }
     
     class TurretCreationListener : CommonCreationStateListener<

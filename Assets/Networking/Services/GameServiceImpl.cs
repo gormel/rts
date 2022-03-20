@@ -35,6 +35,7 @@ namespace Assets.Networking.Services
             {
                 ID = new ID() {Value = info.player.ID.ToString()},
                 Money = info.player.Money,
+                Limit = info.player.Limit,
                 
                 TurretBuildingAvaliable = info.player.TurretBuildingAvaliable,
                 
@@ -42,6 +43,17 @@ namespace Assets.Networking.Services
                 TurretAttackUpgradeLevel = info.player.TurretAttackUpgradeLevel,
                 BuildingDefenceUpgradeAvaliable = info.player.BuildingDefenceUpgradeAvaliable,
                 TurretAttackUpgradeAvaliable = info.player.TurretAttackUpgradeAvaliable,
+                
+                BarrakCost = info.player.BarrakCost,
+                TurretCost = info.player.TurretCost,
+                WorkerCost = info.player.WorkerCost,
+                BuildersLabCost = info.player.BuildersLabCost,
+                CentralBuildingCost = info.player.CentralBuildingCost,
+                MeleeWarriorCost = info.player.MeleeWarriorCost,
+                MiningCampCost = info.player.MiningCampCost,
+                RangedWarriorCost = info.player.RangedWarriorCost,
+                BuildingDefenceUpgradeCost = info.player.BuildingDefenceUpgradeCost,
+                TurretAttackUpgradeCost = info.player.TurretAttackUpgradeCost,
             };
 
             if (collectMap)

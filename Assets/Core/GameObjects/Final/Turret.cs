@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Assets.Core.BehaviorTree;
 using Assets.Core.GameObjects.Base;
 using Assets.Core.GameObjects.Utils;
@@ -18,6 +19,8 @@ namespace Assets.Core.GameObjects.Final
 
     interface ITurretOrders : IBuildingOrders
     {
+        Task Attack(Guid targetId);
+        Task Stop();
     }
     
     class Turret : Building, ITurretInfo, ITurretOrders
@@ -156,6 +159,8 @@ namespace Assets.Core.GameObjects.Final
         public float AttackSpeed { get; private set; }
         public int Damage => Player.Upgrades.TurretAttackUpgrade.Calculate(BaseDamage);
 
+        private TargetStorage mStorage = new TargetStorage();
+
         private int BaseDamage { get; } = 6;
 
         protected override float MaxHealthBase => MaximumHealthConst;
@@ -175,16 +180,15 @@ namespace Assets.Core.GameObjects.Final
             AttackRange = 4;
             AttackSpeed = 2;
 
-            var storage = new TargetStorage();
             mIntelligence = BTree.Create()
                 .Success(b1 => b1
                     .Selector(b2 => b2
                         .Sequence(b3 => b3
                             .Selector(b4 => b4
-                                .Leaf(new CheckDistanceLeaf(this, storage))
-                                .Fail(b5 => b5.Leaf(new ClearTargetLeaf(storage)))
-                                .Leaf(new QueryEnemyLeaf(this, storage)))
-                            .Leaf(new KillTargetLeaf(this, storage)))
+                                .Leaf(new CheckDistanceLeaf(this, mStorage))
+                                .Fail(b5 => b5.Leaf(new ClearTargetLeaf(mStorage)))
+                                .Leaf(new QueryEnemyLeaf(this, mStorage)))
+                            .Leaf(new KillTargetLeaf(this, mStorage)))
                         .Leaf(new CancelKillLeaf(this)))).Build();
             
             base.OnAddedToGame();
@@ -193,6 +197,20 @@ namespace Assets.Core.GameObjects.Final
         public override void Update(TimeSpan deltaTime)
         {
             mIntelligence.Update(deltaTime);
+        }
+
+        public async Task Attack(Guid targetId)
+        {
+            if (targetId == ID)
+                return;
+
+            mStorage.Target = mGame.GetObject<RtsGameObject>(targetId);
+        }
+
+        public Task Stop()
+        {
+            mStorage.Target = null;
+            return Task.CompletedTask;
         }
     }
 }

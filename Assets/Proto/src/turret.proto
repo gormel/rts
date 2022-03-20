@@ -5,6 +5,9 @@ import "base.proto";
 service TurretService {
     rpc ListenCreation (Empty) returns (stream TurretState);
     rpc ListenState(ID) returns (stream TurretState);
+
+    rpc Attack(AttackRequest) returns (Empty);
+    rpc Stop(StopRequest) returns (Empty);
 }
 
 message TurretState {

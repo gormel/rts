@@ -67,6 +67,28 @@ namespace Assets.Interaction
             }
         }
 
+        private class TurretAttackInterfaceAction : InterfaceAction
+        {
+            private IEnumerable<ITurretOrders> mViews;
+            private readonly Raycaster mRaycaster;
+
+            public TurretAttackInterfaceAction(IEnumerable<ITurretOrders> views, Raycaster raycaster)
+            {
+                mViews = views;
+                mRaycaster = raycaster;
+            }
+
+            public override void Resolve(Vector2 position)
+            {
+                var hit = mRaycaster.Raycast<SelectableView>(Input.mousePosition);
+                if (!hit.IsEmpty())
+                {
+                    foreach (var warriorOrders in mViews)
+                        warriorOrders.Attack(hit.Object.InfoBase.ID);
+                }
+            }
+        }
+
         private class GoToInterfaceAction : InterfaceAction
         {
             private readonly IEnumerable<IUnitOrders> mViews;
@@ -176,6 +198,16 @@ namespace Assets.Interaction
         private Raycaster mRaycaster;
         private Vector2 mLastMousePosition;
         private SelectionState mSelectionState;
+        
+        public IEnumerable<T> FetchSelectedOrders<T>() where T : class, IGameObjectOrders
+        {
+            return Selected.Select(v => v.OrdersBase as T).Where(o => o != null);
+        }
+        
+        public IEnumerable<T> FetchSelectedInfo<T>() where T : class, IGameObjectInfo
+        {
+            return Selected.Select(v => v.InfoBase as T).Where(o => o != null);
+        }
 
         void Awake()
         {
@@ -205,6 +237,14 @@ namespace Assets.Interaction
                 mCurrentAction.Cancel();
 
             mCurrentAction = new AttackInterfaceAction(views, mRaycaster);
+        }
+
+        public void BeginTurretAttack(IEnumerable<ITurretOrders> views)
+        {
+            if (mCurrentAction != null)
+                mCurrentAction.Cancel();
+
+            mCurrentAction = new TurretAttackInterfaceAction(views, mRaycaster);
         }
 
         public void BeginBuildingPlacement(IEnumerable<IWorkerOrders> workers, Func<IWorkerOrders, Vector2, Task<Guid>> createTemplate, Vector2 size)

@@ -1,11 +1,23 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Assets.Views;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Assets.Interaction {
     class SelectedBarrakActionsInterface : MonoBehaviour
     {
         public UserInterface Interface;
+
+        public Text RangedCostText;
+        public Text MeeleeCostText;
+
+        private void Update()
+        {
+            var player = Interface.Root.Player;
+            RangedCostText.text = player.RangedWarriorCost.ToString();
+            MeeleeCostText.text = player.MeleeWarriorCost.ToString();
+        }
 
         public void BuildRanged()
         {

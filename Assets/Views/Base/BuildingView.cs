@@ -14,6 +14,17 @@ namespace Assets.Views.Base
     {
         protected override Vector2 Position => Info.Position + Info.Size / 2;
 
+        private bool mScaled = false;
+        private TaskCompletionSource<bool> mScaledTcs = new TaskCompletionSource<bool>();
+
+        protected Task WaitScaledAsync()
+        {
+            if (mScaled)
+                return Task.CompletedTask;
+
+            return mScaledTcs.Task;
+        }
+
         protected override void Update()
         {
             base.Update();
@@ -22,7 +33,12 @@ namespace Assets.Views.Base
                 Info.Size.x,
                 Mathf.Min(Info.Size.x, Info.Size.y),
                 Info.Size.y);
-            
+
+            if (!mScaled)
+            {
+                mScaledTcs.SetResult(true);
+                mScaled = true;
+            }
         }
     }
 }

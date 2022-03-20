@@ -13,11 +13,27 @@ namespace Assets.Core.Game
         Guid ID { get; }
         int Money { get; }
         
+        int Limit { get; }
+        
         bool TurretBuildingAvaliable { get; }
         int TurretAttackUpgradeLevel { get; }
         int BuildingDefenceUpgradeLevel { get; }
         bool TurretAttackUpgradeAvaliable { get; }
         bool BuildingDefenceUpgradeAvaliable { get; }
+    
+        int MeleeWarriorCost { get; }
+        int RangedWarriorCost { get; }
+
+        int WorkerCost { get; }
+
+        int CentralBuildingCost { get; }
+        int MiningCampCost { get; }
+        int BarrakCost { get; }
+        int TurretCost { get; }
+        int BuildersLabCost { get; }
+        
+        int TurretAttackUpgradeCost { get; }
+        int BuildingDefenceUpgradeCost { get; }
     }
 
     class Player : IGameObjectFactory, IPlayerState
@@ -31,6 +47,7 @@ namespace Assets.Core.Game
         private readonly IGameObjectFactory mExternalFactory;
         private readonly Dictionary<Type, int> mCreatedBuildingRegistrations = new Dictionary<Type, int>();
         public ResourceStorage Money { get; } = new ResourceStorage();
+        public ResourceStorage Limit { get; } = new ResourceStorage(200);
         public bool TurretBuildingAvaliable => GetCreatedBuildingCount<BuildersLab>() > 0;
         public int TurretAttackUpgradeLevel => Upgrades.TurretAttackUpgrade.Level;
         public int BuildingDefenceUpgradeLevel => Upgrades.BuildingDefenceUpgrade.Level;
@@ -40,6 +57,18 @@ namespace Assets.Core.Game
         public Guid ID { get; } = Guid.NewGuid();
 
         int IPlayerState.Money => Money.Resources;
+        int IPlayerState.Limit => Limit.Resources;
+        
+        public int MeleeWarriorCost { get; } = 50;
+        public int RangedWarriorCost { get; } = 90;
+        public int WorkerCost { get; } = 30;
+        public int CentralBuildingCost { get; } = 400;
+        public int MiningCampCost { get; } = 100;
+        public int BarrakCost { get; } = 200;
+        public int TurretCost { get; } = 100;
+        public int BuildersLabCost { get; } = 200;
+        public int TurretAttackUpgradeCost { get; } = 250;
+        public int BuildingDefenceUpgradeCost { get; } = 200;
 
         public UpgradeStorage Upgrades { get; } = new UpgradeStorage();
         

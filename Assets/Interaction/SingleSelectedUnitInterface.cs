@@ -21,6 +21,8 @@ namespace Assets.Interaction
             IconNameHealth.SetIcon(selected.Icon);
             IconNameHealth.SetName(selected.Name);
             IconNameHealth.SetHealth(selected.Health, selected.MaxHealth);
+            IconNameHealth.Interface = Interface;
+            IconNameHealth.Owner = selected;
         }
     }
 }

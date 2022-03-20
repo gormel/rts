@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using UnityEngine;
 
 namespace Assets.Core.GameObjects.Utils
 {
@@ -9,6 +10,8 @@ namespace Assets.Core.GameObjects.Utils
         /// </summary>
         /// <returns>Allocated point.</returns>
         Task<PlacementPoint> TryAllocatePoint();
+
+        Task<PlacementPoint> TryAllocateNearestPoint(Vector2 toPoint);
 
         /// <summary>
         /// Releases allocated point.

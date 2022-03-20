@@ -17,13 +17,28 @@ message GameState {
 message PlayerState {
 	ID ID = 1;
 	int32 Money = 2;
+    int32 Limit = 3;
 
-    bool TurretBuildingAvaliable = 3;
+    bool TurretBuildingAvaliable = 4;
 
-    int32 TurretAttackUpgradeLevel = 4;
-    bool TurretAttackUpgradeAvaliable = 5;
-    int32 BuildingDefenceUpgradeLevel = 6;
-    bool BuildingDefenceUpgradeAvaliable = 7;
+    int32 TurretAttackUpgradeLevel = 5;
+    bool TurretAttackUpgradeAvaliable = 6;
+    int32 BuildingDefenceUpgradeLevel = 7;
+    bool BuildingDefenceUpgradeAvaliable = 8;
+    
+    int32 MeleeWarriorCost = 9;
+    int32 RangedWarriorCost = 10;
+
+    int32 WorkerCost = 11;
+
+    int32 CentralBuildingCost = 12;
+    int32 MiningCampCost = 13;
+    int32 BarrakCost = 14;
+    int32 TurretCost = 15;
+    int32 BuildersLabCost = 16;
+
+    int32 TurretAttackUpgradeCost = 17;
+    int32 BuildingDefenceUpgradeCost = 18;
 }
 
 message MapState {

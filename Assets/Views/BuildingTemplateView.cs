@@ -13,48 +13,15 @@ using UnityEngine;
 
 namespace Assets.Views
 {
-    sealed class BuildingTemplateView : BuildingView<IBuildingTemplateOrders, IBuildingTemplateInfo>, IPlacementService
+    sealed class BuildingTemplateView : PlacementServiceBuildingView<IBuildingTemplateOrders, IBuildingTemplateInfo>
     {
         public override string Name => "Строительство";
-
-        public GameObject[] BuilderPoints;
-        private HashSet<int> mBusyPoints = new HashSet<int>();
 
         public override Rect FlatBounds => new Rect(Info.Position, Info.Size);
 
         protected override void OnLoad()
         {
-
             RegisterProperty(new SelectableViewProperty("Progress", () => $"{Info.Progress * 100:#0}%"));
-        }
-
-        public Task<PlacementPoint> TryAllocatePoint()
-        {
-            return SyncContext.Execute(() =>
-            {
-                if (BuilderPoints == null)
-                    return PlacementPoint.Invalid;
-
-                for (int i = 0; i < BuilderPoints.Length; i++)
-                {
-                    if (!mBusyPoints.Contains(i))
-                    {
-                        var ray = new Ray(BuilderPoints[i].transform.position, Vector3.up);
-                        if (Physics.Raycast(ray))
-                            continue;
-
-                        mBusyPoints.Add(i);
-                        return new PlacementPoint(i, GameUtils.GetFlatPosition(transform.localPosition + BuilderPoints[i].transform.position - transform.position));
-                    }
-                }
-
-                return PlacementPoint.Invalid;
-            });
-        }
-
-        public Task<bool> ReleasePoint(int pointId)
-        {
-            return SyncContext.Execute(() => mBusyPoints.Remove(pointId));
         }
     }
 }
