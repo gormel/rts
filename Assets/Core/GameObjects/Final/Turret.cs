@@ -8,18 +8,13 @@ using UnityEngine;
 
 namespace Assets.Core.GameObjects.Final
 {
-    interface ITurretInfo : IBuildingInfo
+    interface ITurretInfo : IBuildingInfo, IAttackerInfo
     {
-        bool IsShooting { get; }
         Vector2 Direction { get; }
-        float AttackRange { get; }
-        float AttackSpeed { get; }
-        int Damage { get; }
     }
 
-    interface ITurretOrders : IBuildingOrders
+    interface ITurretOrders : IBuildingOrders, IAttackerOrders
     {
-        Task Attack(Guid targetId);
         Task Stop();
     }
     
@@ -77,7 +72,7 @@ namespace Assets.Core.GameObjects.Final
                     return BTreeLeafState.Successed;
 
                 mTurret.Direction = PositionUtils.PositionOf(target);
-                mTurret.IsShooting = true;
+                mTurret.IsAttacks = true;
                 mAttackSpeedTimer -= deltaTime;
                 if (mAttackSpeedTimer > TimeSpan.Zero)
                     return BTreeLeafState.Processing;
@@ -87,7 +82,7 @@ namespace Assets.Core.GameObjects.Final
 
                 if (target.RecivedDamage >= target.MaxHealth)
                 {
-                    mTurret.IsShooting = false;
+                    mTurret.IsAttacks = false;
                     mTurret.mGame.RemoveObject(target.ID);
                     return BTreeLeafState.Successed;
                 }
@@ -105,7 +100,7 @@ namespace Assets.Core.GameObjects.Final
             }
             public BTreeLeafState Update(TimeSpan deltaTime)
             {
-                mTurret.IsShooting = false;
+                mTurret.IsAttacks = false;
                 return BTreeLeafState.Successed;
             }
         }
@@ -153,7 +148,7 @@ namespace Assets.Core.GameObjects.Final
         private readonly Vector2 mInitialPosition;
         private BTree mIntelligence;
 
-        public bool IsShooting { get; private set; }
+        public bool IsAttacks { get; private set; }
         public Vector2 Direction { get; private set; }
         public float AttackRange { get; private set; }
         public float AttackSpeed { get; private set; }

@@ -23,7 +23,7 @@ namespace Assets.Networking.ClientListeners
         public float ViewRadius => State.Base.Base.ViewRadius;
         public Vector2 Size => State.Base.Size.ToUnity();
 
-        public bool IsShooting => State.IsAttacks;
+        public bool IsAttacks => State.IsAttacks;
         public Vector2 Direction => State.Direction.ToUnity();
         public float AttackRange => State.AttackRange;
         public float AttackSpeed => State.AttackSpeed;

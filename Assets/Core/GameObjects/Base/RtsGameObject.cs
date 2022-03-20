@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Assets.Core.Game;
 using UnityEngine;
 
@@ -18,6 +19,25 @@ namespace Assets.Core.GameObjects.Base
     {
     }
 
+    interface IQueueOrdersInfo : IGameObjectInfo
+    {
+        int Queued { get; }
+        float Progress { get; }
+    }
+
+    interface IAttackerInfo : IGameObjectInfo
+    {
+        bool IsAttacks { get; }
+        float AttackRange { get; }
+        float AttackSpeed { get; }
+        int Damage { get; }
+    }
+
+    interface IAttackerOrders : IGameObjectOrders
+    {
+        Task Attack(Guid targetID);
+    }
+    
     interface IPlayerControlled
     {
         Player Player { get; set; }

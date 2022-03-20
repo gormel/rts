@@ -15,18 +15,13 @@ namespace Assets.Core.GameObjects.Base
         Idle
     }
 
-    interface IWarriorInfo : IUnitInfo
+    interface IWarriorInfo : IUnitInfo, IAttackerInfo
     {
-        bool IsAttacks { get; }
-        float AttackRange { get; }
-        float AttackSpeed { get; }
-        int Damage { get; }
         Strategy Strategy { get; }
     }
 
-    interface IWarriorOrders : IUnitOrders
+    interface IWarriorOrders : IUnitOrders, IAttackerOrders
     {
-        Task Attack(Guid targetID);
         Task GoToAndAttack(Vector2 position);
         Task SetStrategy(Strategy strategy);
     }

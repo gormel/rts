@@ -8,11 +8,9 @@ using UnityEngine;
 
 namespace Assets.Core.GameObjects.Base {
 
-    interface IFactoryBuildingInfo : IBuildingInfo
+    interface IFactoryBuildingInfo : IBuildingInfo, IQueueOrdersInfo
     {
         Vector2 Waypoint { get; }
-        int Queued { get; }
-        float Progress { get; }
     }
 
     interface IFactoryBuildingOrders : IBuildingOrders

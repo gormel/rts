@@ -11,7 +11,7 @@ namespace Assets.Interaction.InfoPanel
 
         public void Update()
         {
-            var selected = Interface.FetchSelectedInfo<IFactoryBuildingInfo>().FirstOrDefault();
+            var selected = Interface.FetchSelectedInfo<IQueueOrdersInfo>().FirstOrDefault();
             if (selected != null)
             {
                 ProgressBar.ProgressValue = selected.Queued > 0 ? selected.Progress : 0;

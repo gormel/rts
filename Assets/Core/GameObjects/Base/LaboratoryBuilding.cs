@@ -7,10 +7,8 @@ using UnityEngine;
 
 namespace Assets.Core.GameObjects.Base
 {
-    interface ILaboratoryBuildingInfo : IBuildingInfo
+    interface ILaboratoryBuildingInfo : IBuildingInfo, IQueueOrdersInfo
     {
-        float Progress { get; }
-        int Queued { get; }
     }
 
     interface ILaboratoryBuildingOrders : IBuildingOrders

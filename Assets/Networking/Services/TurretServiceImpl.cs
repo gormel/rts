@@ -24,7 +24,7 @@ namespace Assets.Networking.Services
                 AttackRange = info.AttackRange,
                 AttackSpeed = info.AttackSpeed,
                 Direction = info.Direction.ToGrpc(),
-                IsAttacks = info.IsShooting,
+                IsAttacks = info.IsAttacks,
             };
         }
 

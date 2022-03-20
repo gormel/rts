@@ -21,7 +21,7 @@ namespace Assets.Views
             var localDirection = Info.Direction - Info.Position - Info.Size / 2;
             RotationTarget.transform.localEulerAngles = new Vector3(0, Mathf.Rad2Deg * Mathf.Atan2(localDirection.x, localDirection.y), 0);
 
-            if (Info.IsShooting)
+            if (Info.IsAttacks)
             {
                 for (int i = 0; i < Lasers.Length; i++)
                 {
