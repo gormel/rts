@@ -27,6 +27,14 @@ namespace Assets.Networking
                 CampID = new ID { Value = mID },
             }).ResponseAsync;
         }
+
+        public Task CollectWorkers()
+        {
+            return mClient.CollectWorkersAsync(new CollectWorkersRequest
+            {
+                CampID = new ID { Value = mID },
+            }).ResponseAsync;
+        }
     }
     class ClientMiningCampInfo : IMinigCampInfo, IStateHolder<MiningCampState>
     {

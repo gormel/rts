@@ -18,6 +18,7 @@ namespace Assets.Core.GameObjects.Final
     interface IMinigCampOrders : IBuildingOrders
     {
         Task FreeWorker();
+        Task CollectWorkers();
     }
 
     class MiningCamp : Building, IMinigCampInfo, IMinigCampOrders
@@ -105,6 +106,11 @@ namespace Assets.Core.GameObjects.Final
             unit.IsAttachedToMiningCamp = false;
             await unit.PathFinder.Teleport(point.Position, mGame.Map.Data);
             await PlacementService.ReleasePoint(point.ID);
+        }
+
+        public Task CollectWorkers()
+        {
+            throw new NotImplementedException();
         }
     }
 }

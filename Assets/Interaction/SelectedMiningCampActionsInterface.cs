@@ -15,5 +15,14 @@ namespace Assets.Interaction
                 campView.Orders.FreeWorker();
             }
         }
+
+        public void CollectWorkers()
+        {
+            var views = Interface.Selected.OfType<MiningCampView>();
+            foreach (var campView in views)
+            {
+                campView.Orders.CollectWorkers();
+            }
+        }
     }
 }

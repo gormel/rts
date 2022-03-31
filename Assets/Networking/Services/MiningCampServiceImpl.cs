@@ -44,6 +44,15 @@ namespace Assets.Networking.Services
             });
         }
 
+        public override Task<Empty> CollectWorkers(CollectWorkersRequest request, ServerCallContext context)
+        {
+            return mCommonService.ExecuteOrder(request.CampID, async orders =>
+            {
+                await orders.CollectWorkers();
+                return new Empty();
+            });
+        }
+
         public void Register(IMinigCampOrders orders, IMinigCampInfo info)
         {
             mCommonService.Register(orders, info);
