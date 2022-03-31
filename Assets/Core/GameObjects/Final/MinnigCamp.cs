@@ -28,9 +28,10 @@ namespace Assets.Core.GameObjects.Final
         public static Vector2 BuildingSize { get; } = new Vector2(1, 1);
         public const float MaximumHealthConst = 100;
         public const int MaxWorkers = 4;
-        public const float BaseMiningSpeed = 2.5f;
+        public const float BaseMiningSpeed = 1.56f;
+        public const float WorkerMiningSpeed = 0.39f;
 
-        public float MiningSpeed => BaseMiningSpeed * (mWorkers.Count + 1);
+        public float MiningSpeed => BaseMiningSpeed + WorkerMiningSpeed * mWorkers.Count;
         public int WorkerCount => mWorkers.Count;
 
         private double mMinedTemp;
