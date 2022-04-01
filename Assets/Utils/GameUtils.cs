@@ -1,8 +1,10 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using Assets.Core.Game;
 using Assets.Core.GameObjects.Final;
 using Assets.Core.Map;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Assets.Utils
 {
@@ -74,20 +76,18 @@ namespace Assets.Utils
             return false;
         }
 
-        public static Vector2 CreateBase(Game game, Player player)
+        public static bool TryCreateBase(Game game, Player player, out Vector2 basePos)
         {
             player.Money.Store(170000);
-            var size = CentralBuilding.BuildingSize + Vector2.one * 2;
-            var pos = new Vector2(Random.Range(0, game.Map.Width), Random.Range(0, game.Map.Length));
-            while (!game.GetIsAreaFree(pos, size) || !HasCrystal(pos + size / 2, (int)(size.x / 2), (int)size.x, game.Map.Data))
-                pos = new Vector2(Random.Range(0, game.Map.Width), Random.Range(0, game.Map.Length));
+            if (!game.Map.TryAllocateBase(out basePos))
+                return false;
 
-            player.CreateCentralBuilding(pos + Vector2.one).ContinueWith(t => game.PlaceObject(t.Result));
+            player.CreateCentralBuilding(basePos + Vector2.one).ContinueWith(t => game.PlaceObject(t.Result));
             //player.CreateBarrak(pos + Vector2.one).ContinueWith(t => game.PlaceObject(t.Result));
-            player.CreateWorker(pos).ContinueWith(t => game.PlaceObject(t.Result));
+            player.CreateWorker(basePos).ContinueWith(t => game.PlaceObject(t.Result));
             //player.CreateWorker(pos + Vector2.right).ContinueWith(t => game.PlaceObject(t.Result));
             //player.CreateMeeleeWarrior(pos + Vector2.right).ContinueWith(t => game.PlaceObject(t.Result));
-            return pos;
+            return true;
         }
     }
 }

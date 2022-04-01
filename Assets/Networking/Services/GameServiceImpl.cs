@@ -124,17 +124,20 @@ namespace Assets.Networking.Services
                 {
                     var pl = new Player(mServerFactory);
                     mGame.AddPlayer(pl);
-                    var basePos = GameUtils.CreateBase(mGame, pl);
-                    return (pl, basePos);
+                    var success = GameUtils.TryCreateBase(mGame, pl, out var basePos);
+                    return (pl, basePos, success);
                 });
 
+                if (!player.success)
+                    return;
+
                 context.CancellationToken.ThrowIfCancellationRequested();
-                await responseStream.WriteAsync(CollectGameState(player, true));
+                await responseStream.WriteAsync(CollectGameState((player.pl, player.basePos), true));
 
                 while (true)
                 {
                     context.CancellationToken.ThrowIfCancellationRequested();
-                    await responseStream.WriteAsync(CollectGameState(player, false));
+                    await responseStream.WriteAsync(CollectGameState((player.pl, player.basePos), false));
                     await Task.Delay(30, context.CancellationToken);
                 }
             }

@@ -1,4 +1,8 @@
 ﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
+using Assets.Core.GameObjects.Final;
 using TMPro;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -22,6 +26,11 @@ namespace Assets.Core.Map
         private const int CrystalCount = 20;
         private const int MaxCrystalPlacementTryes = 30;
 
+        private const int BaseCount = 6;
+        private const int BasePlacementTryes = 10;
+
+        private ConcurrentBag<Vector2> mFreeBases = new ConcurrentBag<Vector2>();
+
         public Map(int width, int length)
         {
             var data = new float[width, length];
@@ -33,21 +42,7 @@ namespace Assets.Core.Map
                 var sizeX = Random.Range(MountainSizeMin, MountainSizeMax) / 2;
                 var sizeY = Random.Range(MountainSizeMin, MountainSizeMax) / 2;
                 
-                for (int x1 = x - sizeX; x1 <= x + sizeX; x1++)
-                {
-                    for (int y1 = y - sizeY; y1 <= y + sizeY; y1++)
-                    {
-                        if (x1 < 0 || y1 < 0 || x1 >= width || y1 >= width)
-                            continue;
-
-                        var h = 1f;
-                        if ((x1 == x - sizeX || x1 == x + sizeX) &&
-                            (y1 == y - sizeY || y1 == y + sizeY))
-                            h = 0.5f;
-
-                        data[x1, y1] = h;
-                    }
-                }
+                CreateMountain(x, sizeX, y, sizeY, data);
             }
 
             var objs = new MapObject[width, length];
@@ -80,6 +75,102 @@ namespace Assets.Core.Map
             }
 
             Data = new MapData(width, length, data, objs);
+
+            List<Vector2> possibleBasePositions = new List<Vector2>();
+            CollectPossibleBasePositions(Data, possibleBasePositions);
+
+            List<Vector2> basePositions;
+            if (CreateBasePositions(possibleBasePositions, BaseCount, Math.Min(width / 2, length / 2), out basePositions))
+                foreach (var basePosition in basePositions)
+                    mFreeBases.Add(basePosition);
+        }
+
+        private void CollectPossibleBasePositions(IMapData mapData, List<Vector2> possiblePositions)
+        {
+            var size = CentralBuilding.BuildingSize + Vector2.one * 2;
+            for (int x = 0; x < mapData.Width - size.x; x++)
+            {
+                for (int y = 0; y < mapData.Length - size.y; y++)
+                {
+                    float hSum = 0f;
+                    bool posOK = true;
+                    for (int xx = 0; xx < size.x && posOK; xx++)
+                    {
+                        for (int yy = 0; yy < size.y; yy++)
+                        {
+                            if (mapData.GetMapObjectAt(x + xx, y + yy) != MapObject.None)
+                            {
+                                posOK = false;
+                                break;
+                            }
+
+                            hSum += mapData.GetHeightAt(x + xx, y + yy);
+                        }
+                    }
+                    
+                    if (!posOK)
+                        continue;
+                    
+                    if (Math.Abs(hSum / size.x / size.y - mapData.GetHeightAt(x, y)) > 0.01)
+                        continue;
+                    
+                    possiblePositions.Add(new Vector2(x, y));
+                }
+            }
+        }
+
+        private bool CreateBasePositions(List<Vector2> possiblePositions, int depth, float baseDistance, out List<Vector2> allocatedPositions)
+        {
+            allocatedPositions = new List<Vector2>();
+            
+            if (depth <= 0)
+                return true;
+
+            if (possiblePositions.Count < 1)
+                return false;
+
+            var pos = possiblePositions[Random.Range(0, possiblePositions.Count)];
+
+            var subPossiblePositions = possiblePositions.Where(p => Vector2.Distance(p, pos) >= baseDistance).ToList();
+            List<Vector2> subAllocated = new List<Vector2>();
+
+            var createOK = false;
+            for (int i = 0; i < BasePlacementTryes; i++)
+            {
+                if (CreateBasePositions(subPossiblePositions, depth - 1, baseDistance, out subAllocated))
+                {
+                    createOK = true;
+                    break;
+                }
+            }
+
+            if (!createOK)
+                return false;
+            
+            allocatedPositions.AddRange(subAllocated);
+            return true;
+        }
+
+        public bool TryAllocateBase(out Vector2 basePosition) 
+            => mFreeBases.TryTake(out basePosition);
+
+        void CreateMountain(int x, int sizeX, int y, int sizeY, float[,] heights)
+        {
+            for (int x1 = x - sizeX; x1 <= x + sizeX; x1++)
+            {
+                for (int y1 = y - sizeY; y1 <= y + sizeY; y1++)
+                {
+                    if (x1 < 0 || y1 < 0 || x1 >= heights.GetLength(0) || y1 >= heights.GetLength(1))
+                        continue;
+
+                    var h = 1f;
+                    if ((x1 == x - sizeX || x1 == x + sizeX) &&
+                        (y1 == y - sizeY || y1 == y + sizeY))
+                        h = 0.5f;
+
+                    heights[x1, y1] = h;
+                }
+            }
         }
 
         private void GenerateForest(int x, int y, MapObject[,] objs, int depth)

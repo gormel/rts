@@ -244,7 +244,7 @@ class Root : MonoBehaviour
 
             mServer.Listen(SyncContext, enemyFactory, mGame);
 
-            var basePos = GameUtils.CreateBase(mGame, player);
+            var success = GameUtils.TryCreateBase(mGame, player, out var basePos);
             PlaseCamera(basePos);
         }
 
