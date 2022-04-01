@@ -39,6 +39,7 @@ namespace Assets.Core.GameObjects.Final
         private int mMinedTotal;
 
         private Stack<Worker> mWorkers = new Stack<Worker>();
+        private List<Worker> mOrderedToWork = new List<Worker>();
 
         protected override float MaxHealthBase => MaximumHealthConst;
 
@@ -108,14 +109,22 @@ namespace Assets.Core.GameObjects.Final
             await PlacementService.ReleasePoint(point.ID);
         }
 
-        public Task CollectWorkers()
+        public async Task CollectWorkers()
         {
             if (WorkerCount >= MaxWorkers)
-                return Task.CompletedTask;
-            
+                return;
+
+            mOrderedToWork.RemoveAll(w =>
+                w.IntelligenceTag != Worker.MiningIntelligenceTag || w.IsAttachedToMiningCamp);
+
             var found = mGame.QueryObjects(Position + Size / 2, ViewRadius * 2)
-                .OfType<Worker>().Where(w => !w.IsBuilding && w.PathFinder.IsArrived).Take(4 - WorkerCount);
-            return Task.WhenAll(found.Select(w => w.AttachToMiningCamp(ID)));
+                .OfType<Worker>().Where(w => w.IntelligenceTag == Unit.IdleIntelligenceTag && !mOrderedToWork.Contains(w))
+                .Take(4 - WorkerCount - mOrderedToWork.Count).ToList();
+            
+            mOrderedToWork.AddRange(found);
+
+            foreach (var worker in found) 
+                await worker.AttachToMiningCamp(ID);
         }
     }
 }
