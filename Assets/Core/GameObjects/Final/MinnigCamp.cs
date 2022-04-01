@@ -110,7 +110,12 @@ namespace Assets.Core.GameObjects.Final
 
         public Task CollectWorkers()
         {
-            throw new NotImplementedException();
+            if (WorkerCount >= MaxWorkers)
+                return Task.CompletedTask;
+            
+            var found = mGame.QueryObjects(Position + Size / 2, ViewRadius * 2)
+                .OfType<Worker>().Where(w => !w.IsBuilding && w.PathFinder.IsArrived).Take(4 - WorkerCount);
+            return Task.WhenAll(found.Select(w => w.AttachToMiningCamp(ID)));
         }
     }
 }
