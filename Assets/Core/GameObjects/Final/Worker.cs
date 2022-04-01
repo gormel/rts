@@ -122,10 +122,12 @@ namespace Assets.Core.GameObjects.Final
         public static TimeSpan TurretBuildTime { get; } = TimeSpan.FromSeconds(15);
         public static TimeSpan BuildersLabBuildTime { get; } = TimeSpan.FromSeconds(25);
 
+        public const string BuildingIntelligenceTag = "Building";
+        public const string MiningIntelligenceTag = "Mining";
+
         public bool IsBuilding { get; private set; }
         
         public bool IsAttachedToMiningCamp { get; set; }
-
         protected override float MaxHealthBase => 40;
 
         public Worker(Game.Game game, IPathFinder pathFinder, Vector2 position)
@@ -285,7 +287,8 @@ namespace Assets.Core.GameObjects.Final
                     .Sequence(b1 => b1
                         .Leaf(new CancelGotoLeaf(PathFinder))
                         .Leaf(new StopBuildLeaf(this, template))
-                        .Leaf(new FreePlacementPointLeaf(point, template.PlacementService)))
+                        .Leaf(new FreePlacementPointLeaf(point, template.PlacementService))),
+                BuildingIntelligenceTag
                 );
         }
 
@@ -304,7 +307,8 @@ namespace Assets.Core.GameObjects.Final
                         .Leaf(new FreePlacementPointLeaf(point, camp.PlacementService))),
                 b => b
                     .Leaf(new CancelGotoLeaf(PathFinder))
-                    .Leaf(new FreePlacementPointLeaf(point, camp.PlacementService))
+                    .Leaf(new FreePlacementPointLeaf(point, camp.PlacementService)),
+                MiningIntelligenceTag
             );
         }
     }

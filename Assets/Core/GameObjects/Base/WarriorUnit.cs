@@ -204,6 +204,11 @@ namespace Assets.Core.GameObjects.Base
 
         private IBTreeBuilder mAgressiveIntelligence;
         private IBTreeBuilder mDefenciveIntelligence;
+
+        public const string AggressiveIdleIntelligenceTag = "AggressiveIdle";
+        public const string DefenciveIdleIntelligenceTag = "DefenciveIdel";
+        public const string KillTargetIntelligenceTag = "KillTarget";
+        public const string AggressiveWalkingIntelligenceTag = "AggressiveWalking";
         
         protected WarriorUnit(Game.Game game, IPathFinder pathFinder, Vector2 position)
             : base(game, pathFinder, position)
@@ -243,7 +248,9 @@ namespace Assets.Core.GameObjects.Base
                 b => b
                     .Leaf(new ClearTargetLeaf(storage))
                     .Leaf(new CancelGotoLeaf(PathFinder))
-                    .Leaf(new CancelKillLeaf(this)));
+                    .Leaf(new CancelKillLeaf(this)),
+                AggressiveIdleIntelligenceTag
+                );
         }
 
         private IBTreeBuilder CreateDefenciveIntelligence()
@@ -260,7 +267,9 @@ namespace Assets.Core.GameObjects.Base
                             .Leaf(new CancelKillLeaf(this)))),
                 b => b
                     .Leaf(new ClearTargetLeaf(storage))
-                    .Leaf(new CancelKillLeaf(this)));
+                    .Leaf(new CancelKillLeaf(this)),
+                DefenciveIdleIntelligenceTag
+                );
         }
 
         private IBTreeBuilder CreateFollowAndKillIntelligence(IBTreeBuilder parent, TargetStorage targetStorage)
@@ -281,7 +290,8 @@ namespace Assets.Core.GameObjects.Base
                 b => CreateFollowAndKillIntelligence(b, new TargetStorage { Target = target }),
                 b => b
                     .Leaf(new CancelGotoLeaf(PathFinder))
-                    .Leaf(new CancelKillLeaf(this))
+                    .Leaf(new CancelKillLeaf(this)),
+                KillTargetIntelligenceTag
                 );
         }
 
@@ -311,7 +321,8 @@ namespace Assets.Core.GameObjects.Base
                 b => b
                     .Leaf(new CancelKillLeaf(this))
                     .Leaf(new CancelGotoLeaf(PathFinder))
-                    .Leaf(new ClearTargetLeaf(storage))
+                    .Leaf(new ClearTargetLeaf(storage)),
+                AggressiveWalkingIntelligenceTag
                 );
         }
 

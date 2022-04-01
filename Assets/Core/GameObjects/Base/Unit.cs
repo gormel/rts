@@ -163,7 +163,9 @@ namespace Assets.Core.GameObjects.Base
                 return BTreeLeafState.Successed;
             }
         }
-        
+
+        public const string IdleIntelligenceTag = "Idle";
+        public const string WalkingIntelligenceTag = "Walking";
         protected Game.Game Game { get; }
 
         public float Speed { get; protected set; }
@@ -176,14 +178,16 @@ namespace Assets.Core.GameObjects.Base
 
         private readonly IBTreeBuilder mDefaultIntelligence;
 
-        public override sealed float MaxHealth => MaxHealthBase;
+        public sealed override float MaxHealth => MaxHealthBase;
+
+        public string IntelligenceTag => mIntelligence.Tag;
 
         public Unit(Game.Game game, IPathFinder pathFinder, Vector2 position)
         {
             mInitialPosition = position;
             Game = game;
             PathFinder = pathFinder;
-            mIntelligence = (mDefaultIntelligence = WrapCancellation(b => b, b => b)).Build();
+            mIntelligence = (mDefaultIntelligence = WrapCancellation(b => b, b => b, IdleIntelligenceTag)).Build();
         }
         
         protected virtual IBTreeBuilder GetDefaultIntelligence()
@@ -205,9 +209,9 @@ namespace Assets.Core.GameObjects.Base
             mIntelligence = GetDefaultIntelligence().Build();
         }
 
-        protected IBTreeBuilder WrapCancellation(Func<IBTreeBuilder, IBTreeBuilder> createBody, Func<IBTreeBuilder, IBTreeBuilder> createCancel)
+        protected IBTreeBuilder WrapCancellation(Func<IBTreeBuilder, IBTreeBuilder> createBody, Func<IBTreeBuilder, IBTreeBuilder> createCancel, string tag)
         {
-            return BTree.Create()
+            return BTree.Create(tag)
                 .Sequence(b => b
                     .Selector(b1 => b1
                         .Leaf(new CheckCancellationLeaf(mCancellation))
@@ -221,17 +225,17 @@ namespace Assets.Core.GameObjects.Base
                         .Leaf(new ConfirmCancellationLeaf(mCancellation))));
         }
 
-        protected async Task ApplyIntelligence(Func<IBTreeBuilder, IBTreeBuilder> createBody, Func<IBTreeBuilder, IBTreeBuilder> createCancel)
+        protected async Task ApplyIntelligence(Func<IBTreeBuilder, IBTreeBuilder> createBody, Func<IBTreeBuilder, IBTreeBuilder> createCancel, string tag)
         {
             await mCancellation.Cancel();
-            mIntelligence = WrapCancellation(createBody, createCancel).Build();
+            mIntelligence = WrapCancellation(createBody, createCancel, tag).Build();
         }
 
         public async Task GoTo(Vector2 position)
         {
             await ApplyIntelligence(
                 b => b.Leaf(new GoToTargetLeaf(PathFinder, position, Game.Map.Data)),
-                b => b.Leaf(new CancelGotoLeaf(PathFinder)));
+                b => b.Leaf(new CancelGotoLeaf(PathFinder)), WalkingIntelligenceTag);
         }
 
         public Task Stop()

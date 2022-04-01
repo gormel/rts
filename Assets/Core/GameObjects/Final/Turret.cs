@@ -175,7 +175,7 @@ namespace Assets.Core.GameObjects.Final
             AttackRange = 4;
             AttackSpeed = 2;
 
-            mIntelligence = BTree.Create()
+            mIntelligence = BTree.Create("FindAndKill")
                 .Success(b1 => b1
                     .Selector(b2 => b2
                         .Sequence(b3 => b3

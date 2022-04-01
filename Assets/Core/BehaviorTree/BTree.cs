@@ -39,6 +39,7 @@ namespace Assets.Core.BehaviorTree
 
     class BTree
     {
+        public string Tag { get; }
         private readonly Node mRoot;
 
         private abstract class Node
@@ -140,40 +141,42 @@ namespace Assets.Core.BehaviorTree
         {
             private readonly Builder mParent;
             private readonly Func<Node> mCreateNode;
+            private readonly string mTag;
 
-            public Builder(Builder parent, Func<Node> createNode)
+            public Builder(Builder parent, Func<Node> createNode, string tag)
             {
                 mParent = parent;
                 mCreateNode = createNode;
+                mTag = tag;
             }
 
             public IBTreeBuilder Sequence(Func<IBTreeBuilder, IBTreeBuilder> children)
             {
-                var childrenBuilder = new Builder(null, null);
-                return new Builder(this, () => new SquenceNode((children(childrenBuilder) as Builder)?.BuildInner()?.ToArray()));
+                var childrenBuilder = new Builder(null, null, mTag);
+                return new Builder(this, () => new SquenceNode((children(childrenBuilder) as Builder)?.BuildInner()?.ToArray()), mTag);
             }
 
             public IBTreeBuilder Selector(Func<IBTreeBuilder, IBTreeBuilder> children)
             {
-                var childrenBuilder = new Builder(null, null);
-                return new Builder(this, () => new SelectorNode((children(childrenBuilder) as Builder)?.BuildInner()?.ToArray()));
+                var childrenBuilder = new Builder(null, null, mTag);
+                return new Builder(this, () => new SelectorNode((children(childrenBuilder) as Builder)?.BuildInner()?.ToArray()), mTag);
             }
 
             public IBTreeBuilder Leaf(IBTreeLeaf leaf)
             {
-                return new Builder(this, () => new LeafNode(null, leaf));
+                return new Builder(this, () => new LeafNode(null, leaf), mTag);
             }
 
             public IBTreeBuilder Fail(Func<IBTreeBuilder, IBTreeBuilder> children)
             {
-                var childrenBuilder = new Builder(null, null);
-                return new Builder(this, () => new FailSuccessNode((children(childrenBuilder) as Builder)?.BuildInner()?.ToArray(), BTreeLeafState.Failed));
+                var childrenBuilder = new Builder(null, null, mTag);
+                return new Builder(this, () => new FailSuccessNode((children(childrenBuilder) as Builder)?.BuildInner()?.ToArray(), BTreeLeafState.Failed), mTag);
             }
 
             public IBTreeBuilder Success(Func<IBTreeBuilder, IBTreeBuilder> children)
             {
-                var childrenBuilder = new Builder(null, null);
-                return new Builder(this, () => new FailSuccessNode((children(childrenBuilder) as Builder)?.BuildInner()?.ToArray(), BTreeLeafState.Successed));
+                var childrenBuilder = new Builder(null, null, mTag);
+                return new Builder(this, () => new FailSuccessNode((children(childrenBuilder) as Builder)?.BuildInner()?.ToArray(), BTreeLeafState.Successed), mTag);
             }
 
             private List<Node> BuildInner()
@@ -190,18 +193,19 @@ namespace Assets.Core.BehaviorTree
 
             public BTree Build()
             {
-                return new BTree(BuildInner().Single());
+                return new BTree(BuildInner().Single(), mTag);
             }
         }
 
-        private BTree(Node root)
+        private BTree(Node root, string tag)
         {
+            Tag = tag;
             mRoot = root;
         }
 
-        public static IBTreeBuilder Create()
+        public static IBTreeBuilder Create(string tag)
         {
-            return new Builder(null, null);
+            return new Builder(null, null, tag);
         }
 
         public BTreeLeafState Update(TimeSpan deltaTime)

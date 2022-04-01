@@ -142,7 +142,7 @@ namespace Assets.Core.GameObjects.Base {
             mGame = game;
             mInitialPosition = position;
             mPlacementService = placementService;
-            mIntelligence = BTree.Create().Sequence(b => b
+            mIntelligence = BTree.Create("Production").Sequence(b => b
                 .Selector(b1 => b1
                     .Leaf(new CheckOrderLeaf(this))
                     .Leaf(new LockOrderLeaf(this)))
