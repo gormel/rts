@@ -74,29 +74,37 @@ namespace Assets.Core.Map
                 }
             }
 
-            Data = new MapData(width, length, data, objs);
+            MapData generated;
+            Data = generated = new MapData(width, length, data, objs);
 
+            var relativeCrystalPos = CentralBuilding.BuildingSize + Vector2.one * 2;
+            var size = relativeCrystalPos + Vector2.one * 3;
             List<Vector2> possibleBasePositions = new List<Vector2>();
-            CollectPossibleBasePositions(Data, possibleBasePositions);
-
+            CollectPossibleBasePositions(Data, size, possibleBasePositions);
+            
             List<Vector2> basePositions;
-            if (CreateBasePositions(possibleBasePositions, BaseCount, Math.Min(width / 2, length / 2), out basePositions))
+            if (CreateBasePositions(possibleBasePositions, BaseCount, Math.Min(width, length) / 2.5f, out basePositions))
                 foreach (var basePosition in basePositions)
                     mFreeBases.Add(basePosition);
+
+            foreach (var basePosition in basePositions)
+            {
+                var crystalPos = basePosition + relativeCrystalPos;
+                generated.mObjects[(int) crystalPos.x, (int) crystalPos.y] = MapObject.Crystal;
+            }
         }
 
-        private void CollectPossibleBasePositions(IMapData mapData, List<Vector2> possiblePositions)
+        private void CollectPossibleBasePositions(IMapData mapData, Vector2 squareSize, List<Vector2> possiblePositions)
         {
-            var size = CentralBuilding.BuildingSize + Vector2.one * 2;
-            for (int x = 0; x < mapData.Width - size.x; x++)
+            for (int x = 0; x < mapData.Width - squareSize.x; x++)
             {
-                for (int y = 0; y < mapData.Length - size.y; y++)
+                for (int y = 0; y < mapData.Length - squareSize.y; y++)
                 {
                     float hSum = 0f;
                     bool posOK = true;
-                    for (int xx = 0; xx < size.x && posOK; xx++)
+                    for (int xx = 0; xx < squareSize.x && posOK; xx++)
                     {
-                        for (int yy = 0; yy < size.y; yy++)
+                        for (int yy = 0; yy < squareSize.y; yy++)
                         {
                             if (mapData.GetMapObjectAt(x + xx, y + yy) != MapObject.None)
                             {
@@ -111,7 +119,7 @@ namespace Assets.Core.Map
                     if (!posOK)
                         continue;
                     
-                    if (Math.Abs(hSum / size.x / size.y - mapData.GetHeightAt(x, y)) > 0.01)
+                    if (Math.Abs(hSum / squareSize.x / squareSize.y - mapData.GetHeightAt(x, y)) > 0.01)
                         continue;
                     
                     possiblePositions.Add(new Vector2(x, y));
@@ -122,9 +130,11 @@ namespace Assets.Core.Map
         private bool CreateBasePositions(List<Vector2> possiblePositions, int depth, float baseDistance, out List<Vector2> allocatedPositions)
         {
             allocatedPositions = new List<Vector2>();
-            
+
             if (depth <= 0)
+            {
                 return true;
+            }
 
             if (possiblePositions.Count < 1)
                 return false;
@@ -132,7 +142,7 @@ namespace Assets.Core.Map
             var pos = possiblePositions[Random.Range(0, possiblePositions.Count)];
 
             var subPossiblePositions = possiblePositions.Where(p => Vector2.Distance(p, pos) >= baseDistance).ToList();
-            List<Vector2> subAllocated = new List<Vector2>();
+            List<Vector2> subAllocated = null;
 
             var createOK = false;
             for (int i = 0; i < BasePlacementTryes; i++)
@@ -147,6 +157,7 @@ namespace Assets.Core.Map
             if (!createOK)
                 return false;
             
+            subAllocated.Add(pos);
             allocatedPositions.AddRange(subAllocated);
             return true;
         }
