@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 namespace Assets.Interaction.Selection
@@ -17,6 +18,9 @@ namespace Assets.Interaction.Selection
         public UserInterface Interface;
         public Image IconTarget;
         public Sprite EmptySprite;
+
+        public bool mShiftState;
+        public bool mCtrlState;
 
         private SelectionGroup mSelectionGroup;
 
@@ -38,20 +42,33 @@ namespace Assets.Interaction.Selection
             mSelectionGroup = Interface.SelectionManager.Groups[Index - 1];
         }
 
-        void Update()
+        public void OnShiftState(InputAction.CallbackContext ctx)
         {
-            if (mSelectionGroup == null)
-                return;
+            mShiftState = ctx.ReadValueAsButton();
+        }
 
-            if (Input.GetKeyDown(KeyCode.Alpha1 + Index - 1))
+        public void OnCtrlState(InputAction.CallbackContext ctx)
+        {
+            mCtrlState = ctx.ReadValueAsButton();
+        }
+
+        public void OnInteractToGroup(InputAction.CallbackContext ctx)
+        {
+            if (Math.Abs(ctx.ReadValue<float>() - Index) < 0.01)
             {
-                if (Input.GetKey(KeyCode.LeftControl))
+                if (mCtrlState)
                     mSelectionGroup.Set();
-                else if (Input.GetKey(KeyCode.LeftShift))
+                else if (mShiftState)
                     mSelectionGroup.Add();
                 else
                     mSelectionGroup.Select();
             }
+        }
+
+        void Update()
+        {
+            if (mSelectionGroup == null)
+                return;
 
             var count = mSelectionGroup.Members.Count(go => go != null);
             CountTarget.text = count > 0 ? count.ToString() : "";

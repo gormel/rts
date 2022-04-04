@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Assets.Interaction
 {
@@ -17,36 +18,68 @@ namespace Assets.Interaction
         public float Border = 2;
 
         public float Speed;
+        private Vector3 mCameraVelocity = Vector3.zero;
+        private bool mAltState;
 
-        void Update()
+        private void MoveCamera(bool up, bool right, bool down, bool left)
         {
+            mCameraVelocity = Vector3.zero;
+            
+            if (left)
+                mCameraVelocity -= RightMove;
+
+            if (right)
+                mCameraVelocity += RightMove;
+
+            if (down)
+                mCameraVelocity -= UpMove;
+
+            if (up)
+                mCameraVelocity += UpMove;
+
+            mCameraVelocity.Normalize();
+        }
+
+        public void OnMove(InputAction.CallbackContext ctx)
+        {
+            var xy = ctx.ReadValue<Vector2>();
+            var sx = xy.x;
+            var sy = xy.y;
+            if (!mFocused)
+                return;
+
+            MoveCamera(sy > 0, sx > 0, sy < 0, sx < 0);
+            
+        }
+
+        public void OnAltState(InputAction.CallbackContext ctx)
+        {
+            mAltState = ctx.ReadValueAsButton();
+        }
+        
+        public void OnPan(InputAction.CallbackContext ctx)
+        {
+            var xy = ctx.ReadValue<Vector2>();
+            var mouseX = xy.x;
+            var mouseY = xy.y;
+            
             if (!mFocused)
                 return;
 
 #if UNITY_EDITOR
-            if (!Input.GetKey(KeyCode.LeftAlt))
+            if (!mAltState)
                 return;
 #endif
-            
-            var velocity = Vector3.zero;
+            MoveCamera(
+                mouseY >= Screen.height - Border, 
+                mouseX >= Screen.width - Border, 
+                mouseY <= Border, 
+                mouseX <= Border);
+        }
 
-            var mouseX = Input.mousePosition.x;
-            var mouseY = Input.mousePosition.y;
-
-            if (mouseX <= Border || Input.GetKey(KeyCode.LeftArrow))
-                velocity -= RightMove;
-
-            if (mouseX >= Screen.width - Border || Input.GetKey(KeyCode.RightArrow))
-                velocity += RightMove;
-
-            if (mouseY <= Border || Input.GetKey(KeyCode.DownArrow))
-                velocity -= UpMove;
-
-            if (mouseY >= Screen.height - Border || Input.GetKey(KeyCode.UpArrow))
-                velocity += UpMove;
-
-            velocity.Normalize();
-            transform.localPosition += velocity * Speed * Time.deltaTime;
+        void Update()
+        {
+            transform.localPosition += mCameraVelocity * Speed * Time.deltaTime;
         }
 
         void OnApplicationFocus(bool hasFocus)

@@ -1,5 +1,6 @@
 ﻿using Assets.Views.Base;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 namespace Assets.Interaction
@@ -44,7 +45,7 @@ namespace Assets.Interaction
             if (Interface == null)
                 return;
 
-            if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
+            if (Keyboard.current.shiftKey.isPressed)
             {
                 Interface.SelectionManager.RemoveSelection(new[] { Owner });
             }

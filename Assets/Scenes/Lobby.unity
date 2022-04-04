@@ -94,10 +94,11 @@ LightmapSettings:
     m_PVRFilteringAtrousPositionSigmaDirect: 0.5
     m_PVRFilteringAtrousPositionSigmaIndirect: 2
     m_PVRFilteringAtrousPositionSigmaAO: 1
-    m_ShowResolutionOverlay: 1
     m_ExportTrainingData: 0
+    m_TrainingDataDestination: TrainingData
+    m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -127,11 +128,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1112507868}
     m_Modifications:
-    - target: {fileID: 4693825623222520435, guid: c1a6cc9bd98ee4b4b8e8bc73b5c9986b,
-        type: 3}
-      propertyPath: m_Name
-      value: PlayerIcon (3)
-      objectReference: {fileID: 0}
     - target: {fileID: 2724033401192884147, guid: c1a6cc9bd98ee4b4b8e8bc73b5c9986b,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -237,6 +233,11 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
+    - target: {fileID: 4693825623222520435, guid: c1a6cc9bd98ee4b4b8e8bc73b5c9986b,
+        type: 3}
+      propertyPath: m_Name
+      value: PlayerIcon (3)
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c1a6cc9bd98ee4b4b8e8bc73b5c9986b, type: 3}
 --- !u!114 &290026212 stripped
@@ -303,17 +304,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 337629642}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 708705254, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
   m_RaycastTarget: 1
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
-      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
     m_FontSize: 40
@@ -343,11 +343,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1112507868}
     m_Modifications:
-    - target: {fileID: 4693825623222520435, guid: c1a6cc9bd98ee4b4b8e8bc73b5c9986b,
-        type: 3}
-      propertyPath: m_Name
-      value: PlayerIcon (4)
-      objectReference: {fileID: 0}
     - target: {fileID: 2724033401192884147, guid: c1a6cc9bd98ee4b4b8e8bc73b5c9986b,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -453,6 +448,11 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
+    - target: {fileID: 4693825623222520435, guid: c1a6cc9bd98ee4b4b8e8bc73b5c9986b,
+        type: 3}
+      propertyPath: m_Name
+      value: PlayerIcon (4)
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c1a6cc9bd98ee4b4b8e8bc73b5c9986b, type: 3}
 --- !u!114 &555560252 stripped
@@ -519,17 +519,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 745409949}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 708705254, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
   m_RaycastTarget: 1
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
-      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
     m_FontSize: 14
@@ -642,11 +641,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1112507868}
     m_Modifications:
-    - target: {fileID: 4693825623222520435, guid: c1a6cc9bd98ee4b4b8e8bc73b5c9986b,
-        type: 3}
-      propertyPath: m_Name
-      value: PlayerIcon (1)
-      objectReference: {fileID: 0}
     - target: {fileID: 2724033401192884147, guid: c1a6cc9bd98ee4b4b8e8bc73b5c9986b,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -752,6 +746,11 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
+    - target: {fileID: 4693825623222520435, guid: c1a6cc9bd98ee4b4b8e8bc73b5c9986b,
+        type: 3}
+      propertyPath: m_Name
+      value: PlayerIcon (1)
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c1a6cc9bd98ee4b4b8e8bc73b5c9986b, type: 3}
 --- !u!114 &949636262 stripped
@@ -823,7 +822,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1112507863}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 1301386320, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_IgnoreReversedGraphics: 1
@@ -840,7 +839,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1112507863}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 1980459831, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_UiScaleMode: 0
@@ -926,8 +925,9 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1211362951}
   m_Enabled: 1
-  serializedVersion: 9
+  serializedVersion: 10
   m_Type: 1
+  m_Shape: 0
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
   m_Intensity: 1
   m_Range: 10
@@ -999,11 +999,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1112507868}
     m_Modifications:
-    - target: {fileID: 4693825623222520435, guid: c1a6cc9bd98ee4b4b8e8bc73b5c9986b,
-        type: 3}
-      propertyPath: m_Name
-      value: PlayerIcon (2)
-      objectReference: {fileID: 0}
     - target: {fileID: 2724033401192884147, guid: c1a6cc9bd98ee4b4b8e8bc73b5c9986b,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1109,6 +1104,11 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
+    - target: {fileID: 4693825623222520435, guid: c1a6cc9bd98ee4b4b8e8bc73b5c9986b,
+        type: 3}
+      propertyPath: m_Name
+      value: PlayerIcon (2)
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c1a6cc9bd98ee4b4b8e8bc73b5c9986b, type: 3}
 --- !u!114 &1400477612 stripped
@@ -1136,11 +1136,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1112507868}
     m_Modifications:
-    - target: {fileID: 4693825623222520435, guid: c1a6cc9bd98ee4b4b8e8bc73b5c9986b,
-        type: 3}
-      propertyPath: m_Name
-      value: PlayerIcon (5)
-      objectReference: {fileID: 0}
     - target: {fileID: 2724033401192884147, guid: c1a6cc9bd98ee4b4b8e8bc73b5c9986b,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1246,6 +1241,11 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
+    - target: {fileID: 4693825623222520435, guid: c1a6cc9bd98ee4b4b8e8bc73b5c9986b,
+        type: 3}
+      propertyPath: m_Name
+      value: PlayerIcon (5)
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c1a6cc9bd98ee4b4b8e8bc73b5c9986b, type: 3}
 --- !u!114 &1646450357 stripped
@@ -1314,7 +1314,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1793225498}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 1392445389, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
@@ -1359,8 +1359,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-    m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
-      Culture=neutral, PublicKeyToken=null
 --- !u!114 &1793225501
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1370,17 +1368,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 1793225498}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
-      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
   m_Type: 1
   m_PreserveAspect: 0
@@ -1390,6 +1387,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
 --- !u!222 &1793225502
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1446,7 +1444,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1797417293}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 1392445389, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
@@ -1491,8 +1489,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-    m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
-      Culture=neutral, PublicKeyToken=null
 --- !u!114 &1797417296
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1502,17 +1498,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 1797417293}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
-      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
   m_Type: 1
   m_PreserveAspect: 0
@@ -1522,6 +1517,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
 --- !u!222 &1797417297
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1557,16 +1553,36 @@ MonoBehaviour:
   m_GameObject: {fileID: 2067694019}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 1077351063, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Script: {fileID: 11500000, guid: 01614664b831546d2ae94a42149d80ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_HorizontalAxis: Horizontal
-  m_VerticalAxis: Vertical
-  m_SubmitButton: Submit
-  m_CancelButton: Cancel
-  m_InputActionsPerSecond: 10
-  m_RepeatDelay: 0.5
-  m_ForceModuleActive: 0
+  m_MoveRepeatDelay: 0.5
+  m_MoveRepeatRate: 0.1
+  m_XRTrackingOrigin: {fileID: 0}
+  m_ActionsAsset: {fileID: -944628639613478452, guid: ca9f5fa95ffab41fb9a615ab714db018,
+    type: 3}
+  m_PointAction: {fileID: -1654692200621890270, guid: ca9f5fa95ffab41fb9a615ab714db018,
+    type: 3}
+  m_MoveAction: {fileID: -8784545083839296357, guid: ca9f5fa95ffab41fb9a615ab714db018,
+    type: 3}
+  m_SubmitAction: {fileID: 392368643174621059, guid: ca9f5fa95ffab41fb9a615ab714db018,
+    type: 3}
+  m_CancelAction: {fileID: 7727032971491509709, guid: ca9f5fa95ffab41fb9a615ab714db018,
+    type: 3}
+  m_LeftClickAction: {fileID: 3001919216989983466, guid: ca9f5fa95ffab41fb9a615ab714db018,
+    type: 3}
+  m_MiddleClickAction: {fileID: -2185481485913320682, guid: ca9f5fa95ffab41fb9a615ab714db018,
+    type: 3}
+  m_RightClickAction: {fileID: -4090225696740746782, guid: ca9f5fa95ffab41fb9a615ab714db018,
+    type: 3}
+  m_ScrollWheelAction: {fileID: 6240969308177333660, guid: ca9f5fa95ffab41fb9a615ab714db018,
+    type: 3}
+  m_TrackedDevicePositionAction: {fileID: 6564999863303420839, guid: ca9f5fa95ffab41fb9a615ab714db018,
+    type: 3}
+  m_TrackedDeviceOrientationAction: {fileID: 7970375526676320489, guid: ca9f5fa95ffab41fb9a615ab714db018,
+    type: 3}
+  m_DeselectOnBackgroundClick: 1
+  m_PointerBehavior: 0
 --- !u!114 &2067694021
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1576,7 +1592,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2067694019}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: -619905303, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Script: {fileID: 11500000, guid: 76c392e42b5098c458856cdf6ecaaaa1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_FirstSelected: {fileID: 0}
@@ -1603,11 +1619,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1112507868}
     m_Modifications:
-    - target: {fileID: 4693825623222520435, guid: c1a6cc9bd98ee4b4b8e8bc73b5c9986b,
-        type: 3}
-      propertyPath: m_Name
-      value: PlayerIcon
-      objectReference: {fileID: 0}
     - target: {fileID: 2724033401192884147, guid: c1a6cc9bd98ee4b4b8e8bc73b5c9986b,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1712,6 +1723,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Pivot.y
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4693825623222520435, guid: c1a6cc9bd98ee4b4b8e8bc73b5c9986b,
+        type: 3}
+      propertyPath: m_Name
+      value: PlayerIcon
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c1a6cc9bd98ee4b4b8e8bc73b5c9986b, type: 3}

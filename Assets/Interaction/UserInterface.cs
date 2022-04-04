@@ -13,6 +13,7 @@ using Assets.Views;
 using Assets.Views.Base;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
 
 namespace Assets.Interaction
@@ -45,16 +46,18 @@ namespace Assets.Interaction
         {
             private IEnumerable<IWarriorOrders> mViews;
             private readonly Raycaster mRaycaster;
+            private readonly UserInterface mParent;
 
-            public AttackInterfaceAction(IEnumerable<IWarriorOrders> views, Raycaster raycaster)
+            public AttackInterfaceAction(IEnumerable<IWarriorOrders> views, Raycaster raycaster, UserInterface parent)
             {
                 mViews = views;
                 mRaycaster = raycaster;
+                mParent = parent;
             }
 
             public override void Resolve(Vector2 position)
             {
-                var hit = mRaycaster.Raycast<SelectableView>(Input.mousePosition);
+                var hit = mRaycaster.Raycast<SelectableView>(mParent.mMousePosition);
                 if (hit.IsEmpty())
                 {
                     foreach (var warriorOrders in mViews)
@@ -71,16 +74,18 @@ namespace Assets.Interaction
         {
             private IEnumerable<ITurretOrders> mViews;
             private readonly Raycaster mRaycaster;
+            private readonly UserInterface mParent;
 
-            public TurretAttackInterfaceAction(IEnumerable<ITurretOrders> views, Raycaster raycaster)
+            public TurretAttackInterfaceAction(IEnumerable<ITurretOrders> views, Raycaster raycaster, UserInterface parent)
             {
                 mViews = views;
                 mRaycaster = raycaster;
+                mParent = parent;
             }
 
             public override void Resolve(Vector2 position)
             {
-                var hit = mRaycaster.Raycast<SelectableView>(Input.mousePosition);
+                var hit = mRaycaster.Raycast<SelectableView>(mParent.mMousePosition);
                 if (!hit.IsEmpty())
                 {
                     foreach (var warriorOrders in mViews)
@@ -108,15 +113,17 @@ namespace Assets.Interaction
         {
             private readonly IEnumerable<IWorkerOrders> mViews;
             private readonly Raycaster mRaycaster;
+            private readonly UserInterface mParent;
 
-            public AttachWorkerToMiningCampAction(IEnumerable<IWorkerOrders> views, Raycaster raycaster)
+            public AttachWorkerToMiningCampAction(IEnumerable<IWorkerOrders> views, Raycaster raycaster, UserInterface parent)
             {
                 mViews = views;
                 mRaycaster = raycaster;
+                mParent = parent;
             }
             public override void Resolve(Vector2 position)
             {
-                var hit = mRaycaster.Raycast<MiningCampView>(Input.mousePosition);
+                var hit = mRaycaster.Raycast<MiningCampView>(mParent.mMousePosition);
                 if (hit.IsEmpty())
                     return;
                 
@@ -198,6 +205,10 @@ namespace Assets.Interaction
         private Raycaster mRaycaster;
         private Vector2 mChooseStartMousePosition;
         private SelectionState mSelectionState;
+        private Vector2 mMousePosition;
+        private bool mShiftState;
+
+        private const string LeftButtonControlPath = "/Mouse/leftButton";
         
         public IEnumerable<T> FetchSelectedOrders<T>() where T : class, IGameObjectOrders
         {
@@ -228,7 +239,7 @@ namespace Assets.Interaction
             if (mCurrentAction != null)
                 mCurrentAction.Cancel();
 
-            mCurrentAction = new AttachWorkerToMiningCampAction(views, mRaycaster);
+            mCurrentAction = new AttachWorkerToMiningCampAction(views, mRaycaster, this);
         }
 
         public void BeginAttack(IEnumerable<IWarriorOrders> views)
@@ -236,7 +247,7 @@ namespace Assets.Interaction
             if (mCurrentAction != null)
                 mCurrentAction.Cancel();
 
-            mCurrentAction = new AttackInterfaceAction(views, mRaycaster);
+            mCurrentAction = new AttackInterfaceAction(views, mRaycaster, this);
         }
 
         public void BeginTurretAttack(IEnumerable<ITurretOrders> views)
@@ -244,7 +255,7 @@ namespace Assets.Interaction
             if (mCurrentAction != null)
                 mCurrentAction.Cancel();
 
-            mCurrentAction = new TurretAttackInterfaceAction(views, mRaycaster);
+            mCurrentAction = new TurretAttackInterfaceAction(views, mRaycaster, this);
         }
 
         public void BeginBuildingPlacement(IEnumerable<IWorkerOrders> workers, Func<IWorkerOrders, Vector2, Task<Guid>> createTemplate, Vector2 size)
@@ -266,120 +277,104 @@ namespace Assets.Interaction
             }
         }
 
-        private int updateId = 0;
-        void Update()
+        public void OnShiftPress(InputAction.CallbackContext ctx)
         {
-            updateId++;
-            Selected.RemoveAll(view => view == null || view.gameObject == null || !view.gameObject.activeSelf);
-
-            if (Input.GetMouseButtonDown((int) MouseButton.LeftMouse))
-            {
-                Debug.Log($"MouseDown {updateId}");
-            }
-            
-            if (Input.GetMouseButtonUp((int) MouseButton.LeftMouse))
-            {
-                Debug.Log($"MouseUp {updateId}");
-            }
-
-            if (mSelectionState == SelectionState.Boxing && !Input.GetMouseButton((int)MouseButton.LeftMouse))
-            {
-                SelectionManager.FinishBoxSelection(Input.GetKey(KeyCode.LeftShift), Input.mousePosition);
-                mSelectionState = SelectionState.Idle;
-            }
-
-            SelectionManager.Update(Input.mousePosition);
+            mShiftState = ctx.ReadValueAsButton();
+        }
+        
+        public void OnLeftClick(InputAction.CallbackContext ctx)
+        {
             if (EventSystem.current.IsPointerOverGameObject())
                 return;
 
-            if (mCurrentAction != null && !EventSystem.current.IsPointerOverGameObject())
+            if (mCurrentAction != null)
             {
-                var mapHit = mRaycaster.Raycast<MapView>(Input.mousePosition);
+                var mapHit = mRaycaster.Raycast<MapView>(mMousePosition);
+                if (mapHit.IsEmpty())
+                    return;
+
+                var mapPoint = GameUtils.GetFlatPosition(mapHit.HitPoint);
+                mCurrentAction.Resolve(mapPoint);
+                mCurrentAction = null;
+                return;
+            }
+            
+            SelectionManager.SelectSingle(mShiftState, mMousePosition);
+        }
+
+        public void OnRightClick(InputAction.CallbackContext ctx)
+        {
+            if (EventSystem.current.IsPointerOverGameObject())
+                return;
+            
+            if (mCurrentAction != null)
+            {
+                mCurrentAction.Cancel();
+                mCurrentAction = null;
+                return;
+            }
+            
+            var viewHit = mRaycaster.Raycast<SelectableView>(mMousePosition);
+            if (!viewHit.IsEmpty())
+            {
+                foreach (var view in Selected)
+                {
+                    if (!view.IsControlable)
+                        continue;
+
+                    if (viewHit.Object.IsControlable)
+                        view.OnRightClick(viewHit.Object);
+                    else
+                        view.OnEnemyRightClick(viewHit.Object);
+                }
+
+                return;
+            }
+
+            var mapHit = mRaycaster.Raycast<MapView>(mMousePosition);
+            if (!mapHit.IsEmpty())
+            {
+                var mapPoint = GameUtils.GetFlatPosition(mapHit.HitPoint);
+                ForwardRightClick(mapPoint);
+
+                return;
+            }
+        }
+
+        public void OnDragAndDrop(InputAction.CallbackContext ctx)
+        {
+            if (ctx.control.path != LeftButtonControlPath)
+                return;
+            
+            if (ctx.started)
+            {
+                SelectionManager.StartBoxSelection(mMousePosition);
+            }
+            else if (ctx.canceled)
+            {
+                SelectionManager.FinishBoxSelection(mShiftState, mMousePosition);
+            }
+        }
+
+        public void OnMouseMove(InputAction.CallbackContext ctx)
+        {
+            mMousePosition = ctx.ReadValue<Vector2>();
+            SelectionManager.Update(mMousePosition);
+
+            if (mCurrentAction != null)
+            {
+                var mapHit = mRaycaster.Raycast<MapView>(mMousePosition);
                 if (mapHit.IsEmpty())
                     return;
 
                 var mapPoint = GameUtils.GetFlatPosition(mapHit.HitPoint);
                 mCurrentAction.Move(mapPoint);
-
-                if (Input.GetMouseButton((int) MouseButton.LeftMouse))
-                {
-                    try
-                    {
-                        mCurrentAction.Resolve(mapPoint);
-                    }
-                    finally
-                    {
-                        mCurrentAction = null;
-                    }
-                    return;
-                }
-
-                if (Input.GetMouseButton((int) MouseButton.RightMouse))
-                {
-                    try
-                    {
-                        mCurrentAction.Cancel();
-                    }
-                    finally
-                    {
-                        mCurrentAction = null;
-                    }
-                    return;
-                }
-
-                return;
             }
+        }
 
-            if (mSelectionState == SelectionState.Idle && Input.GetMouseButton((int) MouseButton.LeftMouse))
-            {
-                mSelectionState = SelectionState.Choose;
-                mChooseStartMousePosition = Input.mousePosition;
-                return;
-            }
-
-            if (mSelectionState == SelectionState.Choose)
-            {
-                if (!Input.GetMouseButton((int) MouseButton.LeftMouse))
-                {
-                    SelectionManager.SelectSingle(Input.GetKey(KeyCode.LeftShift), Input.mousePosition);
-                    mSelectionState = SelectionState.Idle;
-                }
-                else if (Vector2.Distance(Input.mousePosition, mChooseStartMousePosition) > 3)
-                {
-                    SelectionManager.StartBoxSelection(Input.mousePosition);
-                    mSelectionState = SelectionState.Boxing;
-                    Debug.Log($"Boxing start {updateId}");
-                }
-            }
-
-            if (Input.GetMouseButtonDown((int) MouseButton.RightMouse))
-            {
-                var viewHit = mRaycaster.Raycast<SelectableView>(Input.mousePosition);
-                if (!viewHit.IsEmpty())
-                {
-                    foreach (var view in Selected)
-                    {
-                        if (!view.IsControlable)
-                            continue;
-
-                        if (viewHit.Object.IsControlable)
-                            view.OnRightClick(viewHit.Object);
-                        else
-                            view.OnEnemyRightClick(viewHit.Object);
-                    }
-
-                    return;
-                }
-
-                var mapHit = mRaycaster.Raycast<MapView>(Input.mousePosition);
-                if (!mapHit.IsEmpty())
-                {
-                    var mapPoint = GameUtils.GetFlatPosition(mapHit.HitPoint);
-                    ForwardRightClick(mapPoint);
-
-                    return;
-                }
-            }
+        void Update()
+        {
+            Selected.RemoveAll(view => view == null || view.gameObject == null || !view.gameObject.activeSelf);
         }
     }
 }

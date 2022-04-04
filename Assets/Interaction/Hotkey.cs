@@ -1,30 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.InputSystem.OnScreen;
 using UnityEngine.UI;
 
 namespace Assets.Interaction
 {
     class Hotkey : MonoBehaviour
     {
-        private Button mButton;
-        public KeyCode Key;
+        public OnScreenButton KeyBinding;
         public Text View;
 
         void Start()
         {
-            mButton = GetComponent<Button>();
-            if (View != null)
-                View.text = Key.ToString();
-        }
-
-        void Update()
-        {
-            if (Input.GetKeyDown(Key) && (mButton?.interactable ?? false))
-                mButton.onClick?.Invoke();
+            if (View != null && KeyBinding != null)
+                View.text = KeyBinding.control.name.ToUpper(CultureInfo.InvariantCulture);
         }
     }
 }

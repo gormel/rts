@@ -37,6 +37,9 @@ namespace Assets.Interaction.InterfaceUtils
 
         public RaycastResult<T> RaycastBase<T>(Vector2 mouse, Func<Ray, RaycastHit[]> raycaster) where T : class
         {
+            if (mCamera == null)
+                return RaycastResult<T>.Empty;
+            
             var ray = mCamera.ScreenPointToRay(mouse);
             var hits = raycaster(ray);
             if (hits == null)
