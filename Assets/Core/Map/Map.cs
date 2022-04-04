@@ -83,9 +83,10 @@ namespace Assets.Core.Map
             CollectPossibleBasePositions(Data, size, possibleBasePositions);
             
             List<Vector2> basePositions;
-            if (CreateBasePositions(possibleBasePositions, BaseCount, Math.Min(width, length) / 2.5f, out basePositions))
-                foreach (var basePosition in basePositions)
-                    mFreeBases.Add(basePosition);
+            while (!CreateBasePositions(possibleBasePositions, BaseCount, Math.Min(width, length) / 2.5f, out basePositions)) ;
+            
+            foreach (var basePosition in basePositions)
+                mFreeBases.Add(basePosition);
 
             foreach (var basePosition in basePositions)
             {

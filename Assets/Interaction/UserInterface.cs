@@ -196,7 +196,7 @@ namespace Assets.Interaction
         public GameObject BuildCursorPrefab;
         public SelectionManager SelectionManager { get; private set; }
         private Raycaster mRaycaster;
-        private Vector2 mLastMousePosition;
+        private Vector2 mChooseStartMousePosition;
         private SelectionState mSelectionState;
         
         public IEnumerable<T> FetchSelectedOrders<T>() where T : class, IGameObjectOrders
@@ -266,11 +266,23 @@ namespace Assets.Interaction
             }
         }
 
+        private int updateId = 0;
         void Update()
         {
+            updateId++;
             Selected.RemoveAll(view => view == null || view.gameObject == null || !view.gameObject.activeSelf);
 
-            if (mSelectionState == SelectionState.Boxing && Input.GetMouseButtonUp((int)MouseButton.LeftMouse))
+            if (Input.GetMouseButtonDown((int) MouseButton.LeftMouse))
+            {
+                Debug.Log($"MouseDown {updateId}");
+            }
+            
+            if (Input.GetMouseButtonUp((int) MouseButton.LeftMouse))
+            {
+                Debug.Log($"MouseUp {updateId}");
+            }
+
+            if (mSelectionState == SelectionState.Boxing && !Input.GetMouseButton((int)MouseButton.LeftMouse))
             {
                 SelectionManager.FinishBoxSelection(Input.GetKey(KeyCode.LeftShift), Input.mousePosition);
                 mSelectionState = SelectionState.Idle;
@@ -289,7 +301,7 @@ namespace Assets.Interaction
                 var mapPoint = GameUtils.GetFlatPosition(mapHit.HitPoint);
                 mCurrentAction.Move(mapPoint);
 
-                if (Input.GetMouseButtonDown((int) MouseButton.LeftMouse))
+                if (Input.GetMouseButton((int) MouseButton.LeftMouse))
                 {
                     try
                     {
@@ -302,7 +314,7 @@ namespace Assets.Interaction
                     return;
                 }
 
-                if (Input.GetMouseButtonDown((int) MouseButton.RightMouse))
+                if (Input.GetMouseButton((int) MouseButton.RightMouse))
                 {
                     try
                     {
@@ -318,20 +330,25 @@ namespace Assets.Interaction
                 return;
             }
 
-            if (mSelectionState == SelectionState.Idle && Input.GetMouseButtonDown((int) MouseButton.LeftMouse))
+            if (mSelectionState == SelectionState.Idle && Input.GetMouseButton((int) MouseButton.LeftMouse))
+            {
                 mSelectionState = SelectionState.Choose;
+                mChooseStartMousePosition = Input.mousePosition;
+                return;
+            }
 
             if (mSelectionState == SelectionState.Choose)
             {
-                if (Vector2.Distance(Input.mousePosition, mLastMousePosition) > 1)
-                {
-                    SelectionManager.StartBoxSelection(Input.mousePosition);
-                    mSelectionState = SelectionState.Boxing;
-                }
-                else if (Input.GetMouseButtonUp((int) MouseButton.LeftMouse))
+                if (!Input.GetMouseButton((int) MouseButton.LeftMouse))
                 {
                     SelectionManager.SelectSingle(Input.GetKey(KeyCode.LeftShift), Input.mousePosition);
                     mSelectionState = SelectionState.Idle;
+                }
+                else if (Vector2.Distance(Input.mousePosition, mChooseStartMousePosition) > 3)
+                {
+                    SelectionManager.StartBoxSelection(Input.mousePosition);
+                    mSelectionState = SelectionState.Boxing;
+                    Debug.Log($"Boxing start {updateId}");
                 }
             }
 
@@ -363,8 +380,6 @@ namespace Assets.Interaction
                     return;
                 }
             }
-
-            mLastMousePosition = Input.mousePosition;
         }
     }
 }

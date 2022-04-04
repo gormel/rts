@@ -1,0 +1,122 @@
+{
+    "name": "RtsInputActions",
+    "maps": [
+        {
+            "name": "Group",
+            "id": "9e12ac19-436a-47a4-9023-8bebeeb80d35",
+            "actions": [
+                {
+                    "name": "Select",
+                    "type": "Button",
+                    "id": "ff764de6-69ed-4cfa-aeba-07760a3f2981",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "4bafb459-2341-4bd1-b788-e14df6014f79",
+                    "path": "<Keyboard>/1",
+                    "interactions": "Tap",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Select",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "152f8334-8550-4026-96f1-8587ea7d8386",
+                    "path": "<Keyboard>/2",
+                    "interactions": "Tap",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Select",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b2b6ee2a-c74c-4476-aa61-51e1a4324b29",
+                    "path": "<Keyboard>/3",
+                    "interactions": "Tap",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Select",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e191a5df-92ca-49da-ba9c-0d03c09089f8",
+                    "path": "<Keyboard>/4",
+                    "interactions": "Tap",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Select",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "76a70735-aa4b-477d-b106-7a89f6bd4201",
+                    "path": "<Keyboard>/5",
+                    "interactions": "Tap",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Select",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "89146b2b-7888-4bf7-ae33-44e22e5e671f",
+                    "path": "<Keyboard>/6",
+                    "interactions": "Tap",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Select",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c161e92c-fe0e-42b3-bfb8-54c0bb857454",
+                    "path": "<Keyboard>/7",
+                    "interactions": "Tap",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Select",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "4c7ad459-6594-4550-8244-cd9c8e7f743f",
+                    "path": "<Keyboard>/8",
+                    "interactions": "Tap",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Select",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "8978c1f6-30b4-44a7-8836-030c1686434c",
+                    "path": "<Keyboard>/9",
+                    "interactions": "Tap",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Select",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
