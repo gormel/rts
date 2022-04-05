@@ -35,6 +35,7 @@ namespace Assets.Interaction.Selection
 
         public void Select(IEnumerable<SelectableView> views)
         {
+            Debug.Log("Select");
             SelectInner(views, false);
         }
 
@@ -67,12 +68,14 @@ namespace Assets.Interaction.Selection
 
         public void StartBoxSelection(Vector3 mouse)
         {
+            Debug.Log("Start Box");
             mSelectionStartPosition = mouse;
             mSelectionInProgress = true;
         }
 
         public void FinishBoxSelection(bool union, Vector3 mouse)
         {
+            Debug.Log("Finish Box");
             if (!mSelectionInProgress)
                 return;
 
@@ -115,6 +118,9 @@ namespace Assets.Interaction.Selection
 
         public void Update(Vector3 mouse)
         {
+            if (mSelectionBox.gameObject == null)
+                return;
+            
             mSelectionBox.gameObject.SetActive(mSelectionInProgress);
 
             if (mSelectionInProgress)

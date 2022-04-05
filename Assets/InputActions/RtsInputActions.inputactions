@@ -292,13 +292,13 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "DragAndDrop",
-                    "type": "Value",
+                    "name": "BeginDrag",
+                    "type": "Button",
                     "id": "ddeb5d47-9d62-46c1-b53e-bebfb6ff7426",
-                    "expectedControlType": "",
+                    "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": true
+                    "initialStateCheck": false
                 },
                 {
                     "name": "MouseMove",
@@ -317,6 +317,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Drop",
+                    "type": "Button",
+                    "id": "88150707-cee4-4013-af00-ac6d5cb61451",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -324,21 +333,10 @@
                     "name": "",
                     "id": "1e3edfca-e0cf-4659-a50a-3cf304381ae5",
                     "path": "<Mouse>/leftButton",
-                    "interactions": "",
+                    "interactions": "Press",
                     "processors": "",
                     "groups": "",
-                    "action": "DragAndDrop",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "36fa26cf-52d1-4f0a-bfc5-7c82d337ca9a",
-                    "path": "<Mouse>/delta",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "DragAndDrop",
+                    "action": "BeginDrag",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -346,7 +344,7 @@
                     "name": "",
                     "id": "2246c73c-c22a-4ea2-b3be-cae8d54d7272",
                     "path": "<Mouse>/leftButton",
-                    "interactions": "",
+                    "interactions": "Tap",
                     "processors": "",
                     "groups": "",
                     "action": "LeftClick",
@@ -357,7 +355,7 @@
                     "name": "",
                     "id": "bc751bbb-198e-430f-a8b7-739191980e1d",
                     "path": "<Mouse>/rightButton",
-                    "interactions": "",
+                    "interactions": "Tap",
                     "processors": "",
                     "groups": "",
                     "action": "RightClick",
@@ -383,6 +381,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "ShiftMod",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "cc5c2094-6b79-4b4f-a31e-1b10545ae7d0",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "Press(behavior=1)",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Drop",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

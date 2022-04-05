@@ -287,6 +287,9 @@ namespace Assets.Interaction
             if (EventSystem.current.IsPointerOverGameObject())
                 return;
 
+            if (ctx.phase != InputActionPhase.Performed)
+                return;
+
             if (mCurrentAction != null)
             {
                 var mapHit = mRaycaster.Raycast<MapView>(mMousePosition);
@@ -341,19 +344,20 @@ namespace Assets.Interaction
             }
         }
 
-        public void OnDragAndDrop(InputAction.CallbackContext ctx)
+        public void OnBeginDrag(InputAction.CallbackContext ctx)
         {
-            if (ctx.control.path != LeftButtonControlPath)
+            if (EventSystem.current.IsPointerOverGameObject())
+                return;
+
+            if (ctx.phase != InputActionPhase.Performed)
                 return;
             
-            if (ctx.started)
-            {
-                SelectionManager.StartBoxSelection(mMousePosition);
-            }
-            else if (ctx.canceled)
-            {
-                SelectionManager.FinishBoxSelection(mShiftState, mMousePosition);
-            }
+            SelectionManager.StartBoxSelection(mMousePosition);
+        }
+
+        public void OnDrop(InputAction.CallbackContext ctx)
+        {
+            SelectionManager.FinishBoxSelection(mShiftState, mMousePosition);
         }
 
         public void OnMouseMove(InputAction.CallbackContext ctx)

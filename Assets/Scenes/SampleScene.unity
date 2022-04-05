@@ -9349,12 +9349,24 @@ MonoBehaviour:
     m_ActionName: Hotkeys/InteractToGroup[/Keyboard/1,/Keyboard/2,/Keyboard/3,/Keyboard/4,/Keyboard/5,/Keyboard/6,/Keyboard/7,/Keyboard/8,/Keyboard/9]
   - m_PersistentCalls:
       m_Calls: []
+    m_ActionId: 33039073-d9d5-4819-ab5f-17f74bebc092
+    m_ActionName: Hotkeys/ShiftState[/Keyboard/shift]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 82fecd51-a04b-4ce0-bce5-88ab16d575ab
+    m_ActionName: Hotkeys/ControlState[/Keyboard/ctrl]
+  - m_PersistentCalls:
+      m_Calls: []
     m_ActionId: 2434025a-8bfb-42f9-a95e-ace4723912b6
     m_ActionName: Camera/Pan[/Mouse/position]
   - m_PersistentCalls:
       m_Calls: []
     m_ActionId: 6a06b00b-2d1f-4a1a-97f0-3c092df48c63
     m_ActionName: Camera/Move[/Keyboard/upArrow,/Keyboard/downArrow,/Keyboard/leftArrow,/Keyboard/rightArrow]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: dd24b31e-c6eb-4560-b157-b801afb1c5fc
+    m_ActionName: Camera/AltState[/Keyboard/alt]
   - m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1098300459}
@@ -9388,7 +9400,7 @@ MonoBehaviour:
   - m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1098300459}
-        m_MethodName: OnDragAndDrop
+        m_MethodName: OnBeginDrag
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -9399,7 +9411,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
     m_ActionId: ddeb5d47-9d62-46c1-b53e-bebfb6ff7426
-    m_ActionName: Map/DragAndDrop[/Mouse/leftButton,/Mouse/delta]
+    m_ActionName: Map/BeginDrag[/Mouse/leftButton]
   - m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1098300459}
@@ -9430,6 +9442,21 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: b83ea040-4b3f-423c-afa3-92dddb3be034
     m_ActionName: Map/ShiftMod[/Keyboard/shift]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1098300459}
+        m_MethodName: OnDrop
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 88150707-cee4-4013-af00-ac6d5cb61451
+    m_ActionName: Map/New action
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Map
