@@ -1979,6 +1979,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 2075601635}
     m_Modifications:
+    - target: {fileID: 6422396910906638563, guid: 461b7aa55044ebd45849a70d4f7ef195,
+        type: 3}
+      propertyPath: m_ControlPath
+      value: <Keyboard>/s
+      objectReference: {fileID: 0}
     - target: {fileID: 6788634556600399810, guid: 461b7aa55044ebd45849a70d4f7ef195,
         type: 3}
       propertyPath: m_Text
@@ -4528,6 +4533,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 654915253}
     m_Modifications:
+    - target: {fileID: 6422396910906638563, guid: 461b7aa55044ebd45849a70d4f7ef195,
+        type: 3}
+      propertyPath: m_ControlPath
+      value: <Keyboard>/s
+      objectReference: {fileID: 0}
     - target: {fileID: 6788634556600399810, guid: 461b7aa55044ebd45849a70d4f7ef195,
         type: 3}
       propertyPath: m_Text
@@ -8021,7 +8031,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb3f5971e91375e43a31c158c6b94cc6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  KeyBinding: {fileID: 484759475}
+  KeyBinding: {fileID: 863416718}
   View: {fileID: 1693500389}
 --- !u!114 &863416715
 MonoBehaviour:
@@ -9376,7 +9386,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb3f5971e91375e43a31c158c6b94cc6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  KeyBinding: {fileID: 484759475}
+  KeyBinding: {fileID: 1145819385}
   View: {fileID: 956729016}
 --- !u!114 &1145819382
 MonoBehaviour:
@@ -14579,7 +14589,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb3f5971e91375e43a31c158c6b94cc6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  KeyBinding: {fileID: 484759475}
+  KeyBinding: {fileID: 1787200978}
   View: {fileID: 700722626}
 --- !u!114 &1787200978
 MonoBehaviour:

@@ -301,7 +301,7 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
                     ""id"": ""7c924dd8-46b3-4683-8de0-475c8c3ff8e9"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
-                    ""interactions"": ""Tap"",
+                    ""interactions"": ""Tap(pressPoint=1)"",
                     ""initialStateCheck"": false
                 },
                 {
