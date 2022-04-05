@@ -207,6 +207,11 @@ namespace Assets.Interaction
         private SelectionState mSelectionState;
         private Vector2 mMousePosition;
         private bool mShiftState;
+        private RtsInputActions mInputActions;
+
+        public Camera GuiCamera;
+        
+        public RectTransform DebugTransform;
 
         private const string LeftButtonControlPath = "/Mouse/leftButton";
         
@@ -224,6 +229,18 @@ namespace Assets.Interaction
         {
             mRaycaster = new Raycaster(Camera.main);
             SelectionManager = new SelectionManager(SelectionBox, this, mRaycaster);
+            mInputActions = new RtsInputActions();
+            mInputActions.Map.MouseMove.performed += OnMouseMove;
+        }
+
+        void OnEnable()
+        {
+            mInputActions.Enable();
+        }
+
+        void OnDisable()
+        {
+            mInputActions.Disable();
         }
 
         public void BeginGoTo(IEnumerable<IUnitOrders> views)
@@ -364,6 +381,20 @@ namespace Assets.Interaction
         {
             mMousePosition = ctx.ReadValue<Vector2>();
             SelectionManager.Update(mMousePosition);
+
+            if (DebugTransform != null)
+            {
+                var pos = new Vector2(100, 500);
+                var screenToViewportPoint = GuiCamera.ScreenToViewportPoint(mMousePosition);
+                var worldPos = GuiCamera.ScreenToWorldPoint(pos);
+                var worldMouse = GuiCamera.ViewportPointToRay(screenToViewportPoint);
+                var canvasPos = DebugTransform.parent.InverseTransformPoint(worldPos);
+                var canvasMouse = DebugTransform.parent.InverseTransformPoint(worldMouse.origin);
+                Debug.Log($"Mouse: {mMousePosition}, {worldMouse.origin} {worldMouse} {screenToViewportPoint}#### {canvasMouse}");
+                
+                DebugTransform.position = canvasPos;
+                DebugTransform.sizeDelta = canvasMouse - canvasPos;
+            }
 
             if (mCurrentAction != null)
             {
