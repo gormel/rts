@@ -20,6 +20,25 @@ namespace Assets.Interaction
         public float Speed;
         private Vector3 mCameraVelocity = Vector3.zero;
         private bool mAltState;
+        private RtsInputActions mInputActions;
+
+        void Awake()
+        {
+            mInputActions = new RtsInputActions();
+            mInputActions.Camera.AltState.performed += OnAltState;
+            mInputActions.Camera.Pan.performed += OnPan;
+            mInputActions.Camera.Move.performed += OnMove;
+        }
+
+        void OnEnable()
+        {
+            mInputActions.Enable();
+        }
+
+        void OnDisable()
+        {
+            mInputActions.Disable();
+        }
 
         private void MoveCamera(bool up, bool right, bool down, bool left)
         {

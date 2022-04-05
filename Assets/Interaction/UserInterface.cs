@@ -209,10 +209,9 @@ namespace Assets.Interaction
         private bool mShiftState;
         private RtsInputActions mInputActions;
 
-        public Camera GuiCamera;
+        public Canvas GuiCanvas;
+        public RectTransform GuiRoot;
         
-        public RectTransform DebugTransform;
-
         private const string LeftButtonControlPath = "/Mouse/leftButton";
         
         public IEnumerable<T> FetchSelectedOrders<T>() where T : class, IGameObjectOrders
@@ -230,7 +229,13 @@ namespace Assets.Interaction
             mRaycaster = new Raycaster(Camera.main);
             SelectionManager = new SelectionManager(SelectionBox, this, mRaycaster);
             mInputActions = new RtsInputActions();
+            
             mInputActions.Map.MouseMove.performed += OnMouseMove;
+            mInputActions.Map.BeginDrag.performed += OnBeginDrag;
+            mInputActions.Map.Drop.performed += OnDrop;
+            mInputActions.Map.LeftClick.performed += OnLeftClick;
+            mInputActions.Map.RightClick.performed += OnRightClick;
+            mInputActions.Map.ShiftMod.performed += OnShiftPress;
         }
 
         void OnEnable()
@@ -356,8 +361,6 @@ namespace Assets.Interaction
             {
                 var mapPoint = GameUtils.GetFlatPosition(mapHit.HitPoint);
                 ForwardRightClick(mapPoint);
-
-                return;
             }
         }
 
@@ -380,21 +383,7 @@ namespace Assets.Interaction
         public void OnMouseMove(InputAction.CallbackContext ctx)
         {
             mMousePosition = ctx.ReadValue<Vector2>();
-            SelectionManager.Update(mMousePosition);
-
-            if (DebugTransform != null)
-            {
-                var pos = new Vector2(100, 500);
-                var screenToViewportPoint = GuiCamera.ScreenToViewportPoint(mMousePosition);
-                var worldPos = GuiCamera.ScreenToWorldPoint(pos);
-                var worldMouse = GuiCamera.ViewportPointToRay(screenToViewportPoint);
-                var canvasPos = DebugTransform.parent.InverseTransformPoint(worldPos);
-                var canvasMouse = DebugTransform.parent.InverseTransformPoint(worldMouse.origin);
-                Debug.Log($"Mouse: {mMousePosition}, {worldMouse.origin} {worldMouse} {screenToViewportPoint}#### {canvasMouse}");
-                
-                DebugTransform.position = canvasPos;
-                DebugTransform.sizeDelta = canvasMouse - canvasPos;
-            }
+            SelectionManager.Update(mMousePosition, GuiRoot, GuiCanvas);
 
             if (mCurrentAction != null)
             {

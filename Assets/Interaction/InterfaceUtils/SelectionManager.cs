@@ -35,7 +35,6 @@ namespace Assets.Interaction.Selection
 
         public void Select(IEnumerable<SelectableView> views)
         {
-            Debug.Log("Select");
             SelectInner(views, false);
         }
 
@@ -68,14 +67,12 @@ namespace Assets.Interaction.Selection
 
         public void StartBoxSelection(Vector3 mouse)
         {
-            Debug.Log("Start Box");
             mSelectionStartPosition = mouse;
             mSelectionInProgress = true;
         }
 
         public void FinishBoxSelection(bool union, Vector3 mouse)
         {
-            Debug.Log("Finish Box");
             if (!mSelectionInProgress)
                 return;
 
@@ -115,8 +112,26 @@ namespace Assets.Interaction.Selection
             var objs = isObjectExist ? new[] {viewHit.Object} : new SelectableView[0];
             SelectInner(objs, union);
         }
+        
+        private static Vector2 ScreenToRectPos(Vector2 screenPoint, RectTransform targetRect, Canvas canvas)
+        {
+            //Canvas is in Camera mode
+            if (canvas.renderMode != RenderMode.ScreenSpaceOverlay && canvas.worldCamera != null)
+            {	        
+                Vector2 anchorPos;
+                RectTransformUtility.ScreenPointToLocalPointInRectangle(targetRect, screenPoint, canvas.worldCamera, out anchorPos);
+                return anchorPos;
+            }
+            //Canvas is in Overlay mode
+            else
+            {   
+                Vector2 anchorPos = screenPoint - new Vector2(targetRect.position.x, targetRect.position.y);
+                anchorPos = new Vector2(anchorPos.x / targetRect.lossyScale.x, anchorPos.y / targetRect.lossyScale.y);
+                return anchorPos;
+            }
+        }
 
-        public void Update(Vector3 mouse)
+        public void Update(Vector3 mouse, RectTransform guiRoot, Canvas canvas)
         {
             if (mSelectionBox.gameObject == null)
                 return;
@@ -125,9 +140,11 @@ namespace Assets.Interaction.Selection
 
             if (mSelectionInProgress)
             {
-                mSelectionBox.position = new Vector3(Mathf.Min(mouse.x, mSelectionStartPosition.x), Mathf.Max(mouse.y, mSelectionStartPosition.y));
-                mSelectionBox.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Mathf.Abs(mouse.x - mSelectionStartPosition.x));
-                mSelectionBox.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, Mathf.Abs(mouse.y - mSelectionStartPosition.y));
+                var min = ScreenToRectPos(Vector3.Min(mouse, mSelectionStartPosition), guiRoot, canvas);
+                var max = ScreenToRectPos(Vector3.Max(mouse, mSelectionStartPosition), guiRoot, canvas);
+                
+                mSelectionBox.anchoredPosition = min;
+                mSelectionBox.sizeDelta = max - min;
             }
 
             if (mLastMouseOver != null)

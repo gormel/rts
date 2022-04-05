@@ -23,6 +23,7 @@ namespace Assets.Interaction.Selection
         public bool mCtrlState;
 
         private SelectionGroup mSelectionGroup;
+        private RtsInputActions mInputActions;
 
         void Awake()
         {
@@ -31,8 +32,23 @@ namespace Assets.Interaction.Selection
             
             if (Index < 1 || Index > 9)
                 return;
+            
+            mInputActions = new RtsInputActions();
+            mInputActions.Hotkeys.ControlState.performed += OnCtrlState;
+            mInputActions.Hotkeys.ShiftState.performed += OnShiftState;
+            mInputActions.Hotkeys.InteractToGroup.performed += OnInteractToGroup;
 
             StartCoroutine(InitSelectionGroup());
+        }
+
+        private void OnEnable()
+        {
+            mInputActions.Enable();
+        }
+
+        private void OnDisable()
+        {
+            mInputActions.Disable();
         }
 
         IEnumerator InitSelectionGroup()
