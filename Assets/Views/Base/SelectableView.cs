@@ -10,6 +10,13 @@ namespace Assets.Views.Base
     {
         Rect FlatBounds { get; }
     }
+
+    enum ObjectOwnershipRelation
+    {
+        My,
+        Ally,
+        Enemy
+    }
     abstract class SelectableView : MonoBehaviour, IFlatBoundsOwner
     {
         public Sprite Icon;
@@ -35,16 +42,16 @@ namespace Assets.Views.Base
 
         public bool IsMouseOver { get; set; }
 
-        public bool IsControlable
+        public ObjectOwnershipRelation OwnershipRelation
         {
-            get { return mIsControlable; }
+            get => mOwnershipRelation;
             set
             {
-                mIsControlable = value;
+                mOwnershipRelation = value;
                 for (int i = 0; i < MaterialTarget.Length; i++)
-                    MaterialTarget[i].sharedMaterial = mIsControlable ? AllyMaterial[i] : EnemyMaterial[i];
+                    MaterialTarget[i].sharedMaterial = mOwnershipRelation != ObjectOwnershipRelation.Enemy ? AllyMaterial[i] : EnemyMaterial[i];
 
-                FogOfWarBrush.SetActive(mIsControlable);
+                FogOfWarBrush.SetActive(mOwnershipRelation != ObjectOwnershipRelation.Enemy);
             }
         }
 
@@ -65,9 +72,8 @@ namespace Assets.Views.Base
         public int SelectionPriority;
 
         private List<SelectableViewProperty> mProperties = new List<SelectableViewProperty>();
-        private bool mIsControlable;
+        private ObjectOwnershipRelation mOwnershipRelation;
         public IReadOnlyList<SelectableViewProperty> Properties => mProperties;
-
 
         protected void RegisterProperty(SelectableViewProperty prop)
         {

@@ -61,6 +61,7 @@ namespace Assets.Networking
             public int BuildersLabCost  => PlayerState.BuildersLabCost;
             public int TurretAttackUpgradeCost  => PlayerState.TurretAttackUpgradeCost;
             public int BuildingDefenceUpgradeCost  => PlayerState.BuildingDefenceUpgradeCost;
+            public int Team => PlayerState.Team;
         }
         
         public event Action<IPlayerState> PlayerConnected;

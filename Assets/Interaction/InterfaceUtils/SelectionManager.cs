@@ -87,7 +87,7 @@ namespace Assets.Interaction.Selection
                     if (selectableView == null)
                         continue;
 
-                    if (!selectableView.IsControlable)
+                    if (selectableView.OwnershipRelation != ObjectOwnershipRelation.My)
                         continue;
 
                     var projected = Camera.main.WorldToScreenPoint(child.position);
@@ -108,7 +108,7 @@ namespace Assets.Interaction.Selection
         public void SelectSingle(bool union, Vector3 mouse)
         {
             var viewHit = mRaycaster.Raycast<SelectableView>(mouse);
-            var isObjectExist = !viewHit.IsEmpty() && (mUserInterface.Selected.Count == 0 || mUserInterface.Selected[0].IsControlable == viewHit.Object.IsControlable);
+            var isObjectExist = !viewHit.IsEmpty() && (mUserInterface.Selected.Count == 0 || mUserInterface.Selected[0].OwnershipRelation == viewHit.Object.OwnershipRelation);
             var objs = isObjectExist ? new[] {viewHit.Object} : new SelectableView[0];
             SelectInner(objs, union);
         }

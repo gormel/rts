@@ -3,9 +3,13 @@ syntax = "proto3";
 import "base.proto";
 
 service GameService {
-    rpc ConnectAndListenState(Empty) returns (stream GameState);
+    rpc ConnectAndListenState(ConnectRequest) returns (stream GameState);
     rpc SendChatMessage(ChatMessage) returns (Empty);
     rpc ListenChat(Empty) returns (stream ChatMessage);
+}
+
+message ConnectRequest {
+    ID Token = 1;
 }
 
 message GameState {
@@ -39,6 +43,8 @@ message PlayerState {
 
     int32 TurretAttackUpgradeCost = 17;
     int32 BuildingDefenceUpgradeCost = 18;
+
+    int32 Team = 19;
 }
 
 message MapState {

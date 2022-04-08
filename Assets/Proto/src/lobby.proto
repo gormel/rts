@@ -9,9 +9,11 @@ service LobbyService {
 
 message StartState {
     bool Start = 1;
+    ID Token = 2;
 }
 
 message UserState {
     string ID = 1;
     bool Connected = 2;
+    int32 Team = 3;
 }

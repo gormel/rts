@@ -292,7 +292,7 @@ namespace Assets.Interaction
         {
             foreach (var view in Selected)
             {
-                if (!view.IsControlable)
+                if (view.OwnershipRelation != ObjectOwnershipRelation.My)
                     continue;
 
                 view.OnRightClick(mapPoint);
@@ -344,10 +344,10 @@ namespace Assets.Interaction
             {
                 foreach (var view in Selected)
                 {
-                    if (!view.IsControlable)
+                    if (view.OwnershipRelation != ObjectOwnershipRelation.My)
                         continue;
 
-                    if (viewHit.Object.IsControlable)
+                    if (viewHit.Object.OwnershipRelation == ObjectOwnershipRelation.My)
                         view.OnRightClick(viewHit.Object);
                     else
                         view.OnEnemyRightClick(viewHit.Object);

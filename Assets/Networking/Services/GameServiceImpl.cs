@@ -54,6 +54,7 @@ namespace Assets.Networking.Services
                 RangedWarriorCost = info.player.RangedWarriorCost,
                 BuildingDefenceUpgradeCost = info.player.BuildingDefenceUpgradeCost,
                 TurretAttackUpgradeCost = info.player.TurretAttackUpgradeCost,
+                Team = info.player.Team,
             };
 
             if (collectMap)
@@ -116,7 +117,7 @@ namespace Assets.Networking.Services
             return new Empty();
         }
 
-        public override async Task ConnectAndListenState(Empty request, IServerStreamWriter<GameState> responseStream, ServerCallContext context)
+        public override async Task ConnectAndListenState(ConnectRequest request, IServerStreamWriter<GameState> responseStream, ServerCallContext context)
         {
             try
             {

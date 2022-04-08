@@ -341,7 +341,7 @@ class Root : MonoBehaviour
 
         view.Map = MapView;
         view.IsClient = true;
-        view.IsControlable = info.PlayerID == Player.ID;
+        view.OwnershipRelation = info.PlayerID == Player.ID ? ObjectOwnershipRelation.My : ;
         view.Updater = Updater;
         view.SyncContext = SyncContext;
         view.LoadModel(orders, info);

@@ -34,6 +34,8 @@ namespace Assets.Core.Game
         
         int TurretAttackUpgradeCost { get; }
         int BuildingDefenceUpgradeCost { get; }
+        
+        int Team { get; }
     }
 
     class Player : IGameObjectFactory, IPlayerState
@@ -69,12 +71,14 @@ namespace Assets.Core.Game
         public int BuildersLabCost { get; } = 200;
         public int TurretAttackUpgradeCost { get; } = 250;
         public int BuildingDefenceUpgradeCost { get; } = 200;
+        public int Team { get; }
 
         public UpgradeStorage Upgrades { get; } = new UpgradeStorage();
         
-        public Player(IGameObjectFactory externalFactory)
+        public Player(IGameObjectFactory externalFactory, int team)
         {
             mExternalFactory = externalFactory;
+            Team = team;
         }
 
         public Task<Worker> CreateWorker(Vector2 position)

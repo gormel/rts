@@ -73,7 +73,12 @@ namespace Assets.Networking.Lobby
                 {
                     mStartRequests.TryAdd(request.ID, tcs);
                     var started = await tcs.Task;
-                    await responseStream.WriteAsync(new StartState { Start = started });
+                    var startToken = started ? Guid.NewGuid() : Guid.Empty;
+                    await responseStream.WriteAsync(new StartState
+                    {
+                        Start = started, 
+                        Token = new ID() { Value = startToken.ToString() }
+                    });
                 }
             }
             catch(Exception ex)
