@@ -1,24 +1,67 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.InputSystem.OnScreen;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Utilities;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace Assets.Interaction
 {
-    class Hotkey : MonoBehaviour
+    public class Hotkey : MonoBehaviour
     {
-        public OnScreenButton KeyBinding;
+        public Button TargetButton;
         public Text View;
+        public string ActionName;
+        
+        private RtsInputActions mInputActions;
+
+        private void OnEnable()
+        {
+            mInputActions.Enable();
+        }
+
+        private void OnDisable()
+        {
+            mInputActions.Disable();
+        }
+
+        private void OnDestroy()
+        {
+            mInputActions.Dispose();
+        }
+
+        private void Awake()
+        {
+            mInputActions = new RtsInputActions();
+            if (!string.IsNullOrEmpty(ActionName))
+                mInputActions.Bindings.Get()[ActionName].performed += OnHotkey;
+        }
+
+        private void OnHotkey(InputAction.CallbackContext obj)
+        {
+            if (TargetButton != null)
+                TargetButton.onClick.Invoke();
+        }
 
         void Start()
         {
-            if (View != null && KeyBinding != null)
-                View.text = KeyBinding.control.name.ToUpper(CultureInfo.InvariantCulture);
+            if (View != null)
+            {
+                var keyboardCtrl = mInputActions.Bindings.Get()[ActionName].controls
+                    .FirstOrDefault(ctrl => InputControlPath.Matches("<Keyboard>", ctrl));
+                if (keyboardCtrl != null)
+                {
+                    foreach (var pathComponent in InputControlPath.Parse(keyboardCtrl.path))
+                    {
+                        if (!string.IsNullOrEmpty(pathComponent.name))
+                        {
+                            View.text = pathComponent.name.ToUpper();
+                            break;
+                        }
+                    }
+                }
+            }
         }
     }
 }

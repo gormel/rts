@@ -15,8 +15,8 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "ShiftState",
-                    "type": "Button",
+                    "name": "AddToGroupState",
+                    "type": "PassThrough",
                     "id": "33039073-d9d5-4819-ab5f-17f74bebc092",
                     "expectedControlType": "Button",
                     "processors": "",
@@ -24,8 +24,8 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "ControlState",
-                    "type": "Button",
+                    "name": "SetGroupState",
+                    "type": "PassThrough",
                     "id": "82fecd51-a04b-4ce0-bce5-88ab16d575ab",
                     "expectedControlType": "Button",
                     "processors": "",
@@ -140,7 +140,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "ShiftState",
+                    "action": "AddToGroupState",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -151,7 +151,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "ControlState",
+                    "action": "SetGroupState",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
@@ -181,7 +181,7 @@
                 },
                 {
                     "name": "AltState",
-                    "type": "Button",
+                    "type": "PassThrough",
                     "id": "dd24b31e-c6eb-4560-b157-b801afb1c5fc",
                     "expectedControlType": "Button",
                     "processors": "",
@@ -311,7 +311,7 @@
                 },
                 {
                     "name": "ShiftMod",
-                    "type": "Button",
+                    "type": "PassThrough",
                     "id": "b83ea040-4b3f-423c-afa3-92dddb3be034",
                     "expectedControlType": "Button",
                     "processors": "",
@@ -392,6 +392,414 @@
                     "processors": "",
                     "groups": "",
                     "action": "Drop",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "Bindings",
+            "id": "4fade705-cbd9-4cfd-bba1-246a6daee203",
+            "actions": [
+                {
+                    "name": "Move",
+                    "type": "Button",
+                    "id": "1643ccd8-c701-4c02-bfd2-05c342f422c6",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Attack",
+                    "type": "Button",
+                    "id": "fb933abc-b5dd-45f9-8740-154ae7d19d24",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Attach",
+                    "type": "Button",
+                    "id": "7cd27f06-3b05-4d93-89b0-7c0b1e1f2eeb",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "OpenBuildMenu",
+                    "type": "Button",
+                    "id": "d27e495d-04ad-4062-8fd0-bfab3c96d65f",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "SetIdleStrategy",
+                    "type": "Button",
+                    "id": "cc6d6186-59d8-491b-b6a7-ce5e87183cfe",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "SetAggressiveStrategy",
+                    "type": "Button",
+                    "id": "8d6ad90d-2950-41a2-9e41-961edb79c967",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "SetDefenciveStrategy",
+                    "type": "Button",
+                    "id": "297a5143-2216-4f3a-9f61-3baf25bd2218",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "QueueWorkerUnit",
+                    "type": "Button",
+                    "id": "e6cfffdd-4bd6-4874-87e9-da0e54ea7a14",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "FreeWorkers",
+                    "type": "Button",
+                    "id": "fe8cb88d-7a0e-46e1-a120-3eed42a40f7d",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "CollectWorkers",
+                    "type": "Button",
+                    "id": "b8d1d19b-eae4-4aeb-b9aa-c3b3f37a4acf",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Stop",
+                    "type": "Button",
+                    "id": "939daa26-213d-4d7f-b84e-3f9c5cc70b02",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "QueueMeleeWarrior",
+                    "type": "Button",
+                    "id": "6cf219be-7655-4f56-afeb-abceb0a51ac8",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "QueueRangedWarrior",
+                    "type": "Button",
+                    "id": "c8834cf9-660f-454b-92ec-b3e0c4d3bb6c",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "QueueBuildingAttackUpgrade",
+                    "type": "Button",
+                    "id": "e2c8dbad-4761-4f5c-b8d4-6e366608965e",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "QueueBuildingDefenceUpgrade",
+                    "type": "Button",
+                    "id": "862a3f72-8545-4399-8289-8d74f5a24116",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "BuildCommandCenter",
+                    "type": "Button",
+                    "id": "dc4ba644-0d32-453b-9cb5-e7df31892b72",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "BuildMiningCamp",
+                    "type": "Button",
+                    "id": "7ac2ccc9-2d4d-417f-adc3-06ed52646a1e",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "BuildBarrack",
+                    "type": "Button",
+                    "id": "448e53db-0dfb-494e-bb4f-c86a15d75b10",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "BuildTurret",
+                    "type": "Button",
+                    "id": "e42fd7b4-4f79-4ce4-a5be-88137a9859e4",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "BuildBuildersLab",
+                    "type": "Button",
+                    "id": "533e48e2-2221-4212-b78a-2026a620c324",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "7bc14984-c2b6-487b-86d6-e75e07f1bb87",
+                    "path": "<Keyboard>/m",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "42adb3e4-4981-4f8c-8b12-99072b3ec02d",
+                    "path": "<Keyboard>/a",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Attack",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b204a861-702d-4d64-b2d1-41e6393bdc03",
+                    "path": "<Keyboard>/a",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Attach",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a5cab03c-b33d-492b-b97a-7d2d1f36f607",
+                    "path": "<Keyboard>/b",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "OpenBuildMenu",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a16c8c89-3d1b-4110-8b09-e36db0849f51",
+                    "path": "<Keyboard>/z",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SetIdleStrategy",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f46ec94a-57e6-4745-9743-61a0c965119f",
+                    "path": "<Keyboard>/x",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SetAggressiveStrategy",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "77d38b39-0e43-4656-b2f0-94fbba1a5592",
+                    "path": "<Keyboard>/c",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SetDefenciveStrategy",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "158dd7c1-412f-4287-86f2-6604efabc895",
+                    "path": "<Keyboard>/w",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "QueueWorkerUnit",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "2dd39db7-6bce-4191-9ca7-44fb80eaff19",
+                    "path": "<Keyboard>/w",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "FreeWorkers",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "baa5b49c-2529-4614-a338-6eeb54701a80",
+                    "path": "<Keyboard>/c",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "CollectWorkers",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "3c40c78a-c1e0-4850-82d9-c160c2a7b870",
+                    "path": "<Keyboard>/s",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Stop",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "23f5ac76-6d22-4de6-b878-9aeeaaa893ac",
+                    "path": "<Keyboard>/e",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "QueueMeleeWarrior",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "11a06f10-c48d-4c29-9dce-daa3670904dc",
+                    "path": "<Keyboard>/r",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "QueueRangedWarrior",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "4776095a-2aa0-4276-af55-ffc69fc9ada8",
+                    "path": "<Keyboard>/a",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "QueueBuildingAttackUpgrade",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "15104e7d-594a-46c3-85ea-a24ec0015416",
+                    "path": "<Keyboard>/d",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "QueueBuildingDefenceUpgrade",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6f116a36-e49f-4523-89f4-bb1b9626c488",
+                    "path": "<Keyboard>/c",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "BuildCommandCenter",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "5933d362-8972-48e5-8a53-b72e0923c560",
+                    "path": "<Keyboard>/d",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "BuildMiningCamp",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c6942862-e1dd-49e5-bb56-023650cc9405",
+                    "path": "<Keyboard>/b",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "BuildBarrack",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "db4b47eb-4b29-47ce-98a1-80b88fcaf156",
+                    "path": "<Keyboard>/t",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "BuildTurret",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "12e526de-d9d0-439a-a692-63b7b751b7fc",
+                    "path": "<Keyboard>/g",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "BuildBuildersLab",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

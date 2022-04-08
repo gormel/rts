@@ -37,8 +37,8 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
                     ""initialStateCheck"": true
                 },
                 {
-                    ""name"": ""ShiftState"",
-                    ""type"": ""Button"",
+                    ""name"": ""AddToGroupState"",
+                    ""type"": ""PassThrough"",
                     ""id"": ""33039073-d9d5-4819-ab5f-17f74bebc092"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
@@ -46,8 +46,8 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""ControlState"",
-                    ""type"": ""Button"",
+                    ""name"": ""SetGroupState"",
+                    ""type"": ""PassThrough"",
                     ""id"": ""82fecd51-a04b-4ce0-bce5-88ab16d575ab"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
@@ -162,7 +162,7 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""ShiftState"",
+                    ""action"": ""AddToGroupState"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -173,7 +173,7 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""ControlState"",
+                    ""action"": ""SetGroupState"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -203,7 +203,7 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": ""AltState"",
-                    ""type"": ""Button"",
+                    ""type"": ""PassThrough"",
                     ""id"": ""dd24b31e-c6eb-4560-b157-b801afb1c5fc"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
@@ -333,7 +333,7 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": ""ShiftMod"",
-                    ""type"": ""Button"",
+                    ""type"": ""PassThrough"",
                     ""id"": ""b83ea040-4b3f-423c-afa3-92dddb3be034"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
@@ -418,6 +418,414 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""Bindings"",
+            ""id"": ""4fade705-cbd9-4cfd-bba1-246a6daee203"",
+            ""actions"": [
+                {
+                    ""name"": ""Move"",
+                    ""type"": ""Button"",
+                    ""id"": ""1643ccd8-c701-4c02-bfd2-05c342f422c6"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Attack"",
+                    ""type"": ""Button"",
+                    ""id"": ""fb933abc-b5dd-45f9-8740-154ae7d19d24"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Attach"",
+                    ""type"": ""Button"",
+                    ""id"": ""7cd27f06-3b05-4d93-89b0-7c0b1e1f2eeb"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""OpenBuildMenu"",
+                    ""type"": ""Button"",
+                    ""id"": ""d27e495d-04ad-4062-8fd0-bfab3c96d65f"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""SetIdleStrategy"",
+                    ""type"": ""Button"",
+                    ""id"": ""cc6d6186-59d8-491b-b6a7-ce5e87183cfe"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""SetAggressiveStrategy"",
+                    ""type"": ""Button"",
+                    ""id"": ""8d6ad90d-2950-41a2-9e41-961edb79c967"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""SetDefenciveStrategy"",
+                    ""type"": ""Button"",
+                    ""id"": ""297a5143-2216-4f3a-9f61-3baf25bd2218"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""QueueWorkerUnit"",
+                    ""type"": ""Button"",
+                    ""id"": ""e6cfffdd-4bd6-4874-87e9-da0e54ea7a14"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""FreeWorkers"",
+                    ""type"": ""Button"",
+                    ""id"": ""fe8cb88d-7a0e-46e1-a120-3eed42a40f7d"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""CollectWorkers"",
+                    ""type"": ""Button"",
+                    ""id"": ""b8d1d19b-eae4-4aeb-b9aa-c3b3f37a4acf"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Stop"",
+                    ""type"": ""Button"",
+                    ""id"": ""939daa26-213d-4d7f-b84e-3f9c5cc70b02"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""QueueMeleeWarrior"",
+                    ""type"": ""Button"",
+                    ""id"": ""6cf219be-7655-4f56-afeb-abceb0a51ac8"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""QueueRangedWarrior"",
+                    ""type"": ""Button"",
+                    ""id"": ""c8834cf9-660f-454b-92ec-b3e0c4d3bb6c"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""QueueBuildingAttackUpgrade"",
+                    ""type"": ""Button"",
+                    ""id"": ""e2c8dbad-4761-4f5c-b8d4-6e366608965e"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""QueueBuildingDefenceUpgrade"",
+                    ""type"": ""Button"",
+                    ""id"": ""862a3f72-8545-4399-8289-8d74f5a24116"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""BuildCommandCenter"",
+                    ""type"": ""Button"",
+                    ""id"": ""dc4ba644-0d32-453b-9cb5-e7df31892b72"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""BuildMiningCamp"",
+                    ""type"": ""Button"",
+                    ""id"": ""7ac2ccc9-2d4d-417f-adc3-06ed52646a1e"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""BuildBarrack"",
+                    ""type"": ""Button"",
+                    ""id"": ""448e53db-0dfb-494e-bb4f-c86a15d75b10"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""BuildTurret"",
+                    ""type"": ""Button"",
+                    ""id"": ""e42fd7b4-4f79-4ce4-a5be-88137a9859e4"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""BuildBuildersLab"",
+                    ""type"": ""Button"",
+                    ""id"": ""533e48e2-2221-4212-b78a-2026a620c324"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""7bc14984-c2b6-487b-86d6-e75e07f1bb87"",
+                    ""path"": ""<Keyboard>/m"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""42adb3e4-4981-4f8c-8b12-99072b3ec02d"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Attack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b204a861-702d-4d64-b2d1-41e6393bdc03"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Attach"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a5cab03c-b33d-492b-b97a-7d2d1f36f607"",
+                    ""path"": ""<Keyboard>/b"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""OpenBuildMenu"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a16c8c89-3d1b-4110-8b09-e36db0849f51"",
+                    ""path"": ""<Keyboard>/z"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SetIdleStrategy"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f46ec94a-57e6-4745-9743-61a0c965119f"",
+                    ""path"": ""<Keyboard>/x"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SetAggressiveStrategy"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""77d38b39-0e43-4656-b2f0-94fbba1a5592"",
+                    ""path"": ""<Keyboard>/c"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SetDefenciveStrategy"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""158dd7c1-412f-4287-86f2-6604efabc895"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""QueueWorkerUnit"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""2dd39db7-6bce-4191-9ca7-44fb80eaff19"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""FreeWorkers"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""baa5b49c-2529-4614-a338-6eeb54701a80"",
+                    ""path"": ""<Keyboard>/c"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""CollectWorkers"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""3c40c78a-c1e0-4850-82d9-c160c2a7b870"",
+                    ""path"": ""<Keyboard>/s"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Stop"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""23f5ac76-6d22-4de6-b878-9aeeaaa893ac"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""QueueMeleeWarrior"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""11a06f10-c48d-4c29-9dce-daa3670904dc"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""QueueRangedWarrior"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4776095a-2aa0-4276-af55-ffc69fc9ada8"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""QueueBuildingAttackUpgrade"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""15104e7d-594a-46c3-85ea-a24ec0015416"",
+                    ""path"": ""<Keyboard>/d"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""QueueBuildingDefenceUpgrade"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""6f116a36-e49f-4523-89f4-bb1b9626c488"",
+                    ""path"": ""<Keyboard>/c"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""BuildCommandCenter"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""5933d362-8972-48e5-8a53-b72e0923c560"",
+                    ""path"": ""<Keyboard>/d"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""BuildMiningCamp"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c6942862-e1dd-49e5-bb56-023650cc9405"",
+                    ""path"": ""<Keyboard>/b"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""BuildBarrack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""db4b47eb-4b29-47ce-98a1-80b88fcaf156"",
+                    ""path"": ""<Keyboard>/t"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""BuildTurret"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""12e526de-d9d0-439a-a692-63b7b751b7fc"",
+                    ""path"": ""<Keyboard>/g"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""BuildBuildersLab"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": []
@@ -425,8 +833,8 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
         // Hotkeys
         m_Hotkeys = asset.FindActionMap("Hotkeys", throwIfNotFound: true);
         m_Hotkeys_InteractToGroup = m_Hotkeys.FindAction("InteractToGroup", throwIfNotFound: true);
-        m_Hotkeys_ShiftState = m_Hotkeys.FindAction("ShiftState", throwIfNotFound: true);
-        m_Hotkeys_ControlState = m_Hotkeys.FindAction("ControlState", throwIfNotFound: true);
+        m_Hotkeys_AddToGroupState = m_Hotkeys.FindAction("AddToGroupState", throwIfNotFound: true);
+        m_Hotkeys_SetGroupState = m_Hotkeys.FindAction("SetGroupState", throwIfNotFound: true);
         // Camera
         m_Camera = asset.FindActionMap("Camera", throwIfNotFound: true);
         m_Camera_Pan = m_Camera.FindAction("Pan", throwIfNotFound: true);
@@ -440,6 +848,28 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
         m_Map_MouseMove = m_Map.FindAction("MouseMove", throwIfNotFound: true);
         m_Map_ShiftMod = m_Map.FindAction("ShiftMod", throwIfNotFound: true);
         m_Map_Drop = m_Map.FindAction("Drop", throwIfNotFound: true);
+        // Bindings
+        m_Bindings = asset.FindActionMap("Bindings", throwIfNotFound: true);
+        m_Bindings_Move = m_Bindings.FindAction("Move", throwIfNotFound: true);
+        m_Bindings_Attack = m_Bindings.FindAction("Attack", throwIfNotFound: true);
+        m_Bindings_Attach = m_Bindings.FindAction("Attach", throwIfNotFound: true);
+        m_Bindings_OpenBuildMenu = m_Bindings.FindAction("OpenBuildMenu", throwIfNotFound: true);
+        m_Bindings_SetIdleStrategy = m_Bindings.FindAction("SetIdleStrategy", throwIfNotFound: true);
+        m_Bindings_SetAggressiveStrategy = m_Bindings.FindAction("SetAggressiveStrategy", throwIfNotFound: true);
+        m_Bindings_SetDefenciveStrategy = m_Bindings.FindAction("SetDefenciveStrategy", throwIfNotFound: true);
+        m_Bindings_QueueWorkerUnit = m_Bindings.FindAction("QueueWorkerUnit", throwIfNotFound: true);
+        m_Bindings_FreeWorkers = m_Bindings.FindAction("FreeWorkers", throwIfNotFound: true);
+        m_Bindings_CollectWorkers = m_Bindings.FindAction("CollectWorkers", throwIfNotFound: true);
+        m_Bindings_Stop = m_Bindings.FindAction("Stop", throwIfNotFound: true);
+        m_Bindings_QueueMeleeWarrior = m_Bindings.FindAction("QueueMeleeWarrior", throwIfNotFound: true);
+        m_Bindings_QueueRangedWarrior = m_Bindings.FindAction("QueueRangedWarrior", throwIfNotFound: true);
+        m_Bindings_QueueBuildingAttackUpgrade = m_Bindings.FindAction("QueueBuildingAttackUpgrade", throwIfNotFound: true);
+        m_Bindings_QueueBuildingDefenceUpgrade = m_Bindings.FindAction("QueueBuildingDefenceUpgrade", throwIfNotFound: true);
+        m_Bindings_BuildCommandCenter = m_Bindings.FindAction("BuildCommandCenter", throwIfNotFound: true);
+        m_Bindings_BuildMiningCamp = m_Bindings.FindAction("BuildMiningCamp", throwIfNotFound: true);
+        m_Bindings_BuildBarrack = m_Bindings.FindAction("BuildBarrack", throwIfNotFound: true);
+        m_Bindings_BuildTurret = m_Bindings.FindAction("BuildTurret", throwIfNotFound: true);
+        m_Bindings_BuildBuildersLab = m_Bindings.FindAction("BuildBuildersLab", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -500,15 +930,15 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
     private readonly InputActionMap m_Hotkeys;
     private IHotkeysActions m_HotkeysActionsCallbackInterface;
     private readonly InputAction m_Hotkeys_InteractToGroup;
-    private readonly InputAction m_Hotkeys_ShiftState;
-    private readonly InputAction m_Hotkeys_ControlState;
+    private readonly InputAction m_Hotkeys_AddToGroupState;
+    private readonly InputAction m_Hotkeys_SetGroupState;
     public struct HotkeysActions
     {
         private @RtsInputActions m_Wrapper;
         public HotkeysActions(@RtsInputActions wrapper) { m_Wrapper = wrapper; }
         public InputAction @InteractToGroup => m_Wrapper.m_Hotkeys_InteractToGroup;
-        public InputAction @ShiftState => m_Wrapper.m_Hotkeys_ShiftState;
-        public InputAction @ControlState => m_Wrapper.m_Hotkeys_ControlState;
+        public InputAction @AddToGroupState => m_Wrapper.m_Hotkeys_AddToGroupState;
+        public InputAction @SetGroupState => m_Wrapper.m_Hotkeys_SetGroupState;
         public InputActionMap Get() { return m_Wrapper.m_Hotkeys; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -521,12 +951,12 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
                 @InteractToGroup.started -= m_Wrapper.m_HotkeysActionsCallbackInterface.OnInteractToGroup;
                 @InteractToGroup.performed -= m_Wrapper.m_HotkeysActionsCallbackInterface.OnInteractToGroup;
                 @InteractToGroup.canceled -= m_Wrapper.m_HotkeysActionsCallbackInterface.OnInteractToGroup;
-                @ShiftState.started -= m_Wrapper.m_HotkeysActionsCallbackInterface.OnShiftState;
-                @ShiftState.performed -= m_Wrapper.m_HotkeysActionsCallbackInterface.OnShiftState;
-                @ShiftState.canceled -= m_Wrapper.m_HotkeysActionsCallbackInterface.OnShiftState;
-                @ControlState.started -= m_Wrapper.m_HotkeysActionsCallbackInterface.OnControlState;
-                @ControlState.performed -= m_Wrapper.m_HotkeysActionsCallbackInterface.OnControlState;
-                @ControlState.canceled -= m_Wrapper.m_HotkeysActionsCallbackInterface.OnControlState;
+                @AddToGroupState.started -= m_Wrapper.m_HotkeysActionsCallbackInterface.OnAddToGroupState;
+                @AddToGroupState.performed -= m_Wrapper.m_HotkeysActionsCallbackInterface.OnAddToGroupState;
+                @AddToGroupState.canceled -= m_Wrapper.m_HotkeysActionsCallbackInterface.OnAddToGroupState;
+                @SetGroupState.started -= m_Wrapper.m_HotkeysActionsCallbackInterface.OnSetGroupState;
+                @SetGroupState.performed -= m_Wrapper.m_HotkeysActionsCallbackInterface.OnSetGroupState;
+                @SetGroupState.canceled -= m_Wrapper.m_HotkeysActionsCallbackInterface.OnSetGroupState;
             }
             m_Wrapper.m_HotkeysActionsCallbackInterface = instance;
             if (instance != null)
@@ -534,12 +964,12 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
                 @InteractToGroup.started += instance.OnInteractToGroup;
                 @InteractToGroup.performed += instance.OnInteractToGroup;
                 @InteractToGroup.canceled += instance.OnInteractToGroup;
-                @ShiftState.started += instance.OnShiftState;
-                @ShiftState.performed += instance.OnShiftState;
-                @ShiftState.canceled += instance.OnShiftState;
-                @ControlState.started += instance.OnControlState;
-                @ControlState.performed += instance.OnControlState;
-                @ControlState.canceled += instance.OnControlState;
+                @AddToGroupState.started += instance.OnAddToGroupState;
+                @AddToGroupState.performed += instance.OnAddToGroupState;
+                @AddToGroupState.canceled += instance.OnAddToGroupState;
+                @SetGroupState.started += instance.OnSetGroupState;
+                @SetGroupState.performed += instance.OnSetGroupState;
+                @SetGroupState.canceled += instance.OnSetGroupState;
             }
         }
     }
@@ -666,11 +1096,196 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
         }
     }
     public MapActions @Map => new MapActions(this);
+
+    // Bindings
+    private readonly InputActionMap m_Bindings;
+    private IBindingsActions m_BindingsActionsCallbackInterface;
+    private readonly InputAction m_Bindings_Move;
+    private readonly InputAction m_Bindings_Attack;
+    private readonly InputAction m_Bindings_Attach;
+    private readonly InputAction m_Bindings_OpenBuildMenu;
+    private readonly InputAction m_Bindings_SetIdleStrategy;
+    private readonly InputAction m_Bindings_SetAggressiveStrategy;
+    private readonly InputAction m_Bindings_SetDefenciveStrategy;
+    private readonly InputAction m_Bindings_QueueWorkerUnit;
+    private readonly InputAction m_Bindings_FreeWorkers;
+    private readonly InputAction m_Bindings_CollectWorkers;
+    private readonly InputAction m_Bindings_Stop;
+    private readonly InputAction m_Bindings_QueueMeleeWarrior;
+    private readonly InputAction m_Bindings_QueueRangedWarrior;
+    private readonly InputAction m_Bindings_QueueBuildingAttackUpgrade;
+    private readonly InputAction m_Bindings_QueueBuildingDefenceUpgrade;
+    private readonly InputAction m_Bindings_BuildCommandCenter;
+    private readonly InputAction m_Bindings_BuildMiningCamp;
+    private readonly InputAction m_Bindings_BuildBarrack;
+    private readonly InputAction m_Bindings_BuildTurret;
+    private readonly InputAction m_Bindings_BuildBuildersLab;
+    public struct BindingsActions
+    {
+        private @RtsInputActions m_Wrapper;
+        public BindingsActions(@RtsInputActions wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Move => m_Wrapper.m_Bindings_Move;
+        public InputAction @Attack => m_Wrapper.m_Bindings_Attack;
+        public InputAction @Attach => m_Wrapper.m_Bindings_Attach;
+        public InputAction @OpenBuildMenu => m_Wrapper.m_Bindings_OpenBuildMenu;
+        public InputAction @SetIdleStrategy => m_Wrapper.m_Bindings_SetIdleStrategy;
+        public InputAction @SetAggressiveStrategy => m_Wrapper.m_Bindings_SetAggressiveStrategy;
+        public InputAction @SetDefenciveStrategy => m_Wrapper.m_Bindings_SetDefenciveStrategy;
+        public InputAction @QueueWorkerUnit => m_Wrapper.m_Bindings_QueueWorkerUnit;
+        public InputAction @FreeWorkers => m_Wrapper.m_Bindings_FreeWorkers;
+        public InputAction @CollectWorkers => m_Wrapper.m_Bindings_CollectWorkers;
+        public InputAction @Stop => m_Wrapper.m_Bindings_Stop;
+        public InputAction @QueueMeleeWarrior => m_Wrapper.m_Bindings_QueueMeleeWarrior;
+        public InputAction @QueueRangedWarrior => m_Wrapper.m_Bindings_QueueRangedWarrior;
+        public InputAction @QueueBuildingAttackUpgrade => m_Wrapper.m_Bindings_QueueBuildingAttackUpgrade;
+        public InputAction @QueueBuildingDefenceUpgrade => m_Wrapper.m_Bindings_QueueBuildingDefenceUpgrade;
+        public InputAction @BuildCommandCenter => m_Wrapper.m_Bindings_BuildCommandCenter;
+        public InputAction @BuildMiningCamp => m_Wrapper.m_Bindings_BuildMiningCamp;
+        public InputAction @BuildBarrack => m_Wrapper.m_Bindings_BuildBarrack;
+        public InputAction @BuildTurret => m_Wrapper.m_Bindings_BuildTurret;
+        public InputAction @BuildBuildersLab => m_Wrapper.m_Bindings_BuildBuildersLab;
+        public InputActionMap Get() { return m_Wrapper.m_Bindings; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(BindingsActions set) { return set.Get(); }
+        public void SetCallbacks(IBindingsActions instance)
+        {
+            if (m_Wrapper.m_BindingsActionsCallbackInterface != null)
+            {
+                @Move.started -= m_Wrapper.m_BindingsActionsCallbackInterface.OnMove;
+                @Move.performed -= m_Wrapper.m_BindingsActionsCallbackInterface.OnMove;
+                @Move.canceled -= m_Wrapper.m_BindingsActionsCallbackInterface.OnMove;
+                @Attack.started -= m_Wrapper.m_BindingsActionsCallbackInterface.OnAttack;
+                @Attack.performed -= m_Wrapper.m_BindingsActionsCallbackInterface.OnAttack;
+                @Attack.canceled -= m_Wrapper.m_BindingsActionsCallbackInterface.OnAttack;
+                @Attach.started -= m_Wrapper.m_BindingsActionsCallbackInterface.OnAttach;
+                @Attach.performed -= m_Wrapper.m_BindingsActionsCallbackInterface.OnAttach;
+                @Attach.canceled -= m_Wrapper.m_BindingsActionsCallbackInterface.OnAttach;
+                @OpenBuildMenu.started -= m_Wrapper.m_BindingsActionsCallbackInterface.OnOpenBuildMenu;
+                @OpenBuildMenu.performed -= m_Wrapper.m_BindingsActionsCallbackInterface.OnOpenBuildMenu;
+                @OpenBuildMenu.canceled -= m_Wrapper.m_BindingsActionsCallbackInterface.OnOpenBuildMenu;
+                @SetIdleStrategy.started -= m_Wrapper.m_BindingsActionsCallbackInterface.OnSetIdleStrategy;
+                @SetIdleStrategy.performed -= m_Wrapper.m_BindingsActionsCallbackInterface.OnSetIdleStrategy;
+                @SetIdleStrategy.canceled -= m_Wrapper.m_BindingsActionsCallbackInterface.OnSetIdleStrategy;
+                @SetAggressiveStrategy.started -= m_Wrapper.m_BindingsActionsCallbackInterface.OnSetAggressiveStrategy;
+                @SetAggressiveStrategy.performed -= m_Wrapper.m_BindingsActionsCallbackInterface.OnSetAggressiveStrategy;
+                @SetAggressiveStrategy.canceled -= m_Wrapper.m_BindingsActionsCallbackInterface.OnSetAggressiveStrategy;
+                @SetDefenciveStrategy.started -= m_Wrapper.m_BindingsActionsCallbackInterface.OnSetDefenciveStrategy;
+                @SetDefenciveStrategy.performed -= m_Wrapper.m_BindingsActionsCallbackInterface.OnSetDefenciveStrategy;
+                @SetDefenciveStrategy.canceled -= m_Wrapper.m_BindingsActionsCallbackInterface.OnSetDefenciveStrategy;
+                @QueueWorkerUnit.started -= m_Wrapper.m_BindingsActionsCallbackInterface.OnQueueWorkerUnit;
+                @QueueWorkerUnit.performed -= m_Wrapper.m_BindingsActionsCallbackInterface.OnQueueWorkerUnit;
+                @QueueWorkerUnit.canceled -= m_Wrapper.m_BindingsActionsCallbackInterface.OnQueueWorkerUnit;
+                @FreeWorkers.started -= m_Wrapper.m_BindingsActionsCallbackInterface.OnFreeWorkers;
+                @FreeWorkers.performed -= m_Wrapper.m_BindingsActionsCallbackInterface.OnFreeWorkers;
+                @FreeWorkers.canceled -= m_Wrapper.m_BindingsActionsCallbackInterface.OnFreeWorkers;
+                @CollectWorkers.started -= m_Wrapper.m_BindingsActionsCallbackInterface.OnCollectWorkers;
+                @CollectWorkers.performed -= m_Wrapper.m_BindingsActionsCallbackInterface.OnCollectWorkers;
+                @CollectWorkers.canceled -= m_Wrapper.m_BindingsActionsCallbackInterface.OnCollectWorkers;
+                @Stop.started -= m_Wrapper.m_BindingsActionsCallbackInterface.OnStop;
+                @Stop.performed -= m_Wrapper.m_BindingsActionsCallbackInterface.OnStop;
+                @Stop.canceled -= m_Wrapper.m_BindingsActionsCallbackInterface.OnStop;
+                @QueueMeleeWarrior.started -= m_Wrapper.m_BindingsActionsCallbackInterface.OnQueueMeleeWarrior;
+                @QueueMeleeWarrior.performed -= m_Wrapper.m_BindingsActionsCallbackInterface.OnQueueMeleeWarrior;
+                @QueueMeleeWarrior.canceled -= m_Wrapper.m_BindingsActionsCallbackInterface.OnQueueMeleeWarrior;
+                @QueueRangedWarrior.started -= m_Wrapper.m_BindingsActionsCallbackInterface.OnQueueRangedWarrior;
+                @QueueRangedWarrior.performed -= m_Wrapper.m_BindingsActionsCallbackInterface.OnQueueRangedWarrior;
+                @QueueRangedWarrior.canceled -= m_Wrapper.m_BindingsActionsCallbackInterface.OnQueueRangedWarrior;
+                @QueueBuildingAttackUpgrade.started -= m_Wrapper.m_BindingsActionsCallbackInterface.OnQueueBuildingAttackUpgrade;
+                @QueueBuildingAttackUpgrade.performed -= m_Wrapper.m_BindingsActionsCallbackInterface.OnQueueBuildingAttackUpgrade;
+                @QueueBuildingAttackUpgrade.canceled -= m_Wrapper.m_BindingsActionsCallbackInterface.OnQueueBuildingAttackUpgrade;
+                @QueueBuildingDefenceUpgrade.started -= m_Wrapper.m_BindingsActionsCallbackInterface.OnQueueBuildingDefenceUpgrade;
+                @QueueBuildingDefenceUpgrade.performed -= m_Wrapper.m_BindingsActionsCallbackInterface.OnQueueBuildingDefenceUpgrade;
+                @QueueBuildingDefenceUpgrade.canceled -= m_Wrapper.m_BindingsActionsCallbackInterface.OnQueueBuildingDefenceUpgrade;
+                @BuildCommandCenter.started -= m_Wrapper.m_BindingsActionsCallbackInterface.OnBuildCommandCenter;
+                @BuildCommandCenter.performed -= m_Wrapper.m_BindingsActionsCallbackInterface.OnBuildCommandCenter;
+                @BuildCommandCenter.canceled -= m_Wrapper.m_BindingsActionsCallbackInterface.OnBuildCommandCenter;
+                @BuildMiningCamp.started -= m_Wrapper.m_BindingsActionsCallbackInterface.OnBuildMiningCamp;
+                @BuildMiningCamp.performed -= m_Wrapper.m_BindingsActionsCallbackInterface.OnBuildMiningCamp;
+                @BuildMiningCamp.canceled -= m_Wrapper.m_BindingsActionsCallbackInterface.OnBuildMiningCamp;
+                @BuildBarrack.started -= m_Wrapper.m_BindingsActionsCallbackInterface.OnBuildBarrack;
+                @BuildBarrack.performed -= m_Wrapper.m_BindingsActionsCallbackInterface.OnBuildBarrack;
+                @BuildBarrack.canceled -= m_Wrapper.m_BindingsActionsCallbackInterface.OnBuildBarrack;
+                @BuildTurret.started -= m_Wrapper.m_BindingsActionsCallbackInterface.OnBuildTurret;
+                @BuildTurret.performed -= m_Wrapper.m_BindingsActionsCallbackInterface.OnBuildTurret;
+                @BuildTurret.canceled -= m_Wrapper.m_BindingsActionsCallbackInterface.OnBuildTurret;
+                @BuildBuildersLab.started -= m_Wrapper.m_BindingsActionsCallbackInterface.OnBuildBuildersLab;
+                @BuildBuildersLab.performed -= m_Wrapper.m_BindingsActionsCallbackInterface.OnBuildBuildersLab;
+                @BuildBuildersLab.canceled -= m_Wrapper.m_BindingsActionsCallbackInterface.OnBuildBuildersLab;
+            }
+            m_Wrapper.m_BindingsActionsCallbackInterface = instance;
+            if (instance != null)
+            {
+                @Move.started += instance.OnMove;
+                @Move.performed += instance.OnMove;
+                @Move.canceled += instance.OnMove;
+                @Attack.started += instance.OnAttack;
+                @Attack.performed += instance.OnAttack;
+                @Attack.canceled += instance.OnAttack;
+                @Attach.started += instance.OnAttach;
+                @Attach.performed += instance.OnAttach;
+                @Attach.canceled += instance.OnAttach;
+                @OpenBuildMenu.started += instance.OnOpenBuildMenu;
+                @OpenBuildMenu.performed += instance.OnOpenBuildMenu;
+                @OpenBuildMenu.canceled += instance.OnOpenBuildMenu;
+                @SetIdleStrategy.started += instance.OnSetIdleStrategy;
+                @SetIdleStrategy.performed += instance.OnSetIdleStrategy;
+                @SetIdleStrategy.canceled += instance.OnSetIdleStrategy;
+                @SetAggressiveStrategy.started += instance.OnSetAggressiveStrategy;
+                @SetAggressiveStrategy.performed += instance.OnSetAggressiveStrategy;
+                @SetAggressiveStrategy.canceled += instance.OnSetAggressiveStrategy;
+                @SetDefenciveStrategy.started += instance.OnSetDefenciveStrategy;
+                @SetDefenciveStrategy.performed += instance.OnSetDefenciveStrategy;
+                @SetDefenciveStrategy.canceled += instance.OnSetDefenciveStrategy;
+                @QueueWorkerUnit.started += instance.OnQueueWorkerUnit;
+                @QueueWorkerUnit.performed += instance.OnQueueWorkerUnit;
+                @QueueWorkerUnit.canceled += instance.OnQueueWorkerUnit;
+                @FreeWorkers.started += instance.OnFreeWorkers;
+                @FreeWorkers.performed += instance.OnFreeWorkers;
+                @FreeWorkers.canceled += instance.OnFreeWorkers;
+                @CollectWorkers.started += instance.OnCollectWorkers;
+                @CollectWorkers.performed += instance.OnCollectWorkers;
+                @CollectWorkers.canceled += instance.OnCollectWorkers;
+                @Stop.started += instance.OnStop;
+                @Stop.performed += instance.OnStop;
+                @Stop.canceled += instance.OnStop;
+                @QueueMeleeWarrior.started += instance.OnQueueMeleeWarrior;
+                @QueueMeleeWarrior.performed += instance.OnQueueMeleeWarrior;
+                @QueueMeleeWarrior.canceled += instance.OnQueueMeleeWarrior;
+                @QueueRangedWarrior.started += instance.OnQueueRangedWarrior;
+                @QueueRangedWarrior.performed += instance.OnQueueRangedWarrior;
+                @QueueRangedWarrior.canceled += instance.OnQueueRangedWarrior;
+                @QueueBuildingAttackUpgrade.started += instance.OnQueueBuildingAttackUpgrade;
+                @QueueBuildingAttackUpgrade.performed += instance.OnQueueBuildingAttackUpgrade;
+                @QueueBuildingAttackUpgrade.canceled += instance.OnQueueBuildingAttackUpgrade;
+                @QueueBuildingDefenceUpgrade.started += instance.OnQueueBuildingDefenceUpgrade;
+                @QueueBuildingDefenceUpgrade.performed += instance.OnQueueBuildingDefenceUpgrade;
+                @QueueBuildingDefenceUpgrade.canceled += instance.OnQueueBuildingDefenceUpgrade;
+                @BuildCommandCenter.started += instance.OnBuildCommandCenter;
+                @BuildCommandCenter.performed += instance.OnBuildCommandCenter;
+                @BuildCommandCenter.canceled += instance.OnBuildCommandCenter;
+                @BuildMiningCamp.started += instance.OnBuildMiningCamp;
+                @BuildMiningCamp.performed += instance.OnBuildMiningCamp;
+                @BuildMiningCamp.canceled += instance.OnBuildMiningCamp;
+                @BuildBarrack.started += instance.OnBuildBarrack;
+                @BuildBarrack.performed += instance.OnBuildBarrack;
+                @BuildBarrack.canceled += instance.OnBuildBarrack;
+                @BuildTurret.started += instance.OnBuildTurret;
+                @BuildTurret.performed += instance.OnBuildTurret;
+                @BuildTurret.canceled += instance.OnBuildTurret;
+                @BuildBuildersLab.started += instance.OnBuildBuildersLab;
+                @BuildBuildersLab.performed += instance.OnBuildBuildersLab;
+                @BuildBuildersLab.canceled += instance.OnBuildBuildersLab;
+            }
+        }
+    }
+    public BindingsActions @Bindings => new BindingsActions(this);
     public interface IHotkeysActions
     {
         void OnInteractToGroup(InputAction.CallbackContext context);
-        void OnShiftState(InputAction.CallbackContext context);
-        void OnControlState(InputAction.CallbackContext context);
+        void OnAddToGroupState(InputAction.CallbackContext context);
+        void OnSetGroupState(InputAction.CallbackContext context);
     }
     public interface ICameraActions
     {
@@ -686,5 +1301,28 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
         void OnMouseMove(InputAction.CallbackContext context);
         void OnShiftMod(InputAction.CallbackContext context);
         void OnDrop(InputAction.CallbackContext context);
+    }
+    public interface IBindingsActions
+    {
+        void OnMove(InputAction.CallbackContext context);
+        void OnAttack(InputAction.CallbackContext context);
+        void OnAttach(InputAction.CallbackContext context);
+        void OnOpenBuildMenu(InputAction.CallbackContext context);
+        void OnSetIdleStrategy(InputAction.CallbackContext context);
+        void OnSetAggressiveStrategy(InputAction.CallbackContext context);
+        void OnSetDefenciveStrategy(InputAction.CallbackContext context);
+        void OnQueueWorkerUnit(InputAction.CallbackContext context);
+        void OnFreeWorkers(InputAction.CallbackContext context);
+        void OnCollectWorkers(InputAction.CallbackContext context);
+        void OnStop(InputAction.CallbackContext context);
+        void OnQueueMeleeWarrior(InputAction.CallbackContext context);
+        void OnQueueRangedWarrior(InputAction.CallbackContext context);
+        void OnQueueBuildingAttackUpgrade(InputAction.CallbackContext context);
+        void OnQueueBuildingDefenceUpgrade(InputAction.CallbackContext context);
+        void OnBuildCommandCenter(InputAction.CallbackContext context);
+        void OnBuildMiningCamp(InputAction.CallbackContext context);
+        void OnBuildBarrack(InputAction.CallbackContext context);
+        void OnBuildTurret(InputAction.CallbackContext context);
+        void OnBuildBuildersLab(InputAction.CallbackContext context);
     }
 }
