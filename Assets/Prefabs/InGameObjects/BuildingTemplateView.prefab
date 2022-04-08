@@ -554,8 +554,12 @@ MonoBehaviour:
   FogOfWarBrush: {fileID: 8677732181077557441}
   SelectionObject: {fileID: 7216380954005465380}
   MouseOverObject: {fileID: 6555883088561393150}
-  AllyMaterial: {fileID: 2100000, guid: d1435e2c5dc465247bdbb6b88465a7d5, type: 2}
-  EnemyMaterial: {fileID: 2100000, guid: c9217accbdfa61c40b586bd613264b65, type: 2}
+  AllyMaterial:
+  - {fileID: 2100000, guid: d1435e2c5dc465247bdbb6b88465a7d5, type: 2}
+  - {fileID: 2100000, guid: d1435e2c5dc465247bdbb6b88465a7d5, type: 2}
+  EnemyMaterial:
+  - {fileID: 2100000, guid: c9217accbdfa61c40b586bd613264b65, type: 2}
+  - {fileID: 2100000, guid: c9217accbdfa61c40b586bd613264b65, type: 2}
   MaterialTarget:
   - {fileID: 7721678425649418009}
   - {fileID: 4960597644044783029}
@@ -997,6 +1001,10 @@ PrefabInstance:
       propertyPath: m_ReceiveShadows
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: cc946ef350fa83248be8c877c7e277b6, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: d1435e2c5dc465247bdbb6b88465a7d5, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cc946ef350fa83248be8c877c7e277b6, type: 3}
 --- !u!23 &7721678425649418009 stripped

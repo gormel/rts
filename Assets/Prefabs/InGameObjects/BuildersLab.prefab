@@ -115,8 +115,12 @@ MonoBehaviour:
   FogOfWarBrush: {fileID: 9208546898425747913}
   SelectionObject: {fileID: 7502167812831537748}
   MouseOverObject: {fileID: 8271778884297739242}
-  AllyMaterial: {fileID: 2100000, guid: d1435e2c5dc465247bdbb6b88465a7d5, type: 2}
-  EnemyMaterial: {fileID: 2100000, guid: c9217accbdfa61c40b586bd613264b65, type: 2}
+  AllyMaterial:
+  - {fileID: 2100000, guid: d1435e2c5dc465247bdbb6b88465a7d5, type: 2}
+  - {fileID: 2100000, guid: d1435e2c5dc465247bdbb6b88465a7d5, type: 2}
+  EnemyMaterial:
+  - {fileID: 2100000, guid: c9217accbdfa61c40b586bd613264b65, type: 2}
+  - {fileID: 2100000, guid: c9217accbdfa61c40b586bd613264b65, type: 2}
   MaterialTarget:
   - {fileID: 2586800908313080171}
   - {fileID: 8973959222012648802}
@@ -653,6 +657,11 @@ PrefabInstance:
       propertyPath: m_LocalScale.z
       value: 1.5
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: b08e1026c5487ef4ea1fd66fc1483ef3,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: d1435e2c5dc465247bdbb6b88465a7d5, type: 2}
     - target: {fileID: 919132149155446097, guid: b08e1026c5487ef4ea1fd66fc1483ef3,
         type: 3}
       propertyPath: m_Name

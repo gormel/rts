@@ -437,8 +437,12 @@ MonoBehaviour:
   FogOfWarBrush: {fileID: 7508193287136253141}
   SelectionObject: {fileID: 5147795105383234188}
   MouseOverObject: {fileID: 9095736737390758960}
-  AllyMaterial: {fileID: 2100000, guid: d1435e2c5dc465247bdbb6b88465a7d5, type: 2}
-  EnemyMaterial: {fileID: 2100000, guid: c9217accbdfa61c40b586bd613264b65, type: 2}
+  AllyMaterial:
+  - {fileID: 2100000, guid: d1435e2c5dc465247bdbb6b88465a7d5, type: 2}
+  - {fileID: 2100000, guid: d1435e2c5dc465247bdbb6b88465a7d5, type: 2}
+  EnemyMaterial:
+  - {fileID: 2100000, guid: c9217accbdfa61c40b586bd613264b65, type: 2}
+  - {fileID: 2100000, guid: c9217accbdfa61c40b586bd613264b65, type: 2}
   MaterialTarget:
   - {fileID: 8479426486627286063}
   - {fileID: 5422970869185902800}
@@ -1025,6 +1029,11 @@ PrefabInstance:
       propertyPath: m_CastShadows
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -1504981713932161579, guid: 0c20070b0f5708b418b6d9f58e630467,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: d1435e2c5dc465247bdbb6b88465a7d5, type: 2}
     - target: {fileID: -927199367670048503, guid: 0c20070b0f5708b418b6d9f58e630467,
         type: 3}
       propertyPath: m_Name
@@ -1032,15 +1041,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0c20070b0f5708b418b6d9f58e630467, type: 3}
---- !u!4 &6614510919780268768 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: -4216859302048453862, guid: 0c20070b0f5708b418b6d9f58e630467,
-    type: 3}
-  m_PrefabInstance: {fileID: 2211762662904713722}
-  m_PrefabAsset: {fileID: 0}
 --- !u!23 &8479426486627286063 stripped
 MeshRenderer:
   m_CorrespondingSourceObject: {fileID: -1504981713932161579, guid: 0c20070b0f5708b418b6d9f58e630467,
+    type: 3}
+  m_PrefabInstance: {fileID: 2211762662904713722}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &6614510919780268768 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -4216859302048453862, guid: 0c20070b0f5708b418b6d9f58e630467,
     type: 3}
   m_PrefabInstance: {fileID: 2211762662904713722}
   m_PrefabAsset: {fileID: 0}

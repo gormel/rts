@@ -42,7 +42,7 @@ namespace Assets.Views.Base
             {
                 mIsControlable = value;
                 for (int i = 0; i < MaterialTarget.Length; i++)
-                    MaterialTarget[i].sharedMaterial = mIsControlable ? AllyMaterial : EnemyMaterial;
+                    MaterialTarget[i].sharedMaterial = mIsControlable ? AllyMaterial[i] : EnemyMaterial[i];
 
                 FogOfWarBrush.SetActive(mIsControlable);
             }
@@ -53,8 +53,8 @@ namespace Assets.Views.Base
         public GameObject FogOfWarBrush;
         public GameObject SelectionObject;
         public GameObject MouseOverObject;
-        public Material AllyMaterial;
-        public Material EnemyMaterial;
+        public Material[] AllyMaterial;
+        public Material[] EnemyMaterial;
         public MeshRenderer[] MaterialTarget;
 
         public ProgressBar HpBar;
