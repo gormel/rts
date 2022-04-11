@@ -15,13 +15,17 @@ namespace Assets.Networking.Lobby
     class LobbyServiceImpl : LobbyService.LobbyServiceBase
     {
         private readonly string mHostID;
+        private int mHostTeam;
+        
         private ConcurrentDictionary<string, TaskCompletionSource<bool>> mStartRequests = new ConcurrentDictionary<string, TaskCompletionSource<bool>>();
         private ConcurrentDictionary<string, AsyncQueue<UserState>> mUserStateRequests = new ConcurrentDictionary<string, AsyncQueue<UserState>>();
+        private ConcurrentDictionary<string, UserState> mActiveUsers = new ConcurrentDictionary<string, UserState>();
         public event Action<UserState> OnUserStateChanged;
 
-        public LobbyServiceImpl(string hostID)
+        public LobbyServiceImpl(string hostID, int team)
         {
             mHostID = hostID;
+            mHostTeam = team;
         }
 
         public void StartGame()
@@ -40,6 +44,17 @@ namespace Assets.Networking.Lobby
             }
         }
 
+        public void SetHostTeam(int team)
+        {
+            mHostTeam = team;
+            ReportUserState(new UserState
+            {
+                Connected = true,
+                ID = mHostID,
+                Team = mHostTeam,
+            });
+        }
+
         private void ReportUserState(UserState state)
         {
             OnUserStateChanged?.Invoke(state);
@@ -48,6 +63,11 @@ namespace Assets.Networking.Lobby
             {
                 queue.Enqueue(state.Clone());
             }
+
+            if (state.Connected)
+                GameUtils.RegistredPlayers.AddOrUpdate(state.ID, state.Team, (n, t) => state.Team);
+            else
+                GameUtils.RegistredPlayers.TryRemove(state.ID, out _);
         }
 
         public void Leave()
@@ -66,27 +86,32 @@ namespace Assets.Networking.Lobby
             {
                 var tcs = new TaskCompletionSource<bool>();
                 using (context.CancellationToken.Register(() =>
-                {
-                    tcs.SetCanceled();
-                    mStartRequests.TryRemove(request.ID, out var tcs1);
-                }))
+                       {
+                           tcs.SetCanceled();
+                       }))
                 {
                     mStartRequests.TryAdd(request.ID, tcs);
+                    mActiveUsers.AddOrUpdate(request.ID, request, (id, req) => request);
                     var started = await tcs.Task;
-                    
+
                     await responseStream.WriteAsync(new StartState
                     {
-                        Start = started, 
+                        Start = started,
                     });
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Debug.LogError(ex);
                 var reported = request.Clone();
                 reported.Connected = false;
                 ReportUserState(reported);
                 throw;
+            }
+            finally
+            {
+                mStartRequests.TryRemove(request.ID, out _);
+                mActiveUsers.TryRemove(request.ID, out _);
             }
         }
 
@@ -105,10 +130,10 @@ namespace Assets.Networking.Lobby
                 if (!mUserStateRequests.TryAdd(key, queue))
                     throw new Exception("Cannot register user state listener!");
 
-                foreach (var startRequestsKey in mStartRequests.Keys)
-                    await responseStream.WriteAsync(new UserState { ID = startRequestsKey, Connected = true });
+                await responseStream.WriteAsync(new UserState { ID = mHostID, Connected = true, Team = mHostTeam });
 
-                await responseStream.WriteAsync(new UserState { ID = mHostID, Connected = true });
+                foreach (var activeUser in mActiveUsers)
+                    await responseStream.WriteAsync(new UserState { ID = activeUser.Key, Connected = true, Team = activeUser.Value.Team });
 
                 while (true)
                 {

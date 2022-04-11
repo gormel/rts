@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Threading.Tasks;
 using Assets.Core.Game;
 using Assets.Core.GameObjects.Base;
@@ -10,6 +11,7 @@ using Assets.Views;
 using Assets.Views.Base;
 using Assets.Views.Utils;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
 using GameObject = UnityEngine.GameObject;
 
@@ -217,6 +219,7 @@ class Root : MonoBehaviour
     private RtsClient mClient;
     private Game mGame;
 
+    private ConcurrentDictionary<Guid, IPlayerState> mClientOtherPlayers = new ConcurrentDictionary<Guid, IPlayerState>();
     public IPlayerState Player { get; private set; }
     public MapView MapView { get; private set; }
 
@@ -240,11 +243,10 @@ class Root : MonoBehaviour
 
             var player = new Player(controlledFactory, GameUtils.Team);
             Player = player;
-            mGame.AddPlayer(player);
 
             mServer.MessageRecived += OnChatMessageRecived;
 
-            mServer.Listen(SyncContext, enemyFactory, allyFactory, mGame);
+            mServer.Listen(SyncContext, enemyFactory, allyFactory, mGame, player);
 
             var success = GameUtils.TryCreateBase(mGame, player, out var basePos);
             PlaseCamera(basePos);
@@ -257,7 +259,8 @@ class Root : MonoBehaviour
             mClient.MapLoaded += data => MapView = CreateMap(data, false);
             mClient.BaseCreated += pos => PlaseCamera(pos);
             mClient.PlayerConnected += state => Player = state;
-            mClient.DisconnectedFromServer +=() => SceneManager.LoadScene(GuiSceneName);
+            mClient.DisconnectedFromServer += () => SceneManager.LoadScene(GuiSceneName);
+            mClient.OtherPlayerConnected += (nick, player) => mClientOtherPlayers.AddOrUpdate(player.ID, player, (id, p) => player);
 
             mClient.MeeleeWarriorCreated += ClientOnMeeleeWarriorCreated;
             mClient.RangedWarriorCreated += ClientOnRangedWarriorCreated;
@@ -346,9 +349,16 @@ class Root : MonoBehaviour
         if (view == null)
             throw new Exception("Prefab not contains View script.");
 
+        IPlayerState player;
+        if (!mClientOtherPlayers.TryGetValue(info.PlayerID, out player))
+            throw new Exception("Unknown player.");
+
         view.Map = MapView;
         view.IsClient = true;
-        view.OwnershipRelation = info.PlayerID == Player.ID ? ObjectOwnershipRelation.My : ;
+        view.OwnershipRelation = 
+                player.ID == Player.ID ? ObjectOwnershipRelation.My : 
+                player.Team == Player.Team ? ObjectOwnershipRelation.Ally :
+                ObjectOwnershipRelation.Enemy;
         view.Updater = Updater;
         view.SyncContext = SyncContext;
         view.LoadModel(orders, info);

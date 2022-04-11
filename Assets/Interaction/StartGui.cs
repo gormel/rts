@@ -53,5 +53,10 @@ namespace Assets.Interaction
         {
             GameUtils.SaveSettings();
         }
+
+        public void Exit()
+        {
+            Application.Quit();
+        }
     }
 }

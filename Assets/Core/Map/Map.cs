@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using Assets.Core.GameObjects.Final;
+using Assets.Utils;
 using TMPro;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -26,7 +27,6 @@ namespace Assets.Core.Map
         private const int CrystalCount = 20;
         private const int MaxCrystalPlacementTryes = 30;
 
-        private const int BaseCount = 6;
         private const int BasePlacementTryes = 10;
 
         private ConcurrentBag<Vector2> mFreeBases = new ConcurrentBag<Vector2>();
@@ -83,7 +83,7 @@ namespace Assets.Core.Map
             CollectPossibleBasePositions(Data, size, possibleBasePositions);
             
             List<Vector2> basePositions;
-            while (!CreateBasePositions(possibleBasePositions, BaseCount, Math.Min(width, length) / 2.5f, out basePositions)) ;
+            while (!CreateBasePositions(possibleBasePositions, GameUtils.MaxPlayers, Math.Min(width, length) / 2.5f, out basePositions)) ;
             
             foreach (var basePosition in basePositions)
                 mFreeBases.Add(basePosition);

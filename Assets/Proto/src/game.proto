@@ -6,6 +6,7 @@ service GameService {
     rpc ConnectAndListenState(ConnectRequest) returns (stream GameState);
     rpc SendChatMessage(ChatMessage) returns (Empty);
     rpc ListenChat(Empty) returns (stream ChatMessage);
+    rpc ListenPlayerConnections(ConnectRequest) returns (stream PlayerConnection);
 }
 
 message ConnectRequest {
@@ -16,6 +17,12 @@ message GameState {
 	PlayerState Player = 1;
 	MapState Map = 2;
 	Vector BasePos = 3;
+}
+
+message PlayerConnection {
+    string Nickname = 1;
+    PlayerState Player = 2;
+    bool State = 3;
 }
 
 message PlayerState {

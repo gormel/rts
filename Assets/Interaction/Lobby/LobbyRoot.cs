@@ -9,6 +9,7 @@ using Assets.Utils;
 using Grpc.Core;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 namespace Assets.Interaction.Lobby
 {
@@ -16,6 +17,8 @@ namespace Assets.Interaction.Lobby
     {
         public LobbyPlace[] Places;
 
+        private int mTeam = 1;
+        public Text CurrentTeamText;
         public GameObject StartGameButton;
         private LobbyServiceImpl mService;
         private Server mServer;
@@ -42,7 +45,7 @@ namespace Assets.Interaction.Lobby
             {
                 mServer = new Server();
                 mServer.Ports.Add(new ServerPort(IPAddress.Any.ToString(), GameUtils.LobbyPort, ServerCredentials.Insecure));
-                mService = new LobbyServiceImpl(GameUtils.Nickname);
+                mService = new LobbyServiceImpl(GameUtils.Nickname, mTeam);
                 mServer.Services.Add(LobbyService.BindService(mService));
                 mService.OnUserStateChanged += ServiceOnOnUserStateChanged;
                 mServer.Start();
@@ -51,11 +54,31 @@ namespace Assets.Interaction.Lobby
             }
         }
 
+        public void ChangeTeam()
+        {
+            mTeam = Math.Max((mTeam + 1) % (GameUtils.MaxPlayers + 1), 1);
+            var updatedState = new UserState {ID = GameUtils.Nickname, Connected = true, Team = mTeam};
+            if (GameUtils.CurrentMode == GameMode.Client)
+                mClient.UpdateStateAsync(updatedState);
+            
+            if (GameUtils.CurrentMode == GameMode.Server)
+                mService.SetHostTeam(mTeam);
+        }
+
         private void ServiceOnOnUserStateChanged(UserState state)
         {
+            if (state.ID == GameUtils.Nickname)
+            {
+                CurrentTeamText.text = state.Team.ToString();
+                GameUtils.Team = state.Team;
+            }
+            
             if (state.Connected)
             {
-                var found = Places.FirstOrDefault(p => !p.IsBusy);
+                var found = Places.FirstOrDefault(p => p.Name == state.ID);
+                if (found == null)
+                    found = Places.FirstOrDefault(p => !p.IsBusy);
+                
                 if (found != null)
                 {
                     found.Name = state.ID;
@@ -101,7 +124,7 @@ namespace Assets.Interaction.Lobby
             try
             {
                 using (var call =
-                    mClient.ListenStart(new UserState { ID = GameUtils.Nickname }, cancellationToken: mChannel.ShutdownToken))
+                    mClient.ListenStart(new UserState { ID = GameUtils.Nickname, Connected = true, Team = mTeam }, cancellationToken: mChannel.ShutdownToken))
                 using (var stream = call.ResponseStream)
                 {
                     await stream.MoveNext(mChannel.ShutdownToken);

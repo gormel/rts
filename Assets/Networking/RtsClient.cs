@@ -65,6 +65,7 @@ namespace Assets.Networking
         }
         
         public event Action<IPlayerState> PlayerConnected;
+        public event Action<string, IPlayerState> OtherPlayerConnected;
         public event Action<IMapData> MapLoaded;
         public event Action<Vector2> BaseCreated;
         public event Action DisconnectedFromServer;
@@ -139,11 +140,13 @@ namespace Assets.Networking
             mMeeleeWarriorCreationStateListener.Destroyed += info => ObjectDestroyed?.Invoke(info);
         }
 
-        public Task Listen()
+        public async Task Listen()
         {
             mChannel = new Channel(GameUtils.IP.ToString(), GameUtils.GamePort, ChannelCredentials.Insecure);
-            return Task.WhenAll(
-                ListenGameState(mChannel, GameUtils.Nickname)
+            mGameService = new GameService.GameServiceClient(mChannel);
+            await Task.WhenAll(
+                ListenGameState(mChannel, mGameService, GameUtils.Nickname),
+                ListenPlayerConnections(mChannel, mGameService, GameUtils.Nickname)
             );
         }
 
@@ -157,7 +160,40 @@ namespace Assets.Networking
             mGameService?.SendChatMessageAsync(new ChatMessage { Nickname = nickname, StickerID = stickerID });
         }
 
-        private async Task ListenGameState(Channel channel, string nickname)
+        private async Task ListenPlayerConnections(Channel channel, GameService.GameServiceClient client, string nickname)
+        {
+            while (true)
+            {
+                try
+                {
+                    using (var call = client.ListenPlayerConnections(new ConnectRequest() { Nickname = nickname }))
+                    using (var stateStream = call.ResponseStream)
+                    {
+                        while (await stateStream.MoveNext(channel.ShutdownToken))
+                        {
+                            channel.ShutdownToken.ThrowIfCancellationRequested();
+                            var state = stateStream.Current;
+                            
+                            OtherPlayerConnected?.Invoke(state.Nickname, new ClientPlayerState
+                            {
+                                PlayerState = state.Player
+                            });
+                        }
+                    }
+
+                    break;
+                }
+                catch (RpcException e)
+                {
+                    if (e.Status.StatusCode != StatusCode.Unavailable)
+                        throw;
+
+                    await Task.Delay(TimeSpan.FromSeconds(0.5));
+                }
+            }
+        }
+
+        private async Task ListenGameState(Channel channel, GameService.GameServiceClient client, string nickname)
         {
             var mapState = new ClientMapData();
             var playerState = new ClientPlayerState();
@@ -169,8 +205,7 @@ namespace Assets.Networking
                 {
                     try
                     {
-                        mGameService = new GameService.GameServiceClient(channel);
-                        using (var call = mGameService.ConnectAndListenState(new ConnectRequest() { Nickname = nickname }))
+                        using (var call = client.ConnectAndListenState(new ConnectRequest() { Nickname = nickname }))
                         using (var stateStream = call.ResponseStream)
                         {
                             while (await stateStream.MoveNext(channel.ShutdownToken))
@@ -195,7 +230,7 @@ namespace Assets.Networking
                                         BaseCreated?.Invoke(state.BasePos.ToUnity());
                                     }, channel.ShutdownToken);
 
-                                    var tChat = ListenChat(mGameService, channel);
+                                    var tChat = ListenChat(client, channel);
 
                                     var t0 = mWorkerCreationStateListener.ListenCreations(mChannel);
                                     var t1 = mBuildingTemplateCreationStateListener.ListenCreations(mChannel);

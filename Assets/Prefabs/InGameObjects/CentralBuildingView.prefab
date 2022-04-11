@@ -998,6 +998,10 @@ MonoBehaviour:
   SelectionObject: {fileID: 1105450150754448884}
   MouseOverObject: {fileID: 6689736640801229686}
   AllyMaterial:
+  - {fileID: 2100000, guid: 0b7d2c2a295f3e343ac951b5eb433f23, type: 2}
+  - {fileID: 2100000, guid: 0b7d2c2a295f3e343ac951b5eb433f23, type: 2}
+  - {fileID: 2100000, guid: 02de3d797cec444de8b7521f81f6d01e, type: 2}
+  MyMaterial:
   - {fileID: 2100000, guid: 763cd29635dae764cb1859e261e6b35d, type: 2}
   - {fileID: 2100000, guid: 763cd29635dae764cb1859e261e6b35d, type: 2}
   - {fileID: 2100000, guid: d1435e2c5dc465247bdbb6b88465a7d5, type: 2}

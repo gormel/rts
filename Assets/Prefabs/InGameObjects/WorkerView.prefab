@@ -418,6 +418,9 @@ MonoBehaviour:
   SelectionObject: {fileID: 3911686759845523766}
   MouseOverObject: {fileID: 8327406872296863484}
   AllyMaterial:
+  - {fileID: 2100000, guid: 02de3d797cec444de8b7521f81f6d01e, type: 2}
+  - {fileID: 2100000, guid: 02de3d797cec444de8b7521f81f6d01e, type: 2}
+  MyMaterial:
   - {fileID: 2100000, guid: d1435e2c5dc465247bdbb6b88465a7d5, type: 2}
   - {fileID: 2100000, guid: d1435e2c5dc465247bdbb6b88465a7d5, type: 2}
   EnemyMaterial:

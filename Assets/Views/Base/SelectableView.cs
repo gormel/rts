@@ -49,7 +49,11 @@ namespace Assets.Views.Base
             {
                 mOwnershipRelation = value;
                 for (int i = 0; i < MaterialTarget.Length; i++)
-                    MaterialTarget[i].sharedMaterial = mOwnershipRelation != ObjectOwnershipRelation.Enemy ? AllyMaterial[i] : EnemyMaterial[i];
+                    MaterialTarget[i].sharedMaterial = 
+                        mOwnershipRelation == ObjectOwnershipRelation.My ? MyMaterial[i] :
+                        mOwnershipRelation == ObjectOwnershipRelation.Ally ? AllyMaterial[i] :
+                        mOwnershipRelation == ObjectOwnershipRelation.Enemy ? EnemyMaterial[i]
+                            : null;
 
                 FogOfWarBrush.SetActive(mOwnershipRelation != ObjectOwnershipRelation.Enemy);
             }
@@ -61,6 +65,7 @@ namespace Assets.Views.Base
         public GameObject SelectionObject;
         public GameObject MouseOverObject;
         public Material[] AllyMaterial;
+        public Material[] MyMaterial;
         public Material[] EnemyMaterial;
         public MeshRenderer[] MaterialTarget;
 

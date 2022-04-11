@@ -16,16 +16,10 @@ namespace Assets.Core.Game
 
         private IDictionary<Guid, RtsGameObject> mGameObjects = new Dictionary<Guid, RtsGameObject>();
         private ConcurrentDictionary<Guid, Action> mRequested = new ConcurrentDictionary<Guid, Action>();
-        private ICollection<Player> mPlayers = new List<Player>();
 
         public Game()
         {
             Map = new Map.Map(70, 70);
-        }
-
-        public void AddPlayer(Player player)
-        {
-            mPlayers.Add(player);
         }
 
         public Task<Guid> PlaceObject(RtsGameObject obj)
