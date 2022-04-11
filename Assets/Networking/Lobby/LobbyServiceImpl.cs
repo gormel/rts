@@ -17,7 +17,7 @@ namespace Assets.Networking.Lobby
         private readonly string mHostID;
         private ConcurrentDictionary<string, TaskCompletionSource<bool>> mStartRequests = new ConcurrentDictionary<string, TaskCompletionSource<bool>>();
         private ConcurrentDictionary<string, AsyncQueue<UserState>> mUserStateRequests = new ConcurrentDictionary<string, AsyncQueue<UserState>>();
-        public event Action<string, bool> OnUserStateChanged;
+        public event Action<UserState> OnUserStateChanged;
 
         public LobbyServiceImpl(string hostID)
         {
@@ -40,13 +40,13 @@ namespace Assets.Networking.Lobby
             }
         }
 
-        private void ReportUserState(string id, bool state)
+        private void ReportUserState(UserState state)
         {
-            OnUserStateChanged?.Invoke(id, state);
+            OnUserStateChanged?.Invoke(state);
 
             foreach (var queue in mUserStateRequests.Values)
             {
-                queue.Enqueue(new UserState { ID = id, Connected = state });
+                queue.Enqueue(state.Clone());
             }
         }
 
@@ -60,7 +60,7 @@ namespace Assets.Networking.Lobby
             if (mStartRequests.ContainsKey(request.ID) || request.ID == mHostID)
                 throw new AuthenticationException("This nickname already busy");
 
-            ReportUserState(request.ID, true);
+            ReportUserState(request);
 
             try
             {
@@ -73,20 +73,27 @@ namespace Assets.Networking.Lobby
                 {
                     mStartRequests.TryAdd(request.ID, tcs);
                     var started = await tcs.Task;
-                    var startToken = started ? Guid.NewGuid() : Guid.Empty;
+                    
                     await responseStream.WriteAsync(new StartState
                     {
                         Start = started, 
-                        Token = new ID() { Value = startToken.ToString() }
                     });
                 }
             }
             catch(Exception ex)
             {
                 Debug.LogError(ex);
-                ReportUserState(request.ID, false);
+                var reported = request.Clone();
+                reported.Connected = false;
+                ReportUserState(reported);
                 throw;
             }
+        }
+
+        public override async Task<Empty> UpdateState(UserState request, ServerCallContext context)
+        {
+            ReportUserState(request);
+            return new Empty();
         }
 
         public override async Task ListenUserState(Empty request, IServerStreamWriter<UserState> responseStream, ServerCallContext context)
@@ -99,7 +106,7 @@ namespace Assets.Networking.Lobby
                     throw new Exception("Cannot register user state listener!");
 
                 foreach (var startRequestsKey in mStartRequests.Keys)
-                    await responseStream.WriteAsync(new UserState {ID = startRequestsKey, Connected = true});
+                    await responseStream.WriteAsync(new UserState { ID = startRequestsKey, Connected = true });
 
                 await responseStream.WriteAsync(new UserState { ID = mHostID, Connected = true });
 

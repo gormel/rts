@@ -28,7 +28,7 @@ namespace Assets.Interaction
             {
                 var active = false;
 
-                if (userInterface.Selected.Count > 0 && userInterface.Selected[0].IsControlable)
+                if (userInterface.Selected.Count > 0 && userInterface.Selected[0].OwnershipRelation == ObjectOwnershipRelation.My)
                     active = userInterface.Selected[0] is T;
 
                 if (mActiveStates.TryGetValue(mTarget, out bool isActive) && isActive)

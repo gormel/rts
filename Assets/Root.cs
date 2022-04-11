@@ -233,16 +233,18 @@ class Root : MonoBehaviour
 
             var enemyFactory = new Factory(this);
             var controlledFactory = new Factory(this);
+            var allyFactory = new Factory(this);
+            allyFactory.ViewCreated += AllyFactoryOnViewCreated;
             controlledFactory.ViewCreated += ControlledFactoryOnViewCreated;
             enemyFactory.ViewCreated += EnemyFactoryOnViewCreated;
 
-            var player = new Player(controlledFactory);
+            var player = new Player(controlledFactory, GameUtils.Team);
             Player = player;
             mGame.AddPlayer(player);
 
             mServer.MessageRecived += OnChatMessageRecived;
 
-            mServer.Listen(SyncContext, enemyFactory, mGame);
+            mServer.Listen(SyncContext, enemyFactory, allyFactory, mGame);
 
             var success = GameUtils.TryCreateBase(mGame, player, out var basePos);
             PlaseCamera(basePos);
@@ -273,6 +275,11 @@ class Root : MonoBehaviour
 
             mClient.Listen();
         }
+    }
+
+    private void AllyFactoryOnViewCreated(SelectableView view)
+    {
+        view.OwnershipRelation = ObjectOwnershipRelation.Ally;
     }
 
     public void SendChatMessage(string nickname, int stickerID)
@@ -357,7 +364,7 @@ class Root : MonoBehaviour
 
     private void EnemyFactoryOnViewCreated(SelectableView obj)
     {
-        obj.IsControlable = false;
+        obj.OwnershipRelation = ObjectOwnershipRelation.Enemy;
     }
 
     private void ClientOnBuildingTemplateCreated(IBuildingTemplateOrders arg1, IBuildingTemplateInfo arg2)
@@ -392,7 +399,7 @@ class Root : MonoBehaviour
 
     private void ControlledFactoryOnViewCreated(SelectableView selectableView)
     {
-        selectableView.IsControlable = true;
+        selectableView.OwnershipRelation = ObjectOwnershipRelation.My;
     }
 
     private MapView CreateMap(IMapData map, bool generateNavMesh)

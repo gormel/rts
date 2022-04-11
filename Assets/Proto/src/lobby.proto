@@ -5,11 +5,11 @@ import "base.proto";
 service LobbyService {
     rpc ListenUserState(Empty) returns (stream UserState);
     rpc ListenStart(UserState) returns (stream StartState);
+    rpc UpdateState(UserState) returns (Empty);
 }
 
 message StartState {
     bool Start = 1;
-    ID Token = 2;
 }
 
 message UserState {

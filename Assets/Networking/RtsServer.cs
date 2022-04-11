@@ -38,11 +38,11 @@ namespace Assets.Networking
 
         public event Action<string, int> MessageRecived;
 
-        public void Listen(UnitySyncContext syncContext, IGameObjectFactory enemyFactory, Game game)
+        public void Listen(UnitySyncContext syncContext, IGameObjectFactory enemyFactory, IGameObjectFactory allyFactory, Game game)
         {
             mServer = new Server();
             mServer.Ports.Add(new ServerPort(IPAddress.Any.ToString(), GameUtils.GamePort, ServerCredentials.Insecure));
-            mServer.Services.Add(GameService.BindService(mGameService = new GameServiceImpl(game, enemyFactory, syncContext)));
+            mServer.Services.Add(GameService.BindService(mGameService = new GameServiceImpl(game, enemyFactory, allyFactory, syncContext)));
             mGameService.MessageRecived += GameServiceOnMessageRecived;
 
             var meeleeWarriorService = new MeeleeWarriorServiceImpl();

@@ -47,28 +47,30 @@ namespace Assets.Interaction.Lobby
                 mService.OnUserStateChanged += ServiceOnOnUserStateChanged;
                 mServer.Start();
                 StartGameButton.SetActive(true);
-                ServiceOnOnUserStateChanged(GameUtils.Nickname, true);
+                ServiceOnOnUserStateChanged(new UserState() { ID = GameUtils.Nickname, Connected = true, Team = 1 });
             }
         }
 
-        private void ServiceOnOnUserStateChanged(string id, bool state)
+        private void ServiceOnOnUserStateChanged(UserState state)
         {
-            if (state)
+            if (state.Connected)
             {
                 var found = Places.FirstOrDefault(p => !p.IsBusy);
                 if (found != null)
                 {
-                    found.Name = id;
+                    found.Name = state.ID;
                     found.IsBusy = true;
+                    found.Team = state.Team;
                 }
             }
             else
             {
-                var found = Places.FirstOrDefault(p => p.Name == id);
+                var found = Places.FirstOrDefault(p => p.Name == state.ID);
                 if (found != null)
                 {
                     found.IsBusy = false;
                     found.Name = "";
+                    found.Team = 1;
                 }
             }
         }
@@ -83,7 +85,7 @@ namespace Assets.Interaction.Lobby
                     while (await stream.MoveNext(mChannel.ShutdownToken))
                     {
                         var state = stream.Current;
-                        ServiceOnOnUserStateChanged(state.ID, state.Connected);
+                        ServiceOnOnUserStateChanged(state);
                     }
                 }
             }
@@ -99,7 +101,7 @@ namespace Assets.Interaction.Lobby
             try
             {
                 using (var call =
-                    mClient.ListenStart(new UserState {ID = GameUtils.Nickname }, cancellationToken: mChannel.ShutdownToken))
+                    mClient.ListenStart(new UserState { ID = GameUtils.Nickname }, cancellationToken: mChannel.ShutdownToken))
                 using (var stream = call.ResponseStream)
                 {
                     await stream.MoveNext(mChannel.ShutdownToken);

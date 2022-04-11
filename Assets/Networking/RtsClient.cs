@@ -143,7 +143,7 @@ namespace Assets.Networking
         {
             mChannel = new Channel(GameUtils.IP.ToString(), GameUtils.GamePort, ChannelCredentials.Insecure);
             return Task.WhenAll(
-                ListenGameState(mChannel)
+                ListenGameState(mChannel, GameUtils.Nickname)
             );
         }
 
@@ -157,7 +157,7 @@ namespace Assets.Networking
             mGameService?.SendChatMessageAsync(new ChatMessage { Nickname = nickname, StickerID = stickerID });
         }
 
-        private async Task ListenGameState(Channel channel)
+        private async Task ListenGameState(Channel channel, string nickname)
         {
             var mapState = new ClientMapData();
             var playerState = new ClientPlayerState();
@@ -170,7 +170,7 @@ namespace Assets.Networking
                     try
                     {
                         mGameService = new GameService.GameServiceClient(channel);
-                        using (var call = mGameService.ConnectAndListenState(new Empty()))
+                        using (var call = mGameService.ConnectAndListenState(new ConnectRequest() { Nickname = nickname }))
                         using (var stateStream = call.ResponseStream)
                         {
                             while (await stateStream.MoveNext(channel.ShutdownToken))

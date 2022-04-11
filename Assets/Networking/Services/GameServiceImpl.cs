@@ -16,13 +16,15 @@ namespace Assets.Networking.Services
 
         private readonly Game mGame;
         private readonly IGameObjectFactory mServerFactory;
+        private readonly IGameObjectFactory mAllyFactory;
         private readonly UnitySyncContext mSyncContext;
         private readonly ConcurrentDictionary<Guid, AsyncQueue<ChatMessage>> mChatListeners = new ConcurrentDictionary<Guid, AsyncQueue<ChatMessage>>();
 
-        public GameServiceImpl(Game game, IGameObjectFactory serverFactory, UnitySyncContext syncContext)
+        public GameServiceImpl(Game game, IGameObjectFactory serverFactory, IGameObjectFactory allyFactory, UnitySyncContext syncContext)
         {
             mGame = game;
             mServerFactory = serverFactory;
+            mAllyFactory = allyFactory;
             mSyncContext = syncContext;
         }
 
@@ -121,9 +123,13 @@ namespace Assets.Networking.Services
         {
             try
             {
+                int team;
+                if (!GameUtils.RegistredPlayers.TryGetValue(request.Nickname, out team))
+                    return;
+                
                 var player = await mSyncContext.Execute(() =>
                 {
-                    var pl = new Player(mServerFactory);
+                    var pl = new Player(team == GameUtils.Team ? mAllyFactory : mServerFactory, team);
                     mGame.AddPlayer(pl);
                     var success = GameUtils.TryCreateBase(mGame, pl, out var basePos);
                     return (pl, basePos, success);
