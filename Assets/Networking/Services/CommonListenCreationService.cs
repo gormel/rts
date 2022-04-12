@@ -26,7 +26,7 @@ namespace Assets.Networking.Services
             }
         }
 
-        private readonly AsyncQueue<Registration> mRegistrations = new AsyncQueue<Registration>();
+        private readonly AsyncDictionary<Guid, AsyncQueue<Registration>> mRegistrations = new AsyncDictionary<Guid, AsyncQueue<Registration>>();
         private readonly AsyncDictionary<Guid, Registration> mRegistred = new AsyncDictionary<Guid, Registration>();
         private readonly Func<TInfo, TState> mCreateState;
 
@@ -37,8 +37,11 @@ namespace Assets.Networking.Services
 
         public async Task ListenCreation(IServerStreamWriter<TState> responseStream, ServerCallContext context)
         {
+            var id = Guid.NewGuid();
+            var registrations = new AsyncQueue<Registration>();
             try
             {
+                mRegistrations.AddOrUpdate(id, registrations);
                 foreach (var key in mRegistred.Keys)
                 {
                     var reg = await mRegistred.GetValueAsync(key, context.CancellationToken);
@@ -47,9 +50,8 @@ namespace Assets.Networking.Services
 
                 while (true)
                 {
-                    var registration = await mRegistrations.DequeueAsync(context.CancellationToken);
+                    var registration = await registrations.DequeueAsync(context.CancellationToken);
                     context.CancellationToken.ThrowIfCancellationRequested();
-                    mRegistred.AddOrUpdate(registration.Info.ID, registration);
                     await responseStream.WriteAsync(mCreateState(registration.Info));
                 }
             }
@@ -57,6 +59,10 @@ namespace Assets.Networking.Services
             {
                 Debug.LogError(e);
                 throw;
+            }
+            finally
+            {
+                mRegistrations.Remove(id);
             }
         }
 
@@ -84,18 +90,24 @@ namespace Assets.Networking.Services
             }
         }
 
-        public async Task<T> ExecuteOrder<T>(ID objId, Func<TOrders, Task<T>> order)
+        public Task<T> ExecuteOrder<T>(ID objId, Func<TOrders, Task<T>> order)
         {
             Registration reg;
             if (!mRegistred.TryGetValue(Guid.Parse(objId.Value), out reg))
                 return default;
 
-            return await order(reg.Orders);
+            return order(reg.Orders);
         }
 
         public void Register(TOrders orders, TInfo info)
         {
-            mRegistrations.Enqueue(new Registration(info, orders));
+            var registration = new Registration(info, orders);
+            mRegistred.AddOrUpdate(registration.Info.ID, registration);
+            foreach (var key in mRegistrations.Keys)
+            {
+                if (mRegistrations.TryGetValue(key, out var queue))
+                    queue.Enqueue(registration);
+            }
         }
 
         public void Unregister(Guid id)
