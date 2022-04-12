@@ -84,7 +84,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 42961235479354410}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.5, y: 0.085, z: 0.5}
+  m_LocalPosition: {x: 0.5, y: 0.01, z: 0.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1950564024106983041}
@@ -277,10 +277,22 @@ MonoBehaviour:
   AllyMaterial:
   - {fileID: 2100000, guid: 02de3d797cec444de8b7521f81f6d01e, type: 2}
   - {fileID: 2100000, guid: 02de3d797cec444de8b7521f81f6d01e, type: 2}
+  - {fileID: 2100000, guid: 02de3d797cec444de8b7521f81f6d01e, type: 2}
+  - {fileID: 2100000, guid: 02de3d797cec444de8b7521f81f6d01e, type: 2}
+  - {fileID: 2100000, guid: 02de3d797cec444de8b7521f81f6d01e, type: 2}
+  - {fileID: 2100000, guid: 02de3d797cec444de8b7521f81f6d01e, type: 2}
   MyMaterial:
   - {fileID: 2100000, guid: d1435e2c5dc465247bdbb6b88465a7d5, type: 2}
   - {fileID: 2100000, guid: d1435e2c5dc465247bdbb6b88465a7d5, type: 2}
+  - {fileID: 2100000, guid: d1435e2c5dc465247bdbb6b88465a7d5, type: 2}
+  - {fileID: 2100000, guid: d1435e2c5dc465247bdbb6b88465a7d5, type: 2}
+  - {fileID: 2100000, guid: d1435e2c5dc465247bdbb6b88465a7d5, type: 2}
+  - {fileID: 2100000, guid: d1435e2c5dc465247bdbb6b88465a7d5, type: 2}
   EnemyMaterial:
+  - {fileID: 2100000, guid: c9217accbdfa61c40b586bd613264b65, type: 2}
+  - {fileID: 2100000, guid: c9217accbdfa61c40b586bd613264b65, type: 2}
+  - {fileID: 2100000, guid: c9217accbdfa61c40b586bd613264b65, type: 2}
+  - {fileID: 2100000, guid: c9217accbdfa61c40b586bd613264b65, type: 2}
   - {fileID: 2100000, guid: c9217accbdfa61c40b586bd613264b65, type: 2}
   - {fileID: 2100000, guid: c9217accbdfa61c40b586bd613264b65, type: 2}
   MaterialTarget:
@@ -379,7 +391,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 395278827864331297}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.5, y: 0.085, z: 0.5}
+  m_LocalPosition: {x: 0.5, y: 0.01, z: 0.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 143175771652966936}

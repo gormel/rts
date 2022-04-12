@@ -49,12 +49,12 @@ namespace Assets.Interaction
             if (View != null)
             {
                 var keyboardCtrl = mInputActions.Bindings.Get()[ActionName].controls
-                    .FirstOrDefault(ctrl => InputControlPath.Matches("<Keyboard>", ctrl));
+                    .FirstOrDefault(ctrl => InputControlPath.Matches("<Keyboard>/*", ctrl));
                 if (keyboardCtrl != null)
                 {
                     foreach (var pathComponent in InputControlPath.Parse(keyboardCtrl.path))
                     {
-                        if (!string.IsNullOrEmpty(pathComponent.name))
+                        if (!string.IsNullOrEmpty(pathComponent.name) && pathComponent.name != "Keyboard")
                         {
                             View.text = pathComponent.name.ToUpper();
                             break;
