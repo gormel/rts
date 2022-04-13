@@ -85,7 +85,10 @@ namespace Assets.Utils
 
         public static bool TryCreateBase(Game game, Player player, out Vector2 basePos)
         {
-            player.Money.Store(170000);
+            player.Money.Store(170);
+#if DEVELOPMENT_BUILD
+            player.Money.Store(100000);
+#endif
             if (!game.Map.TryAllocateBase(out basePos))
                 return false;
 

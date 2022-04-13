@@ -84,8 +84,8 @@ namespace Assets.Interaction
             
             if (!mFocused)
                 return;
-
-#if UNITY_EDITOR
+            
+#if DEVELOPMENT_BUILD
             if (!mAltState)
                 return;
 #endif
