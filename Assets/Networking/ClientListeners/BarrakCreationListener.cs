@@ -73,6 +73,15 @@ namespace Assets.Networking.ClientListeners
             }).ResponseAsync;
             return resp.Base.Result;
         }
+
+        public Task CancelOrderAt(int index)
+        {
+            return mClient.CancelOredrAsync(new CancelQueuedRequest
+            {
+                ObjectID = new ID { Value = mID },
+                Index = index,
+            }).ResponseAsync;
+        }
     }
 
     class BarrakCreationListener : CommonCreationStateListener<

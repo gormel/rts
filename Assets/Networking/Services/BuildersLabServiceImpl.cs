@@ -50,11 +50,11 @@ namespace Assets.Networking.Services
             });
         }
 
-        public override Task<Empty> CancelUpgrade(CancelUpgradeRequest request, ServerCallContext context)
+        public override Task<Empty> CancelOredr(CancelQueuedRequest request, ServerCallContext context)
         {
-            return mCommonService.ExecuteOrder(request.LabID, async orders =>
+            return mCommonService.ExecuteOrder(request.ObjectID, async orders =>
             {
-                await orders.CancelResearch();
+                await orders.CancelOrderAt(request.Index);
                 return new Empty();
             });
         }

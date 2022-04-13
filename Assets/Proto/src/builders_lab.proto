@@ -6,7 +6,7 @@ service BuildersLabService {
     rpc ListenCreation (Empty) returns (stream BuildersLabState);
     rpc ListenState(ID) returns (stream BuildersLabState);
 
-    rpc CancelUpgrade(CancelUpgradeRequest) returns (Empty);
+    rpc CancelOredr(CancelQueuedRequest) returns (Empty);
 
     rpc QueueAttackUpgrade(QueueAttackUpgradeRequest) returns (Empty);
     rpc QueueDefenceUpgrade(QueueDefenceUpgradeRequest) returns (Empty);

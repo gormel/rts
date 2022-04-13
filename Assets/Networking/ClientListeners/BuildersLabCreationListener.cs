@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Assets.Core.GameObjects.Base;
 using Assets.Utils;
+using Google.Protobuf;
 using Grpc.Core;
 using UnityEngine;
 
@@ -35,11 +36,12 @@ namespace Assets.Networking.ClientListeners
             }).ResponseAsync;
         }
 
-        public Task CancelResearch()
+        public Task CancelOrderAt(int index)
         {
-            return mClient.CancelUpgradeAsync(new CancelUpgradeRequest
+            return mClient.CancelOredrAsync(new CancelQueuedRequest
             {
-                LabID = new ID { Value = mID }
+                ObjectID = new ID {Value = mID},
+                Index = index
             }).ResponseAsync;
         }
     }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Assets.Core.Game;
 using Assets.Core.GameObjects.Base;
+using Assets.Core.GameObjects.Utils;
 using UnityEngine;
 
 namespace Assets.Core.GameObjects.Base
@@ -11,9 +12,8 @@ namespace Assets.Core.GameObjects.Base
     {
     }
 
-    interface ILaboratoryBuildingOrders : IBuildingOrders
+    interface ILaboratoryBuildingOrders : IBuildingOrders, IQueueOrdersOrders
     {
-        Task CancelResearch();
     }
 
     abstract class LaboratoryBuilding : Building, ILaboratoryBuildingInfo, ILaboratoryBuildingOrders
@@ -54,7 +54,7 @@ namespace Assets.Core.GameObjects.Base
         public float Progress => 1 - (float)(mUpgradeTimeLeft.TotalSeconds / mUpgradeTime.TotalSeconds);
         public int Queued => mUpgradesQueue.Count + (mProcessingUpgrade == null ? 0 : 1);
 
-        private readonly Queue<(IUpgradeDecorator Upgrade, TimeSpan Time)> mUpgradesQueue = new Queue<(IUpgradeDecorator, TimeSpan)>();
+        private readonly IndexedQueue<(IUpgradeDecorator Upgrade, TimeSpan Time)> mUpgradesQueue = new IndexedQueue<(IUpgradeDecorator, TimeSpan)>();
         private IUpgradeDecorator mProcessingUpgrade;
         private TimeSpan mUpgradeTime = TimeSpan.FromSeconds(1);
         private TimeSpan mUpgradeTimeLeft = TimeSpan.Zero;
@@ -96,14 +96,22 @@ namespace Assets.Core.GameObjects.Base
             }
         }
 
-        public Task CancelResearch()
+        public Task CancelOrderAt(int index)
         {
-            if (mProcessingUpgrade == null)
+            if (index == 0)
+            {
+                if (mProcessingUpgrade == null)
+                    return Task.CompletedTask;
+
+                mProcessingUpgrade.CancelUpgrade();
+                mUpgradeTimeLeft = TimeSpan.Zero;
+                mProcessingUpgrade = null;
                 return Task.CompletedTask;
-            
-            mProcessingUpgrade.CancelUpgrade();
-            mUpgradeTimeLeft = TimeSpan.Zero;
-            mProcessingUpgrade = null;
+            }
+
+            if (mUpgradesQueue.TryRemoveAt(index - 1, out var upgrade)) 
+                upgrade.Upgrade.CancelUpgrade();
+
             return Task.CompletedTask;
         }
     }

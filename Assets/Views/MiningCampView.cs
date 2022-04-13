@@ -13,6 +13,7 @@ namespace Assets.Views
         public override Rect FlatBounds => new Rect(Info.Position, Info.Size);
 
         public GameObject[] WorkerIndicators;
+        public LineRenderer WaypointLine;
 
         protected override void OnLoad()
         {
@@ -31,6 +32,16 @@ namespace Assets.Views
                     WorkerIndicators[i].SetActive(Info.WorkerCount > i);
                 }
             }
+            
+            WaypointLine.gameObject.SetActive(IsSelected && OwnershipRelation == ObjectOwnershipRelation.My);
+
+            WaypointLine.SetPosition(0, Map.GetWorldPosition(Info.Position + Info.Size / 2));
+            WaypointLine.SetPosition(1, Map.GetWorldPosition(Info.Waypoint));
+        }
+
+        public override void OnRightClick(Vector2 position)
+        {
+            Orders.SetWaypoint(position);
         }
     }
 }

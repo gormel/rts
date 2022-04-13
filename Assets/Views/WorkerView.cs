@@ -25,6 +25,8 @@ namespace Assets.Views
             Updater.Register(Info.ID, () =>
             {
                 gameObject.SetActive(!Info.IsAttachedToMiningCamp);
+                if (Info.IsAttachedToMiningCamp && IsSelected)
+                    IsSelected = false;
             });
         }
 

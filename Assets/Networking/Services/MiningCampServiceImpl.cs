@@ -53,6 +53,15 @@ namespace Assets.Networking.Services
             });
         }
 
+        public override Task<Empty> SetWaypoint(SetWaypointRequest request, ServerCallContext context)
+        {
+            return mCommonService.ExecuteOrder(request.BuildingID, async orders =>
+            {
+                await orders.SetWaypoint(request.Waypoint.ToUnity());
+                return new Empty();
+            });
+        }
+
         public void Register(IMinigCampOrders orders, IMinigCampInfo info)
         {
             mCommonService.Register(orders, info);

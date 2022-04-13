@@ -6,6 +6,8 @@ service MiningCampService {
     rpc ListenCreation (Empty) returns (stream MiningCampState);
     rpc ListenState(ID) returns (stream MiningCampState);
 
+    rpc SetWaypoint(SetWaypointRequest) returns (Empty);
+
     rpc FreeWorker(FreeWorkerRequest) returns (Empty);
     rpc CollectWorkers(CollectWorkersRequest) returns (Empty);
 }
@@ -22,4 +24,5 @@ message MiningCampState {
     BuildingState Base = 1;
     float MiningSpeed = 2;
     int32 WorkerCount = 3;
+    Vector Waypoint = 4;
 }

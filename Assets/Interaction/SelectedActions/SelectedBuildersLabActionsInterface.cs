@@ -44,13 +44,5 @@ namespace Assets.Interaction
                 break;
             }
         }
-
-        public void CancelUpgrade()
-        {
-            foreach (var view in Interface.Selected.OfType<BuildersLabView>())
-            {
-                view.Orders.CancelResearch();
-            }
-        }
     }
 }

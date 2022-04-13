@@ -25,6 +25,21 @@ namespace Assets.Core.GameObjects.Base
         float Progress { get; }
     }
 
+    interface IQueueOrdersOrders
+    {
+        Task CancelOrderAt(int index);
+    }
+
+    interface IWaypointInfo
+    {
+        Vector2 Waypoint { get; }
+    }
+    
+    interface IWaypointOrders
+    {
+        Task SetWaypoint(Vector2 waypoint);
+    }
+
     interface IAttackerInfo : IGameObjectInfo
     {
         bool IsAttacks { get; }

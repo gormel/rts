@@ -8,14 +8,12 @@ using UnityEngine;
 
 namespace Assets.Core.GameObjects.Base {
 
-    interface IFactoryBuildingInfo : IBuildingInfo, IQueueOrdersInfo
+    interface IFactoryBuildingInfo : IBuildingInfo, IQueueOrdersInfo, IWaypointInfo
     {
-        Vector2 Waypoint { get; }
     }
 
-    interface IFactoryBuildingOrders : IBuildingOrders
+    interface IFactoryBuildingOrders : IBuildingOrders, IQueueOrdersOrders, IWaypointOrders
     {
-        Task SetWaypoint(Vector2 waypoint);
     }
 
     abstract class FactoryBuilding : Building, IFactoryBuildingInfo, IFactoryBuildingOrders
@@ -25,12 +23,14 @@ namespace Assets.Core.GameObjects.Base {
             public TimeSpan Time { get; }
             private readonly Func<bool> mPrepare;
             private Action mDoing;
+            private readonly Action mCancel;
 
-            public Order(TimeSpan time, Func<bool> prepare, Action doing)
+            public Order(TimeSpan time, Func<bool> prepare, Action doing, Action cancel)
             {
                 Time = time;
                 mPrepare = prepare;
                 mDoing = doing;
+                mCancel = cancel;
             }
 
             public void Doing()
@@ -41,6 +41,11 @@ namespace Assets.Core.GameObjects.Base {
             public bool Prepare()
             {
                 return mPrepare();
+            }
+
+            public void Cancel()
+            {
+                mCancel();
             }
         }
 
@@ -128,7 +133,7 @@ namespace Assets.Core.GameObjects.Base {
         private readonly Game.Game mGame;
         private readonly Vector2 mInitialPosition;
         private readonly IPlacementService mPlacementService;
-        private readonly Queue<Order> mOrders = new Queue<Order>();
+        private readonly IndexedQueue<Order> mOrders = new IndexedQueue<Order>();
         private readonly BTree mIntelligence;
         private Order mLockedOrder;
         private TimeSpan mLockedProgress;
@@ -198,6 +203,11 @@ namespace Assets.Core.GameObjects.Base {
                 await mPlacementService.ReleasePoint(allocatedPoint.ID);
                 if (!new Rect(Position, Size).Contains(Waypoint))
                     await unit.GoTo(Waypoint);
+            }, () =>
+            {
+                Queued--;
+                Player.Limit.Store(1);
+                mPlacementService.ReleasePoint(allocatedPoint.ID);
             }));
             return true;
         }
@@ -205,6 +215,26 @@ namespace Assets.Core.GameObjects.Base {
         public override void Update(TimeSpan deltaTime)
         {
             mIntelligence.Update(deltaTime);
+        }
+
+        public Task CancelOrderAt(int index)
+        {
+            if (index == 0)
+            {
+                if (mLockedOrder == null)
+                    return Task.CompletedTask;
+                
+                mLockedOrder.Cancel();
+                Progress = 0;
+                mLockedProgress = TimeSpan.Zero;
+                mLockedOrder = null;
+                return Task.CompletedTask;
+            }
+            
+            if (mOrders.TryRemoveAt(index - 1, out var order))
+                order.Cancel();
+            
+            return Task.CompletedTask;
         }
     }
 }

@@ -31,6 +31,15 @@ namespace Assets.Networking
         {
             return mClient.SetWaypointAsync(new SetWaypointRequest { BuildingID = new ID { Value = mID }, Waypoint = waypoint.ToGrpc() }).ResponseAsync;
         }
+
+        public Task CancelOrderAt(int index)
+        {
+            return mClient.CancelOredrAsync(new CancelQueuedRequest
+            {
+                ObjectID = new ID { Value = mID },
+                Index = index,
+            }).ResponseAsync;
+        }
     }
 
     class ClientCentralBuildingState : ICentralBuildingInfo, IStateHolder<CentralBuildingState>

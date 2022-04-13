@@ -35,6 +35,15 @@ namespace Assets.Networking
                 CampID = new ID { Value = mID },
             }).ResponseAsync;
         }
+
+        public Task SetWaypoint(Vector2 waypoint)
+        {
+            return mClient.SetWaypointAsync(new SetWaypointRequest
+            {
+                BuildingID = new ID { Value = mID },
+                Waypoint = waypoint.ToGrpc()
+            }).ResponseAsync;
+        }
     }
     class ClientMiningCampInfo : IMinigCampInfo, IStateHolder<MiningCampState>
     {
@@ -49,6 +58,7 @@ namespace Assets.Networking
         public float MaxHealth => State.Base.Base.MaxHealth;
         public float ViewRadius => State.Base.Base.ViewRadius;
         public int WorkerCount => State.WorkerCount;
+        public Vector2 Waypoint => State.Waypoint.ToUnity();
 
         public void ResetState()
         {

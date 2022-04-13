@@ -95,6 +95,7 @@ message SetStrategyRequest {
 	int32 Strategy = 2;
 }
 
-message CancelUpgradeRequest {
-	ID LabID = 1;
+message CancelQueuedRequest {
+	ID ObjectID = 1;
+	int32 Index = 2;
 }

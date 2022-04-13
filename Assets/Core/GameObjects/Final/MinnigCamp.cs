@@ -9,13 +9,13 @@ using UnityEngine;
 
 namespace Assets.Core.GameObjects.Final
 {
-    interface IMinigCampInfo : IBuildingInfo
+    interface IMinigCampInfo : IBuildingInfo, IWaypointInfo
     {
         float MiningSpeed { get; }
         int WorkerCount { get; }
     }
 
-    interface IMinigCampOrders : IBuildingOrders
+    interface IMinigCampOrders : IBuildingOrders, IWaypointOrders
     {
         Task FreeWorker();
         Task CollectWorkers();
@@ -35,6 +35,8 @@ namespace Assets.Core.GameObjects.Final
         public float MiningSpeed => BaseMiningSpeed + WorkerMiningSpeed * mWorkers.Count;
         public int WorkerCount => mWorkers.Count;
 
+        public Vector2 Waypoint { get; protected set; }
+
         private double mMinedTemp;
         private int mMinedTotal;
 
@@ -52,7 +54,7 @@ namespace Assets.Core.GameObjects.Final
 
         public override void OnAddedToGame()
         {
-            Position = mInitialPosition;
+            Waypoint = Position = mInitialPosition;
             Size = BuildingSize;
             ViewRadius = 2;
             
@@ -99,13 +101,16 @@ namespace Assets.Core.GameObjects.Final
             if (mWorkers.Count == 0)
                 return;
             
-            var point = await PlacementService.TryAllocatePoint();
+            var point = await PlacementService.TryAllocateNearestPoint(Waypoint);
             if (point == PlacementPoint.Invalid)
                 return;
 
             var unit = mWorkers.Pop();
             unit.IsAttachedToMiningCamp = false;
             await unit.PathFinder.Teleport(point.Position, mGame.Map.Data);
+            if (!new Rect(Position, Size).Contains(Waypoint))
+                await unit.GoTo(Waypoint);
+            
             await PlacementService.ReleasePoint(point.ID);
         }
 
@@ -125,6 +130,12 @@ namespace Assets.Core.GameObjects.Final
 
             foreach (var worker in found) 
                 await worker.AttachToMiningCamp(ID);
+        }
+
+        public Task SetWaypoint(Vector2 waypoint)
+        {
+            Waypoint = waypoint;
+            return Task.CompletedTask;
         }
     }
 }

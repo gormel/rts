@@ -8,6 +8,8 @@ service BarrakService {
 
     rpc SetWaypoint(SetWaypointRequest) returns (Empty);
 
+    rpc CancelOredr(CancelQueuedRequest) returns (Empty);
+
     rpc QueueRanged(QueueRangedRequest) returns (QueueRangedResult);
     rpc QueueMeelee(QueueMeeleeRequest) returns (QueueMeeleeResult);
 }
