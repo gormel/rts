@@ -22,6 +22,7 @@ namespace Assets.Networking.Services
                 Base = StateUtils.CreateBuildingState(info),
                 MiningSpeed = info.MiningSpeed,
                 WorkerCount = info.WorkerCount,
+                Waypoint = info.Waypoint.ToGrpc(),
             };
         }
 

@@ -48,6 +48,15 @@ namespace Assets.Networking.Services
             });
         }
 
+        public override Task<Empty> CancelOredr(CancelQueuedRequest request, ServerCallContext context)
+        {
+            return mCommonService.ExecuteOrder(request.ObjectID, async orders =>
+            {
+                await orders.CancelOrderAt(request.Index);
+                return new Empty();
+            });
+        }
+
         public void Register(ICentralBuildingOrders orders, ICentralBuildingInfo info)
         {
             mCommonService.Register(orders, info);
