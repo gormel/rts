@@ -152,11 +152,11 @@ Material:
     - Color_7D6C0915: {r: 0.06644432, g: 0.079958424, b: 0.2871746, a: 1}
     - Color_7E137C3D: {r: 0, g: 0.7635951, b: 1, a: 0}
     - _BASE_COLOR: {r: 0, g: 0, b: 0, a: 0}
-    - _BaseColor: {r: 0, g: 0, b: 0, a: 0.64705884}
+    - _BaseColor: {r: 0, g: 0.19350195, b: 1, a: 1}
     - _CameraFadeParams: {r: 0, g: Infinity, b: 0, a: 0}
     - _Color: {r: 0, g: 0.34710598, b: 1, a: 1}
     - _EMISSION_COLOR: {r: 0, g: 0, b: 0, a: 0}
-    - _EmissionColor: {r: 0.83137256, g: 0.95686275, b: 2.9960785, a: 0}
+    - _EmissionColor: {r: 0, g: 0.3333478, b: 1.7207954, a: 0}
     - _SPECULAR_COLOR: {r: 1, g: 1, b: 1, a: 0}
     - _SoftParticleFadeParams: {r: 0, g: 0, b: 0, a: 0}
     - _SpecColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}
