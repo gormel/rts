@@ -103,6 +103,7 @@ namespace Assets.Interaction.Selection
             }
 
             mSelectionInProgress = false;
+            mSelectionBox.gameObject.SetActive(mSelectionInProgress);
         }
 
         public void SelectSingle(bool union, Vector3 mouse)

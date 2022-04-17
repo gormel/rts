@@ -22,6 +22,17 @@ namespace Assets.Interaction
         private bool mAltState;
         private RtsInputActions mInputActions;
 
+        private bool mMouseLeft;
+        private bool mMouseUp;
+        private bool mMouseRight;
+        private bool mMouseDown;
+        
+        private bool mKeyboardLeft;
+        private bool mKeyboardUp;
+        private bool mKeyboardRight;
+        private bool mKeyboardDown;
+        
+
         void Awake()
         {
             mInputActions = new RtsInputActions();
@@ -40,23 +51,24 @@ namespace Assets.Interaction
             mInputActions.Disable();
         }
 
-        private void MoveCamera(bool up, bool right, bool down, bool left)
+        private Vector3 CalcCameraVelocity(bool up, bool right, bool down, bool left)
         {
-            mCameraVelocity = Vector3.zero;
+            var velocity = Vector3.zero;
             
             if (left)
-                mCameraVelocity -= RightMove;
+                velocity -= RightMove;
 
             if (right)
-                mCameraVelocity += RightMove;
+                velocity += RightMove;
 
             if (down)
-                mCameraVelocity -= UpMove;
+                velocity -= UpMove;
 
             if (up)
-                mCameraVelocity += UpMove;
+                velocity += UpMove;
 
-            mCameraVelocity.Normalize();
+            velocity.Normalize();
+            return velocity;
         }
 
         public void OnMove(InputAction.CallbackContext ctx)
@@ -64,10 +76,14 @@ namespace Assets.Interaction
             var xy = ctx.ReadValue<Vector2>();
             var sx = xy.x;
             var sy = xy.y;
+            
             if (!mFocused)
                 return;
 
-            MoveCamera(sy > 0, sx > 0, sy < 0, sx < 0);
+            mKeyboardLeft = sx < 0;
+            mKeyboardUp = sy > 0;
+            mKeyboardRight = sx > 0;
+            mKeyboardDown = sy < 0;
             
         }
 
@@ -82,6 +98,11 @@ namespace Assets.Interaction
             var mouseX = xy.x;
             var mouseY = xy.y;
             
+            mMouseLeft = false;
+            mMouseUp = false;
+            mMouseRight = false;
+            mMouseDown = false;
+            
             if (!mFocused)
                 return;
             
@@ -89,15 +110,20 @@ namespace Assets.Interaction
             if (!mAltState)
                 return;
 #endif
-            MoveCamera(
-                mouseY >= Screen.height - Border, 
-                mouseX >= Screen.width - Border, 
-                mouseY <= Border, 
-                mouseX <= Border);
+            mMouseLeft = mouseX <= Border;
+            mMouseUp = mouseY >= Screen.height - Border;
+            mMouseRight = mouseX >= Screen.width - Border;
+            mMouseDown = mouseY <= Border;
         }
 
         void Update()
         {
+            mCameraVelocity = CalcCameraVelocity(
+                mMouseUp || mKeyboardUp, 
+                mMouseRight || mKeyboardRight, 
+                mMouseDown || mKeyboardDown, 
+                mMouseLeft || mKeyboardLeft);
+            
             transform.localPosition += mCameraVelocity * Speed * Time.deltaTime;
         }
 
