@@ -227,7 +227,7 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
                     ""name"": ""2D Vector"",
                     ""id"": ""ff397edf-b0d3-460e-9bf6-c3257ba09295"",
                     ""path"": ""2DVector(mode=2)"",
-                    ""interactions"": """",
+                    ""interactions"": ""Press(behavior=2)"",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Move"",
@@ -296,6 +296,15 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
             ""id"": ""4383e8bd-d797-4141-8f1c-cb49dd05a4be"",
             ""actions"": [
                 {
+                    ""name"": ""BeginDrag"",
+                    ""type"": ""Button"",
+                    ""id"": ""ddeb5d47-9d62-46c1-b53e-bebfb6ff7426"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
                     ""name"": ""LeftClick"",
                     ""type"": ""Button"",
                     ""id"": ""7c924dd8-46b3-4683-8de0-475c8c3ff8e9"",
@@ -311,15 +320,6 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": ""Tap"",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""BeginDrag"",
-                    ""type"": ""Button"",
-                    ""id"": ""ddeb5d47-9d62-46c1-b53e-bebfb6ff7426"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
                     ""initialStateCheck"": false
                 },
                 {
@@ -351,28 +351,6 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
                 }
             ],
             ""bindings"": [
-                {
-                    ""name"": """",
-                    ""id"": ""1e3edfca-e0cf-4659-a50a-3cf304381ae5"",
-                    ""path"": ""<Mouse>/leftButton"",
-                    ""interactions"": ""Press"",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""BeginDrag"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""2246c73c-c22a-4ea2-b3be-cae8d54d7272"",
-                    ""path"": ""<Mouse>/leftButton"",
-                    ""interactions"": ""Tap"",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""LeftClick"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
                 {
                     ""name"": """",
                     ""id"": ""bc751bbb-198e-430f-a8b7-739191980e1d"",
@@ -414,6 +392,28 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Drop"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""1e3edfca-e0cf-4659-a50a-3cf304381ae5"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""BeginDrag"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""2246c73c-c22a-4ea2-b3be-cae8d54d7272"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": ""Tap"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""LeftClick"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -842,9 +842,9 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
         m_Camera_AltState = m_Camera.FindAction("AltState", throwIfNotFound: true);
         // Map
         m_Map = asset.FindActionMap("Map", throwIfNotFound: true);
+        m_Map_BeginDrag = m_Map.FindAction("BeginDrag", throwIfNotFound: true);
         m_Map_LeftClick = m_Map.FindAction("LeftClick", throwIfNotFound: true);
         m_Map_RightClick = m_Map.FindAction("RightClick", throwIfNotFound: true);
-        m_Map_BeginDrag = m_Map.FindAction("BeginDrag", throwIfNotFound: true);
         m_Map_MouseMove = m_Map.FindAction("MouseMove", throwIfNotFound: true);
         m_Map_ShiftMod = m_Map.FindAction("ShiftMod", throwIfNotFound: true);
         m_Map_Drop = m_Map.FindAction("Drop", throwIfNotFound: true);
@@ -1027,9 +1027,9 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
     // Map
     private readonly InputActionMap m_Map;
     private IMapActions m_MapActionsCallbackInterface;
+    private readonly InputAction m_Map_BeginDrag;
     private readonly InputAction m_Map_LeftClick;
     private readonly InputAction m_Map_RightClick;
-    private readonly InputAction m_Map_BeginDrag;
     private readonly InputAction m_Map_MouseMove;
     private readonly InputAction m_Map_ShiftMod;
     private readonly InputAction m_Map_Drop;
@@ -1037,9 +1037,9 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
     {
         private @RtsInputActions m_Wrapper;
         public MapActions(@RtsInputActions wrapper) { m_Wrapper = wrapper; }
+        public InputAction @BeginDrag => m_Wrapper.m_Map_BeginDrag;
         public InputAction @LeftClick => m_Wrapper.m_Map_LeftClick;
         public InputAction @RightClick => m_Wrapper.m_Map_RightClick;
-        public InputAction @BeginDrag => m_Wrapper.m_Map_BeginDrag;
         public InputAction @MouseMove => m_Wrapper.m_Map_MouseMove;
         public InputAction @ShiftMod => m_Wrapper.m_Map_ShiftMod;
         public InputAction @Drop => m_Wrapper.m_Map_Drop;
@@ -1052,15 +1052,15 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
         {
             if (m_Wrapper.m_MapActionsCallbackInterface != null)
             {
+                @BeginDrag.started -= m_Wrapper.m_MapActionsCallbackInterface.OnBeginDrag;
+                @BeginDrag.performed -= m_Wrapper.m_MapActionsCallbackInterface.OnBeginDrag;
+                @BeginDrag.canceled -= m_Wrapper.m_MapActionsCallbackInterface.OnBeginDrag;
                 @LeftClick.started -= m_Wrapper.m_MapActionsCallbackInterface.OnLeftClick;
                 @LeftClick.performed -= m_Wrapper.m_MapActionsCallbackInterface.OnLeftClick;
                 @LeftClick.canceled -= m_Wrapper.m_MapActionsCallbackInterface.OnLeftClick;
                 @RightClick.started -= m_Wrapper.m_MapActionsCallbackInterface.OnRightClick;
                 @RightClick.performed -= m_Wrapper.m_MapActionsCallbackInterface.OnRightClick;
                 @RightClick.canceled -= m_Wrapper.m_MapActionsCallbackInterface.OnRightClick;
-                @BeginDrag.started -= m_Wrapper.m_MapActionsCallbackInterface.OnBeginDrag;
-                @BeginDrag.performed -= m_Wrapper.m_MapActionsCallbackInterface.OnBeginDrag;
-                @BeginDrag.canceled -= m_Wrapper.m_MapActionsCallbackInterface.OnBeginDrag;
                 @MouseMove.started -= m_Wrapper.m_MapActionsCallbackInterface.OnMouseMove;
                 @MouseMove.performed -= m_Wrapper.m_MapActionsCallbackInterface.OnMouseMove;
                 @MouseMove.canceled -= m_Wrapper.m_MapActionsCallbackInterface.OnMouseMove;
@@ -1074,15 +1074,15 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
             m_Wrapper.m_MapActionsCallbackInterface = instance;
             if (instance != null)
             {
+                @BeginDrag.started += instance.OnBeginDrag;
+                @BeginDrag.performed += instance.OnBeginDrag;
+                @BeginDrag.canceled += instance.OnBeginDrag;
                 @LeftClick.started += instance.OnLeftClick;
                 @LeftClick.performed += instance.OnLeftClick;
                 @LeftClick.canceled += instance.OnLeftClick;
                 @RightClick.started += instance.OnRightClick;
                 @RightClick.performed += instance.OnRightClick;
                 @RightClick.canceled += instance.OnRightClick;
-                @BeginDrag.started += instance.OnBeginDrag;
-                @BeginDrag.performed += instance.OnBeginDrag;
-                @BeginDrag.canceled += instance.OnBeginDrag;
                 @MouseMove.started += instance.OnMouseMove;
                 @MouseMove.performed += instance.OnMouseMove;
                 @MouseMove.canceled += instance.OnMouseMove;
@@ -1295,9 +1295,9 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
     }
     public interface IMapActions
     {
+        void OnBeginDrag(InputAction.CallbackContext context);
         void OnLeftClick(InputAction.CallbackContext context);
         void OnRightClick(InputAction.CallbackContext context);
-        void OnBeginDrag(InputAction.CallbackContext context);
         void OnMouseMove(InputAction.CallbackContext context);
         void OnShiftMod(InputAction.CallbackContext context);
         void OnDrop(InputAction.CallbackContext context);

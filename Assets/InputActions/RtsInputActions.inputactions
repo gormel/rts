@@ -205,7 +205,7 @@
                     "name": "2D Vector",
                     "id": "ff397edf-b0d3-460e-9bf6-c3257ba09295",
                     "path": "2DVector(mode=2)",
-                    "interactions": "",
+                    "interactions": "Press(behavior=2)",
                     "processors": "",
                     "groups": "",
                     "action": "Move",
@@ -274,6 +274,15 @@
             "id": "4383e8bd-d797-4141-8f1c-cb49dd05a4be",
             "actions": [
                 {
+                    "name": "BeginDrag",
+                    "type": "Button",
+                    "id": "ddeb5d47-9d62-46c1-b53e-bebfb6ff7426",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "LeftClick",
                     "type": "Button",
                     "id": "7c924dd8-46b3-4683-8de0-475c8c3ff8e9",
@@ -289,15 +298,6 @@
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "Tap",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "BeginDrag",
-                    "type": "Button",
-                    "id": "ddeb5d47-9d62-46c1-b53e-bebfb6ff7426",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
                     "initialStateCheck": false
                 },
                 {
@@ -329,28 +329,6 @@
                 }
             ],
             "bindings": [
-                {
-                    "name": "",
-                    "id": "1e3edfca-e0cf-4659-a50a-3cf304381ae5",
-                    "path": "<Mouse>/leftButton",
-                    "interactions": "Press",
-                    "processors": "",
-                    "groups": "",
-                    "action": "BeginDrag",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "2246c73c-c22a-4ea2-b3be-cae8d54d7272",
-                    "path": "<Mouse>/leftButton",
-                    "interactions": "Tap",
-                    "processors": "",
-                    "groups": "",
-                    "action": "LeftClick",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
                 {
                     "name": "",
                     "id": "bc751bbb-198e-430f-a8b7-739191980e1d",
@@ -392,6 +370,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "Drop",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "1e3edfca-e0cf-4659-a50a-3cf304381ae5",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "BeginDrag",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "2246c73c-c22a-4ea2-b3be-cae8d54d7272",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "Tap",
+                    "processors": "",
+                    "groups": "",
+                    "action": "LeftClick",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

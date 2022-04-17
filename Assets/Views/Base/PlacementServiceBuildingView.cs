@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Assets.Core.GameObjects.Base;
 using Assets.Core.GameObjects.Utils;
@@ -14,6 +15,8 @@ namespace Assets.Views.Base
     {
         public GameObject[] PlacementPoints;
         public HashSet<int> mLockedPoints = new HashSet<int>();
+
+        private RaycastHit[] mNoAllocRaycastHits = new RaycastHit[5];
 
         public async Task<PlacementPoint> TryAllocatePoint()
         {
@@ -88,7 +91,14 @@ namespace Assets.Views.Base
         public bool IsFree(int pointId)
         {
             var ray = new Ray(PlacementPoints[pointId].transform.position, Vector3.up);
-            return !Physics.Raycast(ray);
+            var size = Physics.RaycastNonAlloc(ray, mNoAllocRaycastHits);
+            if (size > 0)
+            {
+                return mNoAllocRaycastHits
+                    .Take(size)
+                    .All(hit => hit.transform.gameObject.GetComponent<MapView>() == null);
+            }
+            return true;
         }
     }
 }

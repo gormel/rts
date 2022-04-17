@@ -10822,7 +10822,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1390635333}
-  - component: {fileID: 1390635332}
   - component: {fileID: 1390635331}
   m_Layer: 8
   m_Name: Post-process Volume
@@ -10848,19 +10847,6 @@ MonoBehaviour:
   blendDistance: 0
   weight: 1
   priority: 0
---- !u!65 &1390635332
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1390635330}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!4 &1390635333
 Transform:
   m_ObjectHideFlags: 0
