@@ -31,12 +31,5 @@ namespace Assets.Views
         {
             Orders.SetWaypoint(position);
         }
-
-        protected override void Update()
-        {
-            base.Update();
-            
-            
-        }
     }
 }
