@@ -18,8 +18,6 @@ namespace Assets.Views.Base
         protected override void OnLoad()
         {
             base.OnLoad();
-
-            RegisterProperty(new SelectableViewProperty("Strategy", () => Info.Strategy.ToString()));
         }
 
         protected override void Update()

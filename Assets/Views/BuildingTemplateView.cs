@@ -18,10 +18,5 @@ namespace Assets.Views
         public override string Name => "Строительство";
 
         public override Rect FlatBounds => new Rect(Info.Position, Info.Size);
-
-        protected override void OnLoad()
-        {
-            RegisterProperty(new SelectableViewProperty("Progress", () => $"{Info.Progress * 100:#0}%"));
-        }
     }
 }

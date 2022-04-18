@@ -9,11 +9,5 @@ namespace Assets.Views
     {
         public override string Name => "Лаба строителей";
         public override Rect FlatBounds => new Rect(Info.Position, Info.Size);
-
-        protected override void OnLoad()
-        {
-            RegisterProperty(new SelectableViewProperty("Current progress", () => $"{Info.Progress * 100:#0}%"));
-            RegisterProperty(new SelectableViewProperty("Queued", () => $"{Info.Queued}"));
-        }
     }
 }

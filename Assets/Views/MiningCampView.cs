@@ -15,12 +15,6 @@ namespace Assets.Views
         public GameObject[] WorkerIndicators;
         public LineRenderer WaypointLine;
 
-        protected override void OnLoad()
-        {
-            RegisterProperty(new SelectableViewProperty("Mining speed", () => $"{Info.MiningSpeed} m/sec"));
-            RegisterProperty(new SelectableViewProperty("Workers", () => $"{Info.WorkerCount}"));
-        }
-
         protected override void Update()
         {
             base.Update();

@@ -19,6 +19,45 @@ namespace Assets.Views.Base
     }
     abstract class SelectableView : MonoBehaviour, IFlatBoundsOwner
     {
+        interface IValueWatcher
+        {
+            void Update();
+        }
+        class ValueWatcher<T> : IValueWatcher where T : IComparable<T>
+        {
+            private readonly Func<T> mGetValue;
+            private readonly T mBorder;
+            private readonly Action<T> mOnMore;
+            private readonly Action<T> mOnLess;
+            private readonly Action<T> mOnEqual;
+            private T mLastValue;
+            public ValueWatcher(Func<T> getValue, T border, Action<T> onMore, Action<T> onLess, Action<T> onEqual)
+            {
+                mGetValue = getValue;
+                mBorder = border;
+                mOnMore = onMore;
+                mOnLess = onLess;
+                mOnEqual = onEqual;
+                mLastValue = mGetValue();
+            }
+
+            public void Update()
+            {
+                var value = mGetValue();
+                var lastComp = mLastValue.CompareTo(mBorder);
+                var comp = value.CompareTo(mBorder);
+                
+                if (comp < 0 && lastComp >= 0)
+                    mOnLess?.Invoke(value);
+                else if (comp == 0 && lastComp != 0)
+                    mOnEqual?.Invoke(value);
+                else if (comp > 0 && lastComp <= 0)
+                    mOnMore?.Invoke(value);
+                
+                mLastValue = value;
+            }
+        }
+        
         public Sprite Icon;
         public abstract string Name { get; }
         public abstract float Health { get; }
@@ -81,13 +120,17 @@ namespace Assets.Views.Base
 
         public int SelectionPriority;
 
-        private List<SelectableViewProperty> mProperties = new List<SelectableViewProperty>();
+        private List<IValueWatcher> mValueWatchers = new List<IValueWatcher>();
         private ObjectOwnershipRelation mOwnershipRelation;
-        public IReadOnlyList<SelectableViewProperty> Properties => mProperties;
 
-        protected void RegisterProperty(SelectableViewProperty prop)
+        protected void WatchMore<T>(Func<T> getValue, T border, Action<T> onMore) where T : IComparable<T>
         {
-            mProperties.Add(prop);
+            mValueWatchers.Add(new ValueWatcher<T>(getValue, border, onMore, null, null));
+        }
+
+        protected void WatchLess<T>(Func<T> getValue, T border, Action<T> onLess) where T : IComparable<T>
+        {
+            mValueWatchers.Add(new ValueWatcher<T>(getValue, border, null, onLess, null));
         }
 
         public virtual void OnRightClick(Vector2 position)
@@ -104,9 +147,9 @@ namespace Assets.Views.Base
 
         protected virtual void Update()
         {
-            foreach (var property in mProperties)
+            foreach (var watcher in mValueWatchers)
             {
-                property.Update();
+                watcher.Update();
             }
 
             if (HpBar != null)

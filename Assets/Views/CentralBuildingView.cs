@@ -17,15 +17,26 @@ namespace Assets.Views
     {
         public override string Name => "Главное здание";
 
+        public Animation GatesAnimation;
+        public AnimationClip OpenClip;
+        public AnimationClip CloseClip;
+
         protected override void OnLoad()
         {
-            RegisterProperty(new SelectableViewProperty("Current progress", () => $"{Info.Progress * 100:#0}%"));
-            RegisterProperty(new SelectableViewProperty("Queued workers", () => $"{Info.Queued}"));
+            WatchMore(() => Info.Progress, 0.6f, p => { GatesAnimation.Play(OpenClip.name); });
+            WatchMore(() => Info.Progress, 0.99f, p => { GatesAnimation.Play(CloseClip.name); });
         }
 
         public override void OnRightClick(Vector2 position)
         {
             Orders.SetWaypoint(position);
+        }
+
+        protected override void Update()
+        {
+            base.Update();
+            
+            
         }
     }
 }

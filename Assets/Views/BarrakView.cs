@@ -16,12 +16,6 @@ namespace Assets.Views
         public override string Name { get; } = "Барак";
         public override Rect FlatBounds => new Rect(Info.Position, Info.Size);
 
-        protected override void OnLoad()
-        {
-            RegisterProperty(new SelectableViewProperty("Current progress", () => $"{Info.Progress * 100:#0}%"));
-            RegisterProperty(new SelectableViewProperty("Queued", () => $"{Info.Queued}"));
-        }
-
         public override void OnRightClick(Vector2 position)
         {
             Orders.SetWaypoint(position);

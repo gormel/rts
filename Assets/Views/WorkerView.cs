@@ -19,9 +19,6 @@ namespace Assets.Views
 
         protected override void OnLoad()
         {
-            RegisterProperty(new SelectableViewProperty("X position", () => Info.Position.x.ToString("##.##")));
-            RegisterProperty(new SelectableViewProperty("Y position", () => Info.Position.y.ToString("##.##")));
-            
             Updater.Register(Info.ID, () =>
             {
                 gameObject.SetActive(!Info.IsAttachedToMiningCamp);
