@@ -67,7 +67,7 @@ namespace Assets.Views.Base
         public Material[] AllyMaterial;
         public Material[] MyMaterial;
         public Material[] EnemyMaterial;
-        public MeshRenderer[] MaterialTarget;
+        public Renderer[] MaterialTarget;
 
         public ProgressBar HpBar;
 
