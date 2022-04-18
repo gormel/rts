@@ -24,7 +24,7 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
     ""name"": ""RtsInputActions"",
     ""maps"": [
         {
-            ""name"": ""Hotkeys"",
+            ""name"": ""Groups"",
             ""id"": ""9e12ac19-436a-47a4-9023-8bebeeb80d35"",
             ""actions"": [
                 {
@@ -292,7 +292,7 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
             ]
         },
         {
-            ""name"": ""Map"",
+            ""name"": ""OnScreenInteraction"",
             ""id"": ""4383e8bd-d797-4141-8f1c-cb49dd05a4be"",
             ""actions"": [
                 {
@@ -348,6 +348,15 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""RollGroup"",
+                    ""type"": ""Button"",
+                    ""id"": ""01c213ff-34fc-4e73-bd57-429cf44aa636"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -414,6 +423,17 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""LeftClick"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a657e41a-6471-44c1-b01a-07de4740808f"",
+                    ""path"": ""<Keyboard>/tab"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""RollGroup"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -830,24 +850,25 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
     ],
     ""controlSchemes"": []
 }");
-        // Hotkeys
-        m_Hotkeys = asset.FindActionMap("Hotkeys", throwIfNotFound: true);
-        m_Hotkeys_InteractToGroup = m_Hotkeys.FindAction("InteractToGroup", throwIfNotFound: true);
-        m_Hotkeys_AddToGroupState = m_Hotkeys.FindAction("AddToGroupState", throwIfNotFound: true);
-        m_Hotkeys_SetGroupState = m_Hotkeys.FindAction("SetGroupState", throwIfNotFound: true);
+        // Groups
+        m_Groups = asset.FindActionMap("Groups", throwIfNotFound: true);
+        m_Groups_InteractToGroup = m_Groups.FindAction("InteractToGroup", throwIfNotFound: true);
+        m_Groups_AddToGroupState = m_Groups.FindAction("AddToGroupState", throwIfNotFound: true);
+        m_Groups_SetGroupState = m_Groups.FindAction("SetGroupState", throwIfNotFound: true);
         // Camera
         m_Camera = asset.FindActionMap("Camera", throwIfNotFound: true);
         m_Camera_Pan = m_Camera.FindAction("Pan", throwIfNotFound: true);
         m_Camera_Move = m_Camera.FindAction("Move", throwIfNotFound: true);
         m_Camera_AltState = m_Camera.FindAction("AltState", throwIfNotFound: true);
-        // Map
-        m_Map = asset.FindActionMap("Map", throwIfNotFound: true);
-        m_Map_BeginDrag = m_Map.FindAction("BeginDrag", throwIfNotFound: true);
-        m_Map_LeftClick = m_Map.FindAction("LeftClick", throwIfNotFound: true);
-        m_Map_RightClick = m_Map.FindAction("RightClick", throwIfNotFound: true);
-        m_Map_MouseMove = m_Map.FindAction("MouseMove", throwIfNotFound: true);
-        m_Map_ShiftMod = m_Map.FindAction("ShiftMod", throwIfNotFound: true);
-        m_Map_Drop = m_Map.FindAction("Drop", throwIfNotFound: true);
+        // OnScreenInteraction
+        m_OnScreenInteraction = asset.FindActionMap("OnScreenInteraction", throwIfNotFound: true);
+        m_OnScreenInteraction_BeginDrag = m_OnScreenInteraction.FindAction("BeginDrag", throwIfNotFound: true);
+        m_OnScreenInteraction_LeftClick = m_OnScreenInteraction.FindAction("LeftClick", throwIfNotFound: true);
+        m_OnScreenInteraction_RightClick = m_OnScreenInteraction.FindAction("RightClick", throwIfNotFound: true);
+        m_OnScreenInteraction_MouseMove = m_OnScreenInteraction.FindAction("MouseMove", throwIfNotFound: true);
+        m_OnScreenInteraction_ShiftMod = m_OnScreenInteraction.FindAction("ShiftMod", throwIfNotFound: true);
+        m_OnScreenInteraction_Drop = m_OnScreenInteraction.FindAction("Drop", throwIfNotFound: true);
+        m_OnScreenInteraction_RollGroup = m_OnScreenInteraction.FindAction("RollGroup", throwIfNotFound: true);
         // Bindings
         m_Bindings = asset.FindActionMap("Bindings", throwIfNotFound: true);
         m_Bindings_Move = m_Bindings.FindAction("Move", throwIfNotFound: true);
@@ -926,39 +947,39 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
         return asset.FindBinding(bindingMask, out action);
     }
 
-    // Hotkeys
-    private readonly InputActionMap m_Hotkeys;
-    private IHotkeysActions m_HotkeysActionsCallbackInterface;
-    private readonly InputAction m_Hotkeys_InteractToGroup;
-    private readonly InputAction m_Hotkeys_AddToGroupState;
-    private readonly InputAction m_Hotkeys_SetGroupState;
-    public struct HotkeysActions
+    // Groups
+    private readonly InputActionMap m_Groups;
+    private IGroupsActions m_GroupsActionsCallbackInterface;
+    private readonly InputAction m_Groups_InteractToGroup;
+    private readonly InputAction m_Groups_AddToGroupState;
+    private readonly InputAction m_Groups_SetGroupState;
+    public struct GroupsActions
     {
         private @RtsInputActions m_Wrapper;
-        public HotkeysActions(@RtsInputActions wrapper) { m_Wrapper = wrapper; }
-        public InputAction @InteractToGroup => m_Wrapper.m_Hotkeys_InteractToGroup;
-        public InputAction @AddToGroupState => m_Wrapper.m_Hotkeys_AddToGroupState;
-        public InputAction @SetGroupState => m_Wrapper.m_Hotkeys_SetGroupState;
-        public InputActionMap Get() { return m_Wrapper.m_Hotkeys; }
+        public GroupsActions(@RtsInputActions wrapper) { m_Wrapper = wrapper; }
+        public InputAction @InteractToGroup => m_Wrapper.m_Groups_InteractToGroup;
+        public InputAction @AddToGroupState => m_Wrapper.m_Groups_AddToGroupState;
+        public InputAction @SetGroupState => m_Wrapper.m_Groups_SetGroupState;
+        public InputActionMap Get() { return m_Wrapper.m_Groups; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
         public bool enabled => Get().enabled;
-        public static implicit operator InputActionMap(HotkeysActions set) { return set.Get(); }
-        public void SetCallbacks(IHotkeysActions instance)
+        public static implicit operator InputActionMap(GroupsActions set) { return set.Get(); }
+        public void SetCallbacks(IGroupsActions instance)
         {
-            if (m_Wrapper.m_HotkeysActionsCallbackInterface != null)
+            if (m_Wrapper.m_GroupsActionsCallbackInterface != null)
             {
-                @InteractToGroup.started -= m_Wrapper.m_HotkeysActionsCallbackInterface.OnInteractToGroup;
-                @InteractToGroup.performed -= m_Wrapper.m_HotkeysActionsCallbackInterface.OnInteractToGroup;
-                @InteractToGroup.canceled -= m_Wrapper.m_HotkeysActionsCallbackInterface.OnInteractToGroup;
-                @AddToGroupState.started -= m_Wrapper.m_HotkeysActionsCallbackInterface.OnAddToGroupState;
-                @AddToGroupState.performed -= m_Wrapper.m_HotkeysActionsCallbackInterface.OnAddToGroupState;
-                @AddToGroupState.canceled -= m_Wrapper.m_HotkeysActionsCallbackInterface.OnAddToGroupState;
-                @SetGroupState.started -= m_Wrapper.m_HotkeysActionsCallbackInterface.OnSetGroupState;
-                @SetGroupState.performed -= m_Wrapper.m_HotkeysActionsCallbackInterface.OnSetGroupState;
-                @SetGroupState.canceled -= m_Wrapper.m_HotkeysActionsCallbackInterface.OnSetGroupState;
+                @InteractToGroup.started -= m_Wrapper.m_GroupsActionsCallbackInterface.OnInteractToGroup;
+                @InteractToGroup.performed -= m_Wrapper.m_GroupsActionsCallbackInterface.OnInteractToGroup;
+                @InteractToGroup.canceled -= m_Wrapper.m_GroupsActionsCallbackInterface.OnInteractToGroup;
+                @AddToGroupState.started -= m_Wrapper.m_GroupsActionsCallbackInterface.OnAddToGroupState;
+                @AddToGroupState.performed -= m_Wrapper.m_GroupsActionsCallbackInterface.OnAddToGroupState;
+                @AddToGroupState.canceled -= m_Wrapper.m_GroupsActionsCallbackInterface.OnAddToGroupState;
+                @SetGroupState.started -= m_Wrapper.m_GroupsActionsCallbackInterface.OnSetGroupState;
+                @SetGroupState.performed -= m_Wrapper.m_GroupsActionsCallbackInterface.OnSetGroupState;
+                @SetGroupState.canceled -= m_Wrapper.m_GroupsActionsCallbackInterface.OnSetGroupState;
             }
-            m_Wrapper.m_HotkeysActionsCallbackInterface = instance;
+            m_Wrapper.m_GroupsActionsCallbackInterface = instance;
             if (instance != null)
             {
                 @InteractToGroup.started += instance.OnInteractToGroup;
@@ -973,7 +994,7 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
             }
         }
     }
-    public HotkeysActions @Hotkeys => new HotkeysActions(this);
+    public GroupsActions @Groups => new GroupsActions(this);
 
     // Camera
     private readonly InputActionMap m_Camera;
@@ -1024,54 +1045,59 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
     }
     public CameraActions @Camera => new CameraActions(this);
 
-    // Map
-    private readonly InputActionMap m_Map;
-    private IMapActions m_MapActionsCallbackInterface;
-    private readonly InputAction m_Map_BeginDrag;
-    private readonly InputAction m_Map_LeftClick;
-    private readonly InputAction m_Map_RightClick;
-    private readonly InputAction m_Map_MouseMove;
-    private readonly InputAction m_Map_ShiftMod;
-    private readonly InputAction m_Map_Drop;
-    public struct MapActions
+    // OnScreenInteraction
+    private readonly InputActionMap m_OnScreenInteraction;
+    private IOnScreenInteractionActions m_OnScreenInteractionActionsCallbackInterface;
+    private readonly InputAction m_OnScreenInteraction_BeginDrag;
+    private readonly InputAction m_OnScreenInteraction_LeftClick;
+    private readonly InputAction m_OnScreenInteraction_RightClick;
+    private readonly InputAction m_OnScreenInteraction_MouseMove;
+    private readonly InputAction m_OnScreenInteraction_ShiftMod;
+    private readonly InputAction m_OnScreenInteraction_Drop;
+    private readonly InputAction m_OnScreenInteraction_RollGroup;
+    public struct OnScreenInteractionActions
     {
         private @RtsInputActions m_Wrapper;
-        public MapActions(@RtsInputActions wrapper) { m_Wrapper = wrapper; }
-        public InputAction @BeginDrag => m_Wrapper.m_Map_BeginDrag;
-        public InputAction @LeftClick => m_Wrapper.m_Map_LeftClick;
-        public InputAction @RightClick => m_Wrapper.m_Map_RightClick;
-        public InputAction @MouseMove => m_Wrapper.m_Map_MouseMove;
-        public InputAction @ShiftMod => m_Wrapper.m_Map_ShiftMod;
-        public InputAction @Drop => m_Wrapper.m_Map_Drop;
-        public InputActionMap Get() { return m_Wrapper.m_Map; }
+        public OnScreenInteractionActions(@RtsInputActions wrapper) { m_Wrapper = wrapper; }
+        public InputAction @BeginDrag => m_Wrapper.m_OnScreenInteraction_BeginDrag;
+        public InputAction @LeftClick => m_Wrapper.m_OnScreenInteraction_LeftClick;
+        public InputAction @RightClick => m_Wrapper.m_OnScreenInteraction_RightClick;
+        public InputAction @MouseMove => m_Wrapper.m_OnScreenInteraction_MouseMove;
+        public InputAction @ShiftMod => m_Wrapper.m_OnScreenInteraction_ShiftMod;
+        public InputAction @Drop => m_Wrapper.m_OnScreenInteraction_Drop;
+        public InputAction @RollGroup => m_Wrapper.m_OnScreenInteraction_RollGroup;
+        public InputActionMap Get() { return m_Wrapper.m_OnScreenInteraction; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
         public bool enabled => Get().enabled;
-        public static implicit operator InputActionMap(MapActions set) { return set.Get(); }
-        public void SetCallbacks(IMapActions instance)
+        public static implicit operator InputActionMap(OnScreenInteractionActions set) { return set.Get(); }
+        public void SetCallbacks(IOnScreenInteractionActions instance)
         {
-            if (m_Wrapper.m_MapActionsCallbackInterface != null)
+            if (m_Wrapper.m_OnScreenInteractionActionsCallbackInterface != null)
             {
-                @BeginDrag.started -= m_Wrapper.m_MapActionsCallbackInterface.OnBeginDrag;
-                @BeginDrag.performed -= m_Wrapper.m_MapActionsCallbackInterface.OnBeginDrag;
-                @BeginDrag.canceled -= m_Wrapper.m_MapActionsCallbackInterface.OnBeginDrag;
-                @LeftClick.started -= m_Wrapper.m_MapActionsCallbackInterface.OnLeftClick;
-                @LeftClick.performed -= m_Wrapper.m_MapActionsCallbackInterface.OnLeftClick;
-                @LeftClick.canceled -= m_Wrapper.m_MapActionsCallbackInterface.OnLeftClick;
-                @RightClick.started -= m_Wrapper.m_MapActionsCallbackInterface.OnRightClick;
-                @RightClick.performed -= m_Wrapper.m_MapActionsCallbackInterface.OnRightClick;
-                @RightClick.canceled -= m_Wrapper.m_MapActionsCallbackInterface.OnRightClick;
-                @MouseMove.started -= m_Wrapper.m_MapActionsCallbackInterface.OnMouseMove;
-                @MouseMove.performed -= m_Wrapper.m_MapActionsCallbackInterface.OnMouseMove;
-                @MouseMove.canceled -= m_Wrapper.m_MapActionsCallbackInterface.OnMouseMove;
-                @ShiftMod.started -= m_Wrapper.m_MapActionsCallbackInterface.OnShiftMod;
-                @ShiftMod.performed -= m_Wrapper.m_MapActionsCallbackInterface.OnShiftMod;
-                @ShiftMod.canceled -= m_Wrapper.m_MapActionsCallbackInterface.OnShiftMod;
-                @Drop.started -= m_Wrapper.m_MapActionsCallbackInterface.OnDrop;
-                @Drop.performed -= m_Wrapper.m_MapActionsCallbackInterface.OnDrop;
-                @Drop.canceled -= m_Wrapper.m_MapActionsCallbackInterface.OnDrop;
+                @BeginDrag.started -= m_Wrapper.m_OnScreenInteractionActionsCallbackInterface.OnBeginDrag;
+                @BeginDrag.performed -= m_Wrapper.m_OnScreenInteractionActionsCallbackInterface.OnBeginDrag;
+                @BeginDrag.canceled -= m_Wrapper.m_OnScreenInteractionActionsCallbackInterface.OnBeginDrag;
+                @LeftClick.started -= m_Wrapper.m_OnScreenInteractionActionsCallbackInterface.OnLeftClick;
+                @LeftClick.performed -= m_Wrapper.m_OnScreenInteractionActionsCallbackInterface.OnLeftClick;
+                @LeftClick.canceled -= m_Wrapper.m_OnScreenInteractionActionsCallbackInterface.OnLeftClick;
+                @RightClick.started -= m_Wrapper.m_OnScreenInteractionActionsCallbackInterface.OnRightClick;
+                @RightClick.performed -= m_Wrapper.m_OnScreenInteractionActionsCallbackInterface.OnRightClick;
+                @RightClick.canceled -= m_Wrapper.m_OnScreenInteractionActionsCallbackInterface.OnRightClick;
+                @MouseMove.started -= m_Wrapper.m_OnScreenInteractionActionsCallbackInterface.OnMouseMove;
+                @MouseMove.performed -= m_Wrapper.m_OnScreenInteractionActionsCallbackInterface.OnMouseMove;
+                @MouseMove.canceled -= m_Wrapper.m_OnScreenInteractionActionsCallbackInterface.OnMouseMove;
+                @ShiftMod.started -= m_Wrapper.m_OnScreenInteractionActionsCallbackInterface.OnShiftMod;
+                @ShiftMod.performed -= m_Wrapper.m_OnScreenInteractionActionsCallbackInterface.OnShiftMod;
+                @ShiftMod.canceled -= m_Wrapper.m_OnScreenInteractionActionsCallbackInterface.OnShiftMod;
+                @Drop.started -= m_Wrapper.m_OnScreenInteractionActionsCallbackInterface.OnDrop;
+                @Drop.performed -= m_Wrapper.m_OnScreenInteractionActionsCallbackInterface.OnDrop;
+                @Drop.canceled -= m_Wrapper.m_OnScreenInteractionActionsCallbackInterface.OnDrop;
+                @RollGroup.started -= m_Wrapper.m_OnScreenInteractionActionsCallbackInterface.OnRollGroup;
+                @RollGroup.performed -= m_Wrapper.m_OnScreenInteractionActionsCallbackInterface.OnRollGroup;
+                @RollGroup.canceled -= m_Wrapper.m_OnScreenInteractionActionsCallbackInterface.OnRollGroup;
             }
-            m_Wrapper.m_MapActionsCallbackInterface = instance;
+            m_Wrapper.m_OnScreenInteractionActionsCallbackInterface = instance;
             if (instance != null)
             {
                 @BeginDrag.started += instance.OnBeginDrag;
@@ -1092,10 +1118,13 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
                 @Drop.started += instance.OnDrop;
                 @Drop.performed += instance.OnDrop;
                 @Drop.canceled += instance.OnDrop;
+                @RollGroup.started += instance.OnRollGroup;
+                @RollGroup.performed += instance.OnRollGroup;
+                @RollGroup.canceled += instance.OnRollGroup;
             }
         }
     }
-    public MapActions @Map => new MapActions(this);
+    public OnScreenInteractionActions @OnScreenInteraction => new OnScreenInteractionActions(this);
 
     // Bindings
     private readonly InputActionMap m_Bindings;
@@ -1281,7 +1310,7 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
         }
     }
     public BindingsActions @Bindings => new BindingsActions(this);
-    public interface IHotkeysActions
+    public interface IGroupsActions
     {
         void OnInteractToGroup(InputAction.CallbackContext context);
         void OnAddToGroupState(InputAction.CallbackContext context);
@@ -1293,7 +1322,7 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
         void OnMove(InputAction.CallbackContext context);
         void OnAltState(InputAction.CallbackContext context);
     }
-    public interface IMapActions
+    public interface IOnScreenInteractionActions
     {
         void OnBeginDrag(InputAction.CallbackContext context);
         void OnLeftClick(InputAction.CallbackContext context);
@@ -1301,6 +1330,7 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
         void OnMouseMove(InputAction.CallbackContext context);
         void OnShiftMod(InputAction.CallbackContext context);
         void OnDrop(InputAction.CallbackContext context);
+        void OnRollGroup(InputAction.CallbackContext context);
     }
     public interface IBindingsActions
     {

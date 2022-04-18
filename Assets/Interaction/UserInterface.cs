@@ -212,8 +212,6 @@ namespace Assets.Interaction
         public Canvas GuiCanvas;
         public RectTransform GuiRoot;
         
-        private const string LeftButtonControlPath = "/Mouse/leftButton";
-        
         public IEnumerable<T> FetchSelectedOrders<T>() where T : class, IGameObjectOrders
         {
             return Selected.Select(v => v.OrdersBase as T).Where(o => o != null);
@@ -230,12 +228,31 @@ namespace Assets.Interaction
             SelectionManager = new SelectionManager(SelectionBox, this, mRaycaster);
             mInputActions = new RtsInputActions();
             
-            mInputActions.Map.MouseMove.performed += OnMouseMove;
-            mInputActions.Map.BeginDrag.performed += OnBeginDrag;
-            mInputActions.Map.Drop.performed += OnDrop;
-            mInputActions.Map.LeftClick.performed += OnLeftClick;
-            mInputActions.Map.RightClick.performed += OnRightClick;
-            mInputActions.Map.ShiftMod.performed += OnShiftPress;
+            mInputActions.OnScreenInteraction.MouseMove.performed += OnMouseMove;
+            mInputActions.OnScreenInteraction.BeginDrag.performed += OnBeginDrag;
+            mInputActions.OnScreenInteraction.Drop.performed += OnDrop;
+            mInputActions.OnScreenInteraction.LeftClick.performed += OnLeftClick;
+            mInputActions.OnScreenInteraction.RightClick.performed += OnRightClick;
+            mInputActions.OnScreenInteraction.ShiftMod.performed += OnShiftPress;
+            mInputActions.OnScreenInteraction.RollGroup.performed += OnRollGroup;
+        }
+
+        private void OnRollGroup(InputAction.CallbackContext obj)
+        {
+            if (Selected.Count < 1)
+                return;
+
+            var type = Selected[0].InfoBase.GetType();
+            var rollCount = Selected.TakeWhile(v => v.InfoBase.GetType() == type).Count();
+            if (rollCount == Selected.Count)
+                return;
+
+            for (int i = 0; i < rollCount; i++)
+            {
+                var zero = Selected[0];
+                Selected.RemoveAt(0);
+                Selected.Add(zero);
+            }
         }
 
         void OnEnable()

@@ -34,9 +34,9 @@ namespace Assets.Interaction.Selection
                 return;
             
             mInputActions = new RtsInputActions();
-            mInputActions.Hotkeys.SetGroupState.performed += OnCtrlState;
-            mInputActions.Hotkeys.AddToGroupState.performed += OnShiftState;
-            mInputActions.Hotkeys.InteractToGroup.performed += OnInteractToGroup;
+            mInputActions.Groups.SetGroupState.performed += OnCtrlState;
+            mInputActions.Groups.AddToGroupState.performed += OnShiftState;
+            mInputActions.Groups.InteractToGroup.performed += OnInteractToGroup;
 
             StartCoroutine(InitSelectionGroup());
         }

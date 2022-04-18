@@ -49,10 +49,12 @@ namespace Assets.Interaction.Selection
 
         private void SelectInner(IEnumerable<SelectableView> views, bool union)
         {
-            if (!union)
+            var toSelect = new List<SelectableView>();
+            
+            if (union)
             {
                 foreach (var selectableView in mUserInterface.Selected)
-                    selectableView.IsSelected = false;
+                    toSelect.Add(selectableView);
 
                 mUserInterface.Selected.Clear();
             }
@@ -60,8 +62,19 @@ namespace Assets.Interaction.Selection
             foreach (var selectableView in views.Where(v => v != null))
             {
                 selectableView.IsSelected = true;
-                if (!mUserInterface.Selected.Contains(selectableView))
-                    mUserInterface.Selected.Add(selectableView);
+                if (!toSelect.Contains(selectableView))
+                    toSelect.Add(selectableView);
+            }
+            
+            foreach (var selectableView in mUserInterface.Selected)
+                selectableView.IsSelected = false;
+
+            mUserInterface.Selected.Clear();
+
+            foreach (var view in toSelect.GroupBy(v => v.InfoBase.GetType()).SelectMany(g => g))
+            {
+                view.IsSelected = true;
+                mUserInterface.Selected.Add(view);
             }
         }
 

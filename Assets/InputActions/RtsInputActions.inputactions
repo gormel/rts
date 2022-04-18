@@ -2,7 +2,7 @@
     "name": "RtsInputActions",
     "maps": [
         {
-            "name": "Hotkeys",
+            "name": "Groups",
             "id": "9e12ac19-436a-47a4-9023-8bebeeb80d35",
             "actions": [
                 {
@@ -270,7 +270,7 @@
             ]
         },
         {
-            "name": "Map",
+            "name": "OnScreenInteraction",
             "id": "4383e8bd-d797-4141-8f1c-cb49dd05a4be",
             "actions": [
                 {
@@ -326,6 +326,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "RollGroup",
+                    "type": "Button",
+                    "id": "01c213ff-34fc-4e73-bd57-429cf44aa636",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -392,6 +401,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "LeftClick",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a657e41a-6471-44c1-b01a-07de4740808f",
+                    "path": "<Keyboard>/tab",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "RollGroup",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
