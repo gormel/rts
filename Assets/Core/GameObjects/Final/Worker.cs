@@ -109,7 +109,7 @@ namespace Assets.Core.GameObjects.Final
             public BTreeLeafState Update(TimeSpan deltaTime)
             {
                 if (!mCamp.TryPutWorker(mWorker))
-                    return BTreeLeafState.Failed;
+                    return BTreeLeafState.Successed;
 
                 mWorker.IsAttachedToMiningCamp = true;
                 return BTreeLeafState.Successed;
