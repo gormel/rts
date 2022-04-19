@@ -274,6 +274,9 @@ namespace Assets.Core.GameObjects.Final
         {
             if (!Game.GetIsAreaFree(position, WarriorsLab.BuildingSize))
                 return Guid.Empty;
+            
+            if (!Player.WarriorsLabBuildingAvaliable)
+                return Guid.Empty;
 
             if (!Player.Money.Spend(Player.WarriorsLabCost))
                 return Guid.Empty;

@@ -3188,6 +3188,7 @@ MonoBehaviour:
   Interface: {fileID: 1098300459}
   StartScreen: {fileID: 1818369578}
   PlaceTurretButton: {fileID: 863416715}
+  PlaceWarriorsLabButton: {fileID: 1932377504}
   CentralBuildingCostText: {fileID: 456073617}
   BarrakCostText: {fileID: 1606176444}
   TurretCostText: {fileID: 1577429823}

@@ -12,6 +12,7 @@ namespace Assets.Interaction
     {
         public GameObject StartScreen;
         public Button PlaceTurretButton;
+        public Button PlaceWarriorsLabButton;
 
         public Text CentralBuildingCostText;
         public Text BarrakCostText;
@@ -76,6 +77,7 @@ namespace Assets.Interaction
         private void Update()
         {
             PlaceTurretButton.interactable = Interface.Root.Player.TurretBuildingAvaliable;
+            PlaceWarriorsLabButton.interactable = Interface.Root.Player.WarriorsLabBuildingAvaliable;
 
             var player = Interface.Root.Player;
             

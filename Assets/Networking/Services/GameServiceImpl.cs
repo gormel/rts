@@ -44,6 +44,7 @@ namespace Assets.Networking.Services
                 Limit = player.Limit,
                 
                 TurretBuildingAvaliable = player.TurretBuildingAvaliable,
+                WarriorsLabBuildingAvaliable = player.WarriorsLabBuildingAvaliable,
                 
                 BuildingDefenceUpgradeLevel = player.BuildingDefenceUpgradeLevel,
                 TurretAttackUpgradeLevel = player.TurretAttackUpgradeLevel,

@@ -16,6 +16,7 @@ namespace Assets.Core.Game
         int Limit { get; }
         
         bool TurretBuildingAvaliable { get; }
+        bool WarriorsLabBuildingAvaliable { get; }
         int TurretAttackUpgradeLevel { get; }
         int BuildingDefenceUpgradeLevel { get; }
         bool TurretAttackUpgradeAvaliable { get; }
@@ -52,6 +53,7 @@ namespace Assets.Core.Game
         public ResourceStorage Money { get; } = new ResourceStorage();
         public ResourceStorage Limit { get; } = new ResourceStorage(200);
         public bool TurretBuildingAvaliable => GetCreatedBuildingCount<BuildersLab>() > 0;
+        public bool WarriorsLabBuildingAvaliable => GetCreatedBuildingCount<Barrak>() > 0;
         public int TurretAttackUpgradeLevel => Upgrades.TurretAttackUpgrade.Level;
         public int BuildingDefenceUpgradeLevel => Upgrades.BuildingDefenceUpgrade.Level;
         public bool TurretAttackUpgradeAvaliable => Upgrades.TurretAttackUpgrade.LevelUpAvaliable;

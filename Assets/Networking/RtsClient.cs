@@ -47,6 +47,7 @@ namespace Assets.Networking
             public int Money => PlayerState.Money;
             public int Limit => PlayerState.Limit;
             public bool TurretBuildingAvaliable => PlayerState.TurretBuildingAvaliable;
+            public bool WarriorsLabBuildingAvaliable => PlayerState.WarriorsLabBuildingAvaliable;
             public int TurretAttackUpgradeLevel => PlayerState.TurretAttackUpgradeLevel;
             public int BuildingDefenceUpgradeLevel => PlayerState.BuildingDefenceUpgradeLevel;
             public bool TurretAttackUpgradeAvaliable => PlayerState.TurretAttackUpgradeAvaliable;
