@@ -17,10 +17,12 @@ namespace Assets.Core.Game
         
         bool TurretBuildingAvaliable { get; }
         bool WarriorsLabBuildingAvaliable { get; }
-        int TurretAttackUpgradeLevel { get; }
-        int BuildingDefenceUpgradeLevel { get; }
         bool TurretAttackUpgradeAvaliable { get; }
         bool BuildingDefenceUpgradeAvaliable { get; }
+        bool BuildingArmourUpgradeAvaliable { get; }
+        bool UnitArmourUpgradeAvaliable { get; }
+        bool UnitDamageUpgradeAvaliable { get; }
+        bool UnitAttackRangeUpgradeAvaliable { get; }
     
         int MeleeWarriorCost { get; }
         int RangedWarriorCost { get; }
@@ -37,6 +39,11 @@ namespace Assets.Core.Game
         int TurretAttackUpgradeCost { get; }
         int BuildingDefenceUpgradeCost { get; }
         
+        int BuildingArmourUpgradeCost { get; }
+        int UnitArmourUpgradeCost { get; }
+        int UnitDamageUpgradeCost { get; }
+        int UnitAttackRangeUpgradeCost { get; }
+        
         int Team { get; }
     }
 
@@ -45,7 +52,12 @@ namespace Assets.Core.Game
         public class UpgradeStorage
         {
             public Upgrade<int> TurretAttackUpgrade { get; } = new Upgrade<int>(1, (atk, lvl) => atk + lvl);
-            public Upgrade<float> BuildingDefenceUpgrade { get; } = new Upgrade<float>(1, (hp, lvl) => hp + 50 * lvl);
+            public Upgrade<float> BuildingHealthUpgrade { get; } = new Upgrade<float>(1, (hp, lvl) => hp + 50 * lvl);
+            public Upgrade<int> BuildingArmourUpgrade { get; } = new Upgrade<int>(1, (arm, lvl) => arm + lvl);//unset
+
+            public Upgrade<int> UnitArmourUpgrade { get; } = new Upgrade<int>(1, (arm, lvl) => arm + lvl);
+            public Upgrade<int> UnitDamageUpgrade { get; } = new Upgrade<int>(1, (dmg, lvl) => dmg + lvl);
+            public Upgrade<int> UnitAttackRangeUpgrade { get; } = new Upgrade<int>(1, (rng, lvl) => rng + lvl);
         }
         
         private readonly IGameObjectFactory mExternalFactory;
@@ -54,10 +66,12 @@ namespace Assets.Core.Game
         public ResourceStorage Limit { get; } = new ResourceStorage(200);
         public bool TurretBuildingAvaliable => GetCreatedBuildingCount<BuildersLab>() > 0;
         public bool WarriorsLabBuildingAvaliable => GetCreatedBuildingCount<Barrak>() > 0;
-        public int TurretAttackUpgradeLevel => Upgrades.TurretAttackUpgrade.Level;
-        public int BuildingDefenceUpgradeLevel => Upgrades.BuildingDefenceUpgrade.Level;
         public bool TurretAttackUpgradeAvaliable => Upgrades.TurretAttackUpgrade.LevelUpAvaliable;
-        public bool BuildingDefenceUpgradeAvaliable => Upgrades.BuildingDefenceUpgrade.LevelUpAvaliable;
+        public bool BuildingDefenceUpgradeAvaliable => Upgrades.BuildingHealthUpgrade.LevelUpAvaliable;
+        public bool BuildingArmourUpgradeAvaliable => Upgrades.BuildingArmourUpgrade.LevelUpAvaliable;
+        public bool UnitArmourUpgradeAvaliable => Upgrades.UnitArmourUpgrade.LevelUpAvaliable;
+        public bool UnitDamageUpgradeAvaliable => Upgrades.UnitDamageUpgrade.LevelUpAvaliable;
+        public bool UnitAttackRangeUpgradeAvaliable => Upgrades.UnitAttackRangeUpgrade.LevelUpAvaliable;
 
         public Guid ID { get; } = Guid.NewGuid();
 
@@ -75,6 +89,10 @@ namespace Assets.Core.Game
         public int WarriorsLabCost { get; } = 200;
         public int TurretAttackUpgradeCost { get; } = 250;
         public int BuildingDefenceUpgradeCost { get; } = 200;
+        public int BuildingArmourUpgradeCost { get; } = 220;
+        public int UnitArmourUpgradeCost { get; } = 300;
+        public int UnitDamageUpgradeCost { get; } = 350;
+        public int UnitAttackRangeUpgradeCost { get; } = 380;
         public int Team { get; }
 
         public UpgradeStorage Upgrades { get; } = new UpgradeStorage();

@@ -31,6 +31,7 @@ namespace Assets.Networking.ClientListeners
         public int Damage => State.Base.Damage;
         public Strategy Strategy => (Strategy)State.Base.Strategy;
         public float ViewRadius => State.Base.Base.Base.ViewRadius;
+        public int Armour => State.Base.Base.Base.Armour;
 
         public void ResetState()
         {

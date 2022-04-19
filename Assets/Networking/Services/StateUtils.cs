@@ -14,7 +14,8 @@ namespace Assets.Networking.Services
                 RecivedDamage = info.RecivedDamage,
                 MaxHealth = info.MaxHealth,
                 Position = info.Position.ToGrpc(),
-                ViewRadius = info.ViewRadius
+                ViewRadius = info.ViewRadius,
+                Armour = info.Armour,
             };
         }
 

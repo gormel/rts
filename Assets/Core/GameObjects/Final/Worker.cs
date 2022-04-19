@@ -130,19 +130,16 @@ namespace Assets.Core.GameObjects.Final
         public bool IsBuilding { get; private set; }
         
         public bool IsAttachedToMiningCamp { get; set; }
+        public override float ViewRadius => 3;
+        public override float Speed => 1.8f;
+        public override int Armour => ArmourBase;
+        
         protected override float MaxHealthBase => 40;
+        protected override int ArmourBase => 1;
 
         public Worker(Game.Game game, IPathFinder pathFinder, Vector2 position)
             : base(game, pathFinder, position)
         {
-        }
-
-        public override void OnAddedToGame()
-        {
-            Speed = 1.8f;
-            ViewRadius = 3;
-            
-            base.OnAddedToGame();
         }
 
         public async Task<Guid> PlaceCentralBuildingTemplate(Vector2Int position)

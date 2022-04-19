@@ -22,6 +22,7 @@ namespace Assets.Networking
         public float Progress => State.Progress;
         public int AttachedWorkers => State.AttachedWorkers;
         public float ViewRadius => State.Base.Base.ViewRadius;
+        public int Armour => State.Base.Base.Armour;
 
         public void ResetState()
         {

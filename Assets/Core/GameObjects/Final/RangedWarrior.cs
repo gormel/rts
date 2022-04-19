@@ -19,20 +19,16 @@ namespace Assets.Core.GameObjects.Final {
     {
         protected override float MaxHealthBase => 75;
         
+        public override float ViewRadius => 5;
+        protected override int ArmourBase => 1;
+        public override float AttackRange => Player.Upgrades.UnitAttackRangeUpgrade.Calculate(3);
+        public override float AttackSpeed => 2;
+        protected override int DamageBase => 5;
+        public override float Speed => 2f;
+        
         public RangedWarrior(Game.Game game, IPathFinder pathFinder, Vector2 position)
             : base(game, pathFinder, position)
         {
-        }
-
-        public override void OnAddedToGame()
-        {
-            Speed = 2;
-            AttackRange = 3;
-            AttackSpeed = 2;
-            Damage = 5;
-            ViewRadius = 5;
-            
-            base.OnAddedToGame();
         }
     }
 }

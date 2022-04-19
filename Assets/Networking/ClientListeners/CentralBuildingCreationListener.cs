@@ -55,8 +55,8 @@ namespace Assets.Networking
         public Vector2 Waypoint => State.Base.Waypoint.ToUnity();
         public int Queued => State.Base.Queued;
         public float Progress => State.Base.Progress;
-        public int WorkersQueued => State.Base.Queued;
         public float ViewRadius => State.Base.Base.Base.ViewRadius;
+        public int Armour => State.Base.Base.Base.Armour;
 
         public void ResetState()
         {

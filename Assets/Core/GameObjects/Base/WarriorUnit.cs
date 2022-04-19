@@ -107,7 +107,7 @@ namespace Assets.Core.GameObjects.Base
                     return BTreeLeafState.Processing;
                 
                 mAttackSpeedTimer = TimeSpan.FromSeconds(1 / mUnit.AttackSpeed);
-                target.RecivedDamage += mUnit.Damage;
+                target.RecivedDamage += Math.Max(mUnit.Damage - target.Armour, 1);
 
                 if (target.RecivedDamage >= target.MaxHealth)
                 {
@@ -197,9 +197,6 @@ namespace Assets.Core.GameObjects.Base
         }
 
         public bool IsAttacks { get; protected set; }
-        public float AttackRange { get; protected set; }
-        public float AttackSpeed { get; protected set; }
-        public int Damage { get; protected set; }
         public Strategy Strategy { get; private set; }
 
         private IBTreeBuilder mAgressiveIntelligence;
@@ -209,7 +206,15 @@ namespace Assets.Core.GameObjects.Base
         public const string DefenciveIdleIntelligenceTag = "DefenciveIdel";
         public const string KillTargetIntelligenceTag = "KillTarget";
         public const string AggressiveWalkingIntelligenceTag = "AggressiveWalking";
+
+        public override int Armour => Player.Upgrades.UnitArmourUpgrade.Calculate(ArmourBase);
+        public int Damage => Player.Upgrades.UnitDamageUpgrade.Calculate(DamageBase);
         
+        public abstract float AttackRange { get; }
+        public abstract float AttackSpeed { get; }
+        
+        protected abstract int DamageBase { get; }
+
         protected WarriorUnit(Game.Game game, IPathFinder pathFinder, Vector2 position)
             : base(game, pathFinder, position)
         {

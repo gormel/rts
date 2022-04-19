@@ -23,19 +23,13 @@ namespace Assets.Core.GameObjects.Base
         public static readonly TimeSpan AttackUpgradeTime = TimeSpan.FromSeconds(20); 
         public static readonly TimeSpan DefenceUpgradeTime = TimeSpan.FromSeconds(15);
 
+        public override float ViewRadius => 3;
         protected override float MaxHealthBase => MaximumHealthConst;
+        public override Vector2 Size => BuildingSize;
         
         public BuildersLab(Vector2 position) 
             : base(position)
         {
-        }
-
-        public override void OnAddedToGame()
-        {
-            Size = BuildingSize;
-            ViewRadius = 3;
-            
-            base.OnAddedToGame();
         }
 
         public Task QueueAttackUpgrade()
@@ -51,7 +45,7 @@ namespace Assets.Core.GameObjects.Base
             if (!Player.Money.Spend(Player.BuildingDefenceUpgradeCost))
                 return Task.CompletedTask;
 
-            return QueueUpgrade(Player.Upgrades.BuildingDefenceUpgrade, DefenceUpgradeTime);
+            return QueueUpgrade(Player.Upgrades.BuildingHealthUpgrade, DefenceUpgradeTime);
         }
     }
 }

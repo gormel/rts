@@ -28,6 +28,7 @@ namespace Assets.Networking.ClientListeners
         public float AttackRange => State.AttackRange;
         public float AttackSpeed => State.AttackSpeed;
         public int Damage => State.Damage;
+        public int Armour => State.Base.Base.Armour;
     }
 
     class ClientTurretOrders : ITurretOrders

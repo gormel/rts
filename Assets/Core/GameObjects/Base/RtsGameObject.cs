@@ -13,6 +13,7 @@ namespace Assets.Core.GameObjects.Base
         float RecivedDamage { get; }
         float MaxHealth { get; }
         float ViewRadius { get; }
+        int Armour { get; }
     }
 
     interface IGameObjectOrders
@@ -70,9 +71,11 @@ namespace Assets.Core.GameObjects.Base
 
         public float RecivedDamage { get; set; }
         public abstract float MaxHealth { get; }
-        public float ViewRadius { get; set; }
-        
+        public abstract float ViewRadius { get; }
+        public abstract int Armour { get; }
+
         protected abstract float MaxHealthBase { get; }
+        protected abstract int ArmourBase { get; }
 
         public bool IsInGame { get; private set; } = false;
 

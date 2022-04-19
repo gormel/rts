@@ -32,6 +32,8 @@ namespace Assets.Networking.ClientListeners
     
     internal class ClientWarriorsLabInfo : IWarriorsLabInfo, IStateHolder<WarriorsLabState>
     {
+        public WarriorsLabState State { get; private set; } = new WarriorsLabState();
+        
         public Guid ID => Guid.Parse(State.Base.Base.Base.ID.Value);
         public Guid PlayerID => Guid.Parse(State.Base.Base.Base.PlayerID.Value);
         public Vector2 Position => State.Base.Base.Base.Position.ToUnity();
@@ -41,7 +43,7 @@ namespace Assets.Networking.ClientListeners
         public Vector2 Size => State.Base.Base.Size.ToUnity();
         public float Progress => State.Base.Progress;
         public int Queued => State.Base.Queued;
-        public WarriorsLabState State { get; private set; } = new WarriorsLabState();
+        public int Armour => State.Base.Base.Base.Armour;
         
         public void ResetState()
         {

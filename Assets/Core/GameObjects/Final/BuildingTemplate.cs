@@ -34,6 +34,8 @@ namespace Assets.Core.GameObjects.Final
         public float Progress { get; private set; }
         public int AttachedWorkers { get; set; }
 
+        public override float ViewRadius => 1;
+        public override Vector2 Size => mInitialSize;
         protected override float MaxHealthBase => mMaxHealthBase;
 
         public BuildingTemplate(
@@ -56,10 +58,8 @@ namespace Assets.Core.GameObjects.Final
 
         public override void OnAddedToGame()
         {
-            Size = mInitialSize;
             Position = mInitialPosition;
             RecivedDamage = MaxHealth - 5;
-            ViewRadius = 1;
             
             base.OnAddedToGame();
         }

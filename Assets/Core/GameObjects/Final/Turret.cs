@@ -78,7 +78,7 @@ namespace Assets.Core.GameObjects.Final
                     return BTreeLeafState.Processing;
                 
                 mAttackSpeedTimer = TimeSpan.FromSeconds(1 / mTurret.AttackSpeed);
-                target.RecivedDamage += mTurret.Damage;
+                target.RecivedDamage += Math.Max(mTurret.Damage - target.Armour, 1);
 
                 if (target.RecivedDamage >= target.MaxHealth)
                 {
@@ -150,15 +150,17 @@ namespace Assets.Core.GameObjects.Final
 
         public bool IsAttacks { get; private set; }
         public Vector2 Direction { get; private set; }
-        public float AttackRange { get; private set; }
-        public float AttackSpeed { get; private set; }
+        public float AttackRange => 4;
+        public float AttackSpeed => 2;
         public int Damage => Player.Upgrades.TurretAttackUpgrade.Calculate(BaseDamage);
 
         private TargetStorage mStorage = new TargetStorage();
 
         private int BaseDamage { get; } = 6;
 
+        public override float ViewRadius => 5;
         protected override float MaxHealthBase => MaximumHealthConst;
+        public override Vector2 Size => BuildingSize;
 
         public Turret(Game.Game game, Vector2 position)
         {
@@ -169,11 +171,6 @@ namespace Assets.Core.GameObjects.Final
         public override void OnAddedToGame()
         {
             Position = mInitialPosition;
-            Size = BuildingSize;
-            ViewRadius = 5;
-            
-            AttackRange = 4;
-            AttackSpeed = 2;
 
             mIntelligence = BTree.Create("FindAndKill")
                 .Success(b1 => b1

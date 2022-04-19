@@ -59,6 +59,7 @@ namespace Assets.Networking
         public float ViewRadius => State.Base.Base.ViewRadius;
         public int WorkerCount => State.WorkerCount;
         public Vector2 Waypoint => State.Waypoint.ToUnity();
+        public int Armour => State.Base.Base.Armour;
 
         public void ResetState()
         {

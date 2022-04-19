@@ -46,21 +46,29 @@ namespace Assets.Networking.Services
                 TurretBuildingAvaliable = player.TurretBuildingAvaliable,
                 WarriorsLabBuildingAvaliable = player.WarriorsLabBuildingAvaliable,
                 
-                BuildingDefenceUpgradeLevel = player.BuildingDefenceUpgradeLevel,
-                TurretAttackUpgradeLevel = player.TurretAttackUpgradeLevel,
                 BuildingDefenceUpgradeAvaliable = player.BuildingDefenceUpgradeAvaliable,
                 TurretAttackUpgradeAvaliable = player.TurretAttackUpgradeAvaliable,
+                BuildingArmourUpgradeAvaliable = player.BuildingArmourUpgradeAvaliable,
+                UnitArmourUpgradeAvaliable = player.UnitArmourUpgradeAvaliable,
+                UnitDamageUpgradeAvaliable = player.UnitDamageUpgradeAvaliable,
+                UnitAttackRangeUpgradeAvaliable = player.UnitAttackRangeUpgradeAvaliable,
+                
+                WorkerCost = player.WorkerCost,
+                MeleeWarriorCost = player.MeleeWarriorCost,
+                RangedWarriorCost = player.RangedWarriorCost,
                 
                 BarrakCost = player.BarrakCost,
                 TurretCost = player.TurretCost,
-                WorkerCost = player.WorkerCost,
                 BuildersLabCost = player.BuildersLabCost,
                 CentralBuildingCost = player.CentralBuildingCost,
-                MeleeWarriorCost = player.MeleeWarriorCost,
                 MiningCampCost = player.MiningCampCost,
-                RangedWarriorCost = player.RangedWarriorCost,
+                
                 BuildingDefenceUpgradeCost = player.BuildingDefenceUpgradeCost,
                 TurretAttackUpgradeCost = player.TurretAttackUpgradeCost,
+                BuildingArmourUpgradeCost = player.BuildingArmourUpgradeCost,
+                UnitArmourUpgradeCost = player.UnitArmourUpgradeCost,
+                UnitDamageUpgradeCost = player.UnitDamageUpgradeCost,
+                UnitAttackRangeUpgradeCost = player.UnitAttackRangeUpgradeCost,
                 Team = player.Team,
             };
         }

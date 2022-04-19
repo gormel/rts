@@ -46,23 +46,35 @@ namespace Assets.Networking
             public Guid ID => Guid.Parse(PlayerState.ID.Value);
             public int Money => PlayerState.Money;
             public int Limit => PlayerState.Limit;
+            
             public bool TurretBuildingAvaliable => PlayerState.TurretBuildingAvaliable;
             public bool WarriorsLabBuildingAvaliable => PlayerState.WarriorsLabBuildingAvaliable;
-            public int TurretAttackUpgradeLevel => PlayerState.TurretAttackUpgradeLevel;
-            public int BuildingDefenceUpgradeLevel => PlayerState.BuildingDefenceUpgradeLevel;
+            
             public bool TurretAttackUpgradeAvaliable => PlayerState.TurretAttackUpgradeAvaliable;
             public bool BuildingDefenceUpgradeAvaliable => PlayerState.BuildingDefenceUpgradeAvaliable;
+            public bool BuildingArmourUpgradeAvaliable => PlayerState.BuildingArmourUpgradeAvaliable;
+            public bool UnitArmourUpgradeAvaliable => PlayerState.UnitArmourUpgradeAvaliable;
+            public bool UnitDamageUpgradeAvaliable => PlayerState.UnitDamageUpgradeAvaliable;
+            public bool UnitAttackRangeUpgradeAvaliable => PlayerState.UnitAttackRangeUpgradeAvaliable;
+            
             public int MeleeWarriorCost => PlayerState.MeleeWarriorCost;
             public int RangedWarriorCost  => PlayerState.RangedWarriorCost;
             public int WorkerCost  => PlayerState.WorkerCost;
+            
             public int CentralBuildingCost  => PlayerState.CentralBuildingCost;
             public int MiningCampCost  => PlayerState.MiningCampCost;
             public int BarrakCost  => PlayerState.BarrakCost;
             public int TurretCost  => PlayerState.TurretCost;
             public int BuildersLabCost  => PlayerState.BuildersLabCost;
             public int WarriorsLabCost => PlayerState.WarriorsLabCost;
+            
             public int TurretAttackUpgradeCost  => PlayerState.TurretAttackUpgradeCost;
             public int BuildingDefenceUpgradeCost  => PlayerState.BuildingDefenceUpgradeCost;
+            public int BuildingArmourUpgradeCost => PlayerState.BuildingArmourUpgradeCost;
+            public int UnitArmourUpgradeCost => PlayerState.UnitArmourUpgradeCost;
+            public int UnitDamageUpgradeCost => PlayerState.UnitDamageUpgradeCost;
+            public int UnitAttackRangeUpgradeCost => PlayerState.UnitAttackRangeUpgradeCost;
+            
             public int Team => PlayerState.Team;
         }
         

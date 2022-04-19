@@ -168,7 +168,7 @@ namespace Assets.Core.GameObjects.Base
         public const string WalkingIntelligenceTag = "Walking";
         protected Game.Game Game { get; }
 
-        public float Speed { get; protected set; }
+        public abstract float Speed { get; }
         public Vector2 Direction { get; protected set; }
         public Vector2 Destignation { get; protected set; }
 
@@ -179,7 +179,7 @@ namespace Assets.Core.GameObjects.Base
         private readonly IBTreeBuilder mDefaultIntelligence;
 
         public sealed override float MaxHealth => MaxHealthBase;
-
+        
         public string IntelligenceTag => mIntelligence.Tag;
 
         public Unit(Game.Game game, IPathFinder pathFinder, Vector2 position)

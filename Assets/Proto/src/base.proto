@@ -45,6 +45,7 @@ message ObjectState {
 	float MaxHealth = 4;
 	ID PlayerID = 5;
 	float ViewRadius = 6;
+	int32 Armour = 7;
 }
 
 message Vector {

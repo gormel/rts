@@ -43,7 +43,9 @@ namespace Assets.Core.GameObjects.Final
         private Stack<Worker> mWorkers = new Stack<Worker>();
         private List<Worker> mOrderedToWork = new List<Worker>();
 
+        public override float ViewRadius => 2;
         protected override float MaxHealthBase => MaximumHealthConst;
+        public override Vector2 Size => BuildingSize;
 
         public MiningCamp(Game.Game game, Vector2 position, IPlacementService placementService)
         {
@@ -55,8 +57,6 @@ namespace Assets.Core.GameObjects.Final
         public override void OnAddedToGame()
         {
             Waypoint = Position = mInitialPosition;
-            Size = BuildingSize;
-            ViewRadius = 2;
             
             base.OnAddedToGame();
         }

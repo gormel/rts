@@ -24,6 +24,7 @@ namespace Assets.Networking
         public bool IsBuilding => State.IsBuilding;
         public bool IsAttachedToMiningCamp => State.IsAttachedToMiningCamp;
         public float ViewRadius => State.Base.Base.ViewRadius;
+        public int Armour => State.Base.Base.Armour;
 
         public void ResetState()
         {
