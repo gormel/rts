@@ -41,6 +41,33 @@ namespace Assets.Networking.Services
             });
         }
 
+        public override Task<Empty> QueueArmourUpgrade(QueueArmourUpgradeRequest request, ServerCallContext context)
+        {
+            return mCommonService.ExecuteOrder(request.LabID, async orders =>
+            {
+                await orders.QueueArmourUpgrade();
+                return new Empty();
+            });
+        }
+
+        public override Task<Empty> QueueDamageUpgrade(QueueDamageUpgradeRequest request, ServerCallContext context)
+        {
+            return mCommonService.ExecuteOrder(request.LabID, async orders =>
+            {
+                await orders.QueueDamageUpgrade();
+                return new Empty();
+            });
+        }
+
+        public override Task<Empty> QueueAttackRangeUpgrade(QueueAttackRangeUpgradeRequest request, ServerCallContext context)
+        {
+            return mCommonService.ExecuteOrder(request.LabID, async orders =>
+            {
+                await orders.QueueAttackRangeUpgrade();
+                return new Empty();
+            });
+        }
+
         public void Register(IWarriorsLabOrders orders, IWarriorsLabInfo info)
         {
             mCommonService.Register(orders, info);

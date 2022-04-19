@@ -579,6 +579,33 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
+                    ""name"": ""QueueUnitDamageUpgrade"",
+                    ""type"": ""Button"",
+                    ""id"": ""a5578985-56d9-41c1-8280-ab4ff2603124"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""QueueUnitArmourUpgrade"",
+                    ""type"": ""Button"",
+                    ""id"": ""565970aa-5d0f-4bdc-a2b6-10f4eef1754e"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""QueueUnitAttackRangeUpgrade"",
+                    ""type"": ""Button"",
+                    ""id"": ""3b6751d9-7b52-4b1e-8b47-6b70c72df221"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
                     ""name"": ""BuildCommandCenter"",
                     ""type"": ""Button"",
                     ""id"": ""dc4ba644-0d32-453b-9cb5-e7df31892b72"",
@@ -864,6 +891,39 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
                     ""action"": ""BuildWarriorsLab"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""0001f692-00c4-4695-a2b6-e53854cd1ff6"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""QueueUnitAttackRangeUpgrade"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b9f1f6c0-a847-4a72-877a-6b21c5a47a04"",
+                    ""path"": ""<Keyboard>/d"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""QueueUnitArmourUpgrade"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4f102613-fa1a-4354-92dd-157daa9d87d2"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""QueueUnitDamageUpgrade"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -906,6 +966,9 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
         m_Bindings_QueueRangedWarrior = m_Bindings.FindAction("QueueRangedWarrior", throwIfNotFound: true);
         m_Bindings_QueueBuildingAttackUpgrade = m_Bindings.FindAction("QueueBuildingAttackUpgrade", throwIfNotFound: true);
         m_Bindings_QueueBuildingDefenceUpgrade = m_Bindings.FindAction("QueueBuildingDefenceUpgrade", throwIfNotFound: true);
+        m_Bindings_QueueUnitDamageUpgrade = m_Bindings.FindAction("QueueUnitDamageUpgrade", throwIfNotFound: true);
+        m_Bindings_QueueUnitArmourUpgrade = m_Bindings.FindAction("QueueUnitArmourUpgrade", throwIfNotFound: true);
+        m_Bindings_QueueUnitAttackRangeUpgrade = m_Bindings.FindAction("QueueUnitAttackRangeUpgrade", throwIfNotFound: true);
         m_Bindings_BuildCommandCenter = m_Bindings.FindAction("BuildCommandCenter", throwIfNotFound: true);
         m_Bindings_BuildMiningCamp = m_Bindings.FindAction("BuildMiningCamp", throwIfNotFound: true);
         m_Bindings_BuildBarrack = m_Bindings.FindAction("BuildBarrack", throwIfNotFound: true);
@@ -1165,6 +1228,9 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
     private readonly InputAction m_Bindings_QueueRangedWarrior;
     private readonly InputAction m_Bindings_QueueBuildingAttackUpgrade;
     private readonly InputAction m_Bindings_QueueBuildingDefenceUpgrade;
+    private readonly InputAction m_Bindings_QueueUnitDamageUpgrade;
+    private readonly InputAction m_Bindings_QueueUnitArmourUpgrade;
+    private readonly InputAction m_Bindings_QueueUnitAttackRangeUpgrade;
     private readonly InputAction m_Bindings_BuildCommandCenter;
     private readonly InputAction m_Bindings_BuildMiningCamp;
     private readonly InputAction m_Bindings_BuildBarrack;
@@ -1190,6 +1256,9 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
         public InputAction @QueueRangedWarrior => m_Wrapper.m_Bindings_QueueRangedWarrior;
         public InputAction @QueueBuildingAttackUpgrade => m_Wrapper.m_Bindings_QueueBuildingAttackUpgrade;
         public InputAction @QueueBuildingDefenceUpgrade => m_Wrapper.m_Bindings_QueueBuildingDefenceUpgrade;
+        public InputAction @QueueUnitDamageUpgrade => m_Wrapper.m_Bindings_QueueUnitDamageUpgrade;
+        public InputAction @QueueUnitArmourUpgrade => m_Wrapper.m_Bindings_QueueUnitArmourUpgrade;
+        public InputAction @QueueUnitAttackRangeUpgrade => m_Wrapper.m_Bindings_QueueUnitAttackRangeUpgrade;
         public InputAction @BuildCommandCenter => m_Wrapper.m_Bindings_BuildCommandCenter;
         public InputAction @BuildMiningCamp => m_Wrapper.m_Bindings_BuildMiningCamp;
         public InputAction @BuildBarrack => m_Wrapper.m_Bindings_BuildBarrack;
@@ -1250,6 +1319,15 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
                 @QueueBuildingDefenceUpgrade.started -= m_Wrapper.m_BindingsActionsCallbackInterface.OnQueueBuildingDefenceUpgrade;
                 @QueueBuildingDefenceUpgrade.performed -= m_Wrapper.m_BindingsActionsCallbackInterface.OnQueueBuildingDefenceUpgrade;
                 @QueueBuildingDefenceUpgrade.canceled -= m_Wrapper.m_BindingsActionsCallbackInterface.OnQueueBuildingDefenceUpgrade;
+                @QueueUnitDamageUpgrade.started -= m_Wrapper.m_BindingsActionsCallbackInterface.OnQueueUnitDamageUpgrade;
+                @QueueUnitDamageUpgrade.performed -= m_Wrapper.m_BindingsActionsCallbackInterface.OnQueueUnitDamageUpgrade;
+                @QueueUnitDamageUpgrade.canceled -= m_Wrapper.m_BindingsActionsCallbackInterface.OnQueueUnitDamageUpgrade;
+                @QueueUnitArmourUpgrade.started -= m_Wrapper.m_BindingsActionsCallbackInterface.OnQueueUnitArmourUpgrade;
+                @QueueUnitArmourUpgrade.performed -= m_Wrapper.m_BindingsActionsCallbackInterface.OnQueueUnitArmourUpgrade;
+                @QueueUnitArmourUpgrade.canceled -= m_Wrapper.m_BindingsActionsCallbackInterface.OnQueueUnitArmourUpgrade;
+                @QueueUnitAttackRangeUpgrade.started -= m_Wrapper.m_BindingsActionsCallbackInterface.OnQueueUnitAttackRangeUpgrade;
+                @QueueUnitAttackRangeUpgrade.performed -= m_Wrapper.m_BindingsActionsCallbackInterface.OnQueueUnitAttackRangeUpgrade;
+                @QueueUnitAttackRangeUpgrade.canceled -= m_Wrapper.m_BindingsActionsCallbackInterface.OnQueueUnitAttackRangeUpgrade;
                 @BuildCommandCenter.started -= m_Wrapper.m_BindingsActionsCallbackInterface.OnBuildCommandCenter;
                 @BuildCommandCenter.performed -= m_Wrapper.m_BindingsActionsCallbackInterface.OnBuildCommandCenter;
                 @BuildCommandCenter.canceled -= m_Wrapper.m_BindingsActionsCallbackInterface.OnBuildCommandCenter;
@@ -1317,6 +1395,15 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
                 @QueueBuildingDefenceUpgrade.started += instance.OnQueueBuildingDefenceUpgrade;
                 @QueueBuildingDefenceUpgrade.performed += instance.OnQueueBuildingDefenceUpgrade;
                 @QueueBuildingDefenceUpgrade.canceled += instance.OnQueueBuildingDefenceUpgrade;
+                @QueueUnitDamageUpgrade.started += instance.OnQueueUnitDamageUpgrade;
+                @QueueUnitDamageUpgrade.performed += instance.OnQueueUnitDamageUpgrade;
+                @QueueUnitDamageUpgrade.canceled += instance.OnQueueUnitDamageUpgrade;
+                @QueueUnitArmourUpgrade.started += instance.OnQueueUnitArmourUpgrade;
+                @QueueUnitArmourUpgrade.performed += instance.OnQueueUnitArmourUpgrade;
+                @QueueUnitArmourUpgrade.canceled += instance.OnQueueUnitArmourUpgrade;
+                @QueueUnitAttackRangeUpgrade.started += instance.OnQueueUnitAttackRangeUpgrade;
+                @QueueUnitAttackRangeUpgrade.performed += instance.OnQueueUnitAttackRangeUpgrade;
+                @QueueUnitAttackRangeUpgrade.canceled += instance.OnQueueUnitAttackRangeUpgrade;
                 @BuildCommandCenter.started += instance.OnBuildCommandCenter;
                 @BuildCommandCenter.performed += instance.OnBuildCommandCenter;
                 @BuildCommandCenter.canceled += instance.OnBuildCommandCenter;
@@ -1378,6 +1465,9 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
         void OnQueueRangedWarrior(InputAction.CallbackContext context);
         void OnQueueBuildingAttackUpgrade(InputAction.CallbackContext context);
         void OnQueueBuildingDefenceUpgrade(InputAction.CallbackContext context);
+        void OnQueueUnitDamageUpgrade(InputAction.CallbackContext context);
+        void OnQueueUnitArmourUpgrade(InputAction.CallbackContext context);
+        void OnQueueUnitAttackRangeUpgrade(InputAction.CallbackContext context);
         void OnBuildCommandCenter(InputAction.CallbackContext context);
         void OnBuildMiningCamp(InputAction.CallbackContext context);
         void OnBuildBarrack(InputAction.CallbackContext context);

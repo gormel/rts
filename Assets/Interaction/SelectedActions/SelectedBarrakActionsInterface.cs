@@ -21,19 +21,21 @@ namespace Assets.Interaction {
 
         public void BuildRanged()
         {
-            var views = Interface.Selected.OfType<BarrakView>();
+            var views = Interface.Selected.OfType<BarrakView>().OrderBy(v => v.Info.Queued);
             foreach (var buildingView in views)
             {
                 buildingView.Orders.QueueRanged();
+                break;
             }
         }
 
         public void BuildMeelee()
         {
-            var views = Interface.Selected.OfType<BarrakView>();
+            var views = Interface.Selected.OfType<BarrakView>().OrderBy(v => v.Info.Queued);
             foreach (var buildingView in views)
             {
                 buildingView.Orders.QueueMeelee();
+                break;
             }
         }
     }

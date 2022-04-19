@@ -40,7 +40,7 @@ namespace Assets.Interaction
 
         private void OnHotkey(InputAction.CallbackContext obj)
         {
-            if (TargetButton != null)
+            if (TargetButton != null && TargetButton.interactable)
                 TargetButton.onClick.Invoke();
         }
 

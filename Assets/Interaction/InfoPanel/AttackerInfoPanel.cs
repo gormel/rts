@@ -12,6 +12,7 @@ namespace Assets.Interaction.InfoPanel
         public Text AttackText;
         public Text AttackSpeedText;
         public Text AttackRangeText;
+        public Text ArmourText;
 
         public virtual void Update()
         {
@@ -21,6 +22,7 @@ namespace Assets.Interaction.InfoPanel
                 AttackText.text = selected.Damage.ToString();
                 AttackSpeedText.text = selected.AttackSpeed.ToString();
                 AttackRangeText.text = selected.AttackRange.ToString();
+                ArmourText.text = selected.Armour.ToString();
             }
         }
     }

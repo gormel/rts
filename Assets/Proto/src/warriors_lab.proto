@@ -7,6 +7,22 @@ service WarriorsLabService {
     rpc ListenState(ID) returns (stream WarriorsLabState);
 
     rpc CancelOredr(CancelQueuedRequest) returns (Empty);
+
+    rpc QueueDamageUpgrade(QueueDamageUpgradeRequest) returns (Empty);
+    rpc QueueArmourUpgrade(QueueArmourUpgradeRequest) returns (Empty);
+    rpc QueueAttackRangeUpgrade(QueueAttackRangeUpgradeRequest) returns (Empty);
+}
+
+message QueueDamageUpgradeRequest {
+    ID LabID = 1;
+}
+
+message QueueArmourUpgradeRequest {
+    ID LabID = 1;
+}
+
+message QueueAttackRangeUpgradeRequest {
+    ID LabID = 1;
 }
 
 message WarriorsLabState {

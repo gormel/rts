@@ -557,6 +557,33 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "QueueUnitDamageUpgrade",
+                    "type": "Button",
+                    "id": "a5578985-56d9-41c1-8280-ab4ff2603124",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "QueueUnitArmourUpgrade",
+                    "type": "Button",
+                    "id": "565970aa-5d0f-4bdc-a2b6-10f4eef1754e",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "QueueUnitAttackRangeUpgrade",
+                    "type": "Button",
+                    "id": "3b6751d9-7b52-4b1e-8b47-6b70c72df221",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "BuildCommandCenter",
                     "type": "Button",
                     "id": "dc4ba644-0d32-453b-9cb5-e7df31892b72",
@@ -840,6 +867,39 @@
                     "processors": "",
                     "groups": "",
                     "action": "BuildWarriorsLab",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "0001f692-00c4-4695-a2b6-e53854cd1ff6",
+                    "path": "<Keyboard>/r",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "QueueUnitAttackRangeUpgrade",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b9f1f6c0-a847-4a72-877a-6b21c5a47a04",
+                    "path": "<Keyboard>/d",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "QueueUnitArmourUpgrade",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "4f102613-fa1a-4354-92dd-157daa9d87d2",
+                    "path": "<Keyboard>/a",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "QueueUnitDamageUpgrade",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

@@ -28,6 +28,30 @@ namespace Assets.Networking.ClientListeners
                 Index = index
             }).ResponseAsync;
         }
+
+        public Task QueueDamageUpgrade()
+        {
+            return mClient.QueueDamageUpgradeAsync(new QueueDamageUpgradeRequest
+            {
+                LabID = new ID {Value = mID},
+            }).ResponseAsync;
+        }
+
+        public Task QueueArmourUpgrade()
+        {
+            return mClient.QueueArmourUpgradeAsync(new QueueArmourUpgradeRequest
+            {
+                LabID = new ID {Value = mID},
+            }).ResponseAsync;
+        }
+
+        public Task QueueAttackRangeUpgrade()
+        {
+            return mClient.QueueAttackRangeUpgradeAsync(new QueueAttackRangeUpgradeRequest
+            {
+                LabID = new ID {Value = mID},
+            }).ResponseAsync;
+        }
     }
     
     internal class ClientWarriorsLabInfo : IWarriorsLabInfo, IStateHolder<WarriorsLabState>

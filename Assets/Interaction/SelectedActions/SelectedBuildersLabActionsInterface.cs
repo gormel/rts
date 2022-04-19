@@ -29,7 +29,7 @@ namespace Assets.Interaction
 
         public void QueueAttackUpgrade()
         {
-            foreach (var view in Interface.Selected.OfType<BuildersLabView>())
+            foreach (var view in Interface.Selected.OfType<BuildersLabView>().OrderBy(v => v.Info.Queued))
             {
                 view.Orders.QueueAttackUpgrade();
                 break;
@@ -38,7 +38,7 @@ namespace Assets.Interaction
 
         public void QueueDefenceUpgrade()
         {
-            foreach (var view in Interface.Selected.OfType<BuildersLabView>())
+            foreach (var view in Interface.Selected.OfType<BuildersLabView>().OrderBy(v => v.Info.Queued))
             {
                 view.Orders.QueueDefenceUpgrade();
                 break;

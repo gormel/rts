@@ -18,10 +18,11 @@ namespace Assets.Interaction
         
         public void BuildWorker()
         {
-            var views = Interface.Selected.OfType<CentralBuildingView>();
+            var views = Interface.Selected.OfType<CentralBuildingView>().OrderBy(v => v.Info.Queued);
             foreach (var buildingView in views)
             {
                 buildingView.Orders.QueueWorker();
+                break;
             }
         }
     }
