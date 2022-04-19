@@ -15,6 +15,7 @@ namespace Assets.Core.GameObjects.Final
         Task<Guid> PlaceBarrakTemplate(Vector2Int position);
         Task<Guid> PlaceTurretTemplate(Vector2Int position);
         Task<Guid> PlaceBuildersLabTemplate(Vector2Int position);
+        Task<Guid> PlaceWarriorsLabTemplate(Vector2Int position);
         Task AttachAsBuilder(Guid templateId);
         Task AttachToMiningCamp(Guid campId);
     }
@@ -121,6 +122,7 @@ namespace Assets.Core.GameObjects.Final
         public static TimeSpan BarrakBuildTime { get; } = TimeSpan.FromSeconds(25);
         public static TimeSpan TurretBuildTime { get; } = TimeSpan.FromSeconds(15);
         public static TimeSpan BuildersLabBuildTime { get; } = TimeSpan.FromSeconds(25);
+        public static TimeSpan WarriorsLabBuildTime { get; } = TimeSpan.FromSeconds(25);
 
         public const string BuildingIntelligenceTag = "Building";
         public const string MiningIntelligenceTag = "Mining";
@@ -261,6 +263,27 @@ namespace Assets.Core.GameObjects.Final
                 BuildersLabBuildTime,
                 BuildersLab.BuildingSize,
                 BuildersLab.MaximumHealthConst
+            );
+
+            var id = await Game.PlaceObject(template);
+            await AttachAsBuilder(id);
+            return id;
+        }
+
+        public async Task<Guid> PlaceWarriorsLabTemplate(Vector2Int position)
+        {
+            if (!Game.GetIsAreaFree(position, WarriorsLab.BuildingSize))
+                return Guid.Empty;
+
+            if (!Player.Money.Spend(Player.WarriorsLabCost))
+                return Guid.Empty;
+
+            var template = await Player.CreateBuildingTemplate(
+                position,
+                async pos => await Player.CreateWarriorsLab(pos),
+                WarriorsLabBuildTime,
+                WarriorsLab.BuildingSize,
+                WarriorsLab.MaximumHealthConst
             );
 
             var id = await Game.PlaceObject(template);

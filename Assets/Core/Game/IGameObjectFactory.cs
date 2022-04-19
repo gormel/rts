@@ -20,5 +20,6 @@ namespace Assets.Core.Game
         Task<Turret> CreateTurret(Vector2 position);
         Task<MiningCamp> CreateMiningCamp(Vector2 position);
         Task<BuildersLab> CreateBuildersLab(Vector2 position);
+        Task<WarriorsLab> CreateWarriorsLab(Vector2 position);
     }
 }

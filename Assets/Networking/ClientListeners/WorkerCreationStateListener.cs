@@ -99,6 +99,16 @@ namespace Assets.Networking
             return Guid.Parse(resp.Value);
         }
 
+        public async Task<Guid> PlaceWarriorsLabTemplate(Vector2Int position)
+        {
+            var resp = await mClient.PlaceWarriorsLabTemplateAsync(new PlaceWarriorsLabTemplateRequest
+            {
+                Position = new Vector {X = position.x, Y = position.y},
+                WorkerID = new ID {Value = mID}
+            });
+            return Guid.Parse(resp.Value);
+        }
+
         public Task AttachAsBuilder(Guid templateId)
         {
             return mClient.AttachAsBuilderAsync(new AttachAsBuilderRequest

@@ -17,6 +17,7 @@ namespace Assets.Interaction
         public Text BarrakCostText;
         public Text TurretCostText;
         public Text BuildersLabCostText;
+        public Text WarriorsLabCostText;
         public Text MiningCampCostText;
         
         public void StartCentralBuildingPlacement()
@@ -59,6 +60,14 @@ namespace Assets.Interaction
             );
         }
 
+        public void StartWarriorsLabPlacement()
+        {
+            Interface.BeginBuildingPlacement(Interface.FetchSelectedOrders<IWorkerOrders>(), (view, position) => 
+                view.PlaceWarriorsLabTemplate(new Vector2Int(Mathf.FloorToInt(position.x), Mathf.FloorToInt(position.y))),
+                WarriorsLab.BuildingSize
+            );
+        }
+
         public void AttachToMiningCamp()
         {
             Interface.BeginAttachWorkerToMiningCamp(Interface.FetchSelectedOrders<IWorkerOrders>());
@@ -74,6 +83,7 @@ namespace Assets.Interaction
             BarrakCostText.text = player.BarrakCost.ToString();
             TurretCostText.text = player.TurretCost.ToString();
             BuildersLabCostText.text = player.BuildersLabCost.ToString();
+            WarriorsLabCostText.text = player.WarriorsLabCost.ToString();
             MiningCampCostText.text = player.MiningCampCost.ToString();
         }
 

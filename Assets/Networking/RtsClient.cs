@@ -59,6 +59,7 @@ namespace Assets.Networking
             public int BarrakCost  => PlayerState.BarrakCost;
             public int TurretCost  => PlayerState.TurretCost;
             public int BuildersLabCost  => PlayerState.BuildersLabCost;
+            public int WarriorsLabCost => PlayerState.WarriorsLabCost;
             public int TurretAttackUpgradeCost  => PlayerState.TurretAttackUpgradeCost;
             public int BuildingDefenceUpgradeCost  => PlayerState.BuildingDefenceUpgradeCost;
             public int Team => PlayerState.Team;
@@ -79,6 +80,7 @@ namespace Assets.Networking
         public event Action<IBarrakOrders, IBarrakInfo> BarrakCreated;
         public event Action<ITurretOrders, ITurretInfo> TurretCreated;
         public event Action<IBuildersLabOrders, IBuildersLabInfo> BuildersLabCreated;
+        public event Action<IWarriorsLabOrders, IWarriorsLabInfo> WarriorsLabCreated;
 
         public event Action<IGameObjectInfo> ObjectDestroyed;
 
@@ -97,6 +99,7 @@ namespace Assets.Networking
         private readonly BarrakCreationListener mBarrakCreationListener;
         private readonly TurretCreationListener mTurretCreationListener;
         private readonly BuildersLabCreationListener mBuildersLabCreationListener;
+        private readonly WarriorsLabCreationListener mWarriorsLabCreationListener;
         
         private GameService.GameServiceClient mGameService;
 
@@ -130,6 +133,10 @@ namespace Assets.Networking
             mBuildersLabCreationListener = new BuildersLabCreationListener(syncContext);
             mBuildersLabCreationListener.Created += (orders, info) => BuildersLabCreated?.Invoke(orders, info);
             mBuildersLabCreationListener.Destroyed += info => ObjectDestroyed?.Invoke(info);
+
+            mWarriorsLabCreationListener = new WarriorsLabCreationListener(syncContext);
+            mWarriorsLabCreationListener.Created += (orders, info) => WarriorsLabCreated?.Invoke(orders, info);
+            mWarriorsLabCreationListener.Destroyed += info => ObjectDestroyed?.Invoke(info);
 
             mRangedWarriorCreationStateListener = new RangedWarriorCreationStateListener(syncContext);
             mRangedWarriorCreationStateListener.Created += (orders, info) => RangedWarriorCreated?.Invoke(orders, info);
@@ -241,6 +248,7 @@ namespace Assets.Networking
                                     var t6 = mMeeleeWarriorCreationStateListener.ListenCreations(mChannel);
                                     var t7 = mTurretCreationListener.ListenCreations(mChannel);
                                     var t8 = mBuildersLabCreationListener.ListenCreations(mChannel);
+                                    var t9 = mWarriorsLabCreationListener.ListenCreations(mChannel);
                                 }
                             }
                         }

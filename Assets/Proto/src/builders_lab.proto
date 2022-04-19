@@ -22,10 +22,4 @@ message QueueDefenceUpgradeRequest {
 
 message BuildersLabState {
     LaboratoryBuildingState Base = 1;
-
-    bool AttackUpgradeAvaliable = 2;
-    int32 AttackUpgradeCost = 3;
-
-    bool DefenceUpgradeAvaliable = 4;
-    int32 DefenceUpgradeCost = 5;
 }

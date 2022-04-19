@@ -600,6 +600,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "BuildWarriorsLab",
+                    "type": "Button",
+                    "id": "d59a1101-5d3f-4c8e-ac22-b7ff34d6132f",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -820,6 +829,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "BuildBuildersLab",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "86a82c7e-4eb3-4f99-bcef-8d9bc75f4963",
+                    "path": "<Keyboard>/w",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "BuildWarriorsLab",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

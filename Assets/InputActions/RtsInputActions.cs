@@ -622,6 +622,15 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""BuildWarriorsLab"",
+                    ""type"": ""Button"",
+                    ""id"": ""d59a1101-5d3f-4c8e-ac22-b7ff34d6132f"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -844,6 +853,17 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
                     ""action"": ""BuildBuildersLab"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""86a82c7e-4eb3-4f99-bcef-8d9bc75f4963"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""BuildWarriorsLab"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -891,6 +911,7 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
         m_Bindings_BuildBarrack = m_Bindings.FindAction("BuildBarrack", throwIfNotFound: true);
         m_Bindings_BuildTurret = m_Bindings.FindAction("BuildTurret", throwIfNotFound: true);
         m_Bindings_BuildBuildersLab = m_Bindings.FindAction("BuildBuildersLab", throwIfNotFound: true);
+        m_Bindings_BuildWarriorsLab = m_Bindings.FindAction("BuildWarriorsLab", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -1149,6 +1170,7 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
     private readonly InputAction m_Bindings_BuildBarrack;
     private readonly InputAction m_Bindings_BuildTurret;
     private readonly InputAction m_Bindings_BuildBuildersLab;
+    private readonly InputAction m_Bindings_BuildWarriorsLab;
     public struct BindingsActions
     {
         private @RtsInputActions m_Wrapper;
@@ -1173,6 +1195,7 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
         public InputAction @BuildBarrack => m_Wrapper.m_Bindings_BuildBarrack;
         public InputAction @BuildTurret => m_Wrapper.m_Bindings_BuildTurret;
         public InputAction @BuildBuildersLab => m_Wrapper.m_Bindings_BuildBuildersLab;
+        public InputAction @BuildWarriorsLab => m_Wrapper.m_Bindings_BuildWarriorsLab;
         public InputActionMap Get() { return m_Wrapper.m_Bindings; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1242,6 +1265,9 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
                 @BuildBuildersLab.started -= m_Wrapper.m_BindingsActionsCallbackInterface.OnBuildBuildersLab;
                 @BuildBuildersLab.performed -= m_Wrapper.m_BindingsActionsCallbackInterface.OnBuildBuildersLab;
                 @BuildBuildersLab.canceled -= m_Wrapper.m_BindingsActionsCallbackInterface.OnBuildBuildersLab;
+                @BuildWarriorsLab.started -= m_Wrapper.m_BindingsActionsCallbackInterface.OnBuildWarriorsLab;
+                @BuildWarriorsLab.performed -= m_Wrapper.m_BindingsActionsCallbackInterface.OnBuildWarriorsLab;
+                @BuildWarriorsLab.canceled -= m_Wrapper.m_BindingsActionsCallbackInterface.OnBuildWarriorsLab;
             }
             m_Wrapper.m_BindingsActionsCallbackInterface = instance;
             if (instance != null)
@@ -1306,6 +1332,9 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
                 @BuildBuildersLab.started += instance.OnBuildBuildersLab;
                 @BuildBuildersLab.performed += instance.OnBuildBuildersLab;
                 @BuildBuildersLab.canceled += instance.OnBuildBuildersLab;
+                @BuildWarriorsLab.started += instance.OnBuildWarriorsLab;
+                @BuildWarriorsLab.performed += instance.OnBuildWarriorsLab;
+                @BuildWarriorsLab.canceled += instance.OnBuildWarriorsLab;
             }
         }
     }
@@ -1354,5 +1383,6 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
         void OnBuildBarrack(InputAction.CallbackContext context);
         void OnBuildTurret(InputAction.CallbackContext context);
         void OnBuildBuildersLab(InputAction.CallbackContext context);
+        void OnBuildWarriorsLab(InputAction.CallbackContext context);
     }
 }

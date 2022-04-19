@@ -35,6 +35,7 @@ namespace Assets.Networking
         public IRegistrator<IBarrakOrders, IBarrakInfo> BarrakRegistrator { get; private set; }
         public IRegistrator<ITurretOrders, ITurretInfo> TurretRegistrator { get; private set; }
         public IRegistrator<IBuildersLabOrders, IBuildersLabInfo> BuildersLabRegistrator { get; private set; }
+        public IRegistrator<IWarriorsLabOrders, IWarriorsLabInfo> WarriorsLabRegistrator { get; private set; }
 
         public event Action<string, int> MessageRecived;
 
@@ -80,6 +81,10 @@ namespace Assets.Networking
             var buildersLabService = new BuildersLabServiceImpl();
             BuildersLabRegistrator = buildersLabService;
             mServer.Services.Add(BuildersLabService.BindService(buildersLabService));
+
+            var warriorsLabService = new WarriorsLabServiceImpl();
+            WarriorsLabRegistrator = warriorsLabService;
+            mServer.Services.Add(WarriorsLabService.BindService(warriorsLabService));
 
             mServer.Start();
         }

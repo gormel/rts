@@ -31,6 +31,7 @@ namespace Assets.Core.Game
         int BarrakCost { get; }
         int TurretCost { get; }
         int BuildersLabCost { get; }
+        int WarriorsLabCost { get; }
         
         int TurretAttackUpgradeCost { get; }
         int BuildingDefenceUpgradeCost { get; }
@@ -69,6 +70,7 @@ namespace Assets.Core.Game
         public int BarrakCost { get; } = 200;
         public int TurretCost { get; } = 100;
         public int BuildersLabCost { get; } = 200;
+        public int WarriorsLabCost { get; } = 200;
         public int TurretAttackUpgradeCost { get; } = 250;
         public int BuildingDefenceUpgradeCost { get; } = 200;
         public int Team { get; }
@@ -141,6 +143,11 @@ namespace Assets.Core.Game
         public Task<BuildersLab> CreateBuildersLab(Vector2 position)
         {
             return AssignPlayer(mExternalFactory.CreateBuildersLab(position));
+        }
+
+        public Task<WarriorsLab> CreateWarriorsLab(Vector2 position)
+        {
+            return AssignPlayer(mExternalFactory.CreateWarriorsLab(position));
         }
 
         public void RegisterCreatedBuilding(Type buildingType)

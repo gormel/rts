@@ -57,8 +57,6 @@ namespace Assets.Networking.ClientListeners
         public Vector2 Size => State.Base.Base.Size.ToUnity();
         public float Progress => State.Base.Progress;
         public int Queued => State.Base.Queued;
-        public int AttackUpgradeCost => State.AttackUpgradeCost;
-        public int DefenceUpgradeCost => State.DefenceUpgradeCost;
         public BuildersLabState State { get; private set; } = new BuildersLabState();
         
         public void ResetState()

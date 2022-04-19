@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+import "base.proto";
+
+service WarriorsLabService {
+    rpc ListenCreation (Empty) returns (stream WarriorsLabState);
+    rpc ListenState(ID) returns (stream WarriorsLabState);
+
+    rpc CancelOredr(CancelQueuedRequest) returns (Empty);
+}
+
+message WarriorsLabState {
+    LaboratoryBuildingState Base = 1;
+}

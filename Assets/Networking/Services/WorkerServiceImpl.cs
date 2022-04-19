@@ -69,6 +69,15 @@ namespace Assets.Networking.Services
             });
         }
 
+        public override Task<ID> PlaceWarriorsLabTemplate(PlaceWarriorsLabTemplateRequest request, ServerCallContext context)
+        {
+            return mCommonService.ExecuteOrder(request.WorkerID, async orders =>
+            {
+                var id = await orders.PlaceWarriorsLabTemplate(new Vector2Int((int)request.Position.X, (int)request.Position.Y));
+                return new ID { Value = id.ToString() };
+            });
+        }
+
         public override Task<ID> PlaceCentralBuildingTemplate(PlaceCentralBuildingTemplateRequest request, ServerCallContext context)
         {
             return mCommonService.ExecuteOrder(request.WorkerID, async orders =>

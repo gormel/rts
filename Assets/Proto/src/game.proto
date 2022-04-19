@@ -47,11 +47,12 @@ message PlayerState {
     int32 BarrakCost = 14;
     int32 TurretCost = 15;
     int32 BuildersLabCost = 16;
+    int32 WarriorsLabCost = 17;
 
-    int32 TurretAttackUpgradeCost = 17;
-    int32 BuildingDefenceUpgradeCost = 18;
+    int32 TurretAttackUpgradeCost = 18;
+    int32 BuildingDefenceUpgradeCost = 19;
 
-    int32 Team = 19;
+    int32 Team = 20;
 }
 
 message MapState {
