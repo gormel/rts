@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Assets.Views;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -18,6 +19,12 @@ namespace Assets.Interaction
         public float Border = 2;
 
         public float Speed;
+
+        public GameObject InnerCamera;
+        public float MinDistance;
+        public float MaxDistance;
+        public float ZoomSpeed;
+        
         private Vector3 mCameraVelocity = Vector3.zero;
         private bool mAltState;
         private RtsInputActions mInputActions;
@@ -31,7 +38,10 @@ namespace Assets.Interaction
         private bool mKeyboardUp;
         private bool mKeyboardRight;
         private bool mKeyboardDown;
-        
+
+        private float mCameraDistance;
+
+        private RaycastHit[] mCameraRaycasts = new RaycastHit[10];
 
         void Awake()
         {
@@ -39,11 +49,18 @@ namespace Assets.Interaction
             mInputActions.Camera.AltState.performed += OnAltState;
             mInputActions.Camera.Pan.performed += OnPan;
             mInputActions.Camera.Move.performed += OnMove;
+            mInputActions.Camera.Zoom.performed += OnZoom;
+        }
+
+        private void OnZoom(InputAction.CallbackContext obj)
+        {
+            mCameraDistance = Mathf.Clamp(mCameraDistance + obj.ReadValue<Vector2>().y * ZoomSpeed, MinDistance, MaxDistance);
         }
 
         void OnEnable()
         {
             mInputActions.Enable();
+            mCameraDistance = MaxDistance;
         }
 
         void OnDisable()
@@ -123,7 +140,11 @@ namespace Assets.Interaction
                 mMouseRight || mKeyboardRight, 
                 mMouseDown || mKeyboardDown, 
                 mMouseLeft || mKeyboardLeft);
-            
+
+            var innerPos = InnerCamera.transform.localPosition;
+            innerPos.z = -mCameraDistance;
+            InnerCamera.transform.localPosition = innerPos;
+
             transform.localPosition += mCameraVelocity * Speed * Time.deltaTime;
         }
 

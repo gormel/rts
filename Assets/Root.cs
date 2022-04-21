@@ -5,6 +5,7 @@ using Assets.Core.Game;
 using Assets.Core.GameObjects.Base;
 using Assets.Core.GameObjects.Final;
 using Assets.Core.Map;
+using Assets.Interaction;
 using Assets.Networking;
 using Assets.Utils;
 using Assets.Views;
@@ -13,6 +14,7 @@ using Assets.Views.Utils;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 using GameObject = UnityEngine.GameObject;
 
 class Root : MonoBehaviour
@@ -230,6 +232,7 @@ class Root : MonoBehaviour
     
     public UnitySyncContext SyncContext;
     public ExternalUpdater Updater;
+    public GameObject PlayerScreen;
 
     private RtsServer mServer;
     private RtsClient mClient;
@@ -265,7 +268,7 @@ class Root : MonoBehaviour
             mServer.Listen(SyncContext, enemyFactory, allyFactory, mGame, player);
 
             var success = GameUtils.TryCreateBase(mGame, player, out var basePos);
-            PlaseCamera(basePos);
+            PlaceCamera(basePos);
         }
 
         if (GameUtils.CurrentMode == GameMode.Client)
@@ -273,7 +276,7 @@ class Root : MonoBehaviour
             mClient = new RtsClient(SyncContext);
 
             mClient.MapLoaded += data => MapView = CreateMap(data, false);
-            mClient.BaseCreated += pos => PlaseCamera(pos);
+            mClient.BaseCreated += pos => PlaceCamera(pos);
             mClient.PlayerConnected += state => Player = state;
             mClient.DisconnectedFromServer += () => SceneManager.LoadScene(GuiSceneName);
             mClient.OtherPlayerConnected += (nick, player) => mClientOtherPlayers.AddOrUpdate(player.ID, player, (id, p) => player);
@@ -326,20 +329,20 @@ class Root : MonoBehaviour
         CreateClientView(orders, info, RangedWarriorPrefab);
     }
 
-    public void PlaseCamera(Vector2 pos)
+    public void PlaceCamera(Vector2 pos)
     {
-        var cameraY = Camera.main.transform.position.y;
+        var cameraY = PlayerScreen.transform.position.y;
         var dY = cameraY - MapView.transform.position.y;
         var dX = 0f;
         var dZ = 0f;
 
-        if (Camera.main.transform.eulerAngles.z > 0)
-            dX = dY / Mathf.Tan(Camera.main.transform.eulerAngles.z * Mathf.Deg2Rad);
+        if (PlayerScreen.transform.eulerAngles.z > 0)
+            dX = dY / Mathf.Tan(PlayerScreen.transform.eulerAngles.z * Mathf.Deg2Rad);
 
-        if (Camera.main.transform.eulerAngles.x > 0)
-            dZ = dY / Mathf.Tan(Camera.main.transform.eulerAngles.x * Mathf.Deg2Rad);
+        if (PlayerScreen.transform.eulerAngles.x > 0)
+            dZ = dY / Mathf.Tan(PlayerScreen.transform.eulerAngles.x * Mathf.Deg2Rad);
 
-        Camera.main.transform.position = new Vector3(pos.x - dX, cameraY, pos.y - dZ);
+        PlayerScreen.transform.position = new Vector3(pos.x - dX, cameraY, pos.y - dZ);
     }
 
     private void ClientOnObjectDestroyed(IGameObjectInfo objectInfo)

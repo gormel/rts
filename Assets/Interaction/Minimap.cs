@@ -61,7 +61,7 @@ namespace Assets.Interaction
             if (eventData.button == PointerEventData.InputButton.Left)
             {
                 mIsCameraMovement = true;
-                Root.PlaseCamera(new Vector2(world.x, world.z));
+                Root.PlaceCamera(new Vector2(world.x, world.z));
             }
 
             if (eventData.button == PointerEventData.InputButton.Right)
@@ -82,7 +82,7 @@ namespace Assets.Interaction
             
             mIsCameraMovement = true;
             var world = ProjectToWorld(eventData.position);
-            Root.PlaseCamera(new Vector2(world.x, world.z));
+            Root.PlaceCamera(new Vector2(world.x, world.z));
         }
 
         public void OnDrag(PointerEventData eventData)
@@ -90,7 +90,7 @@ namespace Assets.Interaction
             if (mIsCameraMovement)
             {
                 var world = ProjectToWorld(eventData.position);
-                Root.PlaseCamera(new Vector2(world.x, world.z));
+                Root.PlaceCamera(new Vector2(world.x, world.z));
             }
         }
 

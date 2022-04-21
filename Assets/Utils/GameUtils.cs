@@ -92,11 +92,10 @@ namespace Assets.Utils
             if (!game.Map.TryAllocateBase(out basePos))
                 return false;
 
-            player.CreateCentralBuilding(basePos + Vector2.one).ContinueWith(t => game.PlaceObject(t.Result));
-            //player.CreateBarrak(pos + Vector2.one).ContinueWith(t => game.PlaceObject(t.Result));
+            var relativeCentralBuildingPosition = Vector2.one;
+            player.CreateCentralBuilding(basePos + relativeCentralBuildingPosition).ContinueWith(t => game.PlaceObject(t.Result));
             player.CreateWorker(basePos).ContinueWith(t => game.PlaceObject(t.Result));
-            //player.CreateWorker(pos + Vector2.right).ContinueWith(t => game.PlaceObject(t.Result));
-            //player.CreateMeeleeWarrior(pos + Vector2.right).ContinueWith(t => game.PlaceObject(t.Result));
+            basePos += relativeCentralBuildingPosition + CentralBuilding.BuildingSize / 2;
             return true;
         }
     }

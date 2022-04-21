@@ -41,7 +41,7 @@ namespace Assets.Interaction.Selection
             var members = new HashSet<SelectableView>(Members.Where(v => v != null));
             if (selected.SetEquals(members) && mSelectionManager.Selected.Any())
             {
-                mRoot.PlaseCamera(Members[mLastCameraOn].FlatBounds.center);
+                mRoot.PlaceCamera(Members[mLastCameraOn].FlatBounds.center);
                 mLastCameraOn = (mLastCameraOn + Members.Count + 1) % Members.Count;
                 return;
             }

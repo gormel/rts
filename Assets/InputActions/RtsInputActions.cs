@@ -209,6 +209,15 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Zoom"",
+                    ""type"": ""Value"",
+                    ""id"": ""9dae66e8-a298-46ba-b551-9b45b67f6bd9"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -286,6 +295,17 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""AltState"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""587ed7c5-a3e3-4385-b5f7-6d50c2297f29"",
+                    ""path"": ""<Mouse>/scroll"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Zoom"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -940,6 +960,7 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
         m_Camera_Pan = m_Camera.FindAction("Pan", throwIfNotFound: true);
         m_Camera_Move = m_Camera.FindAction("Move", throwIfNotFound: true);
         m_Camera_AltState = m_Camera.FindAction("AltState", throwIfNotFound: true);
+        m_Camera_Zoom = m_Camera.FindAction("Zoom", throwIfNotFound: true);
         // OnScreenInteraction
         m_OnScreenInteraction = asset.FindActionMap("OnScreenInteraction", throwIfNotFound: true);
         m_OnScreenInteraction_BeginDrag = m_OnScreenInteraction.FindAction("BeginDrag", throwIfNotFound: true);
@@ -1086,6 +1107,7 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
     private readonly InputAction m_Camera_Pan;
     private readonly InputAction m_Camera_Move;
     private readonly InputAction m_Camera_AltState;
+    private readonly InputAction m_Camera_Zoom;
     public struct CameraActions
     {
         private @RtsInputActions m_Wrapper;
@@ -1093,6 +1115,7 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
         public InputAction @Pan => m_Wrapper.m_Camera_Pan;
         public InputAction @Move => m_Wrapper.m_Camera_Move;
         public InputAction @AltState => m_Wrapper.m_Camera_AltState;
+        public InputAction @Zoom => m_Wrapper.m_Camera_Zoom;
         public InputActionMap Get() { return m_Wrapper.m_Camera; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1111,6 +1134,9 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
                 @AltState.started -= m_Wrapper.m_CameraActionsCallbackInterface.OnAltState;
                 @AltState.performed -= m_Wrapper.m_CameraActionsCallbackInterface.OnAltState;
                 @AltState.canceled -= m_Wrapper.m_CameraActionsCallbackInterface.OnAltState;
+                @Zoom.started -= m_Wrapper.m_CameraActionsCallbackInterface.OnZoom;
+                @Zoom.performed -= m_Wrapper.m_CameraActionsCallbackInterface.OnZoom;
+                @Zoom.canceled -= m_Wrapper.m_CameraActionsCallbackInterface.OnZoom;
             }
             m_Wrapper.m_CameraActionsCallbackInterface = instance;
             if (instance != null)
@@ -1124,6 +1150,9 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
                 @AltState.started += instance.OnAltState;
                 @AltState.performed += instance.OnAltState;
                 @AltState.canceled += instance.OnAltState;
+                @Zoom.started += instance.OnZoom;
+                @Zoom.performed += instance.OnZoom;
+                @Zoom.canceled += instance.OnZoom;
             }
         }
     }
@@ -1437,6 +1466,7 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
         void OnPan(InputAction.CallbackContext context);
         void OnMove(InputAction.CallbackContext context);
         void OnAltState(InputAction.CallbackContext context);
+        void OnZoom(InputAction.CallbackContext context);
     }
     public interface IOnScreenInteractionActions
     {

@@ -245,7 +245,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bff8cf5fcb7be7b4db545557225e35de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PlayerScreen: {fileID: 534669902}
+  PlayerScreen: {fileID: 352638717}
   PlayerScreenIndicator: {fileID: 755579612}
   MinimapCamera: {fileID: 1229197139}
   MinimapTexture: {fileID: 8400000, guid: ee780a1ae1e3a4e4d95fbef4371d5ca2, type: 2}
@@ -3183,6 +3183,58 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 6788634557179720374}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &352638717
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 352638718}
+  - component: {fileID: 352638719}
+  m_Layer: 0
+  m_Name: MainCameraHolder
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &352638718
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 352638717}
+  m_LocalRotation: {x: 0.5, y: 0, z: 0, w: 0.8660254}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 534669905}
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 60, y: 0, z: 0}
+--- !u!114 &352638719
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 352638717}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f95b6d8cec1cad4984b8fc0d6289e53, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  UpMove: {x: 0, y: 0, z: 1}
+  RightMove: {x: 1, y: 0, z: 0}
+  Border: 2
+  Speed: 5
+  InnerCamera: {fileID: 534669902}
+  MinDistance: 5
+  MaxDistance: 10
+  ZoomSpeed: 0.5
 --- !u!1 &365950658
 GameObject:
   m_ObjectHideFlags: 0
@@ -5047,7 +5099,6 @@ GameObject:
   - component: {fileID: 534669905}
   - component: {fileID: 534669904}
   - component: {fileID: 534669903}
-  - component: {fileID: 534669906}
   - component: {fileID: 534669907}
   - component: {fileID: 534669908}
   m_Layer: 0
@@ -5115,29 +5166,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 534669902}
-  m_LocalRotation: {x: 0.5, y: 0, z: 0, w: 0.8660254}
-  m_LocalPosition: {x: 14, y: 8, z: 3}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -16.46}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 352638718}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 60, y: 0, z: 0}
---- !u!114 &534669906
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 534669902}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f95b6d8cec1cad4984b8fc0d6289e53, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  UpMove: {x: 0, y: 0, z: 1}
-  RightMove: {x: 1, y: 0, z: 0}
-  Border: 2
-  Speed: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &534669907
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12856,6 +12891,7 @@ MonoBehaviour:
     type: 3}
   SyncContext: {fileID: 1480507265}
   Updater: {fileID: 1480507266}
+  PlayerScreen: {fileID: 352638717}
 --- !u!4 &1480507268
 Transform:
   m_ObjectHideFlags: 0
