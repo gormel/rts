@@ -38,11 +38,15 @@ namespace Assets.Interaction
 
         void Update()
         {
-            var screenPlayerCameraPosition = MinimapCamera.WorldToScreenPoint(PlayerScreen.transform.position);
+            var forwardedPoint = PlayerScreen.transform.position + PlayerScreen.transform.forward;
+            var screenCamPos = MinimapCamera.WorldToScreenPoint(PlayerScreen.transform.position);
+            var screenCamDir = MinimapCamera.WorldToScreenPoint(forwardedPoint) - screenCamPos;
             PlayerScreenIndicator.anchoredPosition = new Vector2(
-                screenPlayerCameraPosition.x / MinimapTexture.width * mRectTransform.rect.width,
-                screenPlayerCameraPosition.y / MinimapTexture.height * mRectTransform.rect.height
+                screenCamPos.x / MinimapTexture.width * mRectTransform.rect.width,
+                screenCamPos.y / MinimapTexture.height * mRectTransform.rect.height
                 );
+            
+            PlayerScreenIndicator.localRotation = Quaternion.Euler(0, 0, Mathf.Atan2(screenCamDir.y, screenCamDir.x) * Mathf.Rad2Deg - 90);
         }
 
         private Vector3 ProjectToWorld(Vector2 screenPosition)
