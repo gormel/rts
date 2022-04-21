@@ -336,12 +336,21 @@ namespace Assets.Interaction
                     return;
 
                 var mapPoint = GameUtils.GetFlatPosition(mapHit.HitPoint);
-                mCurrentAction.Resolve(mapPoint);
-                mCurrentAction = null;
+                ResolveAction(mapPoint);
                 return;
             }
             
             SelectionManager.SelectSingle(mShiftState, mMousePosition);
+        }
+
+        public bool ResolveAction(Vector2 mapPoint)
+        {
+            if (mCurrentAction == null)
+                return false;
+            
+            mCurrentAction.Resolve(mapPoint);
+            mCurrentAction = null;
+            return true;
         }
 
         public void OnRightClick(InputAction.CallbackContext ctx)
@@ -387,6 +396,9 @@ namespace Assets.Interaction
                 return;
 
             if (ctx.phase != InputActionPhase.Performed)
+                return;
+
+            if (mCurrentAction != null)
                 return;
             
             SelectionManager.StartBoxSelection(mMousePosition);

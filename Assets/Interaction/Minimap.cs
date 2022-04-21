@@ -61,16 +61,20 @@ namespace Assets.Interaction
         public void OnPointerClick(PointerEventData eventData)
         {
             var world = ProjectToWorld(eventData.position);
+            var mapPoint = new Vector2(world.x, world.z);
 
             if (eventData.button == PointerEventData.InputButton.Left)
             {
-                mIsCameraMovement = true;
-                Root.PlaceCamera(new Vector2(world.x, world.z));
+                if (!Interface.ResolveAction(mapPoint))
+                {
+                    mIsCameraMovement = true;
+                    Root.PlaceCamera(mapPoint);
+                }
             }
 
             if (eventData.button == PointerEventData.InputButton.Right)
             {
-                Interface.ForwardRightClick(new Vector2(world.x, world.z));
+                Interface.ForwardRightClick(mapPoint);
             }
         }
 
