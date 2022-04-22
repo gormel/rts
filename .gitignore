@@ -28,3 +28,4 @@ sysinfo.txt
 .idea/
 .vscode/
 [Ll]ogs
+mono_crash.*.json
