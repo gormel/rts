@@ -168,21 +168,7 @@ namespace Assets.Core.GameObjects.Final
             if (!Game.GetIsAreaFree(position, MiningCamp.BuildingSize))
                 return Guid.Empty;
 
-            var crystalExist = false;
-            var dir = new Vector2Int(-1, 0);
-            for (int i = 0; i < 4; i++)
-            {
-                var localPos = position + dir;
-                if (Game.Map.Data.GetMapObjectAt(localPos.x, localPos.y) == MapObject.Crystal)
-                {
-                    crystalExist = true;
-                    break;
-                }
-
-                dir = new Vector2Int(dir.y, -dir.x); //rotate 90 deg
-            }
-
-            if (!crystalExist)
+            if (!MiningCamp.CheckPlaceAllowed(Game.Map.Data, position))
                 return Guid.Empty;
 
             if (!Player.Money.Spend(Player.MiningCampCost))

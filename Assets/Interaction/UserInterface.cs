@@ -15,18 +15,12 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
+using Cursor = UnityEngine.Cursor;
 
 namespace Assets.Interaction
 {
     class UserInterface : MonoBehaviour
     {
-        private enum SelectionState
-        {
-            Idle,
-            Choose,
-            Boxing
-        }
-
         private abstract class InterfaceAction
         {
             public virtual void Resolve(Vector2 position)
@@ -138,6 +132,7 @@ namespace Assets.Interaction
             private readonly IEnumerable<IWorkerOrders> mWorkers;
             private readonly Func<IWorkerOrders, Vector2, Task<Guid>> mCreateTemplate;
             private readonly Vector2 mSize;
+            private readonly Func<Vector2, bool> mAdditionalValidation;
             private GameObject cursorObj;
             private BuildCursorColorer colorer;
 
@@ -145,13 +140,15 @@ namespace Assets.Interaction
                 UserInterface userInterface, 
                 IEnumerable<IWorkerOrders> workers, 
                 Func<IWorkerOrders, Vector2, Task<Guid>> createTemplate, 
-                Vector2 size
+                Vector2 size,
+                Func<Vector2, bool> additionalValidation = null
                 )
             {
                 mUserInterface = userInterface;
                 mWorkers = workers;
                 mCreateTemplate = createTemplate;
                 mSize = size;
+                mAdditionalValidation = additionalValidation;
                 cursorObj = Instantiate(userInterface.BuildCursorPrefab);
                 colorer = cursorObj.GetComponent<BuildCursorColorer>();
                 cursorObj.transform.localScale = new Vector3(
@@ -184,7 +181,8 @@ namespace Assets.Interaction
             public override void Move(Vector2 position)
             {
                 position = new Vector2(Mathf.FloorToInt(position.x), Mathf.FloorToInt(position.y));
-                colorer.Valid = mUserInterface.Root.MapView.IsAreaFree(position, mSize);
+                var additionalValid = mAdditionalValidation == null || mAdditionalValidation(position);
+                colorer.Valid = mUserInterface.Root.MapView.IsAreaFree(position, mSize) && additionalValid;
                 cursorObj.transform.localPosition = mUserInterface.Root.MapView.GetWorldPosition(position);
             }
 
@@ -198,19 +196,18 @@ namespace Assets.Interaction
         public RectTransform SelectionBox;
 
         public Root Root;
-        public List<SelectableView> Selected { get; } = new List<SelectableView>();
-        private InterfaceAction mCurrentAction;
         public GameObject BuildCursorPrefab;
-        public SelectionManager SelectionManager { get; private set; }
-        private Raycaster mRaycaster;
-        private Vector2 mChooseStartMousePosition;
-        private SelectionState mSelectionState;
-        private Vector2 mMousePosition;
-        private bool mShiftState;
-        private RtsInputActions mInputActions;
 
         public Canvas GuiCanvas;
         public RectTransform GuiRoot;
+        public List<SelectableView> Selected { get; } = new();
+        private InterfaceAction mCurrentAction;
+        public SelectionManager SelectionManager { get; private set; }
+        private Raycaster mRaycaster;
+        private Vector2 mChooseStartMousePosition;
+        private Vector2 mMousePosition;
+        private bool mShiftState;
+        private RtsInputActions mInputActions;
         
         public IEnumerable<T> FetchSelectedOrders<T>() where T : class, IGameObjectOrders
         {
@@ -297,12 +294,16 @@ namespace Assets.Interaction
             mCurrentAction = new TurretAttackInterfaceAction(views, mRaycaster, this);
         }
 
-        public void BeginBuildingPlacement(IEnumerable<IWorkerOrders> workers, Func<IWorkerOrders, Vector2, Task<Guid>> createTemplate, Vector2 size)
+        public void BeginBuildingPlacement(
+            IEnumerable<IWorkerOrders> workers, 
+            Func<IWorkerOrders, Vector2, Task<Guid>> createTemplate, 
+            Vector2 size, 
+            Func<Vector2, bool> additionalValidation = null)
         {
             if (mCurrentAction != null)
                 mCurrentAction.Cancel();
 
-            mCurrentAction = new BuildingPlacementInterfaceAction(this, workers, createTemplate, size);
+            mCurrentAction = new BuildingPlacementInterfaceAction(this, workers, createTemplate, size, additionalValidation);
         }
 
         public void ForwardRightClick(Vector2 mapPoint)

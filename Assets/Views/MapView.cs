@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Assets.Core.GameObjects.Final;
 using Assets.Core.Map;
 using Assets.Utils;
 using Assets.Views.Base;
+using Unity.Profiling.LowLevel.Unsafe;
 using UnityEngine;
 using UnityEngine.AI;
 using Random = UnityEngine.Random;
@@ -155,6 +157,9 @@ namespace Assets.Views
             //foreach child in childcontainer, check box collisions
             return true;
         }
+
+        public bool IsMiningCampPlacementAllowed(Vector2 at)
+            => MiningCamp.CheckPlaceAllowed(mMapData, new Vector2Int((int) at.x, (int) at.y));
 
         public Vector3 GetWorldPosition(Vector2 flatPosition)
         {

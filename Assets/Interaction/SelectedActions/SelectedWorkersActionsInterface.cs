@@ -33,7 +33,7 @@ namespace Assets.Interaction
         {
             Interface.BeginBuildingPlacement(Interface.FetchSelectedOrders<IWorkerOrders>(), (view, position) =>
                 view.PlaceMiningCampTemplate(new Vector2Int(Mathf.FloorToInt(position.x), Mathf.FloorToInt(position.y))),
-                MiningCamp.BuildingSize
+                MiningCamp.BuildingSize, pos => Interface.Root.MapView.IsMiningCampPlacementAllowed(pos)
                 );
         }
 

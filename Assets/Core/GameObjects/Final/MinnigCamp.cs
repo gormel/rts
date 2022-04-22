@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Assets.Core.GameObjects.Utils;
+using Assets.Core.Map;
 using UnityEngine;
 
 namespace Assets.Core.GameObjects.Final
@@ -52,6 +53,21 @@ namespace Assets.Core.GameObjects.Final
             mGame = game;
             mInitialPosition = position;
             PlacementService = placementService;
+        }
+
+        public static bool CheckPlaceAllowed(IMapData mapData, Vector2Int at)
+        {
+            var dir = new Vector2Int(-1, 0);
+            for (int i = 0; i < 4; i++)
+            {
+                var localPos = at + dir;
+                if (mapData.GetMapObjectAt(localPos.x, localPos.y) == MapObject.Crystal)
+                    return true;
+
+                dir = new Vector2Int(dir.y, -dir.x); //rotate 90 deg
+            }
+
+            return false;
         }
 
         public override void OnAddedToGame()
