@@ -69,7 +69,8 @@ namespace Assets.Networking.Services
                 AttackSpeed = info.AttackSpeed,
                 Damage = info.Damage,
                 IsAttacks = info.IsAttacks,
-                Strategy = (int)info.Strategy
+                Strategy = (int)info.Strategy,
+                MovementState = info.MovementState,
             };
         }
     }

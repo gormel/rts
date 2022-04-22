@@ -15,16 +15,22 @@ namespace Assets.Views.Base
     {
         public GameObject ShootEffect;
 
-        protected override void OnLoad()
-        {
-            base.OnLoad();
-        }
+        public Color AgressiveMovementColor;
 
         protected override void Update()
         {
             base.Update();
 
             ShootEffect.SetActive(Info.IsAttacks);
+            switch (Info.MovementState)
+            {
+                case WarriorMovementState.Common:
+                    TargetLine.startColor = TargetLine.endColor = TargetLineMovementColor;
+                    break;
+                case WarriorMovementState.Agressive:
+                    TargetLine.startColor = TargetLine.endColor = AgressiveMovementColor;
+                    break;
+            }
         }
 
         public override void OnEnemyRightClick(SelectableView view)

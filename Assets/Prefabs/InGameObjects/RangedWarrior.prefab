@@ -304,10 +304,12 @@ MonoBehaviour:
   ExplosionPrefab: {fileID: 4269541658022102700, guid: aa65bcd20538a464bbb22a2733200282,
     type: 3}
   MinimapBrush: {fileID: 7508193287136253141}
+  TargetLineMovementColor: {r: 0.26666668, g: 0.7058824, b: 0.09803922, a: 0}
   TargetLine: {fileID: 2452205665881685402}
   WaypointPrefab: {fileID: 8652561010937020211, guid: 49ffc32afbe32134f9aed77c684ad460,
     type: 3}
   ShootEffect: {fileID: 5719629722005766375}
+  AgressiveMovementColor: {r: 0.68235296, g: 0.14509805, b: 0.14509805, a: 0}
 --- !u!195 &248576389723375657
 NavMeshAgent:
   m_ObjectHideFlags: 0

@@ -16,7 +16,7 @@ namespace Assets.Views
         public override string Name => "Рабочий";
 
         public GameObject BuildingIndicator;
-
+        public Color TargetLinePlaceToColor;
         protected override void OnLoad()
         {
             Updater.Register(Info.ID, () =>
@@ -32,6 +32,16 @@ namespace Assets.Views
             base.Update();
 
             BuildingIndicator.SetActive(Info.IsBuilding);
+
+            switch (Info.MovementType)
+            {
+                case WorkerMovementType.Common:
+                    TargetLine.endColor = TargetLine.startColor = TargetLineMovementColor;
+                    break;
+                case WorkerMovementType.Attach:
+                    TargetLine.endColor = TargetLine.startColor = TargetLinePlaceToColor;
+                    break;
+            }
         }
 
         public override void OnDestroy()

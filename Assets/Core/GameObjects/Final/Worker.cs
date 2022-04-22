@@ -24,6 +24,8 @@ namespace Assets.Core.GameObjects.Final
     {
         bool IsBuilding { get; }
         bool IsAttachedToMiningCamp { get; }
+        
+        WorkerMovementType MovementType { get; }
     }
 
     internal class Worker : Unit, IWorkerInfo, IWorkerOrders
@@ -117,6 +119,23 @@ namespace Assets.Core.GameObjects.Final
             }
         }
 
+        class SetMovementTypeLeaf : IBTreeLeaf
+        {
+            private readonly Worker mWorker;
+            private readonly WorkerMovementType mMovementType;
+
+            public SetMovementTypeLeaf(Worker worker, WorkerMovementType movementType)
+            {
+                mWorker = worker;
+                mMovementType = movementType;
+            }
+            public BTreeLeafState Update(TimeSpan deltaTime)
+            {
+                mWorker.MovementType = mMovementType;
+                return BTreeLeafState.Successed;
+            }
+        }
+
         public static TimeSpan CentralBuildingBuildTime { get; } = TimeSpan.FromSeconds(30);
         public static TimeSpan MiningCampBuildTime { get; } = TimeSpan.FromSeconds(20);
         public static TimeSpan BarrakBuildTime { get; } = TimeSpan.FromSeconds(25);
@@ -130,6 +149,7 @@ namespace Assets.Core.GameObjects.Final
         public bool IsBuilding { get; private set; }
         
         public bool IsAttachedToMiningCamp { get; set; }
+        public WorkerMovementType MovementType { get; private set; } = WorkerMovementType.Common;
         public override float ViewRadius => 3;
         public override float Speed => 1.8f;
         public override int Armour => ArmourBase;
@@ -287,13 +307,16 @@ namespace Assets.Core.GameObjects.Final
             await ApplyIntelligence(
                 b => b
                     .Sequence(b1 => b1
+                        .Leaf(new SetMovementTypeLeaf(this, WorkerMovementType.Attach))
                         .Leaf(new GoToTargetLeaf(PathFinder, point.Position, Game.Map.Data))
                         .Leaf(new RotateToLeaf(PathFinder, template.Position + template.Size / 2, Game.Map.Data))
                         .Success(b2 => b2.Leaf(new BuildLeaf(this, template)))
                         .Leaf(new StopBuildLeaf(this, template))
+                        .Leaf(new SetMovementTypeLeaf(this, WorkerMovementType.Common))
                         .Leaf(new FreePlacementPointLeaf(point, template.PlacementService))), 
                 b => b
                     .Sequence(b1 => b1
+                        .Leaf(new SetMovementTypeLeaf(this, WorkerMovementType.Common))
                         .Leaf(new CancelGotoLeaf(PathFinder))
                         .Leaf(new StopBuildLeaf(this, template))
                         .Leaf(new FreePlacementPointLeaf(point, template.PlacementService))),
@@ -311,10 +334,13 @@ namespace Assets.Core.GameObjects.Final
             await ApplyIntelligence(
                 b => b
                     .Sequence(b1 => b1
+                        .Leaf(new SetMovementTypeLeaf(this, WorkerMovementType.Attach))
                         .Leaf(new GoToTargetLeaf(PathFinder, point.Position, Game.Map.Data))
                         .Leaf(new MoveToMiningCampLeaf(this, camp))
+                        .Leaf(new SetMovementTypeLeaf(this, WorkerMovementType.Common))
                         .Leaf(new FreePlacementPointLeaf(point, camp.PlacementService))),
                 b => b
+                    .Leaf(new SetMovementTypeLeaf(this, WorkerMovementType.Common))
                     .Leaf(new CancelGotoLeaf(PathFinder))
                     .Leaf(new FreePlacementPointLeaf(point, camp.PlacementService)),
                 MiningIntelligenceTag

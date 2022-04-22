@@ -18,6 +18,8 @@ namespace Assets.Core.GameObjects.Base
     interface IWarriorInfo : IUnitInfo, IAttackerInfo
     {
         Strategy Strategy { get; }
+        
+        WarriorMovementState MovementState { get; }
     }
 
     interface IWarriorOrders : IUnitOrders, IAttackerOrders
@@ -199,6 +201,24 @@ namespace Assets.Core.GameObjects.Base
         public bool IsAttacks { get; protected set; }
         public Strategy Strategy { get; private set; }
 
+        public WarriorMovementState MovementState
+        {
+            get
+            {
+                switch (IntelligenceTag)
+                {
+                    case AggressiveIdleIntelligenceTag:
+                        return WarriorMovementState.Agressive;
+                    case AggressiveWalkingIntelligenceTag:
+                        return WarriorMovementState.Agressive;
+                    case KillTargetIntelligenceTag:
+                        return WarriorMovementState.Agressive;
+                }
+
+                return WarriorMovementState.Common;
+            }
+        }
+
         private IBTreeBuilder mAgressiveIntelligence;
         private IBTreeBuilder mDefenciveIntelligence;
 
@@ -240,7 +260,6 @@ namespace Assets.Core.GameObjects.Base
             
             return base.GetDefaultIntelligence();
         }
-
         private IBTreeBuilder CreateAggressiveIntelligence()
         {
             var storage = new TargetStorage();

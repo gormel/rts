@@ -60,8 +60,14 @@ message AttachAsBuilderRequest {
     ID BuildingTemplateID = 2;
 }
 
+enum WorkerMovementType {
+    WorkerMovementType_Common = 0;
+    WorkerMovementType_Attach = 1;
+}
+
 message WorkerState {
     UnitState Base = 1;
     bool IsBuilding = 2;
     bool IsAttachedToMiningCamp = 3;
+    WorkerMovementType MovementType = 4;
 }

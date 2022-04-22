@@ -10,7 +10,7 @@ namespace Assets.Interaction
 
         public void BeginAttack()
         {
-            Interface.BeginTurretAttack(Interface.FetchSelectedOrders<ITurretOrders>());
+            Interface.BeginAttack(Interface.FetchSelectedOrders<ITurretOrders>());
         }
 
         public void Stop()

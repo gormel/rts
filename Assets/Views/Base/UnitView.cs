@@ -24,6 +24,7 @@ namespace Assets.Views.Base
         private NavMeshAgent mNavMeshAgent;
         private float mLastDistance;
 
+        public Color TargetLineMovementColor;
         public LineRenderer TargetLine;
         public GameObject WaypointPrefab;
 
@@ -51,6 +52,8 @@ namespace Assets.Views.Base
                 mWaypointInst = Instantiate(WaypointPrefab);
                 mWaypointInst.SetActive(false);
             }
+
+            TargetLine.endColor = TargetLine.startColor = TargetLineMovementColor;
         }
 
         public override void OnDestroy()

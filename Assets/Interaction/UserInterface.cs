@@ -38,11 +38,11 @@ namespace Assets.Interaction
 
         private class AttackInterfaceAction : InterfaceAction
         {
-            private IEnumerable<IWarriorOrders> mViews;
+            private IEnumerable<IAttackerOrders> mViews;
             private readonly Raycaster mRaycaster;
             private readonly UserInterface mParent;
 
-            public AttackInterfaceAction(IEnumerable<IWarriorOrders> views, Raycaster raycaster, UserInterface parent)
+            public AttackInterfaceAction(IEnumerable<IAttackerOrders> views, Raycaster raycaster, UserInterface parent)
             {
                 mViews = views;
                 mRaycaster = raycaster;
@@ -54,37 +54,13 @@ namespace Assets.Interaction
                 var hit = mRaycaster.Raycast<SelectableView>(mParent.mMousePosition);
                 if (hit.IsEmpty())
                 {
-                    foreach (var warriorOrders in mViews)
+                    foreach (var warriorOrders in mViews.OfType<IWarriorOrders>())
                         warriorOrders.GoToAndAttack(position);
                     return;
                 }
 
                 foreach (var warriorOrders in mViews)
                     warriorOrders.Attack(hit.Object.InfoBase.ID);
-            }
-        }
-
-        private class TurretAttackInterfaceAction : InterfaceAction
-        {
-            private IEnumerable<ITurretOrders> mViews;
-            private readonly Raycaster mRaycaster;
-            private readonly UserInterface mParent;
-
-            public TurretAttackInterfaceAction(IEnumerable<ITurretOrders> views, Raycaster raycaster, UserInterface parent)
-            {
-                mViews = views;
-                mRaycaster = raycaster;
-                mParent = parent;
-            }
-
-            public override void Resolve(Vector2 position)
-            {
-                var hit = mRaycaster.Raycast<SelectableView>(mParent.mMousePosition);
-                if (!hit.IsEmpty())
-                {
-                    foreach (var warriorOrders in mViews)
-                        warriorOrders.Attack(hit.Object.InfoBase.ID);
-                }
             }
         }
 
@@ -200,6 +176,15 @@ namespace Assets.Interaction
 
         public Canvas GuiCanvas;
         public RectTransform GuiRoot;
+
+        public Texture2D NormalMouse;
+        public Vector2 NormalMouseTexOffset;
+        public Texture2D MoveMouse;
+        public Vector2 MoveMouseTexOffset;
+        public Texture2D AttackMouse;
+        public Vector2 AttackMouseTexOffset;
+        public Texture2D PlaceToMouse;
+        public Vector2 PlaceMouseTexOffset;
         public List<SelectableView> Selected { get; } = new();
         private InterfaceAction mCurrentAction;
         public SelectionManager SelectionManager { get; private set; }
@@ -232,6 +217,8 @@ namespace Assets.Interaction
             mInputActions.OnScreenInteraction.RightClick.performed += OnRightClick;
             mInputActions.OnScreenInteraction.ShiftMod.performed += OnShiftPress;
             mInputActions.OnScreenInteraction.RollGroup.performed += OnRollGroup;
+            
+            Cursor.SetCursor(NormalMouse, NormalMouseTexOffset, CursorMode.Auto);
         }
 
         private void OnRollGroup(InputAction.CallbackContext obj)
@@ -267,6 +254,7 @@ namespace Assets.Interaction
             if (mCurrentAction != null)
                 mCurrentAction.Cancel();
 
+            Cursor.SetCursor(MoveMouse, MoveMouseTexOffset, CursorMode.Auto);
             mCurrentAction = new GoToInterfaceAction(views);
         }
 
@@ -275,23 +263,17 @@ namespace Assets.Interaction
             if (mCurrentAction != null)
                 mCurrentAction.Cancel();
 
+            Cursor.SetCursor(PlaceToMouse, PlaceMouseTexOffset, CursorMode.Auto);
             mCurrentAction = new AttachWorkerToMiningCampAction(views, mRaycaster, this);
         }
 
-        public void BeginAttack(IEnumerable<IWarriorOrders> views)
+        public void BeginAttack(IEnumerable<IAttackerOrders> views)
         {
             if (mCurrentAction != null)
                 mCurrentAction.Cancel();
 
+            Cursor.SetCursor(AttackMouse, AttackMouseTexOffset, CursorMode.Auto);
             mCurrentAction = new AttackInterfaceAction(views, mRaycaster, this);
-        }
-
-        public void BeginTurretAttack(IEnumerable<ITurretOrders> views)
-        {
-            if (mCurrentAction != null)
-                mCurrentAction.Cancel();
-
-            mCurrentAction = new TurretAttackInterfaceAction(views, mRaycaster, this);
         }
 
         public void BeginBuildingPlacement(
@@ -351,6 +333,7 @@ namespace Assets.Interaction
             
             mCurrentAction.Resolve(mapPoint);
             mCurrentAction = null;
+            Cursor.SetCursor(NormalMouse, NormalMouseTexOffset, CursorMode.Auto);
             return true;
         }
 
@@ -363,6 +346,7 @@ namespace Assets.Interaction
             {
                 mCurrentAction.Cancel();
                 mCurrentAction = null;
+                Cursor.SetCursor(NormalMouse, NormalMouseTexOffset, CursorMode.Auto);
                 return;
             }
             

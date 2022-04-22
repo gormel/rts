@@ -28,7 +28,7 @@ namespace Assets.Networking.Services
                 Base = StateUtils.CreateUnitState(info),
                 IsBuilding = info.IsBuilding,
                 IsAttachedToMiningCamp = info.IsAttachedToMiningCamp,
-                
+                MovementType = info.MovementType,
             };
         }
 

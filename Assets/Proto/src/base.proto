@@ -4,6 +4,11 @@ message ID {
 	string Value = 1;
 }
 
+enum WarriorMovementState {
+	WarriorMovementState_Common = 0;
+	WarriorMovementState_Agressive = 1;
+}
+
 message WarriorUnitState {
 	UnitState Base = 1;
     bool IsAttacks = 2;
@@ -11,6 +16,7 @@ message WarriorUnitState {
     float AttackSpeed = 4;
 	int32 Damage = 5;
 	int32 Strategy = 6;
+	WarriorMovementState MovementState = 7;
 }
 
 message UnitState {

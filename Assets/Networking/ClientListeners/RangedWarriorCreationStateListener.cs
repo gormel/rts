@@ -29,6 +29,7 @@ namespace Assets.Networking
         public Strategy Strategy => (Strategy)State.Base.Strategy;
         public float ViewRadius => State.Base.Base.Base.ViewRadius;
         public int Armour => State.Base.Base.Base.Armour;
+        public WarriorMovementState MovementState => State.Base.MovementState;
 
         public void ResetState()
         {

@@ -23,6 +23,7 @@ namespace Assets.Networking
         public Vector2 Destignation => State.Base.Destignation.ToUnity();
         public bool IsBuilding => State.IsBuilding;
         public bool IsAttachedToMiningCamp => State.IsAttachedToMiningCamp;
+        public WorkerMovementType MovementType => State.MovementType;
         public float ViewRadius => State.Base.Base.ViewRadius;
         public int Armour => State.Base.Base.Armour;
 

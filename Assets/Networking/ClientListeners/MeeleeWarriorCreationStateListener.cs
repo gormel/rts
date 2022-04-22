@@ -30,6 +30,7 @@ namespace Assets.Networking.ClientListeners
         public float AttackSpeed => State.Base.AttackSpeed;
         public int Damage => State.Base.Damage;
         public Strategy Strategy => (Strategy)State.Base.Strategy;
+        public WarriorMovementState MovementState => State.Base.MovementState;
         public float ViewRadius => State.Base.Base.Base.ViewRadius;
         public int Armour => State.Base.Base.Base.Armour;
 
