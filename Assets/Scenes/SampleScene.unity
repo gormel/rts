@@ -9909,14 +9909,14 @@ MonoBehaviour:
     type: 3}
   GuiCanvas: {fileID: 881932929}
   GuiRoot: {fileID: 1070720570}
-  NormalMouse: {fileID: 2800000, guid: ffebc034c3edb9514913c810681204bf, type: 3}
+  NormalMouse: {fileID: 0}
   NormalMouseTexOffset: {x: 0, y: 0}
-  MoveMouse: {fileID: 2800000, guid: 7538d9dd6eccc3614a95a5678ba0cec8, type: 3}
-  MoveMouseTexOffset: {x: 16, y: 16}
-  AttackMouse: {fileID: 2800000, guid: 82a14299b01f94915b6423685ce004af, type: 3}
-  AttackMouseTexOffset: {x: 16, y: 16}
-  PlaceToMouse: {fileID: 2800000, guid: 947aa5db8f711fd4b92f0c9e19c95950, type: 3}
-  PlaceMouseTexOffset: {x: 16, y: 16}
+  MoveMouse: {fileID: 0}
+  MoveMouseTexOffset: {x: 0, y: 0}
+  AttackMouse: {fileID: 0}
+  AttackMouseTexOffset: {x: 0, y: 0}
+  PlaceToMouse: {fileID: 0}
+  PlaceMouseTexOffset: {x: 0, y: 0}
 --- !u!1 &1111647143
 GameObject:
   m_ObjectHideFlags: 0
