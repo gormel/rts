@@ -122,6 +122,9 @@ namespace Assets.Views.Base
         {
             return SyncContext.Execute(() =>
             {
+                if (!mNavMeshAgent.isOnNavMesh)
+                    return;
+                
                 InProgress = true;
                 mLookTarget = null;
                 Target = position;

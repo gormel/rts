@@ -61,8 +61,8 @@ namespace Assets.Core.GameObjects.Final
             for (int i = 0; i < 4; i++)
             {
                 var localPos = at + dir;
-                if (mapData.GetMapObjectAt(localPos.x, localPos.y) == MapObject.Crystal)
-                    return true;
+                if (!mapData.IsOutOfBounds(localPos) && mapData.GetMapObjectAt(localPos.x, localPos.y) == MapObject.Crystal)
+                        return true;
 
                 dir = new Vector2Int(dir.y, -dir.x); //rotate 90 deg
             }

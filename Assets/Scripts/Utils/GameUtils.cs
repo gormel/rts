@@ -88,7 +88,7 @@ namespace Assets.Utils
         {
             player.Money.Store(170);
 #if DEVELOPMENT_BUILD
-            player.Money.Store(100000);
+            //player.Money.Store(100000);
 #endif
             if (!game.Map.TryAllocateBase(out basePos))
                 return false;

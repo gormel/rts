@@ -152,7 +152,15 @@ namespace Assets.Core.Game
                 return null;
 
             obj.Player = this;
+            
+            if (obj is RtsGameObject rtsGameObj)
+                OnObjectCreated(rtsGameObj);
+            
             return obj;
+        }
+
+        protected virtual void OnObjectCreated(RtsGameObject obj)
+        {
         }
 
         public Task<MiningCamp> CreateMiningCamp(Vector2 position)

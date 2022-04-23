@@ -45,18 +45,24 @@ namespace Assets.Core.Map
             return -(Vector2.Dot(normal, position) + d) / normal.z;
         }
 
+        public static bool IsOutOfBounds(this IMapData data, Vector2Int pos) =>
+            pos.x < 0 || pos.x >= data.Width || pos.y < 0 || pos.y >= data.Length;
+        
         public static bool GetIsAreaFree(this IMapData data, Vector2 position, Vector2 size)
         {
             var intSize = new Vector2Int(Mathf.CeilToInt(size.x), Mathf.CeilToInt(size.y));
             var intPos = new Vector2Int(Mathf.FloorToInt(position.x), Mathf.FloorToInt(position.y));
 
+            if (data.IsOutOfBounds(intPos))
+                return false;
+            
             var toCompare = data.GetHeightAt(intPos.x, intPos.y);
             for (int x = 0; x <= intSize.x; x++)
             {
                 for (int y = 0; y <= intSize.y; y++)
                 {
                     var localPos = intPos + new Vector2Int(x, y);
-                    if (localPos.x < 0 || localPos.x >= data.Width || localPos.y < 0 || localPos.y >= data.Length)
+                    if (data.IsOutOfBounds(localPos))
                         return false;
 
                     if (Math.Abs(toCompare - data.GetHeightAt(localPos.x, localPos.y)) > 0.001)
