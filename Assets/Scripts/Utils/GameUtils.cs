@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Net;
 using Assets.Core.Game;
 using Assets.Core.GameObjects.Final;
@@ -24,12 +25,12 @@ namespace Assets.Utils
         public static IPAddress IP { get; set; } = IPAddress.Parse("127.0.0.1");
         public static int GamePort { get; set; } = 15656;
         public static int LobbyPort { get; set; } = 15657;
+        public static int Team { get; set; }
+        public static ConcurrentDictionary<string, UserState> BotPlayers { get; } = new();
+        public static ConcurrentDictionary<string, UserState> RegistredPlayers { get; } = new();
+
 
         public const int MaxPlayers = 6;
-        
-        public static int Team { get; set; }
-
-        public static ConcurrentDictionary<string, int> RegistredPlayers { get; } = new ConcurrentDictionary<string, int>();
 
         static GameUtils()
         {

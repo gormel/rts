@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Assets.Core.GameObjects;
 using Assets.Core.GameObjects.Base;
 using Assets.Core.Map;
+using Core.BotIntelligence;
 using UnityEngine;
 
 namespace Assets.Core.Game
@@ -15,7 +16,8 @@ namespace Assets.Core.Game
         public Map.Map Map { get; }
 
         private IDictionary<Guid, RtsGameObject> mGameObjects = new Dictionary<Guid, RtsGameObject>();
-        private ConcurrentDictionary<Guid, Action> mRequested = new ConcurrentDictionary<Guid, Action>();
+        private ConcurrentDictionary<Guid, Action> mRequested = new();
+        private Dictionary<Guid, BotPlayer> mBotPlayers = new();
 
         public Game()
         {
@@ -42,6 +44,15 @@ namespace Assets.Core.Game
             return tcs.Task;
         }
 
+        public IEnumerable<T> RequestPlayerObjects<T>(IPlayerState player) where T : RtsGameObject
+        {
+            foreach (var gameObject in mGameObjects.Values.ToList())
+            {
+                if (gameObject.PlayerID == player.ID && gameObject is T rtsGameObject)
+                    yield return rtsGameObject;
+            }
+        }
+
         public Task<RtsGameObject> RemoveObject(Guid objId)
         {
             return AddRequest<RtsGameObject>(tcs =>
@@ -59,6 +70,9 @@ namespace Assets.Core.Game
                 }
             });
         }
+
+        public void AddBotPlayer(BotPlayer bot) =>
+            mBotPlayers.Add(bot.ID, bot);
 
         public T GetObject<T>(Guid objectId) where T : RtsGameObject
         {
@@ -83,11 +97,14 @@ namespace Assets.Core.Game
                 if (mRequested.TryRemove(key, out var request))
                     request.Invoke();
             }
+
+            foreach (var player in mBotPlayers.Values) 
+                player.Update(elapsed);
         }
 
         public IEnumerable<RtsGameObject> QueryObjects(Vector2 position, float radius)
         {
-            foreach (var gameObject in mGameObjects.Values)
+            foreach (var gameObject in mGameObjects.Values.ToList())
             {
                 if (Vector2.Distance(position, gameObject.Position) < radius)
                 {

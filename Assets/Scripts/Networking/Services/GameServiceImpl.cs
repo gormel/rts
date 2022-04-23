@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Assets.Core.Game;
 using Assets.Utils;
+using Core.BotIntelligence;
 using Grpc.Core;
 using UnityEngine;
 
@@ -22,17 +24,53 @@ namespace Assets.Networking.Services
         private readonly IGameObjectFactory mEnemyFactory;
         private readonly IGameObjectFactory mAllyFactory;
         private readonly UnitySyncContext mSyncContext;
-        private readonly ConcurrentDictionary<Guid, AsyncQueue<ChatMessage>> mChatListeners = new ConcurrentDictionary<Guid, AsyncQueue<ChatMessage>>();
-        private readonly ConcurrentDictionary<Guid, PlayerConnectionListener> mPlayerConnectionListeners = new ConcurrentDictionary<Guid, PlayerConnectionListener>();
-        private readonly ConcurrentDictionary<string, IPlayerState> mConnectedPlayers = new ConcurrentDictionary<string, IPlayerState>();
+        private readonly IDictionary<string, UserState> mRegistredPlayers;
+        private readonly ConcurrentDictionary<Guid, AsyncQueue<ChatMessage>> mChatListeners = new();
+        private readonly ConcurrentDictionary<Guid, PlayerConnectionListener> mPlayerConnectionListeners = new();
+        private readonly ConcurrentDictionary<string, IPlayerState> mConnectedPlayers = new();
+        private readonly ConcurrentDictionary<string, IPlayerState> mBotPlayers = new();
 
-        public GameServiceImpl(Game game, Player hostPlayer, IGameObjectFactory enemyFactory, IGameObjectFactory allyFactory, UnitySyncContext syncContext)
+        private Task mBotPlayersCreated;
+
+        public GameServiceImpl(
+            Game game, 
+            Player hostPlayer, 
+            IGameObjectFactory enemyFactory, 
+            IGameObjectFactory allyFactory, 
+            UnitySyncContext syncContext, 
+            IDictionary<string, UserState> registredPlayers,
+            IDictionary<string, UserState> botPlayers
+            )
         {
             mGame = game;
             mHostPlayer = hostPlayer;
             mEnemyFactory = enemyFactory;
             mAllyFactory = allyFactory;
             mSyncContext = syncContext;
+            mRegistredPlayers = registredPlayers;
+
+            mBotPlayersCreated = InitBotPlayers(botPlayers);
+        }
+
+        private async Task InitBotPlayers(IDictionary<string, UserState> botPlayers, CancellationToken token = default)
+        {
+            foreach (var botPlayer in botPlayers)
+            {
+                var botFactory = botPlayer.Value.Team == mHostPlayer.Team ? mAllyFactory : mEnemyFactory;
+                var bot = new BotPlayer(mGame, botFactory, botPlayer.Value.Team);
+                mBotPlayers.AddOrUpdate(botPlayer.Key, n => bot, (n, b) => bot);
+                await ReportPlayerState(botPlayer.Key, bot, true, token);
+                var success = await mSyncContext.Execute(() => GameUtils.TryCreateBase(mGame, bot, out _), token);
+
+                if (!success)
+                {
+                    if (mBotPlayers.TryRemove(botPlayer.Key, out _))
+                        await ReportPlayerState(botPlayer.Key, bot, false, token);
+                    continue;
+                }
+                
+                mGame.AddBotPlayer(bot);
+            }
         }
 
         private PlayerState CollectPlayerState(IPlayerState player)
@@ -154,6 +192,16 @@ namespace Assets.Networking.Services
                     Player = CollectPlayerState(mHostPlayer),
                     State = true,
                 });
+
+                foreach (var botPlayer in mBotPlayers)
+                {
+                    await responseStream.WriteAsync(new PlayerConnection()
+                    {
+                        Nickname = botPlayer.Key,
+                        Player = CollectPlayerState(botPlayer.Value),
+                        State = true,
+                    });
+                }
                 
                 foreach (var connectedPlayer in mConnectedPlayers)
                 {
@@ -208,11 +256,11 @@ namespace Assets.Networking.Services
         {
             try
             {
-                int team;
-                if (!GameUtils.RegistredPlayers.TryGetValue(request.Nickname, out team))
+                UserState registredPlayer;
+                if (!mRegistredPlayers.TryGetValue(request.Nickname, out registredPlayer))
                     throw new Exception("Player is not registered.");
 
-                var player = new Player(team == GameUtils.Team ? mAllyFactory : mEnemyFactory, team);
+                var player = new Player(registredPlayer.Team == GameUtils.Team ? mAllyFactory : mEnemyFactory, registredPlayer.Team);
 
                 mConnectedPlayers.AddOrUpdate(request.Nickname, player, (s, p) => player);
                 await ReportPlayerState(request.Nickname, player, true, context.CancellationToken);

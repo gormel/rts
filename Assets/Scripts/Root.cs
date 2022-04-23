@@ -265,7 +265,7 @@ class Root : MonoBehaviour
 
             mServer.MessageRecived += OnChatMessageRecived;
 
-            mServer.Listen(SyncContext, enemyFactory, allyFactory, mGame, player);
+            mServer.Listen(SyncContext, enemyFactory, allyFactory, mGame, player, GameUtils.RegistredPlayers, GameUtils.BotPlayers);
 
             var success = GameUtils.TryCreateBase(mGame, player, out var basePos);
             PlaceCamera(basePos);

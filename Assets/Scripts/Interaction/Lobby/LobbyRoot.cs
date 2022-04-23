@@ -20,6 +20,7 @@ namespace Assets.Interaction.Lobby
         private int mTeam = 1;
         public Text CurrentTeamText;
         public GameObject StartGameButton;
+        public GameObject AddBotButton;
         private LobbyServiceImpl mService;
         private Server mServer;
 
@@ -39,19 +40,39 @@ namespace Assets.Interaction.Lobby
                 ListenStates();
                 ListenStart();
                 StartGameButton.SetActive(false);
+                AddBotButton.SetActive(false);
             }
 
             if (GameUtils.CurrentMode == GameMode.Server)
             {
                 mServer = new Server();
                 mServer.Ports.Add(new ServerPort(IPAddress.Any.ToString(), GameUtils.LobbyPort, ServerCredentials.Insecure));
-                mService = new LobbyServiceImpl(GameUtils.Nickname, mTeam);
+                mService = new LobbyServiceImpl(GameUtils.Nickname, mTeam, GameUtils.MaxPlayers);
                 mServer.Services.Add(LobbyService.BindService(mService));
                 mService.OnUserStateChanged += ServiceOnOnUserStateChanged;
                 mServer.Start();
                 StartGameButton.SetActive(true);
+                AddBotButton.SetActive(true);
                 ServiceOnOnUserStateChanged(new UserState() { ID = GameUtils.Nickname, Connected = true, Team = 1 });
             }
+        }
+
+        public void AddBot()
+        {
+            if (GameUtils.CurrentMode == GameMode.Server) 
+                mService.AddBot();
+        }
+
+        public void RemoveBot(string botId)
+        {
+            if (GameUtils.CurrentMode == GameMode.Server) 
+                mService.RemoveBot(botId);
+        }
+
+        public void SetBotTeam(string botId, int team)
+        {
+            if (GameUtils.CurrentMode == GameMode.Server) 
+                mService.SetBotTeam(botId, team);
         }
 
         public void ChangeTeam()
@@ -84,7 +105,13 @@ namespace Assets.Interaction.Lobby
                     found.Name = state.ID;
                     found.IsBusy = true;
                     found.Team = state.Team;
+                    found.IsBot = state.IsBot;
                 }
+
+                if (state.IsBot) 
+                    GameUtils.BotPlayers.AddOrUpdate(state.ID, state, (n, s) => state);
+                else
+                    GameUtils.RegistredPlayers.AddOrUpdate(state.ID, state, (n, t) => state);
             }
             else
             {
@@ -95,6 +122,11 @@ namespace Assets.Interaction.Lobby
                     found.Name = "";
                     found.Team = 1;
                 }
+
+                if (state.IsBot)
+                    GameUtils.BotPlayers.TryRemove(state.ID, out _);
+                else
+                    GameUtils.RegistredPlayers.TryRemove(state.ID, out _);
             }
         }
 

@@ -16,16 +16,19 @@ namespace Assets.Networking.Lobby
     {
         private readonly string mHostID;
         private int mHostTeam;
-        
-        private ConcurrentDictionary<string, TaskCompletionSource<bool>> mStartRequests = new ConcurrentDictionary<string, TaskCompletionSource<bool>>();
-        private ConcurrentDictionary<string, AsyncQueue<UserState>> mUserStateRequests = new ConcurrentDictionary<string, AsyncQueue<UserState>>();
-        private ConcurrentDictionary<string, UserState> mActiveUsers = new ConcurrentDictionary<string, UserState>();
+        private readonly int mMaxPlayers;
+
+        private ConcurrentDictionary<string, TaskCompletionSource<bool>> mStartRequests = new();
+        private ConcurrentDictionary<string, AsyncQueue<UserState>> mUserStateRequests = new();
+        private ConcurrentDictionary<string, UserState> mActiveUsers = new();
+        private ConcurrentDictionary<string, UserState> mBotUsers = new();
         public event Action<UserState> OnUserStateChanged;
 
-        public LobbyServiceImpl(string hostID, int team)
+        public LobbyServiceImpl(string hostID, int team, int maxPlayers)
         {
             mHostID = hostID;
             mHostTeam = team;
+            mMaxPlayers = maxPlayers;
         }
 
         public void StartGame()
@@ -52,7 +55,48 @@ namespace Assets.Networking.Lobby
                 Connected = true,
                 ID = mHostID,
                 Team = mHostTeam,
+                IsBot = false,
             });
+        }
+
+        public void AddBot()
+        {
+            if (mBotUsers.Count + mActiveUsers.Count + 1 >= mMaxPlayers)
+                return;
+            
+            var numbers = mBotUsers.Select(b => int.Parse(b.Key.Substring(4))).ToArray();
+            var idx = 0;
+            if (numbers.Length > 0)
+                idx = numbers.Max() + 1;
+            var nick = $"Bot_{idx}";
+            var botState = new UserState()
+            {
+                ID = nick,
+                Connected = true,
+                Team = 1,
+                IsBot = true,
+            };
+            mBotUsers.AddOrUpdate(nick, n => botState, (n, b) => botState);
+            ReportUserState(botState);
+        }
+
+        public void RemoveBot(string botId)
+        {
+            if (mBotUsers.TryRemove(botId, out var botState))
+            {
+                botState.Connected = false;
+                ReportUserState(botState);
+            }
+        }
+
+        public void SetBotTeam(string botId, int team)
+        {
+            if (mBotUsers.TryGetValue(botId, out var botState))
+            {
+                botState.Team = team;
+                mBotUsers.AddOrUpdate(botId, botState, (id, s) => botState);
+                ReportUserState(botState);
+            }
         }
 
         private void ReportUserState(UserState state)
@@ -63,11 +107,6 @@ namespace Assets.Networking.Lobby
             {
                 queue.Enqueue(state.Clone());
             }
-
-            if (state.Connected)
-                GameUtils.RegistredPlayers.AddOrUpdate(state.ID, state.Team, (n, t) => state.Team);
-            else
-                GameUtils.RegistredPlayers.TryRemove(state.ID, out _);
         }
 
         public void Leave()
@@ -130,10 +169,13 @@ namespace Assets.Networking.Lobby
                 if (!mUserStateRequests.TryAdd(key, queue))
                     throw new Exception("Cannot register user state listener!");
 
-                await responseStream.WriteAsync(new UserState { ID = mHostID, Connected = true, Team = mHostTeam });
+                await responseStream.WriteAsync(new UserState { ID = mHostID, Connected = true, Team = mHostTeam, IsBot = false });
 
                 foreach (var activeUser in mActiveUsers)
-                    await responseStream.WriteAsync(new UserState { ID = activeUser.Key, Connected = true, Team = activeUser.Value.Team });
+                    await responseStream.WriteAsync(new UserState { ID = activeUser.Key, Connected = true, Team = activeUser.Value.Team, IsBot = false });
+
+                foreach (var botUser in mBotUsers)
+                    await responseStream.WriteAsync(new UserState { ID = botUser.Key, Connected = true, Team = botUser.Value.Team, IsBot = true });
 
                 while (true)
                 {
