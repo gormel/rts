@@ -1,11 +1,11 @@
-using System.Collections.Generic;
 using Assets.Core.GameObjects.Final;
 using UnityEngine;
 
-namespace Core.BotIntelligence
+namespace Core.BotIntelligence.Memory
 {
     class BuildingFastMemory
     {
+        public Worker LockedWorker { get; set; }
         public Worker FreeWorker { get; set; }
         public Vector2Int Place { get; set; }
         public BuildingTemplate Template { get; set; }

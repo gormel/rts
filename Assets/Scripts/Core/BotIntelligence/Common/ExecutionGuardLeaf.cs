@@ -1,5 +1,6 @@
 using System;
 using Assets.Core.BehaviorTree;
+using Core.BotIntelligence.Memory;
 
 namespace Core.BotIntelligence
 {

@@ -99,22 +99,41 @@ namespace Assets.Core.GameObjects.Final
             }
         }
 
-        class MoveToMiningCampLeaf : IBTreeLeaf
+        class MiningLeaf : IBTreeLeaf
         {
             private readonly Worker mWorker;
             private readonly MiningCamp mCamp;
 
-            public MoveToMiningCampLeaf(Worker worker, MiningCamp camp)
+            public MiningLeaf(Worker worker, MiningCamp camp)
             {
                 mWorker = worker;
                 mCamp = camp;
             }
             public BTreeLeafState Update(TimeSpan deltaTime)
             {
+                if (mWorker.IsAttachedToMiningCamp)
+                    return BTreeLeafState.Processing;
+                
                 if (!mCamp.TryPutWorker(mWorker))
                     return BTreeLeafState.Successed;
 
                 mWorker.IsAttachedToMiningCamp = true;
+                return BTreeLeafState.Processing;
+            }
+        }
+
+        class CancelMiningLeaf : IBTreeLeaf
+        {
+            private readonly Worker mWorker;
+
+            public CancelMiningLeaf(Worker worker)
+            {
+                mWorker = worker;
+            }
+
+            public BTreeLeafState Update(TimeSpan deltaTime)
+            {
+                mWorker.IsAttachedToMiningCamp = false;
                 return BTreeLeafState.Successed;
             }
         }
@@ -331,11 +350,13 @@ namespace Assets.Core.GameObjects.Final
                 b => b
                     .Sequence(b1 => b1
                         .Leaf(new GoToTargetLeaf(PathFinder, point.Position, Game.Map.Data))
-                        .Leaf(new MoveToMiningCampLeaf(this, camp))
-                        .Leaf(new FreePlacementPointLeaf(point, camp.PlacementService))),
+                        .Leaf(new FreePlacementPointLeaf(point, camp.PlacementService))
+                        .Leaf(new MiningLeaf(this, camp))
+                    ),
                 b => b
                     .Leaf(new CancelGotoLeaf(PathFinder))
-                    .Leaf(new FreePlacementPointLeaf(point, camp.PlacementService)),
+                    .Leaf(new FreePlacementPointLeaf(point, camp.PlacementService))
+                    .Leaf(new CancelMiningLeaf(this)),
                 MiningIntelligenceTag
             );
         }

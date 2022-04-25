@@ -197,10 +197,10 @@ namespace Assets.Core.GameObjects.Base
 
         public override void OnAddedToGame()
         {
-            base.OnAddedToGame();
-
             Destignation = Position = mInitialPosition;
             ApplyDefaultIntelligence();
+            
+            base.OnAddedToGame();
             PathFinder.SetTarget(Position, Game.Map.Data);
         }
 

@@ -1,7 +1,8 @@
 using System;
 using Assets.Core.BehaviorTree;
+using Core.BotIntelligence.Memory;
 
-namespace Core.BotIntelligence
+namespace Core.BotIntelligence.Economy
 {
     class CheckFreeMoneyLeaf : IBTreeLeaf
     {

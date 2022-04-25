@@ -3,10 +3,10 @@ using Assets.Core.BehaviorTree;
 using Assets.Core.Game;
 using Assets.Core.GameObjects.Final;
 using Assets.Core.Map;
-using Assets.Utils;
+using Core.BotIntelligence.Memory;
 using UnityEngine;
 
-namespace Core.BotIntelligence
+namespace Core.BotIntelligence.Economy
 {
     class FindFreePlaceLeaf : IBTreeLeaf
     {

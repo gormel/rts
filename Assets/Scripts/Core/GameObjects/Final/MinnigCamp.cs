@@ -122,7 +122,7 @@ namespace Assets.Core.GameObjects.Final
                 return Guid.Empty;
 
             var unit = mWorkers.Pop();
-            unit.IsAttachedToMiningCamp = false;
+            await unit.Stop();
             await unit.PathFinder.Teleport(point.Position, mGame.Map.Data);
             if (!new Rect(Position, Size).Contains(Waypoint))
                 await unit.GoTo(Waypoint);

@@ -1,12 +1,11 @@
 using System;
-using System.CodeDom;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using Assets.Core.Game;
 using Assets.Core.GameObjects.Base;
 using Assets.Core.GameObjects.Final;
 
-namespace Core.BotIntelligence
+namespace Core.BotIntelligence.Memory
 {
     class BotMemory
     {
@@ -17,6 +16,7 @@ namespace Core.BotIntelligence
         public List<BuildingTemplate> BuildingTemplates { get; } = new();
         public ConcurrentDictionary<Guid, HashSet<Guid>> TemplateAttachedBuilders { get; } = new();
         public ConcurrentDictionary<Guid, HashSet<Guid>> MiningAttachedWorkers { get; } = new();
+        public HashSet<Guid> LockedWorkers { get; } = new();
 
         public int Money => mPlayer.Money.Resources;
         public int Limit => mPlayer.Limit.Resources;

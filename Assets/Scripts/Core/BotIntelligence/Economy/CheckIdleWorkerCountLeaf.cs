@@ -2,8 +2,9 @@ using System;
 using System.Linq;
 using Assets.Core.BehaviorTree;
 using Assets.Core.GameObjects.Base;
+using Core.BotIntelligence.Memory;
 
-namespace Core.BotIntelligence
+namespace Core.BotIntelligence.Economy
 {
     class CheckIdleWorkerCountLeaf : IBTreeLeaf
     {

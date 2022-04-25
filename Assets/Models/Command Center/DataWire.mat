@@ -37,11 +37,35 @@ Material:
         m_Texture: {fileID: 2800000, guid: 9da3369d2e239394f9b30604552560b3, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _Texture2DAsset_1f05651aff354f0993fffad5c34533e0_Out_0:
+        m_Texture: {fileID: 2800000, guid: cc12a5d64c99b804c9e3a3d2987c2cff, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Texture2DAsset_80b75598f500454d88e3e64f6f4fd009_Out_0:
+        m_Texture: {fileID: 2800000, guid: 1bdd3893c1058154ea91943b92b777dc, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Texture2DAsset_d97ebc5430064614a7e95e1cef92dc33_Out_0:
+        m_Texture: {fileID: 2800000, guid: 45272ff2ce886e64b9c670410933ff1c, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Texture2DAsset_ef0d81b0c1a64075be710b61a8c575bd_Out_0:
+        m_Texture: {fileID: 2800000, guid: 9da3369d2e239394f9b30604552560b3, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
     - _BUILTIN_QueueControl: 1
     - _BUILTIN_QueueOffset: 0
-    m_Colors: []
+    - _length: 0
+    - _maxUV: 0
+    - _pos: 5.15
+    - _speed: 1.87
+    - _tail: 4.54
+    - _tailLenght: 0.06
+    - _width: 0.81
+    m_Colors:
+    - _Color: {r: 0, g: 9.296034, b: 10.556064, a: 0}
   m_BuildTextureStacks: []
 --- !u!114 &8044164715634281727
 MonoBehaviour:

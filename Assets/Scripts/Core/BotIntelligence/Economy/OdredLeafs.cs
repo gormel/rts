@@ -2,8 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Assets.Core.GameObjects.Final;
+using Core.BotIntelligence.Memory;
 
-namespace Core.BotIntelligence
+namespace Core.BotIntelligence.Economy
 {
     class PlaceMiningCampLeaf : ExecuteOrderLeaf<(BuildingFastMemory, BotMemory), Worker>
     {
