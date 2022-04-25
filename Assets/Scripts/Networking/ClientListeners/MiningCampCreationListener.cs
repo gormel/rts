@@ -20,12 +20,13 @@ namespace Assets.Networking
             mID = id.ToString();
         }
         
-        public Task FreeWorker()
+        public async Task<Guid> FreeWorker()
         {
-            return mClient.FreeWorkerAsync(new FreeWorkerRequest
+            var resp = await mClient.FreeWorkerAsync(new FreeWorkerRequest
             {
                 CampID = new ID { Value = mID },
             }).ResponseAsync;
+            return Guid.Parse(resp.Value);
         }
 
         public Task CollectWorkers()

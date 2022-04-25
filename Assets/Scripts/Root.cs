@@ -234,6 +234,8 @@ class Root : MonoBehaviour
     public ExternalUpdater Updater;
     public GameObject PlayerScreen;
 
+    public GameObject AddResourcesButton;
+    
     private RtsServer mServer;
     private RtsClient mClient;
     private Game mGame;
@@ -269,6 +271,9 @@ class Root : MonoBehaviour
 
             var success = GameUtils.TryCreateBase(mGame, player, out var basePos);
             PlaceCamera(basePos);
+#if DEVELOPMENT_BUILD
+            AddResourcesButton.SetActive(true);
+#endif
         }
 
         if (GameUtils.CurrentMode == GameMode.Client)
@@ -459,6 +464,12 @@ class Root : MonoBehaviour
         {
             mGame.Update(TimeSpan.FromSeconds(Time.deltaTime));
         }
+    }
+
+    public void AddResources()
+    {
+        if (GameUtils.CurrentMode == GameMode.Server)
+            ((Player)Player).Money.Store(100);
     }
 
     void OnDestroy()

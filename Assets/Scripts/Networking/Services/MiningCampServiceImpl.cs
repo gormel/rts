@@ -36,12 +36,12 @@ namespace Assets.Networking.Services
             return mCommonService.ListenState(request, responseStream, context);
         }
 
-        public override Task<Empty> FreeWorker(FreeWorkerRequest request, ServerCallContext context)
+        public override Task<ID> FreeWorker(FreeWorkerRequest request, ServerCallContext context)
         {
             return mCommonService.ExecuteOrder(request.CampID, async orders =>
             {
-                await orders.FreeWorker();
-                return new Empty();
+                var id = await orders.FreeWorker();
+                return new ID() { Value = id.ToString() };
             });
         }
 

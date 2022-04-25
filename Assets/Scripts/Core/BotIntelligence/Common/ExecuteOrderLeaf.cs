@@ -4,21 +4,14 @@ using Assets.Core.BehaviorTree;
 
 namespace Core.BotIntelligence
 {
-    class ExecuteOrderLeaf<TMemory, TObject> : IBTreeLeaf
+    abstract class ExecuteTaskLeaf : IBTreeLeaf
     {
-        private readonly TMemory mMemory;
-        private readonly Func<TMemory, TObject> mSelectObject;
-        private readonly Func<TObject, TMemory, Task> mDoOrder;
-
         private bool mInProcess;
         private bool mDone;
+        private BTreeLeafState mDoneState;
+
+        protected abstract Task<BTreeLeafState> GetTask();
         
-        public ExecuteOrderLeaf(TMemory memory, Func<TMemory, TObject> selectObject, Func<TObject, TMemory, Task> doOrder)
-        {
-            mMemory = memory;
-            mSelectObject = selectObject;
-            mDoOrder = doOrder;
-        }
         public BTreeLeafState Update(TimeSpan deltaTime)
         {
             if (mInProcess)
@@ -27,21 +20,44 @@ namespace Core.BotIntelligence
             if (mDone)
             {
                 mDone = false;
-                return BTreeLeafState.Successed;
+                return mDoneState;
             }
-
-            var obj = mSelectObject(mMemory);
-            if (obj == null)
-                return BTreeLeafState.Failed;
             
             mInProcess = true;
-            mDoOrder(obj, mMemory).ContinueWith(_ =>
+            GetTask().ContinueWith(t =>
             {
+                if (t.IsFaulted || t.IsCanceled)
+                    mDoneState = BTreeLeafState.Failed;
+                else
+                    mDoneState = t.Result;
+                
                 mInProcess = false;
                 mDone = true;
             });
             
             return BTreeLeafState.Processing;
+        }
+    }
+    
+    abstract class ExecuteOrderLeaf<TMemory, TObject> : ExecuteTaskLeaf
+    {
+        private readonly TMemory mMemory;
+        
+        protected ExecuteOrderLeaf(TMemory memory)
+        {
+            mMemory = memory;
+        }
+
+        protected abstract TObject SelectObject(TMemory memory);
+        protected abstract Task ExecuteOrder(TObject obj, TMemory memory);
+
+        protected sealed override async Task<BTreeLeafState> GetTask()
+        {
+            var obj = SelectObject(mMemory);
+            if (obj == null)
+                return BTreeLeafState.Failed;
+            await ExecuteOrder(obj, mMemory);
+            return BTreeLeafState.Successed;
         }
     }
 }

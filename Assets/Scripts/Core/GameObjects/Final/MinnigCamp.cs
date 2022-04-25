@@ -18,7 +18,7 @@ namespace Assets.Core.GameObjects.Final
 
     interface IMinigCampOrders : IBuildingOrders, IWaypointOrders
     {
-        Task FreeWorker();
+        Task<Guid> FreeWorker();
         Task CollectWorkers();
     }
 
@@ -112,14 +112,14 @@ namespace Assets.Core.GameObjects.Final
             }
         }
 
-        public async Task FreeWorker()
+        public async Task<Guid> FreeWorker()
         {
             if (mWorkers.Count == 0)
-                return;
+                return Guid.Empty;
             
             var point = await PlacementService.TryAllocateNearestPoint(Waypoint);
             if (point == PlacementPoint.Invalid)
-                return;
+                return Guid.Empty;
 
             var unit = mWorkers.Pop();
             unit.IsAttachedToMiningCamp = false;
@@ -128,6 +128,7 @@ namespace Assets.Core.GameObjects.Final
                 await unit.GoTo(Waypoint);
             
             await PlacementService.ReleasePoint(point.ID);
+            return unit.ID;
         }
 
         public async Task CollectWorkers()

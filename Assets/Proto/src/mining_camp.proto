@@ -8,7 +8,7 @@ service MiningCampService {
 
     rpc SetWaypoint(SetWaypointRequest) returns (Empty);
 
-    rpc FreeWorker(FreeWorkerRequest) returns (Empty);
+    rpc FreeWorker(FreeWorkerRequest) returns (ID);
     rpc CollectWorkers(CollectWorkersRequest) returns (Empty);
 }
 

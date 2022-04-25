@@ -50,9 +50,12 @@ namespace Core.BotIntelligence
 
         public BTreeLeafState Update(TimeSpan deltaTime)
         {
+            if (mFastMemory.FreeWorker == null)
+                return BTreeLeafState.Failed;
+            
+            var workerPos = mFastMemory.FreeWorker.Position;
             for (int i = 1; i < 3; i++)
             {
-                var workerPos = mFastMemory.FreeWorker.Position;
                 var areaCenter = new Vector2Int(Mathf.FloorToInt(workerPos.x), Mathf.FloorToInt(workerPos.y));
                 var area = GetSearchArea(areaCenter, 5 * i);
                 if (TryFindPlace(area, out var foundPosition))

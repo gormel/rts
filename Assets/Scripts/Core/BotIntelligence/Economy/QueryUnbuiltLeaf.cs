@@ -19,7 +19,7 @@ namespace Core.BotIntelligence
         
         public BTreeLeafState Update(TimeSpan deltaTime)
         {
-            mFastMemory.Template = mMemory.BuildingTemplates.FirstOrDefault(t => t.AttachedWorkers < mBuilderLimit);
+            mFastMemory.Template = mMemory.BuildingTemplates.FirstOrDefault(t => !mMemory.TemplateAttachedBuilders.TryGetValue(t.ID, out var builders) || builders.Count < mBuilderLimit);
             return mFastMemory.Template == null ? BTreeLeafState.Failed : BTreeLeafState.Successed;
         }
     }
