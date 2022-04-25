@@ -20,11 +20,19 @@ namespace Assets.Views
         public Animation GatesAnimation;
         public AnimationClip OpenClip;
         public AnimationClip CloseClip;
+        public GameObject DataWire;
 
         protected override void OnLoad()
         {
             WatchMore(() => Info.Progress, 0.6f, p => { GatesAnimation.Play(OpenClip.name); });
             WatchMore(() => Info.Progress, 0.99f, p => { GatesAnimation.Play(CloseClip.name); });
+        }
+
+        protected override void Update()
+        {
+            base.Update();
+            
+            DataWire.SetActive(Info.Progress is > 0.01f and < 0.99f);
         }
 
         public override void OnRightClick(Vector2 position)
