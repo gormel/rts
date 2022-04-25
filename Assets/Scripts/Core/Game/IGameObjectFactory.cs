@@ -13,7 +13,7 @@ namespace Assets.Core.Game
         Task<RangedWarrior> CreateRangedWarrior(Vector2 position);
         Task<MeeleeWarrior> CreateMeeleeWarrior(Vector2 position);
 
-        Task<BuildingTemplate> CreateBuildingTemplate(Vector2 position, Func<Vector2, Task<Building>> createBuilding, TimeSpan buildTime, Vector2 size, float maxHealth);
+        Task<BuildingTemplate> CreateBuildingTemplate(Vector2 position, Func<Vector2, Task<Building>> createBuilding, TimeSpan buildTime, Vector2 size, float maxHealth, int cost);
 
         Task<CentralBuilding> CreateCentralBuilding(Vector2 position);
         Task<Barrak> CreateBarrak(Vector2 position);

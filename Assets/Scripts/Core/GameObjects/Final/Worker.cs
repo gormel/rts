@@ -193,7 +193,8 @@ namespace Assets.Core.GameObjects.Final
                 async pos => await Player.CreateCentralBuilding(pos),
                 CentralBuildingBuildTime,
                 CentralBuilding.BuildingSize,
-                CentralBuilding.MaximumHealthConst
+                CentralBuilding.MaximumHealthConst,
+                Player.CentralBuildingCost
             );
 
             var id = await Game.PlaceObject(template);
@@ -217,7 +218,8 @@ namespace Assets.Core.GameObjects.Final
                 async pos => await Player.CreateMiningCamp(pos),
                 MiningCampBuildTime,
                 MiningCamp.BuildingSize,
-                MiningCamp.MaximumHealthConst
+                MiningCamp.MaximumHealthConst,
+                Player.MiningCampCost
             );
 
             var id = await Game.PlaceObject(template);
@@ -238,7 +240,8 @@ namespace Assets.Core.GameObjects.Final
                 async pos => await Player.CreateBarrak(pos),
                 BarrakBuildTime,
                 Barrak.BuildingSize,
-                Barrak.MaximumHealthConst
+                Barrak.MaximumHealthConst,
+                Player.BarrakCost
             );
 
             var id = await Game.PlaceObject(template);
@@ -262,7 +265,8 @@ namespace Assets.Core.GameObjects.Final
                 async pos => await Player.CreateTurret(pos),
                 TurretBuildTime,
                 Turret.BuildingSize,
-                Turret.MaximumHealthConst
+                Turret.MaximumHealthConst,
+                Player.TurretCost
             );
 
             var id = await Game.PlaceObject(template);
@@ -283,7 +287,8 @@ namespace Assets.Core.GameObjects.Final
                 async pos => await Player.CreateBuildersLab(pos),
                 BuildersLabBuildTime,
                 BuildersLab.BuildingSize,
-                BuildersLab.MaximumHealthConst
+                BuildersLab.MaximumHealthConst,
+                Player.BuildersLabCost
             );
 
             var id = await Game.PlaceObject(template);
@@ -307,7 +312,8 @@ namespace Assets.Core.GameObjects.Final
                 async pos => await Player.CreateWarriorsLab(pos),
                 WarriorsLabBuildTime,
                 WarriorsLab.BuildingSize,
-                WarriorsLab.MaximumHealthConst
+                WarriorsLab.MaximumHealthConst,
+                Player.WarriorsLabCost
             );
 
             var id = await Game.PlaceObject(template);

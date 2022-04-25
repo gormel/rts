@@ -27,11 +27,15 @@ namespace Assets.Core.GameObjects.Base
 
         private class UpgradeDecorator<T> : IUpgradeDecorator
         {
+            private readonly LaboratoryBuilding mBuilding;
             private readonly Upgrade<T> mUpgrade;
+            private readonly int mCost;
 
-            public UpgradeDecorator(Upgrade<T> upgrade)
+            public UpgradeDecorator(LaboratoryBuilding building, Upgrade<T> upgrade, int cost)
             {
+                mBuilding = building;
                 mUpgrade = upgrade;
+                mCost = cost;
             }
 
             public void BeginUpgrade()
@@ -46,6 +50,7 @@ namespace Assets.Core.GameObjects.Base
 
             public void CancelUpgrade()
             {
+                mBuilding.Player.Money.Store(mCost);
                 mUpgrade.CancelLevelUp();
             }
         }
@@ -70,10 +75,13 @@ namespace Assets.Core.GameObjects.Base
             base.OnAddedToGame();
         }
 
-        protected Task QueueUpgrade<T>(Upgrade<T> upgrade, TimeSpan upgradeTime)
+        protected Task QueueUpgrade<T>(Upgrade<T> upgrade, TimeSpan upgradeTime, int cost)
         {
+            if (!Player.Money.Spend(cost))
+                return Task.CompletedTask;
+            
             upgrade.BeginLevelUp();
-            mUpgradesQueue.Enqueue((new UpgradeDecorator<T>(upgrade), upgradeTime));
+            mUpgradesQueue.Enqueue((new UpgradeDecorator<T>(this, upgrade, cost), upgradeTime));
             return Task.CompletedTask;
         }
 

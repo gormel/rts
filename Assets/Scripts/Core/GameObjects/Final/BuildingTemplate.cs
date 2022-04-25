@@ -28,6 +28,7 @@ namespace Assets.Core.GameObjects.Final
         private TimeSpan mBuildTime;
         private readonly TimeSpan mFullBuildTime;
         private readonly float mMaxHealthBase;
+        private readonly int mCost;
 
         private const float WorkerInvest = 0.3f;
 
@@ -45,7 +46,8 @@ namespace Assets.Core.GameObjects.Final
             Vector2 size, 
             Vector2 position, 
             float maxHealth, 
-            IPlacementService placementService)
+            IPlacementService placementService,
+            int cost)
         {
             mGame = game;
             mCreateBuilding = createBuilding;
@@ -54,6 +56,7 @@ namespace Assets.Core.GameObjects.Final
             PlacementService = placementService;
             mFullBuildTime = mBuildTime = buildTime;
             mMaxHealthBase = maxHealth;
+            mCost = cost;
         }
 
         public override void OnAddedToGame()
@@ -82,6 +85,7 @@ namespace Assets.Core.GameObjects.Final
 
         public async Task Cancel()
         {
+            Player.Money.Store(mCost);
             await mGame.RemoveObject(ID);
         }
     }

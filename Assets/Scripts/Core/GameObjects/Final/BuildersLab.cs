@@ -34,18 +34,12 @@ namespace Assets.Core.GameObjects.Base
 
         public Task QueueAttackUpgrade()
         {
-            if (!Player.Money.Spend(Player.TurretAttackUpgradeCost))
-                return Task.CompletedTask;
-            
-            return QueueUpgrade(Player.Upgrades.TurretAttackUpgrade, AttackUpgradeTime);
+            return QueueUpgrade(Player.Upgrades.TurretAttackUpgrade, AttackUpgradeTime, Player.BuildingDefenceUpgradeCost);
         }
 
         public Task QueueDefenceUpgrade()
         {
-            if (!Player.Money.Spend(Player.BuildingDefenceUpgradeCost))
-                return Task.CompletedTask;
-
-            return QueueUpgrade(Player.Upgrades.BuildingHealthUpgrade, DefenceUpgradeTime);
+            return QueueUpgrade(Player.Upgrades.BuildingHealthUpgrade, DefenceUpgradeTime, Player.BuildingDefenceUpgradeCost);
         }
     }
 }

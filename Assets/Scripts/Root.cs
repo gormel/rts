@@ -128,11 +128,11 @@ class Root : MonoBehaviour
             return meeleeWarrior;
         }
 
-        public async Task<BuildingTemplate> CreateBuildingTemplate(Vector2 position, Func<Vector2, Task<Building>> building, TimeSpan buildTime, Vector2 size, float maxHealth)
+        public async Task<BuildingTemplate> CreateBuildingTemplate(Vector2 position, Func<Vector2, Task<Building>> building, TimeSpan buildTime, Vector2 size, float maxHealth, int cost)
         {
             var template = await CreateModelAndView<BuildingTemplateView, BuildingTemplate, IBuildingTemplateOrders, IBuildingTemplateInfo>(
                 mBuildingTemplatePrefab,
-                view => new BuildingTemplate(mGame, building, buildTime, size, position, maxHealth, view),
+                view => new BuildingTemplate(mGame, building, buildTime, size, position, maxHealth, view, cost),
                 position
             );
             template.AddedToGame += o => mServer.BuildingTemplateRegistrator.Register(template, template);

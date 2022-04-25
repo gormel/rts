@@ -174,7 +174,10 @@ namespace Assets.Core.GameObjects.Base {
                 return false;
 
             if (!Player.Limit.Spend(1))
+            {
+                Player.Money.Store(cost);
                 return false;
+            }
 
             bool taskProcessing = false;
             var allocatedPoint = PlacementPoint.Invalid;
@@ -207,6 +210,7 @@ namespace Assets.Core.GameObjects.Base {
             {
                 Queued--;
                 Player.Limit.Store(1);
+                Player.Money.Store(cost);
                 mPlacementService.ReleasePoint(allocatedPoint.ID);
             }));
             return true;

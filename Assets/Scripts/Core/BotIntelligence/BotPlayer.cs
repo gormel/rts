@@ -47,7 +47,7 @@ namespace Core.BotIntelligence
                         .Sequence(b4 => b4
                             .Leaf(new CheckFreeMoneyLeaf(mMemory, CentralBuildingCost))
                             .Leaf(new QueryFreeWorkerLeaf(mMemory, buildCentralFM))
-                            .Leaf(new FindFreePlaceLeaf(mGame, mGame.Map.Data, buildCentralFM, CentralBuilding.BuildingSize))
+                            .Leaf(new FindFreePlaceLeaf(mGame, mGame.Map.Data, buildCentralFM, CentralBuilding.BuildingSize, 1))
                             .Leaf(new PlaceCentralLeaf(mMemory, buildCentralFM))
                         )
                     )

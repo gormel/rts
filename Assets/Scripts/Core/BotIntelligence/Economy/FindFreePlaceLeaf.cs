@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Assets.Core.BehaviorTree;
 using Assets.Core.Game;
 using Assets.Core.GameObjects.Final;
@@ -14,13 +16,16 @@ namespace Core.BotIntelligence.Economy
         private readonly IMapData mMapdata;
         private readonly BuildingFastMemory mFastMemory;
         private readonly Vector2 mBuildingSize;
+        private readonly int mBorder;
+        private readonly List<Vector2Int> mFoundPlaces = new();
 
-        public FindFreePlaceLeaf(Game game, IMapData mapdata, BuildingFastMemory fastMemory, Vector2 buildingSize)
+        public FindFreePlaceLeaf(Game game, IMapData mapdata, BuildingFastMemory fastMemory, Vector2 buildingSize, int border)
         {
             mGame = game;
             mMapdata = mapdata;
             mFastMemory = fastMemory;
             mBuildingSize = buildingSize;
+            mBorder = border;
         }
 
         private RectInt GetSearchArea(Vector2Int center, int size)
@@ -31,14 +36,21 @@ namespace Core.BotIntelligence.Economy
 
         private bool TryFindPlace(RectInt searchArea, out Vector2Int foundPosition)
         {
+            mFoundPlaces.Clear();
             for (int x = 0; x < searchArea.width - mBuildingSize.x; x++)
             {
                 for (int y = 0; y < searchArea.height - mBuildingSize.y; y++)
                 {
                     foundPosition = searchArea.position + new Vector2Int(x, y);
                     if (CheckPosition(foundPosition))
-                        return true;
+                        mFoundPlaces.Add(foundPosition);
                 }
+            }
+
+            if (mFoundPlaces.Count > 0)
+            {
+                foundPosition = mFoundPlaces.OrderBy(p => Vector2.Distance(p, searchArea.center)).First();
+                return true;
             }
             
             foundPosition = Vector2Int.zero;
@@ -46,7 +58,7 @@ namespace Core.BotIntelligence.Economy
         }
 
         protected virtual bool CheckPosition(Vector2Int position)
-            => mGame.GetIsAreaFree(position, mBuildingSize);
+            => mGame.GetIsAreaFree(position - new Vector2(mBorder, mBorder), mBuildingSize + new Vector2(mBorder, mBorder) * 2);
 
         public BTreeLeafState Update(TimeSpan deltaTime)
         {
@@ -54,9 +66,9 @@ namespace Core.BotIntelligence.Economy
                 return BTreeLeafState.Failed;
             
             var workerPos = mFastMemory.FreeWorker.Position;
+            var areaCenter = new Vector2Int(Mathf.FloorToInt(workerPos.x), Mathf.FloorToInt(workerPos.y));
             for (int i = 1; i < 3; i++)
             {
-                var areaCenter = new Vector2Int(Mathf.FloorToInt(workerPos.x), Mathf.FloorToInt(workerPos.y));
                 var area = GetSearchArea(areaCenter, 5 * i);
                 if (TryFindPlace(area, out var foundPosition))
                 {
@@ -73,7 +85,7 @@ namespace Core.BotIntelligence.Economy
         private readonly IMapData mMapdata;
 
         public FindFreeMiningCampPlaceLeaf(Game game, IMapData mapdata, BuildingFastMemory fastMemory, Vector2 buildingSize) 
-            : base(game, mapdata, fastMemory, buildingSize)
+            : base(game, mapdata, fastMemory, buildingSize, 0)
         {
             mMapdata = mapdata;
         }

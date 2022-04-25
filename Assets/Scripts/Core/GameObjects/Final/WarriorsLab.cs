@@ -33,26 +33,17 @@ namespace Assets.Core.GameObjects.Base
 
         public Task QueueDamageUpgrade()
         {
-            if (!Player.Money.Spend(Player.UnitDamageUpgradeCost))
-                return Task.CompletedTask;
-
-            return QueueUpgrade(Player.Upgrades.UnitDamageUpgrade, DamageUpgradeTime);
+            return QueueUpgrade(Player.Upgrades.UnitDamageUpgrade, DamageUpgradeTime, Player.UnitDamageUpgradeCost);
         }
 
         public Task QueueArmourUpgrade()
         {
-            if (!Player.Money.Spend(Player.UnitArmourUpgradeCost))
-                return Task.CompletedTask;
-
-            return QueueUpgrade(Player.Upgrades.UnitArmourUpgrade, ArmourUpgradeTime);
+            return QueueUpgrade(Player.Upgrades.UnitArmourUpgrade, ArmourUpgradeTime, Player.UnitArmourUpgradeCost);
         }
 
         public Task QueueAttackRangeUpgrade()
         {
-            if (!Player.Money.Spend(Player.UnitAttackRangeUpgradeCost))
-                return Task.CompletedTask;
-
-            return QueueUpgrade(Player.Upgrades.UnitAttackRangeUpgrade, AttackRangeUpgradeTime);
+            return QueueUpgrade(Player.Upgrades.UnitAttackRangeUpgrade, AttackRangeUpgradeTime, Player.UnitAttackRangeUpgradeCost);
         }
     }
 }
