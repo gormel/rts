@@ -26,6 +26,7 @@ namespace Assets.Core.BehaviorTree
         IBTreeBuilder Leaf(IBTreeLeaf leaf);
         IBTreeBuilder Fail(Func<IBTreeBuilder, IBTreeBuilder> children);
         IBTreeBuilder Success(Func<IBTreeBuilder, IBTreeBuilder> children);
+        IBTreeBuilder Invert(Func<IBTreeBuilder, IBTreeBuilder> children);
         BTree Build();
     }
 
@@ -118,6 +119,32 @@ namespace Assets.Core.BehaviorTree
             }
         }
 
+        private class InvertNode : Node
+        {
+            public InvertNode(Node[] children) 
+                : base(children)
+            {
+            }
+
+            public override BTreeLeafState Update(TimeSpan deltaTime)
+            {
+                for (int i = 0; i < Children.Length; i++)
+                {
+                    var result = Children[i].Update(deltaTime);
+                    if (result == BTreeLeafState.Processing)
+                        return result;
+
+                    if (result == BTreeLeafState.Successed)
+                        return BTreeLeafState.Failed;
+
+                    if (result == BTreeLeafState.Failed)
+                        return BTreeLeafState.Successed;
+                }
+
+                return BTreeLeafState.Failed;
+            }
+        }
+
         private class LeafNode : Node
         {
             private readonly IBTreeLeaf mLeaf;
@@ -177,6 +204,12 @@ namespace Assets.Core.BehaviorTree
             {
                 var childrenBuilder = new Builder(null, null, mTag);
                 return new Builder(this, () => new FailSuccessNode((children(childrenBuilder) as Builder)?.BuildInner()?.ToArray(), BTreeLeafState.Successed), mTag);
+            }
+
+            public IBTreeBuilder Invert(Func<IBTreeBuilder, IBTreeBuilder> children)
+            {
+                var childrenBuilder = new Builder(null, null, mTag);
+                return new Builder(this, () => new InvertNode((children(childrenBuilder) as Builder)?.BuildInner()?.ToArray()), mTag);
             }
 
             private List<Node> BuildInner()

@@ -11,6 +11,7 @@ using Assets.Utils;
 using Assets.Views;
 using Assets.Views.Base;
 using Assets.Views.Utils;
+using Core.BotIntelligence;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
@@ -235,7 +236,7 @@ class Root : MonoBehaviour
     public GameObject PlayerScreen;
 
     public GameObject AddResourcesButton;
-    
+
     private RtsServer mServer;
     private RtsClient mClient;
     private Game mGame;
@@ -262,7 +263,12 @@ class Root : MonoBehaviour
             controlledFactory.ViewCreated += ControlledFactoryOnViewCreated;
             enemyFactory.ViewCreated += EnemyFactoryOnViewCreated;
 
+#if HOST_IS_BOT
+            var player = new BotPlayer(mGame, controlledFactory, GameUtils.Team);
+            mGame.AddBotPlayer(player);
+#else
             var player = new Player(controlledFactory, GameUtils.Team);
+#endif
             Player = player;
 
             mServer.MessageRecived += OnChatMessageRecived;

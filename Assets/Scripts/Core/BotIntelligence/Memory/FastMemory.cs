@@ -20,4 +20,9 @@ namespace Core.BotIntelligence
     {
         public MiningCamp FreeMining { get; set; }
     }
+
+    class ExecutionGuardFastMemory
+    {
+        public int Executions { get; set; }
+    }
 }

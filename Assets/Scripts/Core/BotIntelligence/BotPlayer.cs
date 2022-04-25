@@ -27,33 +27,60 @@ namespace Core.BotIntelligence
 
         private BTree BuildEconomyIntelligence()
         {
-            var buildingFastMemory = new BuildingFastMemory();
-            var buildingFastMemory2 = new BuildingFastMemory();
-            var buildingFastMemory3 = new BuildingFastMemory();
-            var miningBuilderFastMemory = new BuildingFastMemory();
-            var workerOrdFastMemory = new WorkerOrderingFastMemory();
-            var miningFillMemory = new MiningFillFastMemory();
+            var buildTemplateFM = new BuildingFastMemory();
+            var buildTemplateGuardFM = new ExecutionGuardFastMemory();
+            var buildCentralFM = new BuildingFastMemory();
+            var buildCentralGuardFM = new ExecutionGuardFastMemory();
+            var buildCampFM = new BuildingFastMemory();
+            var buildCampGuardFM = new ExecutionGuardFastMemory();
+            var miningBuilderFM = new BuildingFastMemory();
+            var workerOrdFM = new WorkerOrderingFastMemory();
+            var miningFillFM = new MiningFillFastMemory();
             return BTree.Create(EconomyIntelligenceTag)
                 .Sequence(b => b
                     .Success(b1 => b1
                         .Sequence(b2 => b2
                             .Selector(b3 => b3
                                 .Sequence(b4 => b4
-                                    .Leaf(new QueryUnbuiltLeaf(mMemory, buildingFastMemory, 3))
-                                    .Leaf(new QueryFreeWorkerLeaf(mMemory, buildingFastMemory))
-                                    .Leaf(new AttachAsBuilderLeaf(mMemory, buildingFastMemory))
+                                    .Selector(b5 => b5
+                                        .Invert(b6 => b6
+                                            .Leaf(new ExecutionGuardLeaf(buildTemplateGuardFM, 1, ExecutionGuardMode.Wait))
+                                        )
+                                        .Sequence(b6 => b6
+                                            .Leaf(new QueryUnbuiltLeaf(mMemory, buildTemplateFM, 2))
+                                            .Leaf(new QueryFreeOrMiningWorkerLeaf(mMemory, buildTemplateFM))
+                                        )
+                                    )
+                                    .Leaf(new AttachAsBuilderLeaf(mMemory, buildTemplateFM))
+                                    .Leaf(new ExecutionGuardLeaf(buildTemplateGuardFM, 1, ExecutionGuardMode.Release))
                                 )
                                 .Sequence(b4 => b4
-                                    .Leaf(new CheckFreeMoneyLeaf(mMemory, CentralBuildingCost))
-                                    .Leaf(new QueryFreeOrMiningWorkerLeaf(mMemory, buildingFastMemory2))
-                                    .Leaf(new FindFreePlaceLeaf(mGame, mGame.Map.Data, buildingFastMemory2, CentralBuilding.BuildingSize))
-                                    .Leaf(new PlaceCentralLeaf(mMemory, buildingFastMemory2))
+                                    .Selector(b5 => b5
+                                        .Invert(b6 => b6
+                                            .Leaf(new ExecutionGuardLeaf(buildCentralGuardFM, 1, ExecutionGuardMode.Wait))
+                                        )
+                                        .Sequence(b6 => b6
+                                            .Leaf(new CheckFreeMoneyLeaf(mMemory, CentralBuildingCost))
+                                            .Leaf(new QueryFreeOrMiningWorkerLeaf(mMemory, buildCentralFM))
+                                            .Leaf(new FindFreePlaceLeaf(mGame, mGame.Map.Data, buildCentralFM, CentralBuilding.BuildingSize))
+                                        )
+                                    )
+                                    .Leaf(new PlaceCentralLeaf(mMemory, buildCentralFM))
+                                    .Leaf(new ExecutionGuardLeaf(buildCentralGuardFM, 1, ExecutionGuardMode.Release))
                                 )
                                 .Sequence(b4 => b4
-                                    .Leaf(new CheckFreeMoneyLeaf(mMemory, MiningCampCost))
-                                    .Leaf(new QueryFreeOrMiningWorkerLeaf(mMemory, buildingFastMemory3))
-                                    .Leaf(new FindFreeMiningCampPlaceLeaf(mGame, mGame.Map.Data, buildingFastMemory3, MiningCamp.BuildingSize))
-                                    .Leaf(new PlaceMiningCampLeaf(mMemory, buildingFastMemory3))
+                                    .Selector(b5 => b5
+                                        .Invert(b6 => b6
+                                            .Leaf(new ExecutionGuardLeaf(buildCampGuardFM, 1, ExecutionGuardMode.Wait))
+                                        )
+                                        .Sequence(b6 => b6
+                                            .Leaf(new CheckFreeMoneyLeaf(mMemory, MiningCampCost))
+                                            .Leaf(new QueryFreeOrMiningWorkerLeaf(mMemory, buildCampFM))
+                                            .Leaf(new FindFreeMiningCampPlaceLeaf(mGame, mGame.Map.Data, buildCampFM, MiningCamp.BuildingSize))
+                                        )
+                                    )
+                                    .Leaf(new PlaceMiningCampLeaf(mMemory, buildCampFM))
+                                    .Leaf(new ExecutionGuardLeaf(buildCampGuardFM, 1, ExecutionGuardMode.Release))
                                 )
                             )
                         )
@@ -61,17 +88,17 @@ namespace Core.BotIntelligence
                     .Success(b2 => b2
                         .Sequence(b3 => b3
                             .Leaf(new CheckFreeMoneyLeaf(mMemory, WorkerCost))
-                            .Leaf(new QueryIdleCentralLeaf(mMemory, workerOrdFastMemory))
+                            .Leaf(new QueryIdleCentralLeaf(mMemory, workerOrdFM))
                             .Leaf(new CheckIdleWorkerCountLeaf(mMemory, -1, 2))
-                            .Leaf(new QueueWorkerLeaf(workerOrdFastMemory))
+                            .Leaf(new QueueWorkerLeaf(workerOrdFM))
                         )
                     )
                     .Success(b2 => b2
                         .Sequence(b3 => b3
                             .Leaf(new CheckIdleWorkerCountLeaf(mMemory, 0, int.MaxValue))
-                            .Leaf(new QueryFreeWorkerLeaf(mMemory, miningBuilderFastMemory))
-                            .Leaf(new QueryFreeMimingLeaf(mMemory, miningFillMemory, -1, MiningCamp.MaxWorkers))
-                            .Leaf(new AttachToMiningLeaf(mMemory, miningFillMemory, miningBuilderFastMemory))
+                            .Leaf(new QueryFreeWorkerLeaf(mMemory, miningBuilderFM))
+                            .Leaf(new QueryFreeMimingLeaf(mMemory, miningFillFM, -1, MiningCamp.MaxWorkers))
+                            .Leaf(new AttachToMiningLeaf(mMemory, miningFillFM, miningBuilderFM))
                         )
                     )
                 )
