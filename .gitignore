@@ -29,3 +29,4 @@ sysinfo.txt
 .vscode/
 [Ll]ogs
 mono_crash.*.json
+/UserSetting/
