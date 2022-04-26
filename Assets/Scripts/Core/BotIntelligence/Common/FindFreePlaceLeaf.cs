@@ -8,7 +8,7 @@ using Assets.Core.Map;
 using Core.BotIntelligence.Memory;
 using UnityEngine;
 
-namespace Core.BotIntelligence.Economy
+namespace Core.BotIntelligence.Common
 {
     class FindFreePlaceLeaf : IBTreeLeaf
     {
@@ -67,7 +67,7 @@ namespace Core.BotIntelligence.Economy
             
             var workerPos = mFastMemory.FreeWorker.Position;
             var areaCenter = new Vector2Int(Mathf.FloorToInt(workerPos.x), Mathf.FloorToInt(workerPos.y));
-            for (int i = 1; i < 3; i++)
+            for (int i = 1; i < 5; i++)
             {
                 var area = GetSearchArea(areaCenter, 5 * i);
                 if (TryFindPlace(area, out var foundPosition))

@@ -59,11 +59,13 @@ namespace Assets.Core.Game
             public Upgrade<int> UnitDamageUpgrade { get; } = new Upgrade<int>(1, (dmg, lvl) => dmg + lvl);
             public Upgrade<int> UnitAttackRangeUpgrade { get; } = new Upgrade<int>(1, (rng, lvl) => rng + lvl);
         }
+
+        public const int MaxLimit = 200;
         
         private readonly IGameObjectFactory mExternalFactory;
         private readonly Dictionary<Type, int> mCreatedBuildingRegistrations = new Dictionary<Type, int>();
         public ResourceStorage Money { get; } = new ResourceStorage();
-        public ResourceStorage Limit { get; } = new ResourceStorage(200);
+        public ResourceStorage Limit { get; } = new ResourceStorage(MaxLimit);
         public bool TurretBuildingAvaliable => GetCreatedBuildingCount<BuildersLab>() > 0;
         public bool WarriorsLabBuildingAvaliable => GetCreatedBuildingCount<Barrak>() > 0;
         public bool TurretAttackUpgradeAvaliable => Upgrades.TurretAttackUpgrade.LevelUpAvaliable;

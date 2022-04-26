@@ -9,27 +9,32 @@ namespace Core.BotIntelligence.Memory
 {
     class BotMemory
     {
-        private readonly Player mPlayer;
         public List<CentralBuilding> CentralBuildings { get; } = new();
         public List<Worker> Workers { get; } = new();
         public List<MiningCamp> MiningCamps { get; } = new();
         public List<BuildingTemplate> BuildingTemplates { get; } = new();
+        public List<Barrak> Barracks { get; } = new();
+        public List<MeeleeWarrior> MeeleeWarriors { get; } = new();
+        public List<RangedWarrior> RangedWarriors { get; } = new();
         public ConcurrentDictionary<Guid, HashSet<Guid>> TemplateAttachedBuilders { get; } = new();
         public ConcurrentDictionary<Guid, HashSet<Guid>> MiningAttachedWorkers { get; } = new();
-        public HashSet<Guid> LockedWorkers { get; } = new();
-
-        public int Money => mPlayer.Money.Resources;
-        public int Limit => mPlayer.Limit.Resources;
-
-        public BotMemory(Player player)
-        {
-            mPlayer = player;
-        }
         
         public void Assign(RtsGameObject obj)
         {
             switch (obj)
             {
+                case MeeleeWarrior meeleeWarrior:
+                    MeeleeWarriors.Add(meeleeWarrior);
+                    meeleeWarrior.RemovedFromGame += o => MeeleeWarriors.Remove(meeleeWarrior);
+                    break;
+                case RangedWarrior rangedWarrior:
+                    RangedWarriors.Add(rangedWarrior);
+                    rangedWarrior.RemovedFromGame += o => RangedWarriors.Remove(rangedWarrior);
+                    break;
+                case Barrak barrak:
+                    Barracks.Add(barrak);
+                    barrak.RemovedFromGame += o => Barracks.Remove(barrak);
+                    break;
                 case CentralBuilding central:
                     CentralBuildings.Add(central);
                     central.RemovedFromGame += o => CentralBuildings.Remove(central);

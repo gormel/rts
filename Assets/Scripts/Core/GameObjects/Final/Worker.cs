@@ -348,6 +348,9 @@ namespace Assets.Core.GameObjects.Final
         public async Task AttachToMiningCamp(Guid campId)
         {
             var camp = Game.GetObject<MiningCamp>(campId);
+            if (camp.PlayerID != PlayerID)
+                return;
+            
             var point = await camp.PlacementService.TryAllocateNearestPoint(Position);
             if (point == PlacementPoint.Invalid)
                 return;

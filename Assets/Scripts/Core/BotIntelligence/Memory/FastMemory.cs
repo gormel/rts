@@ -1,3 +1,4 @@
+using Assets.Core.GameObjects.Base;
 using Assets.Core.GameObjects.Final;
 using UnityEngine;
 
@@ -14,6 +15,17 @@ namespace Core.BotIntelligence.Memory
     class WorkerOrderingFastMemory
     {
         public CentralBuilding IdleCentral { get; set; }
+    }
+
+    class AttackFastMemory
+    {
+        public WarriorUnit Warrior { get; set; }
+        public RtsGameObject Target { get; set; }
+    }
+
+    class WarriorOrderingFastMemory
+    {
+        public Barrak IdleBarrak { get; set; }
     }
 
     class MiningFillFastMemory

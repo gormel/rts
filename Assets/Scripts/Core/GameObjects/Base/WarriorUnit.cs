@@ -139,11 +139,13 @@ namespace Assets.Core.GameObjects.Base
 
         class QueryEnemyLeaf : IBTreeLeaf
         {
+            private readonly Game.Game mGame;
             private readonly WarriorUnit mUnit;
             private readonly TargetStorage mTargetStorage;
 
-            public QueryEnemyLeaf(WarriorUnit unit, TargetStorage targetStorage)
+            public QueryEnemyLeaf(Game.Game game, WarriorUnit unit, TargetStorage targetStorage)
             {
+                mGame = game;
                 mUnit = unit;
                 mTargetStorage = targetStorage;
             }
@@ -153,7 +155,7 @@ namespace Assets.Core.GameObjects.Base
                 mTargetStorage.Target = mUnit.Game.QueryObjects(mUnit.Position, mUnit.AttackRange)
                     .OrderBy(go => go.MaxHealth)
                     .ThenBy(go => Vector2.Distance(mUnit.Position, PositionUtils.PositionOf(go)))
-                    .FirstOrDefault(go => /*go.ID != mUnit.ID ||*/ go.PlayerID != mUnit.PlayerID);
+                    .FirstOrDefault(go => mGame.GetPlayer(go.PlayerID).Team != mUnit.Player.Team);
 
                 return mTargetStorage.Target == null ? BTreeLeafState.Failed : BTreeLeafState.Successed;
             }
@@ -268,7 +270,7 @@ namespace Assets.Core.GameObjects.Base
                         CreateFollowAndKillIntelligence(b1
                             .Selector(b2 => b2
                                 .Leaf(new CheckTargetLeaf(storage))
-                                .Leaf(new QueryEnemyLeaf(this, storage))), storage)),
+                                .Leaf(new QueryEnemyLeaf(Game, this, storage))), storage)),
                 b => b
                     .Leaf(new ClearTargetLeaf(storage))
                     .Leaf(new CancelGotoLeaf(PathFinder))
@@ -286,7 +288,7 @@ namespace Assets.Core.GameObjects.Base
                             .Sequence(b3 => b3
                                 .Selector(b4 => b4
                                     .Leaf(new CheckDistanceLeaf(this, storage))
-                                    .Leaf(new QueryEnemyLeaf(this, storage)))
+                                    .Leaf(new QueryEnemyLeaf(Game, this, storage)))
                                 .Leaf(new KillTargetLeaf(this, storage)))
                             .Leaf(new CancelKillLeaf(this)))),
                 b => b
@@ -338,7 +340,7 @@ namespace Assets.Core.GameObjects.Base
                             .Sequence(b3 => CreateFollowAndKillIntelligence(b3
                                 .Selector(b4 => b4
                                     .Leaf(new CheckTargetLeaf(storage))
-                                    .Leaf(new QueryEnemyLeaf(this, storage))), storage)))
+                                    .Leaf(new QueryEnemyLeaf(Game, this, storage))), storage)))
                         .Sequence(b5 => b5
                             .Leaf(new CancelKillLeaf(this))
                             .Leaf(new GoToTargetLeaf(PathFinder, position, Game.Map.Data)))),

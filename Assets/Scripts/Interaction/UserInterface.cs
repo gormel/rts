@@ -358,7 +358,7 @@ namespace Assets.Interaction
                     if (view.OwnershipRelation != ObjectOwnershipRelation.My)
                         continue;
 
-                    if (viewHit.Object.OwnershipRelation == ObjectOwnershipRelation.My)
+                    if (viewHit.Object.OwnershipRelation != ObjectOwnershipRelation.Enemy)
                         view.OnRightClick(viewHit.Object);
                     else
                         view.OnEnemyRightClick(viewHit.Object);

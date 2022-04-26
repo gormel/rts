@@ -107,11 +107,13 @@ namespace Assets.Core.GameObjects.Final
 
         class QueryEnemyLeaf : IBTreeLeaf
         {
+            private readonly Game.Game mGame;
             private readonly Turret mTurret;
             private readonly TargetStorage mTargetStorage;
 
-            public QueryEnemyLeaf(Turret turret, TargetStorage targetStorage)
+            public QueryEnemyLeaf(Game.Game game, Turret turret, TargetStorage targetStorage)
             {
+                mGame = game;
                 mTurret = turret;
                 mTargetStorage = targetStorage;
             }
@@ -121,7 +123,7 @@ namespace Assets.Core.GameObjects.Final
                 mTargetStorage.Target = mTurret.mGame.QueryObjects(mTurret.Position + mTurret.Size / 2, mTurret.AttackRange)
                     .OrderBy(go => go.MaxHealth)
                     .ThenBy(go => Vector2.Distance(mTurret.Position, PositionUtils.PositionOf(go)))
-                    .FirstOrDefault(go => /*go.ID != mTurret.ID ||*/ go.PlayerID != mTurret.PlayerID);
+                    .FirstOrDefault(go => mGame.GetPlayer(go.PlayerID).Team != mTurret.Player.Team);
 
                 return mTargetStorage.Target == null ? BTreeLeafState.Failed : BTreeLeafState.Successed;
             }
@@ -179,7 +181,7 @@ namespace Assets.Core.GameObjects.Final
                             .Selector(b4 => b4
                                 .Leaf(new CheckDistanceLeaf(this, mStorage))
                                 .Fail(b5 => b5.Leaf(new ClearTargetLeaf(mStorage)))
-                                .Leaf(new QueryEnemyLeaf(this, mStorage)))
+                                .Leaf(new QueryEnemyLeaf(mGame, this, mStorage)))
                             .Leaf(new KillTargetLeaf(this, mStorage)))
                         .Leaf(new CancelKillLeaf(this)))).Build();
             

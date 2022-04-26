@@ -18,6 +18,7 @@ namespace Assets.Core.Game
         private IDictionary<Guid, RtsGameObject> mGameObjects = new Dictionary<Guid, RtsGameObject>();
         private ConcurrentDictionary<Guid, Action> mRequested = new();
         private Dictionary<Guid, BotPlayer> mBotPlayers = new();
+        private Dictionary<Guid, Player> mPlayers = new();
 
         public Game()
         {
@@ -44,7 +45,7 @@ namespace Assets.Core.Game
             return tcs.Task;
         }
 
-        public IEnumerable<T> RequestPlayerObjects<T>(IPlayerState player) where T : RtsGameObject
+        public IEnumerable<T> RequestPlayerObjects<T>(Player player) where T : RtsGameObject
         {
             foreach (var gameObject in mGameObjects.Values.ToList())
             {
@@ -52,6 +53,8 @@ namespace Assets.Core.Game
                     yield return rtsGameObject;
             }
         }
+
+        public IEnumerable<Player> GetPlayers() => mPlayers.Values.Concat(mBotPlayers.Values);
 
         public Task<RtsGameObject> RemoveObject(Guid objId)
         {
@@ -73,6 +76,20 @@ namespace Assets.Core.Game
 
         public void AddBotPlayer(BotPlayer bot) =>
             mBotPlayers.Add(bot.ID, bot);
+        
+        public void AddPlayer(Player player) =>
+            mPlayers.Add(player.ID, player);
+
+        public Player GetPlayer(Guid playerId)
+        {
+            if (mPlayers.TryGetValue(playerId, out var pl))
+                return pl;
+
+            if (mBotPlayers.TryGetValue(playerId, out var pl1))
+                return pl1;
+
+            throw new ArgumentException("Player does not exist.", nameof(playerId));
+        }
 
         public T GetObject<T>(Guid objectId) where T : RtsGameObject
         {

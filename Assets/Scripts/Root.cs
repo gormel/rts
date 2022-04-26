@@ -268,6 +268,7 @@ class Root : MonoBehaviour
             mGame.AddBotPlayer(player);
 #else
             var player = new Player(controlledFactory, GameUtils.Team);
+            mGame.AddPlayer(player);
 #endif
             Player = player;
 

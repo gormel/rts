@@ -105,4 +105,22 @@ namespace Core.BotIntelligence.Economy
             return worker.AttachToMiningCamp(memory.Item2.FreeMining.ID);
         }
     }
+
+    class FreeMiningWorkerLeaf : ExecuteOrderLeaf<MiningFillFastMemory, MiningCamp>
+    {
+        public FreeMiningWorkerLeaf(MiningFillFastMemory memory) 
+            : base(memory)
+        {
+        }
+
+        protected override MiningCamp SelectObject(MiningFillFastMemory memory)
+        {
+            return memory.FreeMining;
+        }
+
+        protected override Task ExecuteOrder(MiningCamp obj, MiningFillFastMemory memory)
+        {
+            return obj.FreeWorker();
+        }
+    }
 }

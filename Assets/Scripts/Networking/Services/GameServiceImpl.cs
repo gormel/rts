@@ -261,6 +261,7 @@ namespace Assets.Networking.Services
                     throw new Exception("Player is not registered.");
 
                 var player = new Player(registredPlayer.Team == GameUtils.Team ? mAllyFactory : mEnemyFactory, registredPlayer.Team);
+                mGame.AddPlayer(player);
 
                 mConnectedPlayers.AddOrUpdate(request.Nickname, player, (s, p) => player);
                 await ReportPlayerState(request.Nickname, player, true, context.CancellationToken);
