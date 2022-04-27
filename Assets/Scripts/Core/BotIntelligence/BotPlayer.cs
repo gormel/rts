@@ -28,7 +28,7 @@ namespace Core.BotIntelligence
             : base(externalFactory, team)
         {
             mGame = game;
-            mMemory = new BotMemory();
+            mMemory = new BotMemory(this);
 
             mEconomyIntelligence = BuildEconomyIntelligence();
             mWarIntelligence = BuildWarIntelligence();

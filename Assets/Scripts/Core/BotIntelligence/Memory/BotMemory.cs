@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using Assets.Core.Game;
 using Assets.Core.GameObjects.Base;
 using Assets.Core.GameObjects.Final;
@@ -9,6 +10,7 @@ namespace Core.BotIntelligence.Memory
 {
     class BotMemory
     {
+        private readonly BotPlayer mPlayer;
         public List<CentralBuilding> CentralBuildings { get; } = new();
         public List<Worker> Workers { get; } = new();
         public List<MiningCamp> MiningCamps { get; } = new();
@@ -19,6 +21,54 @@ namespace Core.BotIntelligence.Memory
         public List<WarriorsLab> WarriorsLabs { get; } = new();
         public ConcurrentDictionary<Guid, HashSet<Guid>> TemplateAttachedBuilders { get; } = new();
         public ConcurrentDictionary<Guid, HashSet<Guid>> MiningAttachedWorkers { get; } = new();
+
+        public float BarrackOutcome 
+        { 
+            get 
+            {
+                var meleeOutcome = mPlayer.MeleeWarriorCost / (float)Barrak.MeeleeWarriorProductionTime.TotalSeconds;
+                var rangedOutcome = mPlayer.RangedWarriorCost / (float)Barrak.RangedWarriorProductionTime.TotalSeconds;
+                return (meleeOutcome + rangedOutcome) / 2;
+            }
+        }
+
+        public float WarriorLabOutcome
+        {
+            get
+            {
+                var damageUpgradeOutcome = mPlayer.UnitDamageUpgradeCost / (float)WarriorsLab.DamageUpgradeTime.TotalSeconds * (mPlayer.UnitDamageUpgradeAvaliable ? 1 : 0);
+                var armorUpgradeOutcome = mPlayer.UnitArmourUpgradeCost / (float)WarriorsLab.ArmourUpgradeTime.TotalSeconds * (mPlayer.UnitArmourUpgradeAvaliable ? 1 : 0);
+                var rangeUpgradeOutcome = mPlayer.UnitAttackRangeUpgradeCost / (float)WarriorsLab.AttackRangeUpgradeTime.TotalSeconds * (mPlayer.UnitAttackRangeUpgradeAvaliable ? 1 : 0);
+
+                return (damageUpgradeOutcome + armorUpgradeOutcome + rangeUpgradeOutcome) / 3;
+            }
+        }
+
+        public float CentralOutcome
+        {
+            get
+            {
+                var workerOutcome = mPlayer.WorkerCost / (float) CentralBuilding.WorkerProductionTime.TotalSeconds;
+                return workerOutcome;
+            }
+        }
+        
+        public BotMemory(BotPlayer player)
+        {
+            mPlayer = player;
+        }
+        
+        public float GetIncome()
+        {
+            return MiningCamps.Sum(c => c.MiningSpeed);
+        }
+
+        public float GetOutcome()
+        {
+            return Barracks.Count * BarrackOutcome + 
+                   CentralBuildings.Count * CentralOutcome +
+                   WarriorsLabs.Count * WarriorLabOutcome;
+        }
         
         public void Assign(RtsGameObject obj)
         {
