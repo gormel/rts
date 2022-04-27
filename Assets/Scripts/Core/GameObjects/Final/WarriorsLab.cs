@@ -16,7 +16,7 @@ namespace Assets.Core.GameObjects.Base
     }
     class WarriorsLab : LaboratoryBuilding, IWarriorsLabInfo, IWarriorsLabOrders
     {
-        public static Vector2 BuildingSize = new Vector2(2, 2);
+        public static Vector2 BuildingSize { get; } = new Vector2(2, 2);
         public const int MaximumHealthConst = 250;
         public static TimeSpan DamageUpgradeTime { get; } = TimeSpan.FromSeconds(20);
         public static TimeSpan ArmourUpgradeTime { get; } = TimeSpan.FromSeconds(15);

@@ -16,6 +16,7 @@ namespace Core.BotIntelligence.Memory
         public List<Barrak> Barracks { get; } = new();
         public List<MeeleeWarrior> MeeleeWarriors { get; } = new();
         public List<RangedWarrior> RangedWarriors { get; } = new();
+        public List<WarriorsLab> WarriorsLabs { get; } = new();
         public ConcurrentDictionary<Guid, HashSet<Guid>> TemplateAttachedBuilders { get; } = new();
         public ConcurrentDictionary<Guid, HashSet<Guid>> MiningAttachedWorkers { get; } = new();
         
@@ -23,6 +24,10 @@ namespace Core.BotIntelligence.Memory
         {
             switch (obj)
             {
+                case WarriorsLab warriorsLab:
+                    WarriorsLabs.Add(warriorsLab);
+                    warriorsLab.RemovedFromGame += o => WarriorsLabs.Remove(warriorsLab);
+                    break;
                 case MeeleeWarrior meeleeWarrior:
                     MeeleeWarriors.Add(meeleeWarrior);
                     meeleeWarrior.RemovedFromGame += o => MeeleeWarriors.Remove(meeleeWarrior);

@@ -38,26 +38,4 @@ namespace Core.BotIntelligence
             return BTreeLeafState.Processing;
         }
     }
-    
-    abstract class ExecuteOrderLeaf<TMemory, TObject> : ExecuteTaskLeaf
-    {
-        private readonly TMemory mMemory;
-        
-        protected ExecuteOrderLeaf(TMemory memory)
-        {
-            mMemory = memory;
-        }
-
-        protected abstract TObject SelectObject(TMemory memory);
-        protected abstract Task ExecuteOrder(TObject obj, TMemory memory);
-
-        protected sealed override async Task<BTreeLeafState> GetTask()
-        {
-            var obj = SelectObject(mMemory);
-            if (obj == null)
-                return BTreeLeafState.Failed;
-            await ExecuteOrder(obj, mMemory);
-            return BTreeLeafState.Successed;
-        }
-    }
 }

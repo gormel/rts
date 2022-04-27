@@ -1,126 +1,127 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Assets.Core.BehaviorTree;
+using Assets.Core.Game;
 using Assets.Core.GameObjects.Final;
 using Core.BotIntelligence.Memory;
 
 namespace Core.BotIntelligence.Economy
 {
-    class PlaceMiningCampLeaf : ExecuteOrderLeaf<(BuildingFastMemory, BotMemory), Worker>
+    class PlaceMiningCampLeaf : BuildLeaf
     {
-        public PlaceMiningCampLeaf(BotMemory memory, BuildingFastMemory fastMemory) 
-            : base((fastMemory, memory))
+        public PlaceMiningCampLeaf(BotMemory memory, BuildingFastMemory fastMemory)
+            : base(memory, fastMemory)
         {
         }
 
-        protected override Worker SelectObject((BuildingFastMemory, BotMemory) memory)
-            => memory.Item1.FreeWorker;
-
-        protected override async Task ExecuteOrder(Worker worker, (BuildingFastMemory, BotMemory) memory)
+        protected override Task<Guid> PlaceBuildingTemplate(BuildingFastMemory fastMemory)
         {
-            var templateId = await worker.PlaceMiningCampTemplate(memory.Item1.Place);
-            memory.Item2.TemplateAttachedBuilders.AddOrUpdate(templateId, new HashSet<Guid>() { worker.ID }, (id, c) =>
-            {
-                c.Add(worker.ID);
-                return c;
-            });
+            return fastMemory.FreeWorker.PlaceMiningCampTemplate(fastMemory.Place);
         }
     }
     
-    class PlaceCentralLeaf : ExecuteOrderLeaf<(BuildingFastMemory, BotMemory), Worker>
+    class PlaceCentralLeaf : BuildLeaf
     {
         public PlaceCentralLeaf(BotMemory memory, BuildingFastMemory fastMemory) 
-            : base((fastMemory, memory))
+            : base(memory, fastMemory)
         {
         }
-
-        protected override Worker SelectObject((BuildingFastMemory, BotMemory) memory)
-            => memory.Item1.FreeWorker;
-
-        protected override async Task ExecuteOrder(Worker worker, (BuildingFastMemory, BotMemory) memory)
+        
+        protected override Task<Guid> PlaceBuildingTemplate(BuildingFastMemory fastMemory)
         {
-            var templateId = await worker.PlaceCentralBuildingTemplate(memory.Item1.Place);
-            memory.Item2.TemplateAttachedBuilders.AddOrUpdate(templateId, new HashSet<Guid>() { worker.ID }, (id, c) =>
+            return fastMemory.FreeWorker.PlaceCentralBuildingTemplate(fastMemory.Place);
+        }
+    }
+    
+    class AttachAsBuilderLeaf : ExecuteTaskLeaf
+    {
+        private readonly BotMemory mMemory;
+        private readonly BuildingFastMemory mFastMemory;
+
+        public AttachAsBuilderLeaf(BotMemory memory, BuildingFastMemory fastMemory)
+        {
+            mMemory = memory;
+            mFastMemory = fastMemory;
+        }
+
+        protected override async Task<BTreeLeafState> GetTask()
+        {
+            var worker = mFastMemory.FreeWorker;
+            if (worker == null)
+                return BTreeLeafState.Failed;
+            
+            mMemory.TemplateAttachedBuilders.AddOrUpdate(mFastMemory.Template.ID, new HashSet<Guid>() { worker.ID }, (id, c) =>
             {
                 c.Add(worker.ID);
                 return c;
             });
+            await worker.AttachAsBuilder(mFastMemory.Template.ID);
+            return BTreeLeafState.Successed;
         }
     }
     
-    class AttachAsBuilderLeaf : ExecuteOrderLeaf<(BuildingFastMemory, BotMemory), Worker>
+    class QueueWorkerLeaf : ExecuteTaskLeaf
     {
-        public AttachAsBuilderLeaf(BotMemory memory, BuildingFastMemory fastMemory) 
-            : base((fastMemory, memory))
+        private readonly WorkerOrderingFastMemory mFastMemory;
+
+        public QueueWorkerLeaf(WorkerOrderingFastMemory fastMemory)
         {
+            mFastMemory = fastMemory;
         }
 
-        protected override Worker SelectObject((BuildingFastMemory, BotMemory) memory)
-            => memory.Item1.FreeWorker;
-
-        protected override Task ExecuteOrder(Worker worker, (BuildingFastMemory, BotMemory) memory)
+        protected override async Task<BTreeLeafState> GetTask()
         {
-            memory.Item2.TemplateAttachedBuilders.AddOrUpdate(memory.Item1.Template.ID, new HashSet<Guid>() { worker.ID }, (id, c) =>
+            return await mFastMemory.IdleCentral.QueueWorker() ? BTreeLeafState.Successed : BTreeLeafState.Failed;
+
+        }
+    }
+    
+    class AttachToMiningLeaf : ExecuteTaskLeaf
+    {
+        private readonly BotMemory mMemory;
+        private readonly MiningFillFastMemory mMiningFastMemory;
+        private readonly BuildingFastMemory mBuildingFastMemory;
+
+        public AttachToMiningLeaf(BotMemory memory, MiningFillFastMemory miningFastMemory, BuildingFastMemory buildingFastMemory)
+        {
+            mMemory = memory;
+            mMiningFastMemory = miningFastMemory;
+            mBuildingFastMemory = buildingFastMemory;
+        }
+
+        protected override async Task<BTreeLeafState> GetTask()
+        {
+            var worker = mBuildingFastMemory.FreeWorker;
+            if (worker == null)
+                return BTreeLeafState.Failed;
+            
+            mMemory.MiningAttachedWorkers.AddOrUpdate(mMiningFastMemory.FreeMining.ID, new HashSet<Guid>() { worker.ID }, (id, c) =>
             {
                 c.Add(worker.ID);
                 return c;
             });
-            return worker.AttachAsBuilder(memory.Item1.Template.ID);
-        }
-    }
-    
-    class QueueWorkerLeaf : ExecuteOrderLeaf<WorkerOrderingFastMemory, CentralBuilding>
-    {
-        public QueueWorkerLeaf(WorkerOrderingFastMemory fastMemory) 
-            : base(fastMemory)
-        {
-        }
-
-        protected override CentralBuilding SelectObject(WorkerOrderingFastMemory memory)
-            => memory.IdleCentral;
-
-        protected override Task ExecuteOrder(CentralBuilding worker, WorkerOrderingFastMemory memory)
-        {
-            return memory.IdleCentral.QueueWorker();
-        }
-    }
-    
-    class AttachToMiningLeaf : ExecuteOrderLeaf<(BotMemory, MiningFillFastMemory, BuildingFastMemory), Worker>
-    {
-        public AttachToMiningLeaf(BotMemory memory, MiningFillFastMemory m, BuildingFastMemory b) 
-            : base((memory, m, b))
-        {
-        }
-
-        protected override Worker SelectObject((BotMemory, MiningFillFastMemory, BuildingFastMemory) memory)
-            => memory.Item3.FreeWorker;
-
-        protected override Task ExecuteOrder(Worker worker, (BotMemory, MiningFillFastMemory, BuildingFastMemory) memory)
-        {
-            memory.Item1.MiningAttachedWorkers.AddOrUpdate(memory.Item2.FreeMining.ID, new HashSet<Guid>() { worker.ID }, (id, c) =>
-            {
-                c.Add(worker.ID);
-                return c;
-            });
-            return worker.AttachToMiningCamp(memory.Item2.FreeMining.ID);
+            await worker.AttachToMiningCamp(mMiningFastMemory.FreeMining.ID);
+            return BTreeLeafState.Successed;
         }
     }
 
-    class FreeMiningWorkerLeaf : ExecuteOrderLeaf<MiningFillFastMemory, MiningCamp>
+    class FreeMiningWorkerLeaf : ExecuteTaskLeaf
     {
-        public FreeMiningWorkerLeaf(MiningFillFastMemory memory) 
-            : base(memory)
+        private readonly MiningFillFastMemory mMemory;
+
+        public FreeMiningWorkerLeaf(MiningFillFastMemory memory)
         {
+            mMemory = memory;
         }
 
-        protected override MiningCamp SelectObject(MiningFillFastMemory memory)
+        protected override async Task<BTreeLeafState> GetTask()
         {
-            return memory.FreeMining;
-        }
-
-        protected override Task ExecuteOrder(MiningCamp obj, MiningFillFastMemory memory)
-        {
-            return obj.FreeWorker();
+            if (mMemory.FreeMining == null)
+                return BTreeLeafState.Failed;
+            
+            await mMemory.FreeMining.FreeWorker();
+            return BTreeLeafState.Successed;
         }
     }
 }

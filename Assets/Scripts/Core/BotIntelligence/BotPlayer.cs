@@ -6,6 +6,7 @@ using Assets.Core.GameObjects.Final;
 using Core.BotIntelligence.Common;
 using Core.BotIntelligence.Economy;
 using Core.BotIntelligence.Memory;
+using Core.BotIntelligence.Technology;
 using Core.BotIntelligence.War;
 
 namespace Core.BotIntelligence
@@ -17,10 +18,11 @@ namespace Core.BotIntelligence
         public const string TechIntelligenceTag = "TechIntelligence";
         
         private readonly Game mGame;
-        private BotMemory mMemory;
+        private readonly BotMemory mMemory;
 
-        private BTree mEconomyIntelligence;
-        private BTree mWarIntelligence;
+        private readonly BTree mEconomyIntelligence;
+        private readonly BTree mWarIntelligence;
+        private readonly BTree mTechIntelligence;
         
         public BotPlayer(Game game, IGameObjectFactory externalFactory, int team) 
             : base(externalFactory, team)
@@ -30,6 +32,7 @@ namespace Core.BotIntelligence
 
             mEconomyIntelligence = BuildEconomyIntelligence();
             mWarIntelligence = BuildWarIntelligence();
+            mTechIntelligence = BuildTechIntelligence();
         }
 
         private BTree BuildEconomyIntelligence()
@@ -131,7 +134,11 @@ namespace Core.BotIntelligence
                     )
                     .Success(b2 => b2
                         .Sequence(b3 => b3
-                            .Leaf(new CheckCountLessLeaf(mMemory, m => m.MiningCamps.Count / 2, m => m.Barracks.Count))
+                            .Leaf(new CheckCountLessLeaf(mMemory, m => Math.Min(m.MiningCamps.Count / 2, m.MiningCamps.Count / 4 + 1), m => m.Barracks.Count))
+                            .Selector(b4 => b4
+                                .Leaf(new CheckCountLessLeaf(mMemory, _ => 2, m => m.Barracks.Count))
+                                .Leaf(new CheckCountLessLeaf(mMemory, m => m.WarriorsLabs.Count, _ => 1))
+                            )
                             .Leaf(new CheckFreeMoneyLeaf(this, BarrakCost))
                             .Leaf(new QueryFreeWorkerLeaf(mMemory, buildBarrakFM))
                             .Leaf(new FindFreePlaceLeaf(mGame, mGame.Map.Data, buildBarrakFM, Barrak.BuildingSize, 1))
@@ -142,6 +149,48 @@ namespace Core.BotIntelligence
                 .Build();
         }
 
+        private BTree BuildTechIntelligence()
+        {
+            var buildWarriorsLabFM = new BuildingFastMemory();
+            var warriorsUpgradeFM = new WarriorUpgradeFastMemory();
+            return BTree.Create(TechIntelligenceTag)
+                .Sequence(b => b
+                    .Success(b2 => b2
+                        .Sequence(b3 => b3
+                            .Leaf(new CheckCountLessLeaf(mMemory, m => m.Barracks.Count, _ => 1))
+                            .Leaf(new CheckCountLessLeaf(mMemory, _ => 1, m => m.WarriorsLabs.Count))
+                            .Leaf(new CheckFreeMoneyLeaf(this, WarriorsLabCost))
+                            .Leaf(new QueryFreeWorkerLeaf(mMemory, buildWarriorsLabFM))
+                            .Leaf(new FindFreePlaceLeaf(mGame, mGame.Map.Data, buildWarriorsLabFM, WarriorsLab.BuildingSize, 1))
+                            .Leaf(new BuildWarriorsLabLeaf(mMemory, buildWarriorsLabFM))
+                        )
+                    )
+                    .Success(b2 => b2
+                        .Selector(b3 => b3
+                            .Sequence(b4 => b4
+                                .Leaf(new CheckWarriorDamageUpgradeAvaliableLeaf(this))
+                                .Leaf(new CheckFreeMoneyLeaf(this, UnitDamageUpgradeCost))
+                                .Leaf(new QueryFreeWarriorsLabLeaf(mMemory, warriorsUpgradeFM))
+                                .Leaf(new QueueUnitDamageUpgradeLeaf(warriorsUpgradeFM))
+                            )
+                            .Sequence(b4 => b4
+                                .Leaf(new CheckWarriorRangeUpgradeAvaliableLeaf(this))
+                                .Leaf(new CheckFreeMoneyLeaf(this, UnitAttackRangeUpgradeCost))
+                                .Leaf(new QueryFreeWarriorsLabLeaf(mMemory, warriorsUpgradeFM))
+                                .Leaf(new QueueUnitRangeUpgradeLeaf(warriorsUpgradeFM))
+                            )
+                            .Sequence(b4 => b4
+                                .Leaf(new CheckWarriorArmorUpgradeAvaliableLeaf(this))
+                                .Leaf(new CheckFreeMoneyLeaf(this, UnitArmourUpgradeCost))
+                                .Leaf(new QueryFreeWarriorsLabLeaf(mMemory, warriorsUpgradeFM))
+                                .Leaf(new QueueUnitArmorUpgradeLeaf(warriorsUpgradeFM))
+                            )
+                        )
+                    )
+                )
+                .Build();
+        }
+        
         protected override void OnObjectCreated(RtsGameObject obj)
         {
             mMemory.Assign(obj);
@@ -151,6 +200,7 @@ namespace Core.BotIntelligence
         {
             mEconomyIntelligence.Update(deltaTime);
             mWarIntelligence.Update(deltaTime);
+            mTechIntelligence.Update(deltaTime);
         }
     }
 }

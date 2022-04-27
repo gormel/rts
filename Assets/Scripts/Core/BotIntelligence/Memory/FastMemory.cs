@@ -6,7 +6,6 @@ namespace Core.BotIntelligence.Memory
 {
     class BuildingFastMemory
     {
-        public Worker LockedWorker { get; set; }
         public Worker FreeWorker { get; set; }
         public Vector2Int Place { get; set; }
         public BuildingTemplate Template { get; set; }
@@ -36,5 +35,10 @@ namespace Core.BotIntelligence.Memory
     class ExecutionGuardFastMemory
     {
         public int Executions { get; set; }
+    }
+
+    class WarriorUpgradeFastMemory
+    {
+        public WarriorsLab FreeLab { get; set; }
     }
 }
