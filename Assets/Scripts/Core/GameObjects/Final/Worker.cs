@@ -101,11 +101,13 @@ namespace Assets.Core.GameObjects.Final
 
         class MiningLeaf : IBTreeLeaf
         {
+            private readonly IMapData mMapData;
             private readonly Worker mWorker;
             private readonly MiningCamp mCamp;
 
-            public MiningLeaf(Worker worker, MiningCamp camp)
+            public MiningLeaf(IMapData mapData, Worker worker, MiningCamp camp)
             {
+                mMapData = mapData;
                 mWorker = worker;
                 mCamp = camp;
             }
@@ -118,6 +120,7 @@ namespace Assets.Core.GameObjects.Final
                     return BTreeLeafState.Successed;
 
                 mWorker.IsAttachedToMiningCamp = true;
+                mWorker.PathFinder.Teleport(mCamp.Position + mCamp.Size / 2, mMapData);
                 return BTreeLeafState.Processing;
             }
         }
@@ -360,7 +363,7 @@ namespace Assets.Core.GameObjects.Final
                     .Sequence(b1 => b1
                         .Leaf(new GoToTargetLeaf(PathFinder, point.Position, Game.Map.Data))
                         .Leaf(new FreePlacementPointLeaf(point, camp.PlacementService))
-                        .Leaf(new MiningLeaf(this, camp))
+                        .Leaf(new MiningLeaf(Game.Map.Data, this, camp))
                     ),
                 b => b
                     .Leaf(new CancelGotoLeaf(PathFinder))
