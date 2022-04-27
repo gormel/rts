@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace Assets.Interaction
@@ -46,7 +47,7 @@ namespace Assets.Interaction
 
         private void OnZoom(InputAction.CallbackContext obj)
         {
-            mCameraDistance = Mathf.Clamp(mCameraDistance + obj.ReadValue<Vector2>().y * ZoomSpeed, MinDistance, MaxDistance);
+            mCameraDistance = Mathf.Clamp(mCameraDistance + Math.Sign(obj.ReadValue<Vector2>().y) * ZoomSpeed, MinDistance, MaxDistance);
         }
 
         void OnEnable()
