@@ -40,5 +40,10 @@ namespace Assets.Views
                 }
             }
         }
+
+        public override void OnEnemyRightClick(SelectableView view)
+        {
+            Orders.Attack(view.InfoBase.ID);
+        }
     }
 }
