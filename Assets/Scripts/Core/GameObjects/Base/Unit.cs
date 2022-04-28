@@ -118,6 +118,9 @@ namespace Assets.Core.GameObjects.Base
             
             public BTreeLeafState Update(TimeSpan deltaTime)
             {
+                if (!mPathFinder.Initialized)
+                    return BTreeLeafState.Failed;
+                
                 if (mPathFinder.InProgress)
                     return BTreeLeafState.Processing;
 
@@ -141,6 +144,9 @@ namespace Assets.Core.GameObjects.Base
             public BTreeLeafState Update(TimeSpan deltaTime)
             {
                 if (mPathFinder.IsArrived)
+                    return BTreeLeafState.Successed;
+
+                if (!mPathFinder.Initialized)
                     return BTreeLeafState.Successed;
 
                 mPathFinder.Stop();
@@ -184,7 +190,7 @@ namespace Assets.Core.GameObjects.Base
 
         public Unit(Game.Game game, IPathFinder pathFinder, Vector2 position)
         {
-            mInitialPosition = position;
+            Destignation = Position = position;
             Game = game;
             PathFinder = pathFinder;
             mIntelligence = (mDefaultIntelligence = WrapCancellation(b => b, b => b, IdleIntelligenceTag)).Build();
@@ -197,11 +203,10 @@ namespace Assets.Core.GameObjects.Base
 
         public override void OnAddedToGame()
         {
-            Destignation = Position = mInitialPosition;
             ApplyDefaultIntelligence();
             
             base.OnAddedToGame();
-            PathFinder.SetTarget(Position, Game.Map.Data);
+            PathFinder.Initialize(Position, Destignation, Game.Map.Data);
         }
 
         protected void ApplyDefaultIntelligence()
@@ -247,9 +252,12 @@ namespace Assets.Core.GameObjects.Base
         {
             mIntelligence.Update(deltaTime);
 
-            Position = PathFinder.CurrentPosition;
-            Direction = PathFinder.CurrentDirection;
-            Destignation = PathFinder.Target;
+            if (PathFinder.Initialized)
+            {
+                Position = PathFinder.CurrentPosition;
+                Direction = PathFinder.CurrentDirection;
+                Destignation = PathFinder.Target;
+            }
         }
     }
 }

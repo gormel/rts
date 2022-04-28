@@ -8,6 +8,7 @@ using Core.BotIntelligence.Economy;
 using Core.BotIntelligence.Memory;
 using Core.BotIntelligence.Technology;
 using Core.BotIntelligence.War;
+using UnityEngine;
 
 namespace Core.BotIntelligence
 {
@@ -62,7 +63,8 @@ namespace Core.BotIntelligence
                     )
                     .Success(b2 => b2
                         .Sequence(b4 => b4
-                            .Leaf(new CheckCountLessLeaf(mMemory, m => m.MiningCamps.Count / 4 + 1, m => m.CentralBuildings.Count))
+                            .Leaf(new CheckFreeIncomeLeaf(mMemory, m => m.CentralOutcome * 1.1f))
+                            .Leaf(new CheckCountLessLeaf(mMemory, _ => 2, m => m.CentralBuildings.Count))
                             .Leaf(new CheckFreeMoneyLeaf(this, CentralBuildingCost))
                             .Leaf(new QueryFreeWorkerLeaf(mMemory, buildCentralFM))
                             .Leaf(new FindFreePlaceLeaf(mGame, mGame.Map.Data, buildCentralFM, CentralBuilding.BuildingSize, 1))
@@ -71,6 +73,9 @@ namespace Core.BotIntelligence
                     )
                     .Success(b2 => b2
                         .Sequence(b4 => b4
+                            .Invert(b5 => b5
+                                .Leaf(new CheckFreeIncomeLeaf(mMemory, _ => 10))//???
+                            )
                             .Leaf(new CheckFreeMoneyLeaf(this, MiningCampCost))
                             .Leaf(new QueryFreeWorkerLeaf(mMemory, buildCampFM))
                             .Leaf(new FindFreeMiningCampPlaceLeaf(mGame, mGame.Map.Data, buildCampFM, MiningCamp.BuildingSize))
@@ -134,7 +139,7 @@ namespace Core.BotIntelligence
                     )
                     .Success(b2 => b2
                         .Sequence(b3 => b3
-                            .Leaf(new CheckCountLessLeaf(mMemory, m => Math.Min(m.MiningCamps.Count / 2, m.MiningCamps.Count / 4 + 1), m => m.Barracks.Count))
+                            .Leaf(new CheckFreeIncomeLeaf(mMemory, m => m.BarrackOutcome * 1.1f))
                             .Selector(b4 => b4
                                 .Leaf(new CheckCountLessLeaf(mMemory, _ => 2, m => m.Barracks.Count))
                                 .Leaf(new CheckCountLessLeaf(mMemory, m => m.WarriorsLabs.Count, _ => 1))
@@ -159,6 +164,7 @@ namespace Core.BotIntelligence
                         .Sequence(b3 => b3
                             .Leaf(new CheckCountLessLeaf(mMemory, m => m.Barracks.Count, _ => 1))
                             .Leaf(new CheckCountLessLeaf(mMemory, _ => 1, m => m.WarriorsLabs.Count))
+                            .Leaf(new CheckFreeIncomeLeaf(mMemory, m => m.WarriorLabOutcome))
                             .Leaf(new CheckFreeMoneyLeaf(this, WarriorsLabCost))
                             .Leaf(new QueryFreeWorkerLeaf(mMemory, buildWarriorsLabFM))
                             .Leaf(new FindFreePlaceLeaf(mGame, mGame.Map.Data, buildWarriorsLabFM, WarriorsLab.BuildingSize, 1))

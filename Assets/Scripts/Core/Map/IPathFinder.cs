@@ -12,11 +12,12 @@ namespace Assets.Core.Map
     }
     interface IPathFinder : IPathFinderBase
     {
-        event Action Arrived;
-
+        bool Initialized { get; }
         Vector2 CurrentDirection { get; }
         
         bool InProgress { get; }
+
+        Task Initialize(Vector2 position, Vector2 destignation, IMapData mapData);
 
         Task SetLookAt(Vector2 position, IMapData mapData);
         Task SetTarget(Vector2 position, IMapData mapData);

@@ -277,6 +277,7 @@ class Root : MonoBehaviour
             mServer.Listen(SyncContext, enemyFactory, allyFactory, mGame, player, GameUtils.RegistredPlayers, GameUtils.BotPlayers);
 
             var success = GameUtils.TryCreateBase(mGame, player, out var basePos);
+            
             PlaceCamera(basePos);
 #if DEVELOPMENT_BUILD
             AddResourcesButton.SetActive(true);

@@ -14,9 +14,10 @@ namespace Assets.Views.Base
         where TInfo : IUnitInfo
     {
         public bool IsArrived { get; private set; } = true;
-        public event Action Arrived;
-        public Vector2 CurrentPosition => GameUtils.GetFlatPosition(transform.localPosition);
-        public Vector2 CurrentDirection => GameUtils.GetFlatPosition(transform.localRotation * Vector3.forward);
+        public Vector2 CurrentPosition => Initialized ? GameUtils.GetFlatPosition(transform.localPosition) : throw new Exception("Unitialized.");
+
+        public bool Initialized { get; private set; } = false;
+        public Vector2 CurrentDirection => Initialized ? GameUtils.GetFlatPosition(transform.localRotation * Vector3.forward) : throw new Exception("Unitialized.");
         
         public bool InProgress { get; private set; }
         public Vector2 Target { get; private set; }
@@ -94,7 +95,6 @@ namespace Assets.Views.Base
             if (pf != null && pf.IsArrived && other.gameObject.activeSelf && pf.Target == Target)
             {
                 mNavMeshAgent.ResetPath();
-                Arrived?.Invoke();
                 IsArrived = true;
                 mWaypointInst.SetActive(false);
                 InProgress = false;
@@ -105,8 +105,15 @@ namespace Assets.Views.Base
         {
             if (!IsClient && !IsArrived && mNavMeshAgent.velocity.sqrMagnitude > 0)
                 transform.rotation = Quaternion.LookRotation(mNavMeshAgent.velocity.normalized);
-            else if (mLookTarget.HasValue)
+            else if (mLookTarget.HasValue && Vector3.Distance(mLookTarget.Value, transform.localPosition) > 0.01)
                 transform.rotation = Quaternion.LookRotation(mLookTarget.Value - transform.localPosition);
+        }
+
+        public async Task Initialize(Vector2 position, Vector2 destignation, IMapData mapData)
+        {
+            await Teleport(position, mapData);
+            await SetTarget(destignation, mapData);
+            Initialized = true;
         }
 
         public Task SetLookAt(Vector2 position, IMapData mapData)
@@ -114,7 +121,8 @@ namespace Assets.Views.Base
             return SyncContext.Execute(() =>
             {
                 mLookTarget = GameUtils.GetPosition(position, mapData);
-                transform.rotation = Quaternion.LookRotation(mLookTarget.Value - transform.localPosition);
+                if (Vector3.Distance(mLookTarget.Value, transform.localPosition) > 0.01)
+                    transform.rotation = Quaternion.LookRotation(mLookTarget.Value - transform.localPosition);
             });
         }
 
