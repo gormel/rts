@@ -19,8 +19,8 @@ namespace Assets.Interaction.Selection
         public Image IconTarget;
         public Sprite EmptySprite;
 
-        public bool mShiftState;
-        public bool mCtrlState;
+        private bool mShiftState;
+        private bool mCtrlState;
 
         private SelectionGroup mSelectionGroup;
         private RtsInputActions mInputActions;

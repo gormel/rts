@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.37311953, g: 0.38074014, b: 0.3587274, a: 1}
+  m_IndirectSpecularColor: {r: 0.37311953, g: 0.38074014, b: 0.35872743, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -131,6 +131,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1112507868}
     m_Modifications:
+    - target: {fileID: 662893783011657949, guid: c1a6cc9bd98ee4b4b8e8bc73b5c9986b,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0.00002670288
+      objectReference: {fileID: 0}
+    - target: {fileID: 662893783011657949, guid: c1a6cc9bd98ee4b4b8e8bc73b5c9986b,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -0.000015258789
+      objectReference: {fileID: 0}
     - target: {fileID: 2724033401192884147, guid: c1a6cc9bd98ee4b4b8e8bc73b5c9986b,
         type: 3}
       propertyPath: m_Pivot.x
@@ -353,6 +363,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1112507868}
     m_Modifications:
+    - target: {fileID: 662893783011657949, guid: c1a6cc9bd98ee4b4b8e8bc73b5c9986b,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0.00002670288
+      objectReference: {fileID: 0}
+    - target: {fileID: 662893783011657949, guid: c1a6cc9bd98ee4b4b8e8bc73b5c9986b,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -0.000015258789
+      objectReference: {fileID: 0}
     - target: {fileID: 2724033401192884147, guid: c1a6cc9bd98ee4b4b8e8bc73b5c9986b,
         type: 3}
       propertyPath: m_Pivot.x
@@ -672,6 +692,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1112507868}
     m_Modifications:
+    - target: {fileID: 662893783011657949, guid: c1a6cc9bd98ee4b4b8e8bc73b5c9986b,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0.00002670288
+      objectReference: {fileID: 0}
+    - target: {fileID: 662893783011657949, guid: c1a6cc9bd98ee4b4b8e8bc73b5c9986b,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -0.000015258789
+      objectReference: {fileID: 0}
     - target: {fileID: 2724033401192884147, guid: c1a6cc9bd98ee4b4b8e8bc73b5c9986b,
         type: 3}
       propertyPath: m_Pivot.x
@@ -1163,6 +1193,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1112507868}
     m_Modifications:
+    - target: {fileID: 662893783011657949, guid: c1a6cc9bd98ee4b4b8e8bc73b5c9986b,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0.00002670288
+      objectReference: {fileID: 0}
+    - target: {fileID: 662893783011657949, guid: c1a6cc9bd98ee4b4b8e8bc73b5c9986b,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -0.000015258789
+      objectReference: {fileID: 0}
     - target: {fileID: 2724033401192884147, guid: c1a6cc9bd98ee4b4b8e8bc73b5c9986b,
         type: 3}
       propertyPath: m_Pivot.x
@@ -1439,6 +1479,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1112507868}
     m_Modifications:
+    - target: {fileID: 662893783011657949, guid: c1a6cc9bd98ee4b4b8e8bc73b5c9986b,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0.00002670288
+      objectReference: {fileID: 0}
+    - target: {fileID: 662893783011657949, guid: c1a6cc9bd98ee4b4b8e8bc73b5c9986b,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -0.000015258789
+      objectReference: {fileID: 0}
     - target: {fileID: 2724033401192884147, guid: c1a6cc9bd98ee4b4b8e8bc73b5c9986b,
         type: 3}
       propertyPath: m_Pivot.x
@@ -2016,6 +2066,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1112507868}
     m_Modifications:
+    - target: {fileID: 662893783011657949, guid: c1a6cc9bd98ee4b4b8e8bc73b5c9986b,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0.00002670288
+      objectReference: {fileID: 0}
+    - target: {fileID: 662893783011657949, guid: c1a6cc9bd98ee4b4b8e8bc73b5c9986b,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -0.000015258789
+      objectReference: {fileID: 0}
     - target: {fileID: 2724033401192884147, guid: c1a6cc9bd98ee4b4b8e8bc73b5c9986b,
         type: 3}
       propertyPath: m_Pivot.x
