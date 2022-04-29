@@ -20,7 +20,7 @@ namespace Assets.Interaction.Selection
 
         public void Add()
         {
-            foreach (var view in mSelectionManager.Selected)
+            foreach (var view in mSelectionManager.Selected.Where(o => o.OwnershipRelation == ObjectOwnershipRelation.My))
             {
                 if (!Members.Contains(view))
                     Members.Add(view);
