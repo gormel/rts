@@ -1097,6 +1097,10 @@ MonoBehaviour:
   CloseClip: {fileID: -8932998292097109516, guid: fdde7dbdd4d92e64f91f737df11ae6a3,
     type: 3}
   DataWire: {fileID: 4094147983973174366}
+  OpenColor: {r: 1.2502764, g: 3.9800467, b: 1.1877626, a: 1}
+  ClosedColor: {r: 3.917533, g: 0.87519354, b: 0.87519354, a: 1}
+  GateIndicators:
+  - {fileID: 262927260939987992}
 --- !u!1 &6423076948181274185
 GameObject:
   m_ObjectHideFlags: 0
@@ -1716,6 +1720,12 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 763cd29635dae764cb1859e261e6b35d, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3120c4e81536ff047b467590fe04a480, type: 3}
+--- !u!23 &262927260939987992 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -5564410109516303383, guid: 3120c4e81536ff047b467590fe04a480,
+    type: 3}
+  m_PrefabInstance: {fileID: 3558165380480901105}
+  m_PrefabAsset: {fileID: 0}
 --- !u!23 &829916306397466578 stripped
 MeshRenderer:
   m_CorrespondingSourceObject: {fileID: -4979484803825397725, guid: 3120c4e81536ff047b467590fe04a480,

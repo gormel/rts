@@ -105,20 +105,12 @@ namespace Assets.Core.GameObjects.Final
         {
             base.OnRemovedFromGame();
 
-            //var t = FreeAllWorkers();
-            while (mWorkers.Count > 0)
-            {
-                var worker = mWorkers.Pop();
-                mGame.RemoveObject(worker.ID);
-            }
+            var t = FreeAllWorkers();
         }
 
-        private async Task FreeAllWorkers()
+        private Task FreeAllWorkers()
         {
-            while (mWorkers.Count > 0)
-            {
-                await FreeWorker();
-            }
+            return Task.WhenAll(mWorkers.Select(w => w.Stop()));
         }
 
         public async Task<Guid> FreeWorker()

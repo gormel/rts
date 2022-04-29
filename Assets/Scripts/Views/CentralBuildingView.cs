@@ -21,6 +21,13 @@ namespace Assets.Views
         public AnimationClip OpenClip;
         public AnimationClip CloseClip;
         public GameObject DataWire;
+        
+        [ColorUsage(true, true)]
+        public Color OpenColor;
+        
+        [ColorUsage(true, true)]
+        public Color ClosedColor;
+        public MeshRenderer[] GateIndicators;
 
         protected override void OnLoad()
         {
@@ -33,6 +40,8 @@ namespace Assets.Views
             base.Update();
             
             DataWire.SetActive(Info.Progress is > 0.01f and < 0.99f);
+            foreach (var indicator in GateIndicators)
+                indicator.material.SetColor("_EmissionColor", Info.Progress is > 0.6f and < 0.99f ? OpenColor : ClosedColor);
         }
 
         public override void OnRightClick(Vector2 position)
