@@ -29,6 +29,16 @@ ModelImporter:
       assembly: UnityEngine.CoreModule
       name: M_Data_Wire
     second: {fileID: 2100000, guid: d265c8b7401dd8553a4c2af1cc1ebd0c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_Doors_State
+    second: {fileID: 2100000, guid: b9006a5a7e2890f4587a136f19d54284, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_Gates_State
+    second: {fileID: 2100000, guid: b9006a5a7e2890f4587a136f19d54284, type: 2}
   materials:
     materialImportMode: 1
     materialName: 0

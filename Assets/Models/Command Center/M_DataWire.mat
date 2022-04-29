@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: DataWire
+  m_Name: M_DataWire
   m_Shader: {fileID: -6465566751694194690, guid: 1c5533c8c8aa60aa8a5d2808c9c583c0,
     type: 3}
   m_ValidKeywords: []

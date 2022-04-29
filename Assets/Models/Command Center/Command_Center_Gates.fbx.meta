@@ -13,6 +13,11 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: M_Command_Center
+    second: {fileID: 2100000, guid: 763cd29635dae764cb1859e261e6b35d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: M_Command_Center_My
     second: {fileID: 2100000, guid: 763cd29635dae764cb1859e261e6b35d, type: 2}
   - first:
@@ -20,6 +25,11 @@ ModelImporter:
       assembly: UnityEngine.CoreModule
       name: M_Command_Center_a
     second: {fileID: 2100000, guid: 763cd29635dae764cb1859e261e6b35d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_Gates_State
+    second: {fileID: 2100000, guid: b9006a5a7e2890f4587a136f19d54284, type: 2}
   materials:
     materialImportMode: 1
     materialName: 0
