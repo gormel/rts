@@ -158,8 +158,9 @@ Material:
     m_Colors:
     - _BaseColor: {r: 0.7058824, g: 0.69883823, b: 0.48235294, a: 1}
     - _Color: {r: 0.75, g: 0.75, b: 0.75, a: 1}
+    - _Dirt_Color: {r: 0.3098039, g: 0.2980392, b: 0.282353, a: 0}
     - _EmissionColor: {r: 1.5, g: 1.5, b: 1.5, a: 1}
-    - _Own_Color: {r: 0.123194985, g: 0.645, b: 0.53229004, a: 0}
+    - _Own_Color: {r: 0.6399938, g: 0.6431373, b: 0.12156863, a: 0}
     - _SpecColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}
   m_BuildTextureStacks: []
 --- !u!114 &6489566546061337431
