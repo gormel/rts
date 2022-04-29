@@ -1101,6 +1101,7 @@ MonoBehaviour:
   ClosedColor: {r: 3.917533, g: 0.87519354, b: 0.87519354, a: 1}
   GateIndicators:
   - {fileID: 262927260939987992}
+  - {fileID: 54189612846640197}
 --- !u!1 &6423076948181274185
 GameObject:
   m_ObjectHideFlags: 0
@@ -1533,6 +1534,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fdde7dbdd4d92e64f91f737df11ae6a3, type: 3}
+--- !u!23 &54189612846640197 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -8097225066586363535, guid: fdde7dbdd4d92e64f91f737df11ae6a3,
+    type: 3}
+  m_PrefabInstance: {fileID: 1107997218813920564}
+  m_PrefabAsset: {fileID: 0}
 --- !u!23 &1152532087010372438 stripped
 MeshRenderer:
   m_CorrespondingSourceObject: {fileID: 44746044004134498, guid: fdde7dbdd4d92e64f91f737df11ae6a3,
