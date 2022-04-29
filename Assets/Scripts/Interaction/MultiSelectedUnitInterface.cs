@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Assets.Core.GameObjects.Base;
+using UnityEngine;
 
 namespace Assets.Interaction
 {
@@ -14,6 +15,8 @@ namespace Assets.Interaction
             instInterface.SetIcon(view.Icon);
             instInterface.SetName(view.Name);
             instInterface.SetHealth(view.Health, view.MaxHealth);
+            if (view.InfoBase is IQueueOrdersInfo orderSelected)
+                instInterface.SetProgress(orderSelected.Progress);
             instInterface.Interface = Interface;
             instInterface.Owner = view;
         }

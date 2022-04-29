@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Assets.Core.GameObjects.Base;
 using UnityEngine;
 
 namespace Assets.Interaction
@@ -21,6 +22,8 @@ namespace Assets.Interaction
             IconNameHealth.SetIcon(selected.Icon);
             IconNameHealth.SetName(selected.Name);
             IconNameHealth.SetHealth(selected.Health, selected.MaxHealth);
+            if (selected.InfoBase is IQueueOrdersInfo orderSelected)
+                IconNameHealth.SetProgress(orderSelected.Progress);
             IconNameHealth.Interface = Interface;
             IconNameHealth.Owner = selected;
         }

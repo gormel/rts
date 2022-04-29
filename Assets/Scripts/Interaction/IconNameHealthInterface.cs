@@ -12,6 +12,7 @@ namespace Assets.Interaction
         public Text HealthText;
         public RectTransform GreenHealthBar;
         public RectTransform RedHealthBar;
+        public RectTransform ProgressBar;
         
         public UserInterface Interface { get; set; }
         public SelectableView Owner { get; set; }
@@ -38,6 +39,18 @@ namespace Assets.Interaction
                 var percent = health / maxHealth;
                 GreenHealthBar.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, RedHealthBar.rect.width * percent);
             }
+        }
+
+        public void SetProgress(float progress)
+        {
+            var progressParent = ProgressBar.parent as RectTransform;
+            if (progressParent == null)
+                return;
+
+            if (progress >= 1)
+                progress = 0;
+            
+            ProgressBar.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, progressParent.rect.width * progress);
         }
 
         public void OnClick()
