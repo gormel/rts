@@ -32,7 +32,7 @@ namespace Assets.Views.Base
         private GameObject mWaypointInst;
         private Vector3? mLookTarget;
 
-        public override Rect FlatBounds => new Rect(CurrentPosition, Vector2.zero);
+        public override Rect FlatBounds => new(Initialized ? CurrentPosition : Info.Position, Vector2.zero);
 
         protected virtual void Start()
         {

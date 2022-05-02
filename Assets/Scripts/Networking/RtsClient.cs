@@ -41,12 +41,13 @@ namespace Assets.Networking
 
         private class ClientPlayerState : IPlayerState
         {
-            public PlayerState PlayerState { get; set; } = new PlayerState();
+            public PlayerState PlayerState { get; set; } = new();
 
             public Guid ID => Guid.Parse(PlayerState.ID.Value);
             public int Money => PlayerState.Money;
             public int Limit => PlayerState.Limit;
-            
+            public PlayerGameplateState GameplayState => PlayerState.GameplayState;
+
             public bool TurretBuildingAvaliable => PlayerState.TurretBuildingAvaliable;
             public bool WarriorsLabBuildingAvaliable => PlayerState.WarriorsLabBuildingAvaliable;
             

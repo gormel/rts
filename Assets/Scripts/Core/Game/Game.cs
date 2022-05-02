@@ -13,6 +13,13 @@ namespace Assets.Core.Game
 {
     class Game
     {
+        private enum State
+        {
+            Loading, 
+            InProgress,
+            Ended,
+        }
+        
         public Map.Map Map { get; }
 
         private IDictionary<Guid, RtsGameObject> mGameObjects = new Dictionary<Guid, RtsGameObject>();
@@ -20,9 +27,12 @@ namespace Assets.Core.Game
         private Dictionary<Guid, BotPlayer> mBotPlayers = new();
         private Dictionary<Guid, Player> mPlayers = new();
 
+        private State mGameState = State.Loading;
+        
         public Game()
         {
             Map = new Map.Map(70, 70);
+            mGameState = State.InProgress;
         }
 
         public Task<Guid> PlaceObject(RtsGameObject obj)
@@ -103,9 +113,32 @@ namespace Assets.Core.Game
             return (T)result;
         }
 
+        private IEnumerable<RtsGameObject> Filter(IEnumerable<RtsGameObject> collection)
+        {
+#if DEVELOPMENT_BUILD
+            return collection;
+#else
+            return collection.Where(o => GetPlayer(o.PlayerID).GameplayState == PlayerGameplateState.Playing);
+#endif
+        }
+
+        private IEnumerable<BotPlayer> Filter(IEnumerable<BotPlayer> collection)
+        {
+#if DEVELOPMENT_BUILD
+            return collection;
+#else
+            return collection.Where(b => b.GameplayState == PlayerGameplateState.Playing);
+#endif
+        }
+
         public void Update(TimeSpan elapsed)
         {
-            foreach (var o in mGameObjects.Values)
+#if !DEVELOPMENT_BUILD
+            if (mGameState != State.InProgress)
+                return;
+#endif
+
+            foreach (var o in Filter(mGameObjects.Values))
                 o.Update(elapsed);
 
             var requestKeys = mRequested.Keys.ToList();
@@ -115,8 +148,21 @@ namespace Assets.Core.Game
                     request.Invoke();
             }
 
-            foreach (var player in mBotPlayers.Values) 
+            foreach (var player in Filter(mBotPlayers.Values)) 
                 player.Update(elapsed);
+
+            var playerIds = mGameObjects.Values.OfType<Building>().Select(o => o.PlayerID).Distinct().ToList();
+            var lose = GetPlayers().Where(p => !playerIds.Contains(p.ID));
+            foreach (var player in lose) 
+                player.GameplayState = PlayerGameplateState.Lose;
+            
+            if (playerIds.Select(id => GetPlayer(id).Team).Distinct().Count() == 1)
+            {
+                foreach (var player in playerIds.Select(GetPlayer))
+                    player.GameplayState = PlayerGameplateState.Win;
+
+                mGameState = State.Ended;
+            }
         }
 
         public IEnumerable<RtsGameObject> QueryObjects(Vector2 position, float radius)

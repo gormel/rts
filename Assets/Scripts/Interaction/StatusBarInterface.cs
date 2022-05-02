@@ -25,10 +25,5 @@ namespace Assets.Interaction
             if (limit != null)
                 LimitText.text = $"{limit}/200";
         }
-
-        public void Close()
-        {
-            SceneManager.LoadScene("Start");
-        }
     }
 }

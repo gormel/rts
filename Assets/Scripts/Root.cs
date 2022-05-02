@@ -480,6 +480,11 @@ class Root : MonoBehaviour
             ((Player)Player).Money.Store(100);
     }
 
+    public void Close()
+    {
+        SceneManager.LoadScene("Start");
+    }
+
     void OnDestroy()
     {
         if (mServer != null)

@@ -15,6 +15,8 @@ namespace Assets.Core.Game
         
         int Limit { get; }
         
+        PlayerGameplateState GameplayState { get; }
+        
         bool TurretBuildingAvaliable { get; }
         bool WarriorsLabBuildingAvaliable { get; }
         bool TurretAttackUpgradeAvaliable { get; }
@@ -66,6 +68,7 @@ namespace Assets.Core.Game
         private readonly Dictionary<Type, int> mCreatedBuildingRegistrations = new Dictionary<Type, int>();
         public ResourceStorage Money { get; } = new ResourceStorage();
         public ResourceStorage Limit { get; } = new ResourceStorage(MaxLimit);
+        public PlayerGameplateState GameplayState { get; set; } = PlayerGameplateState.Playing;
         public bool TurretBuildingAvaliable => GetCreatedBuildingCount<BuildersLab>() > 0;
         public bool WarriorsLabBuildingAvaliable => GetCreatedBuildingCount<Barrak>() > 0;
         public bool TurretAttackUpgradeAvaliable => Upgrades.TurretAttackUpgrade.LevelUpAvaliable;

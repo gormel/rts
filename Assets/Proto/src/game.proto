@@ -25,6 +25,13 @@ message PlayerConnection {
     bool State = 3;
 }
 
+enum PlayerGameplateState {
+    PlayerGameplateState_None = 0;
+    PlayerGameplateState_Playing = 1;
+    PlayerGameplateState_Win = 2;
+    PlayerGameplateState_Lose = 3;
+}
+
 message PlayerState {
 	ID ID = 1;
 	int32 Money = 2;
@@ -60,6 +67,8 @@ message PlayerState {
     int32 UnitAttackRangeUpgradeCost = 26;
 
     int32 Team = 27;
+
+    PlayerGameplateState GameplayState = 28;
 }
 
 message MapState {

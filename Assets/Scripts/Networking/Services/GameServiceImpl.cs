@@ -108,6 +108,7 @@ namespace Assets.Networking.Services
                 UnitDamageUpgradeCost = player.UnitDamageUpgradeCost,
                 UnitAttackRangeUpgradeCost = player.UnitAttackRangeUpgradeCost,
                 Team = player.Team,
+                GameplayState = player.GameplayState,
             };
         }
 
