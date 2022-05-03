@@ -26,6 +26,7 @@ namespace Assets.Core.Game
         bool UnitArmourUpgradeAvaliable { get; }
         bool UnitDamageUpgradeAvaliable { get; }
         bool UnitAttackRangeUpgradeAvaliable { get; }
+        bool ArilleryOrderAvaliable { get; }
         
         int Team { get; }
     }
@@ -58,6 +59,7 @@ namespace Assets.Core.Game
         public bool UnitArmourUpgradeAvaliable => Upgrades.UnitArmourUpgrade.LevelUpAvaliable;
         public bool UnitDamageUpgradeAvaliable => Upgrades.UnitDamageUpgrade.LevelUpAvaliable;
         public bool UnitAttackRangeUpgradeAvaliable => Upgrades.UnitAttackRangeUpgrade.LevelUpAvaliable;
+        public bool ArilleryOrderAvaliable => GetCreatedBuildingCount<WarriorsLab>() > 0;
 
         public Guid ID { get; } = Guid.NewGuid();
 

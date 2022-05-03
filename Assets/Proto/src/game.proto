@@ -46,6 +46,7 @@ message PlayerState {
     bool TurretAttackUpgradeAvaliable = 9;
     bool BuildingDefenceUpgradeAvaliable = 10;
     bool BuildingArmourUpgradeAvaliable = 11;
+    bool ArtilleryOrderAvaliable = 12;
 
     int32 Team = 27;
 

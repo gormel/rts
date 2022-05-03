@@ -14,11 +14,14 @@ namespace Assets.Interaction {
         public Text MeeleeCostText;
         public Text ArtilleryCostText;
 
+        public Button QueueArtilleryButton;
+
         private void Update()
         {
             RangedCostText.text = Barrak.RangedWarriorCost.ToString();
             MeeleeCostText.text = Barrak.MeleeWarriorCost.ToString();
             ArtilleryCostText.text = Barrak.ArtilleryCost.ToString();
+            QueueArtilleryButton.interactable = Interface.Root.Player.ArilleryOrderAvaliable;
         }
 
         public void BuildRanged()

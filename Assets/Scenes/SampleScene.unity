@@ -1743,7 +1743,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 0, y: 0.000000012655164, z: NaN, w: 0}
+  m_BoundingSphereOverride: {x: 5.565365e-38, y: 1e-45, z: 3.2e-44, w: 2.6224e-41}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0
@@ -11076,7 +11076,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1147176455
 RectTransform:
   m_ObjectHideFlags: 0
@@ -11116,6 +11116,7 @@ MonoBehaviour:
   RangedCostText: {fileID: 156646380}
   MeeleeCostText: {fileID: 1179181087}
   ArtilleryCostText: {fileID: 909157569}
+  QueueArtilleryButton: {fileID: 1795043337}
 --- !u!1 &1153411043
 GameObject:
   m_ObjectHideFlags: 0

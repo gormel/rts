@@ -16,11 +16,14 @@ namespace Assets.Interaction
 
         private void Update()
         {
+#if DEVELOPMENT_BUILD
+            InterfaceRoot.SetActive(false);
+#else
             var player = Interface.Root.Player;
-            
             InterfaceRoot.SetActive(player.GameplayState is PlayerGameplateState.Win or PlayerGameplateState.Lose);
             VictoryText.SetActive(player.GameplayState == PlayerGameplateState.Win);
             DefeatText.SetActive(player.GameplayState == PlayerGameplateState.Lose);
+#endif
         }
     }
 }

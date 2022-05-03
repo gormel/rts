@@ -54,6 +54,9 @@ namespace Assets.Core.GameObjects.Final
 
         public Task<bool> QueueArtillery()
         {
+            if (!Player.ArilleryOrderAvaliable)
+                return Task.FromResult(false);
+            
             return QueueUnit(ArtilleryCost, ArtilleryProductionTime, async (f, p) => await f.CreateArtillery(p));
         }
     }

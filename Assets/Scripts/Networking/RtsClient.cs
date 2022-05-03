@@ -58,7 +58,8 @@ namespace Assets.Networking
             public bool UnitArmourUpgradeAvaliable => PlayerState.UnitArmourUpgradeAvaliable;
             public bool UnitDamageUpgradeAvaliable => PlayerState.UnitDamageUpgradeAvaliable;
             public bool UnitAttackRangeUpgradeAvaliable => PlayerState.UnitAttackRangeUpgradeAvaliable;
-            
+            public bool ArilleryOrderAvaliable => PlayerState.ArtilleryOrderAvaliable;
+
             public int Team => PlayerState.Team;
         }
         
