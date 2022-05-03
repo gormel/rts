@@ -46,25 +46,6 @@ message PlayerState {
     bool TurretAttackUpgradeAvaliable = 9;
     bool BuildingDefenceUpgradeAvaliable = 10;
     bool BuildingArmourUpgradeAvaliable = 11;
-    
-    int32 MeleeWarriorCost = 12;
-    int32 RangedWarriorCost = 13;
-
-    int32 WorkerCost = 14;
-
-    int32 CentralBuildingCost = 15;
-    int32 MiningCampCost = 16;
-    int32 BarrakCost = 17;
-    int32 TurretCost = 18;
-    int32 BuildersLabCost = 19;
-    int32 WarriorsLabCost = 20;
-
-    int32 TurretAttackUpgradeCost = 21;
-    int32 BuildingDefenceUpgradeCost = 22;
-    int32 BuildingArmourUpgradeCost = 23;
-    int32 UnitArmourUpgradeCost = 24;
-    int32 UnitDamageUpgradeCost = 25;
-    int32 UnitAttackRangeUpgradeCost = 26;
 
     int32 Team = 27;
 

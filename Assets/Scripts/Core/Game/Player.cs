@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Assets.Core.GameObjects.Base;
 using Assets.Core.GameObjects.Final;
 using Assets.Views;
+using Core.GameObjects.Final;
 using UnityEngine;
 
 namespace Assets.Core.Game
@@ -25,26 +26,6 @@ namespace Assets.Core.Game
         bool UnitArmourUpgradeAvaliable { get; }
         bool UnitDamageUpgradeAvaliable { get; }
         bool UnitAttackRangeUpgradeAvaliable { get; }
-    
-        int MeleeWarriorCost { get; }
-        int RangedWarriorCost { get; }
-
-        int WorkerCost { get; }
-
-        int CentralBuildingCost { get; }
-        int MiningCampCost { get; }
-        int BarrakCost { get; }
-        int TurretCost { get; }
-        int BuildersLabCost { get; }
-        int WarriorsLabCost { get; }
-        
-        int TurretAttackUpgradeCost { get; }
-        int BuildingDefenceUpgradeCost { get; }
-        
-        int BuildingArmourUpgradeCost { get; }
-        int UnitArmourUpgradeCost { get; }
-        int UnitDamageUpgradeCost { get; }
-        int UnitAttackRangeUpgradeCost { get; }
         
         int Team { get; }
     }
@@ -82,22 +63,6 @@ namespace Assets.Core.Game
 
         int IPlayerState.Money => Money.Resources;
         int IPlayerState.Limit => Limit.Resources;
-        
-        public int MeleeWarriorCost { get; } = 50;
-        public int RangedWarriorCost { get; } = 90;
-        public int WorkerCost { get; } = 30;
-        public int CentralBuildingCost { get; } = 400;
-        public int MiningCampCost { get; } = 100;
-        public int BarrakCost { get; } = 200;
-        public int TurretCost { get; } = 100;
-        public int BuildersLabCost { get; } = 200;
-        public int WarriorsLabCost { get; } = 200;
-        public int TurretAttackUpgradeCost { get; } = 250;
-        public int BuildingDefenceUpgradeCost { get; } = 200;
-        public int BuildingArmourUpgradeCost { get; } = 220;
-        public int UnitArmourUpgradeCost { get; } = 300;
-        public int UnitDamageUpgradeCost { get; } = 350;
-        public int UnitAttackRangeUpgradeCost { get; } = 380;
         public int Team { get; }
 
         public UpgradeStorage Upgrades { get; } = new UpgradeStorage();
@@ -121,6 +86,11 @@ namespace Assets.Core.Game
         public Task<MeeleeWarrior> CreateMeeleeWarrior(Vector2 position)
         {
             return AssignPlayer(mExternalFactory.CreateMeeleeWarrior(position));
+        }
+
+        public Task<Artillery> CreateArtillery(Vector2 position)
+        {
+            return AssignPlayer(mExternalFactory.CreateArtillery(position));
         }
 
         public Task<BuildingTemplate> CreateBuildingTemplate(Vector2 position, Func<Vector2, Task<Building>> createBuilding, TimeSpan buildTime, Vector2 size,

@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Assets.Core.GameObjects.Final;
 using Assets.Views;
 using UnityEngine;
 using UnityEngine.UI;
@@ -13,7 +14,7 @@ namespace Assets.Interaction
 
         void Update()
         {
-            WorkerCostText.text = Interface.Root.Player.WorkerCost.ToString();
+            WorkerCostText.text = CentralBuilding.WorkerCost.ToString();
         }
         
         public void BuildWorker()

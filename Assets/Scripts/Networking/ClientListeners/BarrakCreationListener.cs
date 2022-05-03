@@ -75,6 +75,18 @@ namespace Assets.Networking.ClientListeners
             return resp.Base.Result;
         }
 
+        public async Task<bool> QueueArtillery()
+        {
+            var resp = await mClient.QueueArtilleryAsync(new QueueArtilleryRequest()
+            {
+                Base = new QueueUnitRequest
+                {
+                    BuildingID = new ID { Value = mID }
+                }
+            }).ResponseAsync;
+            return resp.Base.Result;
+        }
+
         public Task CancelOrderAt(int index)
         {
             return mClient.CancelOredrAsync(new CancelQueuedRequest

@@ -7,6 +7,7 @@ using Assets.Core.GameObjects.Final;
 using Assets.Core.Map;
 using Assets.Networking.ClientListeners;
 using Assets.Utils;
+using Core.GameObjects.Final;
 using Google.Protobuf;
 using Grpc.Core;
 using UnityEngine;
@@ -58,24 +59,6 @@ namespace Assets.Networking
             public bool UnitDamageUpgradeAvaliable => PlayerState.UnitDamageUpgradeAvaliable;
             public bool UnitAttackRangeUpgradeAvaliable => PlayerState.UnitAttackRangeUpgradeAvaliable;
             
-            public int MeleeWarriorCost => PlayerState.MeleeWarriorCost;
-            public int RangedWarriorCost  => PlayerState.RangedWarriorCost;
-            public int WorkerCost  => PlayerState.WorkerCost;
-            
-            public int CentralBuildingCost  => PlayerState.CentralBuildingCost;
-            public int MiningCampCost  => PlayerState.MiningCampCost;
-            public int BarrakCost  => PlayerState.BarrakCost;
-            public int TurretCost  => PlayerState.TurretCost;
-            public int BuildersLabCost  => PlayerState.BuildersLabCost;
-            public int WarriorsLabCost => PlayerState.WarriorsLabCost;
-            
-            public int TurretAttackUpgradeCost  => PlayerState.TurretAttackUpgradeCost;
-            public int BuildingDefenceUpgradeCost  => PlayerState.BuildingDefenceUpgradeCost;
-            public int BuildingArmourUpgradeCost => PlayerState.BuildingArmourUpgradeCost;
-            public int UnitArmourUpgradeCost => PlayerState.UnitArmourUpgradeCost;
-            public int UnitDamageUpgradeCost => PlayerState.UnitDamageUpgradeCost;
-            public int UnitAttackRangeUpgradeCost => PlayerState.UnitAttackRangeUpgradeCost;
-            
             public int Team => PlayerState.Team;
         }
         
@@ -87,6 +70,7 @@ namespace Assets.Networking
 
         public event Action<IRangedWarriorOrders, IRangedWarriorInfo> RangedWarriorCreated;
         public event Action<IMeeleeWarriorOrders, IMeeleeWarriorInfo> MeeleeWarriorCreated;
+        public event Action<IArtilleryOrders, IArtilleryInfo> ArtilleryCreated;
         public event Action<IWorkerOrders, IWorkerInfo> WorkerCreated;
         public event Action<IBuildingTemplateOrders, IBuildingTemplateInfo> BuildingTemplateCreated;
         public event Action<ICentralBuildingOrders, ICentralBuildingInfo> CentralBuildingCreated;
@@ -106,6 +90,7 @@ namespace Assets.Networking
 
         private readonly MeeleeWarriorCreationStateListener mMeeleeWarriorCreationStateListener;
         private readonly RangedWarriorCreationStateListener mRangedWarriorCreationStateListener;
+        private readonly ArtilleryCreationStateListener mArtilleryCreationStateListener;
         private readonly WorkerCreationStateListener mWorkerCreationStateListener;
         private readonly BuildingTemplateCreationStateListener mBuildingTemplateCreationStateListener;
         private readonly CentralBuildingCreationListener mCentralBuildingCreationStateListener;
@@ -159,6 +144,10 @@ namespace Assets.Networking
             mMeeleeWarriorCreationStateListener = new MeeleeWarriorCreationStateListener(syncContext);
             mMeeleeWarriorCreationStateListener.Created += (orders, info) => MeeleeWarriorCreated?.Invoke(orders, info);
             mMeeleeWarriorCreationStateListener.Destroyed += info => ObjectDestroyed?.Invoke(info);
+            
+            mArtilleryCreationStateListener = new ArtilleryCreationStateListener(syncContext);
+            mArtilleryCreationStateListener.Created += (orders, info) => ArtilleryCreated?.Invoke(orders, info);
+            mArtilleryCreationStateListener.Destroyed += info => ObjectDestroyed?.Invoke(info);
         }
 
         public async Task Listen()
@@ -263,6 +252,7 @@ namespace Assets.Networking
                                     var t7 = mTurretCreationListener.ListenCreations(mChannel);
                                     var t8 = mBuildersLabCreationListener.ListenCreations(mChannel);
                                     var t9 = mWarriorsLabCreationListener.ListenCreations(mChannel);
+                                    var t10 = mArtilleryCreationStateListener.ListenCreations(mChannel);
                                 }
                             }
                         }

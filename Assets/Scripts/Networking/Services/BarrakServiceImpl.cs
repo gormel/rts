@@ -63,6 +63,15 @@ namespace Assets.Networking.Services
             });
         }
 
+        public override Task<QueueArtilleryResult> QueueArtillery(QueueArtilleryRequest request, ServerCallContext context)
+        {
+            return mCommonService.ExecuteOrder(request.Base.BuildingID, async orders =>
+            {
+                var result = await orders.QueueArtillery();
+                return new QueueArtilleryResult() { Base = new QueueUnitResult { Result = result } };
+            });
+        }
+
         public override Task<Empty> CancelOredr(CancelQueuedRequest request, ServerCallContext context)
         {
             return mCommonService.ExecuteOrder(request.ObjectID, async orders =>

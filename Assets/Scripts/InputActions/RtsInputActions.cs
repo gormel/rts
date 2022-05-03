@@ -581,6 +581,15 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
+                    ""name"": ""QueueArtillery"",
+                    ""type"": ""Button"",
+                    ""id"": ""da9cd2f3-1b63-406d-996f-17fc5146bdb5"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
                     ""name"": ""QueueBuildingAttackUpgrade"",
                     ""type"": ""Button"",
                     ""id"": ""e2c8dbad-4761-4f5c-b8d4-6e366608965e"",
@@ -944,6 +953,17 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
                     ""action"": ""QueueUnitDamageUpgrade"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""42f0cf9a-b19b-44ae-aa37-16f3a9348350"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""QueueArtillery"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -985,6 +1005,7 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
         m_Bindings_Stop = m_Bindings.FindAction("Stop", throwIfNotFound: true);
         m_Bindings_QueueMeleeWarrior = m_Bindings.FindAction("QueueMeleeWarrior", throwIfNotFound: true);
         m_Bindings_QueueRangedWarrior = m_Bindings.FindAction("QueueRangedWarrior", throwIfNotFound: true);
+        m_Bindings_QueueArtillery = m_Bindings.FindAction("QueueArtillery", throwIfNotFound: true);
         m_Bindings_QueueBuildingAttackUpgrade = m_Bindings.FindAction("QueueBuildingAttackUpgrade", throwIfNotFound: true);
         m_Bindings_QueueBuildingDefenceUpgrade = m_Bindings.FindAction("QueueBuildingDefenceUpgrade", throwIfNotFound: true);
         m_Bindings_QueueUnitDamageUpgrade = m_Bindings.FindAction("QueueUnitDamageUpgrade", throwIfNotFound: true);
@@ -1255,6 +1276,7 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
     private readonly InputAction m_Bindings_Stop;
     private readonly InputAction m_Bindings_QueueMeleeWarrior;
     private readonly InputAction m_Bindings_QueueRangedWarrior;
+    private readonly InputAction m_Bindings_QueueArtillery;
     private readonly InputAction m_Bindings_QueueBuildingAttackUpgrade;
     private readonly InputAction m_Bindings_QueueBuildingDefenceUpgrade;
     private readonly InputAction m_Bindings_QueueUnitDamageUpgrade;
@@ -1283,6 +1305,7 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
         public InputAction @Stop => m_Wrapper.m_Bindings_Stop;
         public InputAction @QueueMeleeWarrior => m_Wrapper.m_Bindings_QueueMeleeWarrior;
         public InputAction @QueueRangedWarrior => m_Wrapper.m_Bindings_QueueRangedWarrior;
+        public InputAction @QueueArtillery => m_Wrapper.m_Bindings_QueueArtillery;
         public InputAction @QueueBuildingAttackUpgrade => m_Wrapper.m_Bindings_QueueBuildingAttackUpgrade;
         public InputAction @QueueBuildingDefenceUpgrade => m_Wrapper.m_Bindings_QueueBuildingDefenceUpgrade;
         public InputAction @QueueUnitDamageUpgrade => m_Wrapper.m_Bindings_QueueUnitDamageUpgrade;
@@ -1342,6 +1365,9 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
                 @QueueRangedWarrior.started -= m_Wrapper.m_BindingsActionsCallbackInterface.OnQueueRangedWarrior;
                 @QueueRangedWarrior.performed -= m_Wrapper.m_BindingsActionsCallbackInterface.OnQueueRangedWarrior;
                 @QueueRangedWarrior.canceled -= m_Wrapper.m_BindingsActionsCallbackInterface.OnQueueRangedWarrior;
+                @QueueArtillery.started -= m_Wrapper.m_BindingsActionsCallbackInterface.OnQueueArtillery;
+                @QueueArtillery.performed -= m_Wrapper.m_BindingsActionsCallbackInterface.OnQueueArtillery;
+                @QueueArtillery.canceled -= m_Wrapper.m_BindingsActionsCallbackInterface.OnQueueArtillery;
                 @QueueBuildingAttackUpgrade.started -= m_Wrapper.m_BindingsActionsCallbackInterface.OnQueueBuildingAttackUpgrade;
                 @QueueBuildingAttackUpgrade.performed -= m_Wrapper.m_BindingsActionsCallbackInterface.OnQueueBuildingAttackUpgrade;
                 @QueueBuildingAttackUpgrade.canceled -= m_Wrapper.m_BindingsActionsCallbackInterface.OnQueueBuildingAttackUpgrade;
@@ -1418,6 +1444,9 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
                 @QueueRangedWarrior.started += instance.OnQueueRangedWarrior;
                 @QueueRangedWarrior.performed += instance.OnQueueRangedWarrior;
                 @QueueRangedWarrior.canceled += instance.OnQueueRangedWarrior;
+                @QueueArtillery.started += instance.OnQueueArtillery;
+                @QueueArtillery.performed += instance.OnQueueArtillery;
+                @QueueArtillery.canceled += instance.OnQueueArtillery;
                 @QueueBuildingAttackUpgrade.started += instance.OnQueueBuildingAttackUpgrade;
                 @QueueBuildingAttackUpgrade.performed += instance.OnQueueBuildingAttackUpgrade;
                 @QueueBuildingAttackUpgrade.canceled += instance.OnQueueBuildingAttackUpgrade;
@@ -1493,6 +1522,7 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
         void OnStop(InputAction.CallbackContext context);
         void OnQueueMeleeWarrior(InputAction.CallbackContext context);
         void OnQueueRangedWarrior(InputAction.CallbackContext context);
+        void OnQueueArtillery(InputAction.CallbackContext context);
         void OnQueueBuildingAttackUpgrade(InputAction.CallbackContext context);
         void OnQueueBuildingDefenceUpgrade(InputAction.CallbackContext context);
         void OnQueueUnitDamageUpgrade(InputAction.CallbackContext context);

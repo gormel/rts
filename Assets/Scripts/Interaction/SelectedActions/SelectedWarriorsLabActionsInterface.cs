@@ -1,4 +1,5 @@
 using System.Linq;
+using Assets.Core.GameObjects.Base;
 using Assets.Views;
 using UnityEngine;
 using UnityEngine.UI;
@@ -24,9 +25,9 @@ namespace Assets.Interaction
             ArmourUpgradeButton.gameObject.SetActive(player.UnitArmourUpgradeAvaliable);
             AttackRangeUpgradeButton.gameObject.SetActive(player.UnitAttackRangeUpgradeAvaliable);
 
-            DamageUpgradeCostText.text = player.UnitDamageUpgradeCost.ToString();
-            ArmourUpgradeCostText.text = player.UnitArmourUpgradeCost.ToString();
-            AttackRangeUpgradeCostText.text = player.UnitAttackRangeUpgradeCost.ToString();
+            DamageUpgradeCostText.text = WarriorsLab.UnitDamageUpgradeCost.ToString();
+            ArmourUpgradeCostText.text = WarriorsLab.UnitArmourUpgradeCost.ToString();
+            AttackRangeUpgradeCostText.text = WarriorsLab.UnitAttackRangeUpgradeCost.ToString();
         }
 
         public void QueueDamageUpgrade()

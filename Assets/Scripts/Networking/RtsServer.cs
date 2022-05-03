@@ -9,6 +9,7 @@ using Assets.Core.GameObjects.Base;
 using Assets.Core.GameObjects.Final;
 using Assets.Networking.Services;
 using Assets.Utils;
+using Core.GameObjects.Final;
 using Grpc.Core;
 
 namespace Assets.Networking
@@ -28,6 +29,7 @@ namespace Assets.Networking
 
         public IRegistrator<IRangedWarriorOrders, IRangedWarriorInfo> RangedWarriorRegistrator { get; private set; }
         public IRegistrator<IMeeleeWarriorOrders, IMeeleeWarriorInfo> MeeleeWarriorRegistrator { get; private set; }
+        public IRegistrator<IArtilleryOrders, IArtilleryInfo> ArtilleryRegistrator { get; private set; }
         public IRegistrator<IWorkerOrders, IWorkerInfo> WorkerRegistrator { get; private set; }
         public IRegistrator<IBuildingTemplateOrders, IBuildingTemplateInfo> BuildingTemplateRegistrator { get; private set; }
         public IRegistrator<ICentralBuildingOrders, ICentralBuildingInfo> CentralBuildingRegistrator { get; private set; }
@@ -55,6 +57,10 @@ namespace Assets.Networking
             var rangedWarriorService = new RangedWarriorServiceImpl();
             RangedWarriorRegistrator = rangedWarriorService;
             mServer.Services.Add(RangedWarriorService.BindService(rangedWarriorService));
+
+            var artilleryService = new ArtilleryServiceImpl();
+            ArtilleryRegistrator = artilleryService;
+            mServer.Services.Add(ArtilleryService.BindService(artilleryService));
             
             var workerService = new WorkerServiceImpl();
             WorkerRegistrator = workerService;

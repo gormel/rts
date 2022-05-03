@@ -23,8 +23,8 @@ namespace Assets.Interaction
             QueueAttackUpgradeButton.SetActive(player.TurretAttackUpgradeAvaliable);
             QueueDefenceUpgradeButton.SetActive(player.BuildingDefenceUpgradeAvaliable);
             
-            QueueAttackUpgradeText.text = player.TurretAttackUpgradeCost.ToString();
-            QueueDefenceUpgradeText.text = player.BuildingDefenceUpgradeCost.ToString();
+            QueueAttackUpgradeText.text = BuildersLab.TurretAttackUpgradeCost.ToString();
+            QueueDefenceUpgradeText.text = BuildersLab.BuildingDefenceUpgradeCost.ToString();
         }
 
         public void QueueAttackUpgrade()

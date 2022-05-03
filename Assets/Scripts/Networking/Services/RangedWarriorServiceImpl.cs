@@ -5,7 +5,8 @@ using Assets.Core.GameObjects.Final;
 using Assets.Utils;
 using Grpc.Core;
 
-namespace Assets.Networking.Services {
+namespace Assets.Networking.Services 
+{
     class RangedWarriorServiceImpl : RangedWarriorService.RangedWarriorServiceBase, IRegistrator<IRangedWarriorOrders, IRangedWarriorInfo>
     {
         private CommonListenCreationService<IRangedWarriorOrders, IRangedWarriorInfo, RangedWarriorState> mCreationService;

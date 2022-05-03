@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Assets.Core.GameObjects;
 using Assets.Core.GameObjects.Base;
 using Assets.Core.GameObjects.Final;
+using Core.GameObjects.Final;
 using UnityEngine;
 
 namespace Assets.Core.Game
@@ -12,6 +13,7 @@ namespace Assets.Core.Game
         Task<Worker> CreateWorker(Vector2 position);
         Task<RangedWarrior> CreateRangedWarrior(Vector2 position);
         Task<MeeleeWarrior> CreateMeeleeWarrior(Vector2 position);
+        Task<Artillery> CreateArtillery(Vector2 position);
 
         Task<BuildingTemplate> CreateBuildingTemplate(Vector2 position, Func<Vector2, Task<Building>> createBuilding, TimeSpan buildTime, Vector2 size, float maxHealth, int cost);
 

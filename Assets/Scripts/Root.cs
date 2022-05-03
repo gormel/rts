@@ -12,6 +12,7 @@ using Assets.Views;
 using Assets.Views.Base;
 using Assets.Views.Utils;
 using Core.BotIntelligence;
+using Core.GameObjects.Final;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
@@ -37,6 +38,7 @@ class Root : MonoBehaviour
         private readonly GameObject mTurretPrefab;
         private readonly GameObject mBuildersLabPrefab;
         private readonly GameObject mWarriorsLabPrefab;
+        private readonly GameObject mArtilleryPrefab;
 
         public event Action<SelectableView> ViewCreated;
 
@@ -49,6 +51,7 @@ class Root : MonoBehaviour
             mMap = root.MapView;
             mRangedWarriorPrefab = root.RangedWarriorPrefab;
             mMeeleeWarriorPrefab = root.MeeleeWarriorPrefab;
+            mArtilleryPrefab = root.ArtilleryPrefab;
             mWorkerPrefab = root.WorkerPrefab;
             mBuildingTemplatePrefab = root.BuildingTemplatePrefab;
             mCentralBuildingPrefab = root.CentralBuildingPrefab;
@@ -126,6 +129,18 @@ class Root : MonoBehaviour
             meeleeWarrior.AddedToGame += o => mServer.MeeleeWarriorRegistrator.Register(meeleeWarrior, meeleeWarrior);
             meeleeWarrior.RemovedFromGame += o => mServer.MeeleeWarriorRegistrator.Unregister(o.ID);
             return meeleeWarrior;
+        }
+
+        public async Task<Artillery> CreateArtillery(Vector2 position)
+        {
+            var artillery = await CreateModelAndView<ArtilleryView, Artillery, IArtilleryOrders, IArtilleryInfo> (
+                mArtilleryPrefab,
+                view => new Artillery(mGame, view, position), 
+                position
+            );
+            artillery.AddedToGame += o => mServer.ArtilleryRegistrator.Register(artillery, artillery);
+            artillery.RemovedFromGame += o => mServer.ArtilleryRegistrator.Unregister(o.ID);
+            return artillery;
         }
 
         public async Task<BuildingTemplate> CreateBuildingTemplate(Vector2 position, Func<Vector2, Task<Building>> building, TimeSpan buildTime, Vector2 size, float maxHealth, int cost)
@@ -224,6 +239,7 @@ class Root : MonoBehaviour
     public GameObject WorkerPrefab;
     public GameObject RangedWarriorPrefab;
     public GameObject MeeleeWarriorPrefab;
+    public GameObject ArtilleryPrefab;
     public GameObject BuildingTemplatePrefab;
     public GameObject CentralBuildingPrefab;
     public GameObject MiningCampPrefab;
@@ -296,6 +312,7 @@ class Root : MonoBehaviour
 
             mClient.MeeleeWarriorCreated += ClientOnMeeleeWarriorCreated;
             mClient.RangedWarriorCreated += ClientOnRangedWarriorCreated;
+            mClient.ArtilleryCreated += ClientOnArtilleryCreated;
             mClient.WorkerCreated += ClientOnWorkerCreated;
             mClient.BuildingTemplateCreated += ClientOnBuildingTemplateCreated;
             mClient.CentralBuildingCreated += ClientOnCentralBuildingCreated;
@@ -340,6 +357,11 @@ class Root : MonoBehaviour
     private void ClientOnRangedWarriorCreated(IRangedWarriorOrders orders, IRangedWarriorInfo info)
     {
         CreateClientView(orders, info, RangedWarriorPrefab);
+    }
+
+    private void ClientOnArtilleryCreated(IArtilleryOrders orders, IArtilleryInfo info)
+    {
+        CreateClientView(orders, info, ArtilleryPrefab);
     }
 
     public void PlaceCamera(Vector2 pos)

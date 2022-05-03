@@ -26,8 +26,8 @@ namespace Core.BotIntelligence.Memory
         { 
             get 
             {
-                var meleeOutcome = mPlayer.MeleeWarriorCost / (float)Barrak.MeeleeWarriorProductionTime.TotalSeconds;
-                var rangedOutcome = mPlayer.RangedWarriorCost / (float)Barrak.RangedWarriorProductionTime.TotalSeconds;
+                var meleeOutcome = Barrak.MeleeWarriorCost / (float)Barrak.MeeleeWarriorProductionTime.TotalSeconds;
+                var rangedOutcome = Barrak.RangedWarriorCost / (float)Barrak.RangedWarriorProductionTime.TotalSeconds;
                 return (meleeOutcome + rangedOutcome) / 2;
             }
         }
@@ -36,9 +36,9 @@ namespace Core.BotIntelligence.Memory
         {
             get
             {
-                var damageUpgradeOutcome = mPlayer.UnitDamageUpgradeCost / (float)WarriorsLab.DamageUpgradeTime.TotalSeconds * (mPlayer.UnitDamageUpgradeAvaliable ? 1 : 0);
-                var armorUpgradeOutcome = mPlayer.UnitArmourUpgradeCost / (float)WarriorsLab.ArmourUpgradeTime.TotalSeconds * (mPlayer.UnitArmourUpgradeAvaliable ? 1 : 0);
-                var rangeUpgradeOutcome = mPlayer.UnitAttackRangeUpgradeCost / (float)WarriorsLab.AttackRangeUpgradeTime.TotalSeconds * (mPlayer.UnitAttackRangeUpgradeAvaliable ? 1 : 0);
+                var damageUpgradeOutcome = WarriorsLab.UnitDamageUpgradeCost / (float)WarriorsLab.DamageUpgradeTime.TotalSeconds * (mPlayer.UnitDamageUpgradeAvaliable ? 1 : 0);
+                var armorUpgradeOutcome = WarriorsLab.UnitArmourUpgradeCost / (float)WarriorsLab.ArmourUpgradeTime.TotalSeconds * (mPlayer.UnitArmourUpgradeAvaliable ? 1 : 0);
+                var rangeUpgradeOutcome = WarriorsLab.UnitAttackRangeUpgradeCost / (float)WarriorsLab.AttackRangeUpgradeTime.TotalSeconds * (mPlayer.UnitAttackRangeUpgradeAvaliable ? 1 : 0);
 
                 return (damageUpgradeOutcome + armorUpgradeOutcome + rangeUpgradeOutcome) / 3;
             }
@@ -48,7 +48,7 @@ namespace Core.BotIntelligence.Memory
         {
             get
             {
-                var workerOutcome = mPlayer.WorkerCost / (float) CentralBuilding.WorkerProductionTime.TotalSeconds;
+                var workerOutcome = CentralBuilding.WorkerCost / (float) CentralBuilding.WorkerProductionTime.TotalSeconds;
                 return workerOutcome;
             }
         }

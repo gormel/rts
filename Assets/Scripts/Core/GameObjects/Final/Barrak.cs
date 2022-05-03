@@ -17,12 +17,18 @@ namespace Assets.Core.GameObjects.Final
     {
         Task<bool> QueueRanged();
         Task<bool> QueueMeelee();
+        Task<bool> QueueArtillery();
     }
 
     internal class Barrak : FactoryBuilding, IBarrakInfo, IBarrakOrders
     {
         public static readonly TimeSpan MeeleeWarriorProductionTime = TimeSpan.FromSeconds(9);
         public static readonly TimeSpan RangedWarriorProductionTime = TimeSpan.FromSeconds(13);
+        public static readonly TimeSpan ArtilleryProductionTime = TimeSpan.FromSeconds(10);
+        
+        public static int MeleeWarriorCost { get; } = 50;
+        public static int RangedWarriorCost { get; } = 90;
+        public static int ArtilleryCost { get; } = 130;
 
         public static Vector2 BuildingSize { get; } = new Vector2(2, 2);
         public const float MaximumHealthConst = 300;
@@ -38,12 +44,17 @@ namespace Assets.Core.GameObjects.Final
 
         public Task<bool> QueueRanged()
         {
-            return QueueUnit(Player.RangedWarriorCost, RangedWarriorProductionTime, async (f, p) => await f.CreateRangedWarrior(p));
+            return QueueUnit(RangedWarriorCost, RangedWarriorProductionTime, async (f, p) => await f.CreateRangedWarrior(p));
         }
 
         public Task<bool> QueueMeelee()
         {
-            return QueueUnit(Player.MeleeWarriorCost, MeeleeWarriorProductionTime, async (f, p) => await f.CreateMeeleeWarrior(p));
+            return QueueUnit(MeleeWarriorCost, MeeleeWarriorProductionTime, async (f, p) => await f.CreateMeeleeWarrior(p));
+        }
+
+        public Task<bool> QueueArtillery()
+        {
+            return QueueUnit(ArtilleryCost, ArtilleryProductionTime, async (f, p) => await f.CreateArtillery(p));
         }
     }
 }

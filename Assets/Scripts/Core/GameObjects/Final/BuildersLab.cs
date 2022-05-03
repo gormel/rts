@@ -23,6 +23,9 @@ namespace Assets.Core.GameObjects.Base
         public static readonly TimeSpan AttackUpgradeTime = TimeSpan.FromSeconds(20); 
         public static readonly TimeSpan DefenceUpgradeTime = TimeSpan.FromSeconds(15);
 
+        public static int TurretAttackUpgradeCost { get; } = 250;
+        public static int BuildingDefenceUpgradeCost { get; } = 200;
+
         public override float ViewRadius => 3;
         protected override float MaxHealthBase => MaximumHealthConst;
         public override Vector2 Size => BuildingSize;
@@ -34,12 +37,12 @@ namespace Assets.Core.GameObjects.Base
 
         public Task QueueAttackUpgrade()
         {
-            return QueueUpgrade(Player.Upgrades.TurretAttackUpgrade, AttackUpgradeTime, Player.BuildingDefenceUpgradeCost);
+            return QueueUpgrade(Player.Upgrades.TurretAttackUpgrade, AttackUpgradeTime, TurretAttackUpgradeCost);
         }
 
         public Task QueueDefenceUpgrade()
         {
-            return QueueUpgrade(Player.Upgrades.BuildingHealthUpgrade, DefenceUpgradeTime, Player.BuildingDefenceUpgradeCost);
+            return QueueUpgrade(Player.Upgrades.BuildingHealthUpgrade, DefenceUpgradeTime, BuildingDefenceUpgradeCost);
         }
     }
 }

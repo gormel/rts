@@ -12,6 +12,15 @@ service BarrakService {
 
     rpc QueueRanged(QueueRangedRequest) returns (QueueRangedResult);
     rpc QueueMeelee(QueueMeeleeRequest) returns (QueueMeeleeResult);
+    rpc QueueArtillery(QueueArtilleryRequest) returns (QueueArtilleryResult);
+}
+
+message QueueArtilleryRequest {
+    QueueUnitRequest Base = 1;
+}
+
+message QueueArtilleryResult {
+    QueueUnitResult Base = 1;
 }
 
 message QueueRangedRequest {

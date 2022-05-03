@@ -65,7 +65,7 @@ namespace Core.BotIntelligence
                         .Sequence(b4 => b4
                             .Leaf(new CheckFreeIncomeLeaf(mMemory, m => m.CentralOutcome * 1.1f))
                             .Leaf(new CheckCountLessLeaf(mMemory, _ => 2, m => m.CentralBuildings.Count))
-                            .Leaf(new CheckFreeMoneyLeaf(this, CentralBuildingCost))
+                            .Leaf(new CheckFreeMoneyLeaf(this, Worker.CentralBuildingCost))
                             .Leaf(new QueryFreeWorkerLeaf(mMemory, buildCentralFM))
                             .Leaf(new FindFreePlaceLeaf(mGame, mGame.Map.Data, buildCentralFM, CentralBuilding.BuildingSize, 1))
                             .Leaf(new PlaceCentralLeaf(mMemory, buildCentralFM))
@@ -76,7 +76,7 @@ namespace Core.BotIntelligence
                             .Invert(b5 => b5
                                 .Leaf(new CheckFreeIncomeLeaf(mMemory, _ => 10))//???
                             )
-                            .Leaf(new CheckFreeMoneyLeaf(this, MiningCampCost))
+                            .Leaf(new CheckFreeMoneyLeaf(this, Worker.MiningCampCost))
                             .Leaf(new QueryFreeWorkerLeaf(mMemory, buildCampFM))
                             .Leaf(new FindFreeMiningCampPlaceLeaf(mGame, mGame.Map.Data, buildCampFM, MiningCamp.BuildingSize))
                             .Leaf(new PlaceMiningCampLeaf(mMemory, buildCampFM))
@@ -86,7 +86,7 @@ namespace Core.BotIntelligence
                         .Sequence(b3 => b3
                             .Leaf(new CheckCountLessLeaf(mMemory, _ => MaxLimit / 2, m => m.Workers.Count))
                             .Leaf(new CheckFreeLimitLeaf(this))
-                            .Leaf(new CheckFreeMoneyLeaf(this, WorkerCost))
+                            .Leaf(new CheckFreeMoneyLeaf(this, CentralBuilding.WorkerCost))
                             .Leaf(new CheckIdleWorkerCountLeaf(mMemory, -1, 3))
                             .Leaf(new QueryIdleCentralLeaf(mMemory, workerOrdFM))
                             .Leaf(new QueueWorkerLeaf(workerOrdFM))
@@ -115,7 +115,7 @@ namespace Core.BotIntelligence
                     .Success(b2 => b2
                         .Sequence(b3 => b3
                             .Leaf(new CheckCountLessLeaf(mMemory, m => m.MeeleeWarriors.Count, m => m.RangedWarriors.Count))
-                            .Leaf(new CheckFreeMoneyLeaf(this, RangedWarriorCost))
+                            .Leaf(new CheckFreeMoneyLeaf(this, Barrak.RangedWarriorCost))
                             .Leaf(new CheckFreeLimitLeaf(this))
                             .Leaf(new QueryIdleBarrakLeaf(mMemory, rangedOrderFM))
                             .Leaf(new QueueRangedWarriorLeaf(rangedOrderFM))
@@ -124,7 +124,7 @@ namespace Core.BotIntelligence
                     .Success(b2 => b2
                         .Sequence(b3 => b3
                             .Leaf(new CheckCountLessLeaf(mMemory, m => m.RangedWarriors.Count + 1, m => m.MeeleeWarriors.Count))
-                            .Leaf(new CheckFreeMoneyLeaf(this, MeleeWarriorCost))
+                            .Leaf(new CheckFreeMoneyLeaf(this, Barrak.MeleeWarriorCost))
                             .Leaf(new CheckFreeLimitLeaf(this))
                             .Leaf(new QueryIdleBarrakLeaf(mMemory, meleeOrderFM))
                             .Leaf(new QueueMeleeWarriorLeaf(meleeOrderFM))
@@ -144,7 +144,7 @@ namespace Core.BotIntelligence
                                 .Leaf(new CheckCountLessLeaf(mMemory, _ => 2, m => m.Barracks.Count))
                                 .Leaf(new CheckCountLessLeaf(mMemory, m => m.WarriorsLabs.Count, _ => 1))
                             )
-                            .Leaf(new CheckFreeMoneyLeaf(this, BarrakCost))
+                            .Leaf(new CheckFreeMoneyLeaf(this, Worker.BarrakCost))
                             .Leaf(new QueryFreeWorkerLeaf(mMemory, buildBarrakFM))
                             .Leaf(new FindFreePlaceLeaf(mGame, mGame.Map.Data, buildBarrakFM, Barrak.BuildingSize, 1))
                             .Leaf(new BuildBarrakLeaf(mMemory, buildBarrakFM))
@@ -165,7 +165,7 @@ namespace Core.BotIntelligence
                             .Leaf(new CheckCountLessLeaf(mMemory, m => m.Barracks.Count, _ => 1))
                             .Leaf(new CheckCountLessLeaf(mMemory, _ => 1, m => m.WarriorsLabs.Count))
                             .Leaf(new CheckFreeIncomeLeaf(mMemory, m => m.WarriorLabOutcome))
-                            .Leaf(new CheckFreeMoneyLeaf(this, WarriorsLabCost))
+                            .Leaf(new CheckFreeMoneyLeaf(this, Worker.WarriorsLabCost))
                             .Leaf(new QueryFreeWorkerLeaf(mMemory, buildWarriorsLabFM))
                             .Leaf(new FindFreePlaceLeaf(mGame, mGame.Map.Data, buildWarriorsLabFM, WarriorsLab.BuildingSize, 1))
                             .Leaf(new BuildWarriorsLabLeaf(mMemory, buildWarriorsLabFM))
@@ -175,19 +175,19 @@ namespace Core.BotIntelligence
                         .Selector(b3 => b3
                             .Sequence(b4 => b4
                                 .Leaf(new CheckWarriorDamageUpgradeAvaliableLeaf(this))
-                                .Leaf(new CheckFreeMoneyLeaf(this, UnitDamageUpgradeCost))
+                                .Leaf(new CheckFreeMoneyLeaf(this, WarriorsLab.UnitDamageUpgradeCost))
                                 .Leaf(new QueryFreeWarriorsLabLeaf(mMemory, warriorsUpgradeFM))
                                 .Leaf(new QueueUnitDamageUpgradeLeaf(warriorsUpgradeFM))
                             )
                             .Sequence(b4 => b4
                                 .Leaf(new CheckWarriorRangeUpgradeAvaliableLeaf(this))
-                                .Leaf(new CheckFreeMoneyLeaf(this, UnitAttackRangeUpgradeCost))
+                                .Leaf(new CheckFreeMoneyLeaf(this, WarriorsLab.UnitAttackRangeUpgradeCost))
                                 .Leaf(new QueryFreeWarriorsLabLeaf(mMemory, warriorsUpgradeFM))
                                 .Leaf(new QueueUnitRangeUpgradeLeaf(warriorsUpgradeFM))
                             )
                             .Sequence(b4 => b4
                                 .Leaf(new CheckWarriorArmorUpgradeAvaliableLeaf(this))
-                                .Leaf(new CheckFreeMoneyLeaf(this, UnitArmourUpgradeCost))
+                                .Leaf(new CheckFreeMoneyLeaf(this, WarriorsLab.UnitArmourUpgradeCost))
                                 .Leaf(new QueryFreeWarriorsLabLeaf(mMemory, warriorsUpgradeFM))
                                 .Leaf(new QueueUnitArmorUpgradeLeaf(warriorsUpgradeFM))
                             )

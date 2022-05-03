@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+import "base.proto";
+
+service ArtilleryService {
+    rpc ListenCreation (Empty) returns (stream ArtilleryState);
+    rpc ListenState(ID) returns (stream ArtilleryState);
+
+    rpc GoTo(GoToRequest) returns (Empty);
+    rpc Stop(StopRequest) returns (Empty);
+}
+
+message ArtilleryState {
+    UnitState Base = 1;
+}

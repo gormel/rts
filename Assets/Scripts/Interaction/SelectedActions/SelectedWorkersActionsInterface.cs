@@ -79,14 +79,12 @@ namespace Assets.Interaction
             PlaceTurretButton.interactable = Interface.Root.Player.TurretBuildingAvaliable;
             PlaceWarriorsLabButton.interactable = Interface.Root.Player.WarriorsLabBuildingAvaliable;
 
-            var player = Interface.Root.Player;
-            
-            CentralBuildingCostText.text = player.CentralBuildingCost.ToString();
-            BarrakCostText.text = player.BarrakCost.ToString();
-            TurretCostText.text = player.TurretCost.ToString();
-            BuildersLabCostText.text = player.BuildersLabCost.ToString();
-            WarriorsLabCostText.text = player.WarriorsLabCost.ToString();
-            MiningCampCostText.text = player.MiningCampCost.ToString();
+            CentralBuildingCostText.text = Worker.CentralBuildingCost.ToString();
+            BarrakCostText.text = Worker.BarrakCost.ToString();
+            TurretCostText.text = Worker.TurretCost.ToString();
+            BuildersLabCostText.text = Worker.BuildersLabCost.ToString();
+            WarriorsLabCostText.text = Worker.WarriorsLabCost.ToString();
+            MiningCampCostText.text = Worker.MiningCampCost.ToString();
         }
 
         void OnEnable()

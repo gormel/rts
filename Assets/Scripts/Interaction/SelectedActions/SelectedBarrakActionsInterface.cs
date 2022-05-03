@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Assets.Core.GameObjects.Final;
 using Assets.Views;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,12 +12,13 @@ namespace Assets.Interaction {
 
         public Text RangedCostText;
         public Text MeeleeCostText;
+        public Text ArtilleryCostText;
 
         private void Update()
         {
-            var player = Interface.Root.Player;
-            RangedCostText.text = player.RangedWarriorCost.ToString();
-            MeeleeCostText.text = player.MeleeWarriorCost.ToString();
+            RangedCostText.text = Barrak.RangedWarriorCost.ToString();
+            MeeleeCostText.text = Barrak.MeleeWarriorCost.ToString();
+            ArtilleryCostText.text = Barrak.ArtilleryCost.ToString();
         }
 
         public void BuildRanged()
@@ -35,6 +37,16 @@ namespace Assets.Interaction {
             foreach (var buildingView in views)
             {
                 buildingView.Orders.QueueMeelee();
+                break;
+            }
+        }
+
+        public void BuildArtillery()
+        {
+            var views = Interface.Selected.OfType<BarrakView>().OrderBy(v => v.Info.Queued);
+            foreach (var buildingView in views)
+            {
+                buildingView.Orders.QueueArtillery();
                 break;
             }
         }

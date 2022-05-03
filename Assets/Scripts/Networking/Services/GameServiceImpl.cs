@@ -91,22 +91,6 @@ namespace Assets.Networking.Services
                 UnitDamageUpgradeAvaliable = player.UnitDamageUpgradeAvaliable,
                 UnitAttackRangeUpgradeAvaliable = player.UnitAttackRangeUpgradeAvaliable,
                 
-                WorkerCost = player.WorkerCost,
-                MeleeWarriorCost = player.MeleeWarriorCost,
-                RangedWarriorCost = player.RangedWarriorCost,
-                
-                BarrakCost = player.BarrakCost,
-                TurretCost = player.TurretCost,
-                BuildersLabCost = player.BuildersLabCost,
-                CentralBuildingCost = player.CentralBuildingCost,
-                MiningCampCost = player.MiningCampCost,
-                
-                BuildingDefenceUpgradeCost = player.BuildingDefenceUpgradeCost,
-                TurretAttackUpgradeCost = player.TurretAttackUpgradeCost,
-                BuildingArmourUpgradeCost = player.BuildingArmourUpgradeCost,
-                UnitArmourUpgradeCost = player.UnitArmourUpgradeCost,
-                UnitDamageUpgradeCost = player.UnitDamageUpgradeCost,
-                UnitAttackRangeUpgradeCost = player.UnitAttackRangeUpgradeCost,
                 Team = player.Team,
                 GameplayState = player.GameplayState,
             };

@@ -147,6 +147,13 @@ namespace Assets.Core.GameObjects.Final
         public static TimeSpan TurretBuildTime { get; } = TimeSpan.FromSeconds(15);
         public static TimeSpan BuildersLabBuildTime { get; } = TimeSpan.FromSeconds(25);
         public static TimeSpan WarriorsLabBuildTime { get; } = TimeSpan.FromSeconds(25);
+        
+        public static int CentralBuildingCost { get; } = 400;
+        public static int MiningCampCost { get; } = 100;
+        public static int BarrakCost { get; } = 200;
+        public static int TurretCost { get; } = 100;
+        public static int BuildersLabCost { get; } = 200;
+        public static int WarriorsLabCost { get; } = 200;
 
         public const string BuildingIntelligenceTag = "Building";
         public const string MiningIntelligenceTag = "Mining";
@@ -188,7 +195,7 @@ namespace Assets.Core.GameObjects.Final
             if (!Game.GetIsAreaFree(position, CentralBuilding.BuildingSize))
                 return Guid.Empty;
 
-            if (!Player.Money.Spend(Player.CentralBuildingCost))
+            if (!Player.Money.Spend(CentralBuildingCost))
                 return Guid.Empty;
             
             var template = await Player.CreateBuildingTemplate(
@@ -197,7 +204,7 @@ namespace Assets.Core.GameObjects.Final
                 CentralBuildingBuildTime,
                 CentralBuilding.BuildingSize,
                 CentralBuilding.MaximumHealthConst,
-                Player.CentralBuildingCost
+                CentralBuildingCost
             );
 
             var id = await Game.PlaceObject(template);
@@ -213,7 +220,7 @@ namespace Assets.Core.GameObjects.Final
             if (!MiningCamp.CheckPlaceAllowed(Game.Map.Data, position))
                 return Guid.Empty;
 
-            if (!Player.Money.Spend(Player.MiningCampCost))
+            if (!Player.Money.Spend(MiningCampCost))
                 return Guid.Empty;
 
             var template = await Player.CreateBuildingTemplate(
@@ -222,7 +229,7 @@ namespace Assets.Core.GameObjects.Final
                 MiningCampBuildTime,
                 MiningCamp.BuildingSize,
                 MiningCamp.MaximumHealthConst,
-                Player.MiningCampCost
+                MiningCampCost
             );
 
             var id = await Game.PlaceObject(template);
@@ -235,7 +242,7 @@ namespace Assets.Core.GameObjects.Final
             if (!Game.GetIsAreaFree(position, Barrak.BuildingSize))
                 return Guid.Empty;
 
-            if (!Player.Money.Spend(Player.BarrakCost))
+            if (!Player.Money.Spend(BarrakCost))
                 return Guid.Empty;
 
             var template = await Player.CreateBuildingTemplate(
@@ -244,7 +251,7 @@ namespace Assets.Core.GameObjects.Final
                 BarrakBuildTime,
                 Barrak.BuildingSize,
                 Barrak.MaximumHealthConst,
-                Player.BarrakCost
+                BarrakCost
             );
 
             var id = await Game.PlaceObject(template);
@@ -260,7 +267,7 @@ namespace Assets.Core.GameObjects.Final
             if (!Player.TurretBuildingAvaliable)
                 return Guid.Empty;
 
-            if (!Player.Money.Spend(Player.TurretCost))
+            if (!Player.Money.Spend(TurretCost))
                 return Guid.Empty;
 
             var template = await Player.CreateBuildingTemplate(
@@ -269,7 +276,7 @@ namespace Assets.Core.GameObjects.Final
                 TurretBuildTime,
                 Turret.BuildingSize,
                 Turret.MaximumHealthConst,
-                Player.TurretCost
+                TurretCost
             );
 
             var id = await Game.PlaceObject(template);
@@ -282,7 +289,7 @@ namespace Assets.Core.GameObjects.Final
             if (!Game.GetIsAreaFree(position, BuildersLab.BuildingSize))
                 return Guid.Empty;
 
-            if (!Player.Money.Spend(Player.BuildersLabCost))
+            if (!Player.Money.Spend(BuildersLabCost))
                 return Guid.Empty;
 
             var template = await Player.CreateBuildingTemplate(
@@ -291,7 +298,7 @@ namespace Assets.Core.GameObjects.Final
                 BuildersLabBuildTime,
                 BuildersLab.BuildingSize,
                 BuildersLab.MaximumHealthConst,
-                Player.BuildersLabCost
+                BuildersLabCost
             );
 
             var id = await Game.PlaceObject(template);
@@ -307,7 +314,7 @@ namespace Assets.Core.GameObjects.Final
             if (!Player.WarriorsLabBuildingAvaliable)
                 return Guid.Empty;
 
-            if (!Player.Money.Spend(Player.WarriorsLabCost))
+            if (!Player.Money.Spend(WarriorsLabCost))
                 return Guid.Empty;
 
             var template = await Player.CreateBuildingTemplate(
@@ -316,7 +323,7 @@ namespace Assets.Core.GameObjects.Final
                 WarriorsLabBuildTime,
                 WarriorsLab.BuildingSize,
                 WarriorsLab.MaximumHealthConst,
-                Player.WarriorsLabCost
+                WarriorsLabCost
             );
 
             var id = await Game.PlaceObject(template);

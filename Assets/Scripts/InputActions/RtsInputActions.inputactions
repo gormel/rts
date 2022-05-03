@@ -559,6 +559,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "QueueArtillery",
+                    "type": "Button",
+                    "id": "da9cd2f3-1b63-406d-996f-17fc5146bdb5",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "QueueBuildingAttackUpgrade",
                     "type": "Button",
                     "id": "e2c8dbad-4761-4f5c-b8d4-6e366608965e",
@@ -920,6 +929,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "QueueUnitDamageUpgrade",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "42f0cf9a-b19b-44ae-aa37-16f3a9348350",
+                    "path": "<Keyboard>/a",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "QueueArtillery",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
