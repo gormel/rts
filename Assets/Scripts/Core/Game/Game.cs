@@ -32,6 +32,10 @@ namespace Assets.Core.Game
         public Game()
         {
             Map = new Map.Map(70, 70);
+        }
+
+        public void Start()
+        {
             mGameState = State.InProgress;
         }
 
@@ -152,13 +156,13 @@ namespace Assets.Core.Game
                 player.Update(elapsed);
 
             var playerIds = mGameObjects.Values.OfType<Building>().Select(o => o.PlayerID).Distinct().ToList();
-            var lose = GetPlayers().Where(p => !playerIds.Contains(p.ID));
+            var lose = GetPlayers().Where(p => !playerIds.Contains(p.ID) && p.GameplayState == PlayerGameplateState.Playing);
             foreach (var player in lose) 
                 player.GameplayState = PlayerGameplateState.Lose;
             
             if (playerIds.Select(id => GetPlayer(id).Team).Distinct().Count() == 1)
             {
-                foreach (var player in playerIds.Select(GetPlayer))
+                foreach (var player in playerIds.Select(GetPlayer).Where(p => p.GameplayState == PlayerGameplateState.Playing))
                     player.GameplayState = PlayerGameplateState.Win;
 
                 mGameState = State.Ended;

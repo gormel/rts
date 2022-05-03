@@ -27,10 +27,12 @@ namespace Assets.Networking.Services
         private readonly IDictionary<string, UserState> mRegistredPlayers;
         private readonly ConcurrentDictionary<Guid, AsyncQueue<ChatMessage>> mChatListeners = new();
         private readonly ConcurrentDictionary<Guid, PlayerConnectionListener> mPlayerConnectionListeners = new();
-        private readonly ConcurrentDictionary<string, IPlayerState> mConnectedPlayers = new();
-        private readonly ConcurrentDictionary<string, IPlayerState> mBotPlayers = new();
+        private readonly ConcurrentDictionary<string, Player> mConnectedPlayers = new();
+        private readonly ConcurrentDictionary<string, BotPlayer> mBotPlayers = new();
 
         private Task mBotPlayersCreated;
+        private Task mGameStarted;
+        private readonly ConcurrentDictionary<string, TaskCompletionSource<Player>> mRegistredPlayerConnections = new();
 
         public GameServiceImpl(
             Game game, 
@@ -49,7 +51,14 @@ namespace Assets.Networking.Services
             mSyncContext = syncContext;
             mRegistredPlayers = registredPlayers;
 
+            foreach (var registredPlayer in registredPlayers.Where(p => p.Value.ID != GameUtils.Nickname))
+            {
+                var tcs = new TaskCompletionSource<Player>();
+                mRegistredPlayerConnections.AddOrUpdate(registredPlayer.Key, tcs, (n, t) => tcs);
+            }
+
             mBotPlayersCreated = InitBotPlayers(botPlayers);
+            mGameStarted = WaitAndStartGame();
         }
 
         private async Task InitBotPlayers(IDictionary<string, UserState> botPlayers, CancellationToken token = default)
@@ -66,11 +75,25 @@ namespace Assets.Networking.Services
                 {
                     if (mBotPlayers.TryRemove(botPlayer.Key, out _))
                         await ReportPlayerState(botPlayer.Key, bot, false, token);
+                    
                     continue;
                 }
                 
                 mGame.AddBotPlayer(bot);
             }
+        }
+
+        private async Task WaitAndStartGame()
+        {
+            await mBotPlayersCreated;
+            var players = await Task.WhenAll(mRegistredPlayerConnections.Values.Select(s => s.Task));
+
+            foreach (var player in players) 
+                player.GameplayState = PlayerGameplateState.Playing;
+
+            mHostPlayer.GameplayState = PlayerGameplateState.Playing;
+            
+            mGame.Start();
         }
 
         private PlayerState CollectPlayerState(IPlayerState player)
@@ -247,6 +270,9 @@ namespace Assets.Networking.Services
 
                 var player = new Player(registredPlayer.Team == GameUtils.Team ? mAllyFactory : mEnemyFactory, registredPlayer.Team);
                 mGame.AddPlayer(player);
+                
+                if (mRegistredPlayerConnections.TryGetValue(request.Nickname, out var tcs))
+                    tcs.SetResult(player);
 
                 mConnectedPlayers.AddOrUpdate(request.Nickname, player, (s, p) => player);
                 await ReportPlayerState(request.Nickname, player, true, context.CancellationToken);
