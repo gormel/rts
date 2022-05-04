@@ -55,6 +55,7 @@ namespace Assets.Interaction
         public GameObject TurretActions;
         public GameObject BuildersLabActions;
         public GameObject WarriorsLabActions;
+        public GameObject ArtilleryActions;
 
         public UserInterface Interface;
 
@@ -76,6 +77,7 @@ namespace Assets.Interaction
                 new Activator<TurretView>(TurretActions, mActiveStates),
                 new Activator<BuildersLabView>(BuildersLabActions, mActiveStates),
                 new Activator<WarriorsLabView>(WarriorsLabActions, mActiveStates),
+                new Activator<ArtilleryView>(ArtilleryActions, mActiveStates),
             };
         }
 

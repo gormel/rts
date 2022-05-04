@@ -24,11 +24,17 @@ namespace Assets.Networking
         public Vector2 Destignation => State.Base.Destignation.ToUnity();
         public float ViewRadius => State.Base.Base.ViewRadius;
         public int Armour => State.Base.Base.Armour;
+        public bool LaunchAvaliable => State.LaunchAvaliable;
+        public float MissileSpeed => State.MissileSpeed;
+        public float MissileRadius => State.MissileRadius;
+        public float MissileDamage => State.MissileDamage;
+        public float LaunchRange => State.LaunchRange;
 
         public void ResetState()
         {
             State = new ArtilleryState();
         }
+
     }
 
     class ClientArtilleryOrders : IArtilleryOrders
@@ -57,6 +63,20 @@ namespace Assets.Networking
             {
                 UnitUD = new ID {Value = mID},
             }).ResponseAsync;
+        }
+
+        public async Task<ProjectileInfo> Launch(Vector2 target)
+        {
+            var resp = await mClient.LaunchAsync(new LaunchReqest
+            {
+                UnitID = new ID {Value = mID},
+                Target = target.ToGrpc(),
+            }).ResponseAsync;
+            
+            if (!resp.Valid)
+                return ProjectileInfo.Invalid;
+            
+            return new ProjectileInfo(resp.StartPoint.ToUnity(), resp.EndPoint.ToUnity());
         }
     }
     

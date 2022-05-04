@@ -135,7 +135,7 @@ class Root : MonoBehaviour
         {
             var artillery = await CreateModelAndView<ArtilleryView, Artillery, IArtilleryOrders, IArtilleryInfo> (
                 mArtilleryPrefab,
-                view => new Artillery(mGame, view, position), 
+                view => new Artillery(mGame, view, position, view), 
                 position
             );
             artillery.AddedToGame += o => mServer.ArtilleryRegistrator.Register(artillery, artillery);

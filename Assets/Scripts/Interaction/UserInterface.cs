@@ -11,6 +11,7 @@ using Assets.Interaction.Selection;
 using Assets.Utils;
 using Assets.Views;
 using Assets.Views.Base;
+using Core.GameObjects.Final;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -76,6 +77,21 @@ namespace Assets.Interaction
             {
                 foreach (var view in mViews)
                     view.GoTo(position);
+            }
+        }
+
+        private class LaunchMissileInterfaceAction : InterfaceAction
+        {
+            private readonly IEnumerable<IArtilleryOrders> mViews;
+
+            public LaunchMissileInterfaceAction(IEnumerable<IArtilleryOrders> views)
+            {
+                mViews = views;
+            }
+            public override void Resolve(Vector2 position)
+            {
+                foreach (var view in mViews)
+                    view.Launch(position);
             }
         }
 
@@ -256,6 +272,15 @@ namespace Assets.Interaction
 
             Cursor.SetCursor(MoveMouse, MoveMouseTexOffset, CursorMode.Auto);
             mCurrentAction = new GoToInterfaceAction(views);
+        }
+
+        public void BeginLaunchMissile(IEnumerable<IArtilleryOrders> views)
+        {
+            if (mCurrentAction != null)
+                mCurrentAction.Cancel();
+
+            Cursor.SetCursor(AttackMouse, AttackMouseTexOffset, CursorMode.Auto);
+            mCurrentAction = new LaunchMissileInterfaceAction(views);
         }
 
         public void BeginAttachWorkerToMiningCamp(IEnumerable<IWorkerOrders> views)

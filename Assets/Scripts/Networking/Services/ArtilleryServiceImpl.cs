@@ -19,7 +19,13 @@ namespace Assets.Networking.Services
         {
             return new ArtilleryState()
             {
-                Base = StateUtils.CreateUnitState(info)
+                Base = StateUtils.CreateUnitState(info),
+                
+                LaunchAvaliable = info.LaunchAvaliable,
+                MissileSpeed = info.MissileSpeed,
+                MissileRadius = info.MissileRadius,
+                MissileDamage = info.MissileDamage,
+                LaunchRange = info.LaunchRange,
             };
         }
 
@@ -48,6 +54,21 @@ namespace Assets.Networking.Services
             {
                 await orders.Stop();
                 return new Empty();
+            });
+        }
+
+        public override Task<LaunchResult> Launch(LaunchReqest request, ServerCallContext context)
+        {
+            return mCreationService.ExecuteOrder(request.UnitID, async orders =>
+            {
+                var info = await orders.Launch(request.Target.ToUnity());
+                
+                return new LaunchResult()
+                {
+                    Valid = info.Equals(ProjectileInfo.Invalid),
+                    StartPoint = info.StartPoint.ToGrpc(),
+                    EndPoint = info.EndPoint.ToGrpc(),
+                };
             });
         }
 

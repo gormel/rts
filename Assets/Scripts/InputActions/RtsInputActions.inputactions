@@ -451,6 +451,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "LaunchMissile",
+                    "type": "Button",
+                    "id": "5a894c10-2a43-42c4-a404-56657fefcee2",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Attack",
                     "type": "Button",
                     "id": "fb933abc-b5dd-45f9-8740-154ae7d19d24",
@@ -940,6 +949,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "QueueArtillery",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "5bbfbd50-6901-4ac1-98f2-3feab41d3949",
+                    "path": "<Keyboard>/a",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "LaunchMissile",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

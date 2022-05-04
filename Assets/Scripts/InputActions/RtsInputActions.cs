@@ -473,6 +473,15 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
+                    ""name"": ""LaunchMissile"",
+                    ""type"": ""Button"",
+                    ""id"": ""5a894c10-2a43-42c4-a404-56657fefcee2"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
                     ""name"": ""Attack"",
                     ""type"": ""Button"",
                     ""id"": ""fb933abc-b5dd-45f9-8740-154ae7d19d24"",
@@ -964,6 +973,17 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
                     ""action"": ""QueueArtillery"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""5bbfbd50-6901-4ac1-98f2-3feab41d3949"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""LaunchMissile"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -993,6 +1013,7 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
         // Bindings
         m_Bindings = asset.FindActionMap("Bindings", throwIfNotFound: true);
         m_Bindings_Move = m_Bindings.FindAction("Move", throwIfNotFound: true);
+        m_Bindings_LaunchMissile = m_Bindings.FindAction("LaunchMissile", throwIfNotFound: true);
         m_Bindings_Attack = m_Bindings.FindAction("Attack", throwIfNotFound: true);
         m_Bindings_Attach = m_Bindings.FindAction("Attach", throwIfNotFound: true);
         m_Bindings_OpenBuildMenu = m_Bindings.FindAction("OpenBuildMenu", throwIfNotFound: true);
@@ -1264,6 +1285,7 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
     private readonly InputActionMap m_Bindings;
     private IBindingsActions m_BindingsActionsCallbackInterface;
     private readonly InputAction m_Bindings_Move;
+    private readonly InputAction m_Bindings_LaunchMissile;
     private readonly InputAction m_Bindings_Attack;
     private readonly InputAction m_Bindings_Attach;
     private readonly InputAction m_Bindings_OpenBuildMenu;
@@ -1293,6 +1315,7 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
         private @RtsInputActions m_Wrapper;
         public BindingsActions(@RtsInputActions wrapper) { m_Wrapper = wrapper; }
         public InputAction @Move => m_Wrapper.m_Bindings_Move;
+        public InputAction @LaunchMissile => m_Wrapper.m_Bindings_LaunchMissile;
         public InputAction @Attack => m_Wrapper.m_Bindings_Attack;
         public InputAction @Attach => m_Wrapper.m_Bindings_Attach;
         public InputAction @OpenBuildMenu => m_Wrapper.m_Bindings_OpenBuildMenu;
@@ -1329,6 +1352,9 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
                 @Move.started -= m_Wrapper.m_BindingsActionsCallbackInterface.OnMove;
                 @Move.performed -= m_Wrapper.m_BindingsActionsCallbackInterface.OnMove;
                 @Move.canceled -= m_Wrapper.m_BindingsActionsCallbackInterface.OnMove;
+                @LaunchMissile.started -= m_Wrapper.m_BindingsActionsCallbackInterface.OnLaunchMissile;
+                @LaunchMissile.performed -= m_Wrapper.m_BindingsActionsCallbackInterface.OnLaunchMissile;
+                @LaunchMissile.canceled -= m_Wrapper.m_BindingsActionsCallbackInterface.OnLaunchMissile;
                 @Attack.started -= m_Wrapper.m_BindingsActionsCallbackInterface.OnAttack;
                 @Attack.performed -= m_Wrapper.m_BindingsActionsCallbackInterface.OnAttack;
                 @Attack.canceled -= m_Wrapper.m_BindingsActionsCallbackInterface.OnAttack;
@@ -1408,6 +1434,9 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
                 @Move.started += instance.OnMove;
                 @Move.performed += instance.OnMove;
                 @Move.canceled += instance.OnMove;
+                @LaunchMissile.started += instance.OnLaunchMissile;
+                @LaunchMissile.performed += instance.OnLaunchMissile;
+                @LaunchMissile.canceled += instance.OnLaunchMissile;
                 @Attack.started += instance.OnAttack;
                 @Attack.performed += instance.OnAttack;
                 @Attack.canceled += instance.OnAttack;
@@ -1510,6 +1539,7 @@ public partial class @RtsInputActions : IInputActionCollection2, IDisposable
     public interface IBindingsActions
     {
         void OnMove(InputAction.CallbackContext context);
+        void OnLaunchMissile(InputAction.CallbackContext context);
         void OnAttack(InputAction.CallbackContext context);
         void OnAttach(InputAction.CallbackContext context);
         void OnOpenBuildMenu(InputAction.CallbackContext context);
