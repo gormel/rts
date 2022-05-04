@@ -14128,7 +14128,7 @@ MonoBehaviour:
   TurretActions: {fileID: 472671641}
   BuildersLabActions: {fileID: 584640332}
   WarriorsLabActions: {fileID: 584640332}
-  ArtilleryActions: {fileID: 0}
+  ArtilleryActions: {fileID: 1036901792}
   Interface: {fileID: 1098300459}
 --- !u!1 &1445211627
 GameObject:
