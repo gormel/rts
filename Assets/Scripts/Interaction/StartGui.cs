@@ -19,11 +19,18 @@ namespace Assets.Interaction
 
         public InputField ConnectIPField;
         public InputField NicknameField;
+        public GameObject DevelopmentBuildIndicator;
 
         void Start()
         {
             ConnectIPField.text = GameUtils.IP.ToString();
             NicknameField.text = GameUtils.Nickname;
+            
+#if DEVELOPMENT_BUILD
+            DevelopmentBuildIndicator.SetActive(true);
+#else
+            DevelopmentBuildIndicator.SetActive(false);
+#endif
         }
 
         public void Host()
