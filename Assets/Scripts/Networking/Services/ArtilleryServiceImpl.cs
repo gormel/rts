@@ -57,18 +57,12 @@ namespace Assets.Networking.Services
             });
         }
 
-        public override Task<LaunchResult> Launch(LaunchReqest request, ServerCallContext context)
+        public override Task<Empty> Launch(LaunchReqest request, ServerCallContext context)
         {
             return mCreationService.ExecuteOrder(request.UnitID, async orders =>
             {
-                var info = await orders.Launch(request.Target.ToUnity());
-                
-                return new LaunchResult()
-                {
-                    Valid = info.Equals(ProjectileInfo.Invalid),
-                    StartPoint = info.StartPoint.ToGrpc(),
-                    EndPoint = info.EndPoint.ToGrpc(),
-                };
+                await orders.Launch(request.Target.ToUnity());
+                return new Empty();
             });
         }
 

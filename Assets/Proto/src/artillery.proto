@@ -9,18 +9,12 @@ service ArtilleryService {
     rpc GoTo(GoToRequest) returns (Empty);
     rpc Stop(StopRequest) returns (Empty);
 
-    rpc Launch(LaunchReqest) returns (LaunchResult);
+    rpc Launch(LaunchReqest) returns (Empty);
 }
 
 message LaunchReqest {
     ID UnitID = 1;
     Vector Target = 2;
-}
-
-message LaunchResult {
-    Vector StartPoint = 1;
-    Vector EndPoint = 2;
-    bool Valid = 3;
 }
 
 message ArtilleryState {

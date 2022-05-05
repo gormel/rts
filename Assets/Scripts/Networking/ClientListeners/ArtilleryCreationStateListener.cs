@@ -65,18 +65,13 @@ namespace Assets.Networking
             }).ResponseAsync;
         }
 
-        public async Task<ProjectileInfo> Launch(Vector2 target)
+        public Task Launch(Vector2 target)
         {
-            var resp = await mClient.LaunchAsync(new LaunchReqest
+            return mClient.LaunchAsync(new LaunchReqest
             {
                 UnitID = new ID {Value = mID},
                 Target = target.ToGrpc(),
             }).ResponseAsync;
-            
-            if (!resp.Valid)
-                return ProjectileInfo.Invalid;
-            
-            return new ProjectileInfo(resp.StartPoint.ToUnity(), resp.EndPoint.ToUnity());
         }
     }
     
