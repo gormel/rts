@@ -146,7 +146,7 @@ namespace Assets.Networking.Services
             return result;
         }
 
-        public override async Task ListenChat(Empty request, IServerStreamWriter<ChatMessage> responseStream, ServerCallContext context)
+        public override async Task ListenChat(ConnectRequest request, IServerStreamWriter<ChatMessage> responseStream, ServerCallContext context)
         {
             var key = Guid.NewGuid();
             try
@@ -155,7 +155,7 @@ namespace Assets.Networking.Services
                 if (!mChatListeners.TryAdd(key, queue))
                     throw new Exception("Cannot register user state listener!");
 
-                while (true)
+                while (!context.CancellationToken.IsCancellationRequested)
                 {
                     var message = await queue.DequeueAsync(context.CancellationToken);
                     context.CancellationToken.ThrowIfCancellationRequested();
@@ -166,8 +166,11 @@ namespace Assets.Networking.Services
             catch (Exception e)
             {
                 Debug.LogError(e);
-                mChatListeners.TryRemove(key, out var q);
                 throw;
+            }
+            finally
+            {
+                mChatListeners.TryRemove(key, out var q);
             }
         }
 
@@ -210,7 +213,7 @@ namespace Assets.Networking.Services
                         State = true,
                     });
                 }
-                
+
                 foreach (var connectedPlayer in mConnectedPlayers)
                 {
                     await responseStream.WriteAsync(new PlayerConnection()
@@ -220,8 +223,8 @@ namespace Assets.Networking.Services
                         State = true,
                     });
                 }
-                
-                while (true)
+
+                while (!context.CancellationToken.IsCancellationRequested)
                 {
                     var message = await queue.DequeueAsync(context.CancellationToken);
                     context.CancellationToken.ThrowIfCancellationRequested();
@@ -233,8 +236,11 @@ namespace Assets.Networking.Services
             catch (Exception e)
             {
                 Debug.LogError(e);
-                mPlayerConnectionListeners.TryRemove(key, out var q);
                 throw;
+            }
+            finally
+            {
+                mPlayerConnectionListeners.TryRemove(key, out _);
             }
         }
 
@@ -268,7 +274,7 @@ namespace Assets.Networking.Services
                 if (!mRegistredPlayers.TryGetValue(request.Nickname, out registredPlayer))
                     throw new Exception("Player is not registered.");
 
-                var player = new Player(registredPlayer.Team == GameUtils.Team ? mAllyFactory : mEnemyFactory, registredPlayer.Team);
+                var player = new Player(registredPlayer.Team == mHostPlayer.Team ? mAllyFactory : mEnemyFactory, registredPlayer.Team);
                 mGame.AddPlayer(player);
                 
                 if (mRegistredPlayerConnections.TryGetValue(request.Nickname, out var tcs))
@@ -289,7 +295,7 @@ namespace Assets.Networking.Services
                 context.CancellationToken.ThrowIfCancellationRequested();
                 await responseStream.WriteAsync(CollectGameState((player, baseCreation.basePos), true));
 
-                while (true)
+                while (!context.CancellationToken.IsCancellationRequested)
                 {
                     context.CancellationToken.ThrowIfCancellationRequested();
                     await responseStream.WriteAsync(CollectGameState((player, baseCreation.basePos), false));

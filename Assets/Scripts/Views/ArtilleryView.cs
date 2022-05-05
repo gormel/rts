@@ -12,7 +12,7 @@ namespace Assets.Views
         public override string Name => "Артелерия";
         public float GetTrajectoryLength(Vector2 from, Vector2 to)
         {
-            return 1;
+            return Vector2.Distance(from, to);
         }
 
         public override void OnEnemyRightClick(SelectableView view)

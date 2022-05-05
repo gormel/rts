@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+import "base.proto";
+
+service ProjectilesService {
+    rpc ListenMissileProjectiles (Empty) returns (stream MissileProjectileCreation);
+}
+
+message MissileProjectileCreation {
+    Vector From = 1;
+    Vector To = 2;
+    float Speed = 3;
+    float Radius = 4;
+}

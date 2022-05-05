@@ -7,6 +7,8 @@ using Assets.Core.GameObjects;
 using Assets.Core.GameObjects.Base;
 using Assets.Core.Map;
 using Core.BotIntelligence;
+using Core.GameObjects.Final;
+using Core.Projectiles;
 using UnityEngine;
 
 namespace Assets.Core.Game
@@ -26,6 +28,7 @@ namespace Assets.Core.Game
         private ConcurrentDictionary<Guid, Action> mRequested = new();
         private Dictionary<Guid, BotPlayer> mBotPlayers = new();
         private Dictionary<Guid, Player> mPlayers = new();
+        private List<Projectile> mProjectiles = new();
 
         private State mGameState = State.Loading;
         
@@ -105,6 +108,11 @@ namespace Assets.Core.Game
             throw new ArgumentException("Player does not exist.", nameof(playerId));
         }
 
+        public void SpawnProjectile(Projectile projectile)
+        {
+            mProjectiles.Add(projectile);
+        }
+        
         public T GetObject<T>(Guid objectId) where T : RtsGameObject
         {
             RtsGameObject result;
@@ -144,6 +152,11 @@ namespace Assets.Core.Game
 
             foreach (var o in Filter(mGameObjects.Values))
                 o.Update(elapsed);
+
+            foreach (var projectile in mProjectiles)
+                projectile.Update(elapsed);
+
+            mProjectiles.RemoveAll(p => p.Complete);
 
             var requestKeys = mRequested.Keys.ToList();
             foreach (var key in requestKeys.ToList())

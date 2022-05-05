@@ -5,7 +5,7 @@ import "base.proto";
 service GameService {
     rpc ConnectAndListenState(ConnectRequest) returns (stream GameState);
     rpc SendChatMessage(ChatMessage) returns (Empty);
-    rpc ListenChat(Empty) returns (stream ChatMessage);
+    rpc ListenChat(ConnectRequest) returns (stream ChatMessage);
     rpc ListenPlayerConnections(ConnectRequest) returns (stream PlayerConnection);
 }
 

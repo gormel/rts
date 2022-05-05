@@ -157,7 +157,8 @@ namespace Assets.Networking
             mGameService = new GameService.GameServiceClient(mChannel);
             await Task.WhenAll(
                 ListenGameState(mChannel, mGameService, GameUtils.Nickname),
-                ListenPlayerConnections(mChannel, mGameService, GameUtils.Nickname)
+                ListenPlayerConnections(mChannel, mGameService, GameUtils.Nickname),
+                ListenChat(mGameService, mChannel, GameUtils.Nickname)
             );
         }
 
@@ -173,7 +174,7 @@ namespace Assets.Networking
 
         private async Task ListenPlayerConnections(Channel channel, GameService.GameServiceClient client, string nickname)
         {
-            while (true)
+            while (!channel.ShutdownToken.IsCancellationRequested)
             {
                 try
                 {
@@ -212,7 +213,7 @@ namespace Assets.Networking
 
             try
             {
-                while (true)
+                while (!channel.ShutdownToken.IsCancellationRequested)
                 {
                     try
                     {
@@ -240,8 +241,6 @@ namespace Assets.Networking
                                         MapLoaded?.Invoke(mapState);
                                         BaseCreated?.Invoke(state.BasePos.ToUnity());
                                     }, channel.ShutdownToken);
-
-                                    var tChat = ListenChat(client, channel);
 
                                     var t0 = mWorkerCreationStateListener.ListenCreations(mChannel);
                                     var t1 = mBuildingTemplateCreationStateListener.ListenCreations(mChannel);
@@ -277,23 +276,28 @@ namespace Assets.Networking
             }
         }
 
-        private async Task ListenChat(GameService.GameServiceClient client, Channel channel)
+        private async Task ListenChat(GameService.GameServiceClient client, Channel channel, string nickname)
         {
-            try
+            while (!channel.ShutdownToken.IsCancellationRequested)
             {
-                using (var call = client.ListenChat(new Empty()))
-                using (var chatStream = call.ResponseStream)
+                try
                 {
-                    while (await chatStream.MoveNext(channel.ShutdownToken))
+                    using (var call = client.ListenChat(new ConnectRequest() { Nickname = nickname }))
+                    using (var chatStream = call.ResponseStream)
                     {
-                        ChatMessageRecived?.Invoke(chatStream.Current.Nickname, chatStream.Current.StickerID);
+                        while (await chatStream.MoveNext(channel.ShutdownToken))
+                        {
+                            ChatMessageRecived?.Invoke(chatStream.Current.Nickname, chatStream.Current.StickerID);
+                        }
                     }
                 }
-            }
-            catch (Exception e)
-            {
-                Debug.LogError(e);
-                throw;
+                catch (RpcException e)
+                {
+                    if (e.StatusCode != StatusCode.Unavailable)
+                        throw;
+                    
+                    await Task.Delay(TimeSpan.FromSeconds(0.5));
+                }
             }
         }
     }

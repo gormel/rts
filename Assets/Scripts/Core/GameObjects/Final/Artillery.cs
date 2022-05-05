@@ -8,25 +8,11 @@ using Assets.Core.Game;
 using Assets.Core.GameObjects.Base;
 using Assets.Core.GameObjects.Utils;
 using Assets.Core.Map;
+using Core.Projectiles;
 using UnityEngine;
 
 namespace Core.GameObjects.Final
 {
-    struct ProjectileInfo
-    {
-        public Vector2 StartPoint { get; set; }
-        public Vector2 EndPoint { get; set; }
-        public float Position { get; set; }
-
-        public ProjectileInfo(Vector2 startPoint, Vector2 endPoint, float position)
-        {
-            StartPoint = startPoint;
-            EndPoint = endPoint;
-            Position = position;
-        }
-
-        public ProjectileInfo Move(float distance) => new(StartPoint, EndPoint, Position + distance);
-    }
     interface IArtilleryInfo : IUnitInfo
     {
         bool LaunchAvaliable { get; }
@@ -97,12 +83,24 @@ namespace Core.GameObjects.Final
 
         class LaunchMissileLeaf : IBTreeLeaf
         {
+            private readonly Artillery mArtillery;
+            private readonly Vector2 mToPoint;
+
             public LaunchMissileLeaf(Artillery artillery, Vector2 toPoint)
             {
+                mArtillery = artillery;
+                mToPoint = toPoint;
             }
 
             public BTreeLeafState Update(TimeSpan deltaTime)
             {
+                mArtillery.Game.SpawnProjectile(new Missile(
+                    mArtillery.MissileSpeed,
+                    mArtillery.mTrajectoryService.GetTrajectoryLength(mArtillery.Position, mToPoint),
+                    mArtillery.MissileRadius,
+                    mArtillery.Game,
+                    mArtillery.MissileDamage, mToPoint
+                    ));
                 return BTreeLeafState.Successed;
             }
         }
@@ -130,9 +128,9 @@ namespace Core.GameObjects.Final
             mTrajectoryService = trajectoryService;
         }
 
-        public async Task Launch(Vector2 target)
+        public Task Launch(Vector2 target)
         {
-            ApplyIntelligence(
+            return ApplyIntelligence(
                 b => b
                     .Sequence(b1 => b1
                         .Leaf(new CheckCooldownLeaf(this, LaunchCooldown))
