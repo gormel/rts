@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Assets.Core.Game;
 using Assets.Core.GameObjects.Base;
@@ -7,20 +8,52 @@ using Assets.Core.GameObjects.Final;
 using Assets.Core.Map;
 using Assets.Interaction;
 using Assets.Networking;
+using Assets.Networking.Services;
 using Assets.Utils;
 using Assets.Views;
 using Assets.Views.Base;
 using Assets.Views.Utils;
 using Core.BotIntelligence;
 using Core.GameObjects.Final;
+using Core.Projectiles;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
+using Views.Projectiles;
 using GameObject = UnityEngine.GameObject;
 
 class Root : MonoBehaviour
 {
+    private class ProjectileSpawner : IProjectileSpawner
+    {
+        private readonly Game mGame;
+        private readonly RtsServer mServer;
+        private readonly MissileSpawnerView mMissileTrajectoryService;
+
+        public ProjectileSpawner(Game game, RtsServer server, MissileSpawnerView missileTrajectoryService)
+        {
+            mGame = game;
+            mServer = server;
+            mMissileTrajectoryService = missileTrajectoryService;
+        }
+
+        public void SpawnMissile(Vector2 from, Vector2 to, float speed, float radius, float damage)
+        {
+            mGame.SpawnProjectile(new Missile(
+                speed,
+                mMissileTrajectoryService.GetTrajectoryLength(from, to),
+                radius,
+                mGame,
+                damage,
+                to
+                ));
+            
+            mServer.ProjectileSpawner.SpawnMissile(from, to, speed, radius);
+            mMissileTrajectoryService.Spawn(from, to, speed, radius);
+        }
+    }
+    
     private class Factory : IGameObjectFactory
     {
         private readonly RtsServer mServer;
@@ -39,6 +72,8 @@ class Root : MonoBehaviour
         private readonly GameObject mBuildersLabPrefab;
         private readonly GameObject mWarriorsLabPrefab;
         private readonly GameObject mArtilleryPrefab;
+
+        private readonly ProjectileSpawner mProjectileSpawner;
 
         public event Action<SelectableView> ViewCreated;
 
@@ -60,6 +95,8 @@ class Root : MonoBehaviour
             mTurretPrefab = root.TurretPrefab;
             mBuildersLabPrefab = root.BuildersLabPrefab;
             mWarriorsLabPrefab = root.WarriorsLabPrefab;
+
+            mProjectileSpawner = new ProjectileSpawner(mGame, mServer, root.MissileSpawner);
         }
 
         private Task<TModel> CreateModelAndView<TView, TModel, TOrders, TInfo>(GameObject prefab, Func<TView, TModel> createModel, Vector2 position)
@@ -135,7 +172,7 @@ class Root : MonoBehaviour
         {
             var artillery = await CreateModelAndView<ArtilleryView, Artillery, IArtilleryOrders, IArtilleryInfo> (
                 mArtilleryPrefab,
-                view => new Artillery(mGame, view, position, view), 
+                view => new Artillery(mGame, view, position, mProjectileSpawner), 
                 position
             );
             artillery.AddedToGame += o => mServer.ArtilleryRegistrator.Register(artillery, artillery);
@@ -253,6 +290,8 @@ class Root : MonoBehaviour
 
     public GameObject AddResourcesButton;
 
+    public MissileSpawnerView MissileSpawner;
+
     private RtsServer mServer;
     private RtsClient mClient;
     private Game mGame;
@@ -321,6 +360,8 @@ class Root : MonoBehaviour
             mClient.TurretCreated += ClientOnTurretCreated;
             mClient.BuildersLabCreated += ClientOnBuildersLabCreated;
             mClient.WarriorsLabCreated += ClientOnWarriorsLabCreated;
+
+            mClient.MissileSpawned += (from, to, speed, radius) => MissileSpawner.Spawn(from, to, speed, radius);
 
             mClient.ObjectDestroyed += ClientOnObjectDestroyed;
 

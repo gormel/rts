@@ -17,11 +17,11 @@ namespace Assets.Core.Game
     {
         private enum State
         {
-            Loading, 
+            Loading,
             InProgress,
             Ended,
         }
-        
+
         public Map.Map Map { get; }
 
         private IDictionary<Guid, RtsGameObject> mGameObjects = new Dictionary<Guid, RtsGameObject>();
@@ -31,7 +31,7 @@ namespace Assets.Core.Game
         private List<Projectile> mProjectiles = new();
 
         private State mGameState = State.Loading;
-        
+
         public Game()
         {
             Map = new Map.Map(70, 70);
@@ -44,7 +44,8 @@ namespace Assets.Core.Game
 
         public Task<Guid> PlaceObject(RtsGameObject obj)
         {
-            return AddRequest<Guid>(tcs => {
+            return AddRequest<Guid>(tcs =>
+            {
                 mGameObjects.Add(obj.ID, obj);
                 obj.OnAddedToGame();
                 tcs.SetResult(obj.ID);
@@ -93,7 +94,7 @@ namespace Assets.Core.Game
 
         public void AddBotPlayer(BotPlayer bot) =>
             mBotPlayers.Add(bot.ID, bot);
-        
+
         public void AddPlayer(Player player) =>
             mPlayers.Add(player.ID, player);
 
@@ -112,7 +113,7 @@ namespace Assets.Core.Game
         {
             mProjectiles.Add(projectile);
         }
-        
+
         public T GetObject<T>(Guid objectId) where T : RtsGameObject
         {
             RtsGameObject result;
@@ -122,7 +123,7 @@ namespace Assets.Core.Game
             if (!(result is T))
                 throw new ArgumentException("Object type does not match.");
 
-            return (T)result;
+            return (T) result;
         }
 
         private IEnumerable<RtsGameObject> Filter(IEnumerable<RtsGameObject> collection)
@@ -165,17 +166,19 @@ namespace Assets.Core.Game
                     request.Invoke();
             }
 
-            foreach (var player in Filter(mBotPlayers.Values)) 
+            foreach (var player in Filter(mBotPlayers.Values))
                 player.Update(elapsed);
 
             var playerIds = mGameObjects.Values.OfType<Building>().Select(o => o.PlayerID).Distinct().ToList();
-            var lose = GetPlayers().Where(p => !playerIds.Contains(p.ID) && p.GameplayState == PlayerGameplateState.Playing);
-            foreach (var player in lose) 
+            var lose = GetPlayers()
+                .Where(p => !playerIds.Contains(p.ID) && p.GameplayState == PlayerGameplateState.Playing);
+            foreach (var player in lose)
                 player.GameplayState = PlayerGameplateState.Lose;
-            
+
             if (playerIds.Select(id => GetPlayer(id).Team).Distinct().Count() == 1)
             {
-                foreach (var player in playerIds.Select(GetPlayer).Where(p => p.GameplayState == PlayerGameplateState.Playing))
+                foreach (var player in playerIds.Select(GetPlayer)
+                    .Where(p => p.GameplayState == PlayerGameplateState.Playing))
                     player.GameplayState = PlayerGameplateState.Win;
 
                 mGameState = State.Ended;
@@ -223,9 +226,9 @@ namespace Assets.Core.Game
                 if (rect.Contains(gameObject.Position))
                     return false;
 
-                if (gameObject is Building)
+                if (gameObject is Building building)
                 {
-                    if (rect.Overlaps(new Rect(gameObject.Position, ((Building) gameObject).Size)))
+                    if (rect.Overlaps(new Rect(gameObject.Position, building.Size)))
                         return false;
                 }
             }

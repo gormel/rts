@@ -38,6 +38,8 @@ namespace Assets.Networking
         public IRegistrator<ITurretOrders, ITurretInfo> TurretRegistrator { get; private set; }
         public IRegistrator<IBuildersLabOrders, IBuildersLabInfo> BuildersLabRegistrator { get; private set; }
         public IRegistrator<IWarriorsLabOrders, IWarriorsLabInfo> WarriorsLabRegistrator { get; private set; }
+        
+        public IServerProjectileSpawner ProjectileSpawner { get; private set; }
 
         public event Action<string, int> MessageRecived;
 
@@ -49,6 +51,10 @@ namespace Assets.Networking
             mServer.Ports.Add(new ServerPort(IPAddress.Any.ToString(), GameUtils.GamePort, ServerCredentials.Insecure));
             mServer.Services.Add(GameService.BindService(mGameService = new GameServiceImpl(game, hostPlayer, enemyFactory, allyFactory, syncContext, registredPlayers, botPlayers)));
             mGameService.MessageRecived += GameServiceOnMessageRecived;
+
+            var projectileService = new ProjectileServiceImpl();
+            ProjectileSpawner = projectileService;
+            mServer.Services.Add(ProjectilesService.BindService(projectileService));
 
             var meeleeWarriorService = new MeeleeWarriorServiceImpl();
             MeeleeWarriorRegistrator = meeleeWarriorService;

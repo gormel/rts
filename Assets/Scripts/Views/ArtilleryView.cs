@@ -7,13 +7,9 @@ using UnityEngine.UI;
 
 namespace Assets.Views
 {
-    class ArtilleryView : UnitView<IArtilleryOrders, IArtilleryInfo>, ITrajectoryService
+    class ArtilleryView : UnitView<IArtilleryOrders, IArtilleryInfo>
     {
         public override string Name => "Артелерия";
-        public float GetTrajectoryLength(Vector2 from, Vector2 to)
-        {
-            return Vector2.Distance(from, to);
-        }
 
         public override void OnEnemyRightClick(SelectableView view)
         {

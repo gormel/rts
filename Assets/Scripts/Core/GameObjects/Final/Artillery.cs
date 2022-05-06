@@ -8,6 +8,7 @@ using Assets.Core.Game;
 using Assets.Core.GameObjects.Base;
 using Assets.Core.GameObjects.Utils;
 using Assets.Core.Map;
+using Assets.Networking.Services;
 using Core.Projectiles;
 using UnityEngine;
 
@@ -94,13 +95,13 @@ namespace Core.GameObjects.Final
 
             public BTreeLeafState Update(TimeSpan deltaTime)
             {
-                mArtillery.Game.SpawnProjectile(new Missile(
+                mArtillery.mSpawner.SpawnMissile(
+                    mArtillery.Position,
+                    mToPoint,
                     mArtillery.MissileSpeed,
-                    mArtillery.mTrajectoryService.GetTrajectoryLength(mArtillery.Position, mToPoint),
                     mArtillery.MissileRadius,
-                    mArtillery.Game,
-                    mArtillery.MissileDamage, mToPoint
-                    ));
+                    mArtillery.MissileDamage
+                );
                 return BTreeLeafState.Successed;
             }
         }
@@ -108,7 +109,7 @@ namespace Core.GameObjects.Final
         public const string LaunchIntelligenceTag = "Launch";
         public static TimeSpan LaunchCooldown { get; } = TimeSpan.FromSeconds(2);
         
-        private readonly ITrajectoryService mTrajectoryService;
+        private readonly IProjectileSpawner mSpawner;
         public override float ViewRadius => 2;
         public override int Armour => Player.Upgrades.UnitArmourUpgrade.Calculate(ArmourBase);
         protected override float MaxHealthBase => 30;
@@ -122,10 +123,10 @@ namespace Core.GameObjects.Final
         
         private Stopwatch mLaunchTimer = Stopwatch.StartNew();
         
-        public Artillery(Game game, IPathFinder pathFinder, Vector2 position, ITrajectoryService trajectoryService) 
+        public Artillery(Game game, IPathFinder pathFinder, Vector2 position, IProjectileSpawner spawner) 
             : base(game, pathFinder, position)
         {
-            mTrajectoryService = trajectoryService;
+            mSpawner = spawner;
         }
 
         public Task Launch(Vector2 target)

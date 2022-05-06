@@ -10,6 +10,7 @@ using Assets.Utils;
 using Core.GameObjects.Final;
 using Google.Protobuf;
 using Grpc.Core;
+using Networking.ClientListeners;
 using UnityEngine;
 
 namespace Assets.Networking
@@ -19,7 +20,7 @@ namespace Assets.Networking
         TState State { get; }
         void ResetState();
     }
-
+    
     class RtsClient
     {
         private class ClientMapData : IMapData
@@ -81,6 +82,8 @@ namespace Assets.Networking
         public event Action<IBuildersLabOrders, IBuildersLabInfo> BuildersLabCreated;
         public event Action<IWarriorsLabOrders, IWarriorsLabInfo> WarriorsLabCreated;
 
+        public event MissileSpawnDelegate MissileSpawned;
+
         public event Action<IGameObjectInfo> ObjectDestroyed;
 
         public event Action<string, int> ChatMessageRecived;
@@ -100,12 +103,16 @@ namespace Assets.Networking
         private readonly TurretCreationListener mTurretCreationListener;
         private readonly BuildersLabCreationListener mBuildersLabCreationListener;
         private readonly WarriorsLabCreationListener mWarriorsLabCreationListener;
+        private readonly ProjectileSpawnListener mProjectileSpawnListener;
         
         private GameService.GameServiceClient mGameService;
 
         public RtsClient(UnitySyncContext syncContext)
         {
             mSyncContext = syncContext;
+            mProjectileSpawnListener = new ProjectileSpawnListener(syncContext);
+            mProjectileSpawnListener.OnMissileSpawn += (from, to, speed, radius) => MissileSpawned?.Invoke(from, to, speed, radius);
+            
             mWorkerCreationStateListener = new WorkerCreationStateListener(syncContext);
             mWorkerCreationStateListener.Created += (orders, info) => WorkerCreated?.Invoke(orders, info);
             mWorkerCreationStateListener.Destroyed += info => ObjectDestroyed?.Invoke(info);
@@ -241,6 +248,8 @@ namespace Assets.Networking
                                         MapLoaded?.Invoke(mapState);
                                         BaseCreated?.Invoke(state.BasePos.ToUnity());
                                     }, channel.ShutdownToken);
+
+                                    var proj = mProjectileSpawnListener.Listen(mChannel);
 
                                     var t0 = mWorkerCreationStateListener.ListenCreations(mChannel);
                                     var t1 = mBuildingTemplateCreationStateListener.ListenCreations(mChannel);

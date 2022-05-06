@@ -31,22 +31,8 @@ namespace Assets.Views.Base
 
         public virtual void OnDestroy()
         {
-            if (Map.isActiveAndEnabled)
-                Map.StartCoroutine(ShowExplosion());
-        }
-
-        private IEnumerator ShowExplosion()
-        {
-            if (ExplosionPrefab == null)
-                yield break;
-
-            var inst = Instantiate(ExplosionPrefab);
-            inst.transform.parent = Map.transform;
+            var inst = Instantiate(ExplosionPrefab, Map.transform, true);
             inst.transform.localPosition = Map.GetWorldPosition(Position);
-
-            yield return new WaitForSeconds(2);
-
-            Destroy(inst);
         }
 
         public void LoadModel(TOrderer orderer, TInfo info)

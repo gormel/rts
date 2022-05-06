@@ -170,7 +170,7 @@ namespace Assets.Networking.Services
             }
             finally
             {
-                mChatListeners.TryRemove(key, out var q);
+                mChatListeners.TryRemove(key, out _);
             }
         }
 
