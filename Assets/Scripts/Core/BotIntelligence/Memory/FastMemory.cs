@@ -1,5 +1,6 @@
 using Assets.Core.GameObjects.Base;
 using Assets.Core.GameObjects.Final;
+using Core.GameObjects.Final;
 using UnityEngine;
 
 namespace Core.BotIntelligence.Memory
@@ -16,10 +17,23 @@ namespace Core.BotIntelligence.Memory
         public CentralBuilding IdleCentral { get; set; }
     }
 
-    class AttackFastMemory
+    abstract class TargetLockFastMemory
+    {
+        public RtsGameObject Target { get; set; }
+        
+        public abstract Vector2 SearchOrigin { get; }
+    }
+
+    class AttackFastMemory : TargetLockFastMemory
     {
         public WarriorUnit Warrior { get; set; }
-        public RtsGameObject Target { get; set; }
+        public override Vector2 SearchOrigin => Warrior.Position;
+    }
+
+    class SiedgeFastMemory : TargetLockFastMemory
+    {
+        public Artillery Artillery { get; set; }
+        public override Vector2 SearchOrigin => Artillery.Position;
     }
 
     class WarriorOrderingFastMemory

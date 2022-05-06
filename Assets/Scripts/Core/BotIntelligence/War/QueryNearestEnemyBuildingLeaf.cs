@@ -8,13 +8,13 @@ using UnityEngine;
 
 namespace Core.BotIntelligence.War
 {
-    class QueryNearestEnemyLeaf : IBTreeLeaf
+    class QueryNearestEnemyBuildingLeaf : IBTreeLeaf
     {
         private readonly Game mGame;
         private readonly IPlayerState mPlayer;
         private readonly TargetLockFastMemory mFastMemory;
 
-        public QueryNearestEnemyLeaf(Game game, IPlayerState player, TargetLockFastMemory fastMemory)
+        public QueryNearestEnemyBuildingLeaf(Game game, IPlayerState player, TargetLockFastMemory fastMemory)
         {
             mGame = game;
             mPlayer = player;
@@ -25,7 +25,7 @@ namespace Core.BotIntelligence.War
         {
             mFastMemory.Target = mGame.GetPlayers()
                 .Where(p => p.Team != mPlayer.Team)
-                .SelectMany(mGame.RequestPlayerObjects<RtsGameObject>)
+                .SelectMany(mGame.RequestPlayerObjects<Building>)
                 .OrderBy(o => Vector2.Distance(o.Position, mFastMemory.SearchOrigin))
                 .FirstOrDefault();
 

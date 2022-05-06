@@ -74,7 +74,7 @@ namespace Core.BotIntelligence
                     .Success(b2 => b2
                         .Sequence(b4 => b4
                             .Invert(b5 => b5
-                                .Leaf(new CheckFreeIncomeLeaf(mMemory, _ => 10))//???
+                                .Leaf(new CheckFreeIncomeLeaf(mMemory, m => m.MaxSingleOutcome))
                             )
                             .Leaf(new CheckFreeMoneyLeaf(this, Worker.MiningCampCost))
                             .Leaf(new QueryFreeWorkerLeaf(mMemory, buildCampFM))
@@ -103,18 +103,21 @@ namespace Core.BotIntelligence
                 )
                 .Build();
         }
-
+        
         private BTree BuildWarIntelligence()
         {
             var buildBarrakFM = new BuildingFastMemory();
             var rangedOrderFM = new WarriorOrderingFastMemory();
             var meleeOrderFM = new WarriorOrderingFastMemory();
+            var artilleryOrderFM = new WarriorOrderingFastMemory();
             var attackFM = new AttackFastMemory();
+            var siedgeFM = new SiedgeFastMemory();
+            var armyRelation = new LimitRelation(2, 2, 1);
             return BTree.Create(WarIntelligenceTag)
                 .Sequence(b => b
                     .Success(b2 => b2
                         .Sequence(b3 => b3
-                            .Leaf(new CheckCountLessLeaf(mMemory, m => m.MeeleeWarriors.Count, m => m.RangedWarriors.Count))
+                            .Leaf(new CheckCountLessLeaf(mMemory, m => Mathf.CeilToInt(armyRelation.GetWarLimit(m) * armyRelation.Ranged) + 1, m => m.RangedWarriors.Count))
                             .Leaf(new CheckFreeMoneyLeaf(this, Barrak.RangedWarriorCost))
                             .Leaf(new CheckFreeLimitLeaf(this))
                             .Leaf(new QueryIdleBarrakLeaf(mMemory, rangedOrderFM))
@@ -123,7 +126,7 @@ namespace Core.BotIntelligence
                     )
                     .Success(b2 => b2
                         .Sequence(b3 => b3
-                            .Leaf(new CheckCountLessLeaf(mMemory, m => m.RangedWarriors.Count + 1, m => m.MeeleeWarriors.Count))
+                            .Leaf(new CheckCountLessLeaf(mMemory, m => Mathf.CeilToInt(armyRelation.GetWarLimit(m) * armyRelation.Melee), m => m.MeeleeWarriors.Count))
                             .Leaf(new CheckFreeMoneyLeaf(this, Barrak.MeleeWarriorCost))
                             .Leaf(new CheckFreeLimitLeaf(this))
                             .Leaf(new QueryIdleBarrakLeaf(mMemory, meleeOrderFM))
@@ -131,10 +134,26 @@ namespace Core.BotIntelligence
                         )
                     )
                     .Success(b2 => b2
+                        .Sequence(b3 => b3
+                            .Leaf(new CheckCountLessLeaf(mMemory, m => Mathf.CeilToInt(armyRelation.GetWarLimit(m) * armyRelation.Artillery), m => m.Artilleries.Count))
+                            .Leaf(new CheckFreeMoneyLeaf(this, Barrak.ArtilleryCost))
+                            .Leaf(new CheckFreeLimitLeaf(this))
+                            .Leaf(new QueryIdleBarrakLeaf(mMemory, artilleryOrderFM))
+                            .Leaf(new QueueArtilleryLeaf(artilleryOrderFM))
+                        )
+                    )
+                    .Success(b2 => b2
                         .Sequence(b3  => b3
                             .Leaf(new QueryIdleWarriorLeaf(mMemory, attackFM))
                             .Leaf(new QueryNearestEnemyLeaf(mGame, this, attackFM))
                             .Leaf(new AttackTargetLeaf(attackFM))
+                        )
+                    )
+                    .Success(b2 => b2
+                        .Sequence(b3  => b3
+                            .Leaf(new QueryIdleArtilleryLeaf(mMemory, siedgeFM))
+                            .Leaf(new QueryNearestEnemyBuildingLeaf(mGame, this, siedgeFM))
+                            .Leaf(new LaunchToTargetLeaf(siedgeFM))
                         )
                     )
                     .Success(b2 => b2

@@ -17,6 +17,8 @@ namespace Assets.Interaction
             instInterface.SetHealth(view.Health, view.MaxHealth);
             if (view.InfoBase is IQueueOrdersInfo orderSelected)
                 instInterface.SetProgress(orderSelected.Progress);
+            else
+                instInterface.SetProgress(0);
             instInterface.Interface = Interface;
             instInterface.Owner = view;
         }

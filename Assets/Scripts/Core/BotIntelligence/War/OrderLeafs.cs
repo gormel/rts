@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Assets.Core.BehaviorTree;
+using Assets.Core.GameObjects.Base;
 using Core.BotIntelligence.Memory;
 
 namespace Core.BotIntelligence.War
@@ -62,6 +63,21 @@ namespace Core.BotIntelligence.War
         }
     }
 
+    class QueueArtilleryLeaf : ExecuteTaskLeaf
+    {
+        private readonly WarriorOrderingFastMemory mFastMemory;
+
+        public QueueArtilleryLeaf(WarriorOrderingFastMemory fastMemory)
+        {
+            mFastMemory = fastMemory;
+        }
+
+        protected override async Task<BTreeLeafState> GetTask()
+        {
+            return await mFastMemory.IdleBarrak.QueueArtillery() ? BTreeLeafState.Successed : BTreeLeafState.Failed;
+        }
+    }
+
     class AttackTargetLeaf : ExecuteTaskLeaf
     {
         private readonly AttackFastMemory mFastMemory;
@@ -80,6 +96,32 @@ namespace Core.BotIntelligence.War
                 return BTreeLeafState.Failed;
             
             await mFastMemory.Warrior.Attack(mFastMemory.Target.ID);
+            return BTreeLeafState.Successed;
+        }
+    }
+
+    class LaunchToTargetLeaf : ExecuteTaskLeaf
+    {
+        private readonly SiedgeFastMemory mFastMemory;
+
+        public LaunchToTargetLeaf(SiedgeFastMemory fastMemory)
+        {
+            mFastMemory = fastMemory;
+        }
+
+        protected override async Task<BTreeLeafState> GetTask()
+        {
+            if (mFastMemory.Artillery == null)
+                return BTreeLeafState.Failed;
+            
+            if (mFastMemory.Target == null)
+                return BTreeLeafState.Failed;
+
+            var position = mFastMemory.Target.Position;
+            if (mFastMemory.Target is Building building)
+                position += building.Size / 2;
+            
+            await mFastMemory.Artillery.Launch(position);
             return BTreeLeafState.Successed;
         }
     }

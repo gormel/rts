@@ -5,6 +5,8 @@ using System.Linq;
 using Assets.Core.Game;
 using Assets.Core.GameObjects.Base;
 using Assets.Core.GameObjects.Final;
+using Core.GameObjects.Final;
+using UnityEngine;
 
 namespace Core.BotIntelligence.Memory
 {
@@ -18,6 +20,7 @@ namespace Core.BotIntelligence.Memory
         public List<Barrak> Barracks { get; } = new();
         public List<MeeleeWarrior> MeeleeWarriors { get; } = new();
         public List<RangedWarrior> RangedWarriors { get; } = new();
+        public List<Artillery> Artilleries { get; } = new();
         public List<WarriorsLab> WarriorsLabs { get; } = new();
         public ConcurrentDictionary<Guid, HashSet<Guid>> TemplateAttachedBuilders { get; } = new();
         public ConcurrentDictionary<Guid, HashSet<Guid>> MiningAttachedWorkers { get; } = new();
@@ -28,7 +31,8 @@ namespace Core.BotIntelligence.Memory
             {
                 var meleeOutcome = Barrak.MeleeWarriorCost / (float)Barrak.MeeleeWarriorProductionTime.TotalSeconds;
                 var rangedOutcome = Barrak.RangedWarriorCost / (float)Barrak.RangedWarriorProductionTime.TotalSeconds;
-                return (meleeOutcome + rangedOutcome) / 2;
+                var artilleryOutcome = Barrak.ArtilleryCost / (float) Barrak.ArtilleryProductionTime.TotalSeconds * (mPlayer.ArilleryOrderAvaliable ? 1 : 0);
+                return (meleeOutcome + rangedOutcome + artilleryOutcome) / 3;
             }
         }
 
@@ -52,6 +56,8 @@ namespace Core.BotIntelligence.Memory
                 return workerOutcome;
             }
         }
+
+        public float MaxSingleOutcome => Mathf.Max(BarrackOutcome, CentralOutcome, WarriorLabOutcome);
         
         public BotMemory(BotPlayer player)
         {
@@ -85,6 +91,10 @@ namespace Core.BotIntelligence.Memory
                 case RangedWarrior rangedWarrior:
                     RangedWarriors.Add(rangedWarrior);
                     rangedWarrior.RemovedFromGame += o => RangedWarriors.Remove(rangedWarrior);
+                    break;
+                case Artillery artillery:
+                    Artilleries.Add(artillery);
+                    artillery.RemovedFromGame += o => Artilleries.Remove(artillery);
                     break;
                 case Barrak barrak:
                     Barracks.Add(barrak);

@@ -24,6 +24,8 @@ namespace Assets.Interaction
             IconNameHealth.SetHealth(selected.Health, selected.MaxHealth);
             if (selected.InfoBase is IQueueOrdersInfo orderSelected)
                 IconNameHealth.SetProgress(orderSelected.Progress);
+            else
+            IconNameHealth.SetProgress(0);
             IconNameHealth.Interface = Interface;
             IconNameHealth.Owner = selected;
         }
