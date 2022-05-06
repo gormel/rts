@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Assets.Core.GameObjects;
 using Assets.Core.GameObjects.Base;
+using Assets.Core.GameObjects.Final;
 using Assets.Core.Map;
 using Core.BotIntelligence;
 using Core.GameObjects.Final;
@@ -187,17 +188,23 @@ namespace Assets.Core.Game
 
         public IEnumerable<RtsGameObject> QueryObjects(Vector2 position, float radius)
         {
-            foreach (var gameObject in mGameObjects.Values.ToList())
+            foreach (var gameObject in mGameObjects.Values)
             {
+                if (!gameObject.IsInGame)
+                    continue;
+                
+                if (gameObject is Worker { IsAttachedToMiningCamp: true })
+                    continue;
+                
                 if (Vector2.Distance(position, gameObject.Position) < radius)
                 {
                     yield return gameObject;
                     continue;
                 }
 
-                if (gameObject is Building)
+                if (gameObject is Building building)
                 {
-                    var rect = new Rect(gameObject.Position, ((Building) gameObject).Size);
+                    var rect = new Rect(building.Position, building.Size);
                     var test = position;
 
                     if (position.x < rect.min.x)
@@ -212,7 +219,7 @@ namespace Assets.Core.Game
 
                     if (Vector2.Distance(test, position) < radius)
                     {
-                        yield return gameObject;
+                        yield return building;
                     }
                 }
             }
@@ -220,6 +227,9 @@ namespace Assets.Core.Game
 
         public bool GetIsAreaFree(Vector2 position, Vector2 size)
         {
+            if (!Map.Data.GetIsAreaFree(position, size))
+                return false;
+            
             var rect = new Rect(position, size);
             foreach (var gameObject in mGameObjects.Values)
             {
@@ -233,7 +243,7 @@ namespace Assets.Core.Game
                 }
             }
 
-            return Map.Data.GetIsAreaFree(position, size);
+            return true;
         }
     }
 }
