@@ -29,7 +29,7 @@ namespace Assets.Views
             
             WaypointLine.gameObject.SetActive(IsSelected && OwnershipRelation == ObjectOwnershipRelation.My);
 
-            WaypointLine.SetPosition(0, Map.GetWorldPosition(Info.Position + Info.Size / 2));
+            WaypointLine.SetPosition(0, Map.GetWorldPosition(PositionUtils.PositionOf(Info)));
             WaypointLine.SetPosition(1, Map.GetWorldPosition(Info.Waypoint));
         }
 

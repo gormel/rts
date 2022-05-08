@@ -120,7 +120,7 @@ namespace Assets.Core.GameObjects.Final
                     return BTreeLeafState.Successed;
 
                 mWorker.IsAttachedToMiningCamp = true;
-                mWorker.PathFinder.Teleport(mCamp.Position + mCamp.Size / 2, mMapData);
+                mWorker.PathFinder.Teleport(PositionUtils.PositionOf(mCamp), mMapData);
                 return BTreeLeafState.Processing;
             }
         }
@@ -192,7 +192,7 @@ namespace Assets.Core.GameObjects.Final
 
         public async Task<Guid> PlaceCentralBuildingTemplate(Vector2Int position)
         {
-            if (!Game.GetIsAreaFree(position, CentralBuilding.BuildingSize))
+            if (!Game.GetIsAreaFreeNoAlloc(position, CentralBuilding.BuildingSize))
                 return Guid.Empty;
 
             if (!Player.Money.Spend(CentralBuildingCost))
@@ -214,7 +214,7 @@ namespace Assets.Core.GameObjects.Final
 
         public async Task<Guid> PlaceMiningCampTemplate(Vector2Int position)
         {
-            if (!Game.GetIsAreaFree(position, MiningCamp.BuildingSize))
+            if (!Game.GetIsAreaFreeNoAlloc(position, MiningCamp.BuildingSize))
                 return Guid.Empty;
 
             if (!MiningCamp.CheckPlaceAllowed(Game.Map.Data, position))
@@ -239,7 +239,7 @@ namespace Assets.Core.GameObjects.Final
 
         public async Task<Guid> PlaceBarrakTemplate(Vector2Int position)
         {
-            if (!Game.GetIsAreaFree(position, Barrak.BuildingSize))
+            if (!Game.GetIsAreaFreeNoAlloc(position, Barrak.BuildingSize))
                 return Guid.Empty;
 
             if (!Player.Money.Spend(BarrakCost))
@@ -261,7 +261,7 @@ namespace Assets.Core.GameObjects.Final
 
         public async Task<Guid> PlaceTurretTemplate(Vector2Int position)
         {
-            if (!Game.GetIsAreaFree(position, Turret.BuildingSize))
+            if (!Game.GetIsAreaFreeNoAlloc(position, Turret.BuildingSize))
                 return Guid.Empty;
             
             if (!Player.TurretBuildingAvaliable)
@@ -286,7 +286,7 @@ namespace Assets.Core.GameObjects.Final
 
         public async Task<Guid> PlaceBuildersLabTemplate(Vector2Int position)
         {
-            if (!Game.GetIsAreaFree(position, BuildersLab.BuildingSize))
+            if (!Game.GetIsAreaFreeNoAlloc(position, BuildersLab.BuildingSize))
                 return Guid.Empty;
 
             if (!Player.Money.Spend(BuildersLabCost))
@@ -308,7 +308,7 @@ namespace Assets.Core.GameObjects.Final
 
         public async Task<Guid> PlaceWarriorsLabTemplate(Vector2Int position)
         {
-            if (!Game.GetIsAreaFree(position, WarriorsLab.BuildingSize))
+            if (!Game.GetIsAreaFreeNoAlloc(position, WarriorsLab.BuildingSize))
                 return Guid.Empty;
             
             if (!Player.WarriorsLabBuildingAvaliable)
@@ -342,7 +342,7 @@ namespace Assets.Core.GameObjects.Final
                 b => b
                     .Sequence(b1 => b1
                         .Leaf(new GoToTargetLeaf(PathFinder, point.Position, Game.Map.Data))
-                        .Leaf(new RotateToLeaf(PathFinder, template.Position + template.Size / 2, Game.Map.Data))
+                        .Leaf(new RotateToLeaf(PathFinder, PositionUtils.PositionOf(template), Game.Map.Data))
                         .Success(b2 => b2.Leaf(new BuildLeaf(this, template)))
                         .Leaf(new StopBuildLeaf(this, template))
                         .Leaf(new FreePlacementPointLeaf(point, template.PlacementService))), 

@@ -12,7 +12,7 @@ namespace Assets.Views.Utils
     {
         void Update()
         {
-            transform.rotation = Quaternion.identity;
+            transform.rotation = Quaternion.LookRotation(transform.forward, Vector3.up);
         }
     }
 }

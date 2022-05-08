@@ -1,4 +1,5 @@
 ﻿using Assets.Core.GameObjects.Final;
+using Assets.Core.GameObjects.Utils;
 using Assets.Views.Base;
 using UnityEngine;
 
@@ -18,7 +19,7 @@ namespace Assets.Views
         {
             base.Update();
 
-            var localDirection = Info.Direction - Info.Position - Info.Size / 2;
+            var localDirection = Info.Direction - PositionUtils.PositionOf(Info);
             RotationTarget.transform.localEulerAngles = new Vector3(0, Mathf.Rad2Deg * Mathf.Atan2(localDirection.x, localDirection.y), 0);
 
             if (Info.IsAttacks)

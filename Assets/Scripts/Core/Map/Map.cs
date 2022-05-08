@@ -15,6 +15,8 @@ namespace Assets.Core.Map
         public int Width => Data.Width;
         public int Length => Data.Length;
 
+        public Vector2 StartCorner => new(0, 0);
+
         public IMapData Data { get; }
 
         private const int MountainCount = 20;

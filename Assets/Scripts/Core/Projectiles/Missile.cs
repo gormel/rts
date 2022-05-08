@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Assets.Core.Game;
+using Assets.Core.GameObjects.Base;
 using UnityEngine;
 
 namespace Core.Projectiles
@@ -11,6 +13,8 @@ namespace Core.Projectiles
         private readonly Game mGame;
         private readonly float mDamage;
         private readonly Vector2 mExplodePosition;
+
+        private List<RtsGameObject> mQueried = new();
 
         public Missile(float speed, float pathLenght, float explodeRadius, Game game, float damage, Vector2 explodePosition)
             : base(speed, pathLenght)
@@ -23,11 +27,12 @@ namespace Core.Projectiles
 
         protected override void OnComplete()
         {
-            var queried = mGame.QueryObjects(mExplodePosition, mExplodeRadius).ToList();
-            foreach (var obj in queried)
+            mQueried.Clear();
+            mGame.QueryObjectsNoAlloc(mExplodePosition, mExplodeRadius, mQueried);
+            foreach (var obj in mQueried)
                 obj.RecivedDamage += Math.Max(1, mDamage - obj.Armour);
 
-            foreach (var obj in queried)
+            foreach (var obj in mQueried)
                 if (obj.RecivedDamage > obj.MaxHealth)
                     mGame.RemoveObject(obj.ID);
         }

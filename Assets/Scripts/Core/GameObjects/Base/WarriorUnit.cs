@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Assets.Core.BehaviorTree;
@@ -143,6 +144,8 @@ namespace Assets.Core.GameObjects.Base
             private readonly WarriorUnit mUnit;
             private readonly TargetStorage mTargetStorage;
 
+            private List<RtsGameObject> mQueried = new();
+
             public QueryEnemyLeaf(Game.Game game, WarriorUnit unit, TargetStorage targetStorage)
             {
                 mGame = game;
@@ -152,8 +155,9 @@ namespace Assets.Core.GameObjects.Base
             
             public BTreeLeafState Update(TimeSpan deltaTime)
             {
-                mTargetStorage.Target = mUnit.Game.QueryObjects(mUnit.Position, mUnit.AttackRange)
-                    .OrderBy(go => go.MaxHealth)
+                mQueried.Clear();
+                mUnit.Game.QueryObjectsNoAlloc(mUnit.Position, mUnit.AttackRange, mQueried);
+                mTargetStorage.Target = mQueried.OrderBy(go => go.MaxHealth)
                     .ThenBy(go => Vector2.Distance(mUnit.Position, PositionUtils.PositionOf(go)))
                     .FirstOrDefault(go => mGame.GetPlayer(go.PlayerID).Team != mUnit.Player.Team);
 

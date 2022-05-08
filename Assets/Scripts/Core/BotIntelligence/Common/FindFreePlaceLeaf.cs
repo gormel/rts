@@ -58,7 +58,7 @@ namespace Core.BotIntelligence.Common
         }
 
         protected virtual bool CheckPosition(Vector2Int position)
-            => mGame.GetIsAreaFree(position - new Vector2(mBorder, mBorder), mBuildingSize + new Vector2(mBorder, mBorder) * 2);
+            => mGame.GetIsAreaFreeNoAlloc(position - new Vector2(mBorder, mBorder), mBuildingSize + new Vector2(mBorder, mBorder) * 2);
 
         public BTreeLeafState Update(TimeSpan deltaTime)
         {

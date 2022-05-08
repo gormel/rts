@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Assets.Core.BehaviorTree;
 using Assets.Core.GameObjects.Base;
+using Assets.Core.GameObjects.Utils;
 using Core.BotIntelligence.Memory;
 
 namespace Core.BotIntelligence.War
@@ -117,9 +118,7 @@ namespace Core.BotIntelligence.War
             if (mFastMemory.Target == null)
                 return BTreeLeafState.Failed;
 
-            var position = mFastMemory.Target.Position;
-            if (mFastMemory.Target is Building building)
-                position += building.Size / 2;
+            var position = PositionUtils.PositionOf(mFastMemory.Target);
             
             await mFastMemory.Artillery.Launch(position);
             return BTreeLeafState.Successed;

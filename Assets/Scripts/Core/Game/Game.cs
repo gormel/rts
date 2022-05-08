@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Assets.Core.GameObjects;
 using Assets.Core.GameObjects.Base;
 using Assets.Core.GameObjects.Final;
+using Assets.Core.GameObjects.Utils;
 using Assets.Core.Map;
 using Core.BotIntelligence;
 using Core.GameObjects.Final;
@@ -33,9 +34,12 @@ namespace Assets.Core.Game
 
         private State mGameState = State.Loading;
 
+        private RtsQuadTree mQuadTree;
+
         public Game()
         {
             Map = new Map.Map(70, 70);
+            mQuadTree = new RtsQuadTree(5, Map.StartCorner, new Vector2(Map.Width, Map.Length));
         }
 
         public void Start()
@@ -152,8 +156,16 @@ namespace Assets.Core.Game
                 return;
 #endif
 
+            PositionUtils.Overlapses = 0;
+            int cnt = 0;
             foreach (var o in Filter(mGameObjects.Values))
+            {
+                cnt++;
                 o.Update(elapsed);
+                mQuadTree.Remove(o);
+                mQuadTree.Add(o);
+            }
+            Debug.Log($"calls: {PositionUtils.Overlapses} objs: {cnt}");
 
             foreach (var projectile in mProjectiles)
                 projectile.Update(elapsed);
@@ -186,64 +198,17 @@ namespace Assets.Core.Game
             }
         }
 
-        public IEnumerable<RtsGameObject> QueryObjects(Vector2 position, float radius)
+        public void QueryObjectsNoAlloc(Vector2 position, float radius, ICollection<RtsGameObject> result)
         {
-            foreach (var gameObject in mGameObjects.Values)
-            {
-                if (!gameObject.IsInGame)
-                    continue;
-                
-                if (gameObject is Worker { IsAttachedToMiningCamp: true })
-                    continue;
-                
-                if (Vector2.Distance(position, gameObject.Position) < radius)
-                {
-                    yield return gameObject;
-                    continue;
-                }
-
-                if (gameObject is Building building)
-                {
-                    var rect = new Rect(building.Position, building.Size);
-                    var test = position;
-
-                    if (position.x < rect.min.x)
-                        test.x = rect.min.x;
-                    else if (position.x > rect.max.x)
-                        test.x = rect.max.x;
-                    if (position.y < rect.min.y)
-                        test.y = rect.min.y;
-                    else if (position.y > rect.max.y)
-                        test.y = rect.max.y;
-
-
-                    if (Vector2.Distance(test, position) < radius)
-                    {
-                        yield return building;
-                    }
-                }
-            }
+            mQuadTree.QueryNoAlloc(position, radius, result);
         }
 
-        public bool GetIsAreaFree(Vector2 position, Vector2 size)
+        public bool GetIsAreaFreeNoAlloc(Vector2 position, Vector2 size)
         {
             if (!Map.Data.GetIsAreaFree(position, size))
                 return false;
-            
-            var rect = new Rect(position, size);
-            foreach (var gameObject in mGameObjects.Values)
-            {
-                if (rect.Contains(gameObject.Position))
-                    return false;
 
-                if (gameObject is Building building)
-                {
-                    if (rect.Overlaps(new Rect(gameObject.Position, building.Size)))
-                        return false;
-                }
-            }
-
-            return true;
+            return !mQuadTree.Any(new Rect(position, size));
         }
     }
 }

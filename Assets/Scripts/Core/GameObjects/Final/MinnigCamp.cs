@@ -40,6 +40,7 @@ namespace Assets.Core.GameObjects.Final
 
         private double mMinedTemp;
         private int mMinedTotal;
+        private List<RtsGameObject> mQueriedWorkers;
 
         private Stack<Worker> mWorkers = new Stack<Worker>();
         private List<Worker> mOrderedToWork = new List<Worker>();
@@ -140,7 +141,9 @@ namespace Assets.Core.GameObjects.Final
             mOrderedToWork.RemoveAll(w =>
                 w.IntelligenceTag != Worker.MiningIntelligenceTag || w.IsAttachedToMiningCamp);
 
-            var found = mGame.QueryObjects(Position + Size / 2, ViewRadius * 2)
+            mQueriedWorkers.Clear();
+            mGame.QueryObjectsNoAlloc(PositionUtils.PositionOf(this), ViewRadius * 2, mQueriedWorkers);
+            var found = mQueriedWorkers
                 .OfType<Worker>().Where(w => w.IntelligenceTag == Unit.IdleIntelligenceTag && !mOrderedToWork.Contains(w))
                 .Take(4 - WorkerCount - mOrderedToWork.Count).ToList();
             
