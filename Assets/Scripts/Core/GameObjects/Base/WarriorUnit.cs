@@ -225,8 +225,8 @@ namespace Assets.Core.GameObjects.Base
             }
         }
 
-        private IBTreeBuilder mAgressiveIntelligence;
-        private IBTreeBuilder mDefenciveIntelligence;
+        private BTree mAgressiveIntelligence;
+        private BTree mDefenciveIntelligence;
 
         public const string AggressiveIdleIntelligenceTag = "AggressiveIdle";
         public const string DefenciveIdleIntelligenceTag = "DefenciveIdel";
@@ -256,7 +256,7 @@ namespace Assets.Core.GameObjects.Base
             base.OnAddedToGame();
         }
 
-        protected override IBTreeBuilder GetDefaultIntelligence()
+        protected override BTree GetDefaultIntelligence()
         {
             if (Strategy == Strategy.Aggressive)
                 return mAgressiveIntelligence;
@@ -266,7 +266,7 @@ namespace Assets.Core.GameObjects.Base
             
             return base.GetDefaultIntelligence();
         }
-        private IBTreeBuilder CreateAggressiveIntelligence()
+        private BTree CreateAggressiveIntelligence()
         {
             var storage = new TargetStorage();
             return WrapCancellation(
@@ -280,26 +280,26 @@ namespace Assets.Core.GameObjects.Base
                     .Leaf(new CancelGotoLeaf(PathFinder))
                     .Leaf(new CancelKillLeaf(this)),
                 AggressiveIdleIntelligenceTag
-                );
+                ).Build();
         }
 
-        private IBTreeBuilder CreateDefenciveIntelligence()
+        private BTree CreateDefenciveIntelligence()
         {
             var storage = new TargetStorage();
             return WrapCancellation(
                 b => b.Success(b1 => b1
-                        .Selector(b2 => b2
-                            .Sequence(b3 => b3
-                                .Selector(b4 => b4
-                                    .Leaf(new CheckDistanceLeaf(this, storage))
-                                    .Leaf(new QueryEnemyLeaf(Game, this, storage)))
-                                .Leaf(new KillTargetLeaf(this, storage)))
-                            .Leaf(new CancelKillLeaf(this)))),
+                    .Selector(b2 => b2
+                        .Sequence(b3 => b3
+                            .Selector(b4 => b4
+                                .Leaf(new CheckDistanceLeaf(this, storage))
+                                .Leaf(new QueryEnemyLeaf(Game, this, storage)))
+                            .Leaf(new KillTargetLeaf(this, storage)))
+                        .Leaf(new CancelKillLeaf(this)))),
                 b => b
                     .Leaf(new ClearTargetLeaf(storage))
                     .Leaf(new CancelKillLeaf(this)),
                 DefenciveIdleIntelligenceTag
-                );
+            ).Build();
         }
 
         private IBTreeBuilder CreateFollowAndKillIntelligence(IBTreeBuilder parent, TargetStorage targetStorage)
