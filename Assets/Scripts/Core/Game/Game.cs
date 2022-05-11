@@ -34,17 +34,21 @@ namespace Assets.Core.Game
 
         private State mGameState = State.Loading;
 
-        private RtsQuadTree mQuadTree;
+        private Dictionary<int, RtsQuadTree> mQuadTrees = new();
 
         public Game()
         {
             Map = new Map.Map(70, 70);
-            mQuadTree = new RtsQuadTree(30, Map.StartCorner, new Vector2(Map.Width, Map.Length));
         }
 
         public void Start()
         {
             mGameState = State.InProgress;
+            var teams = GetPlayers().Select(p => p.Team).Distinct();
+            foreach (var team in teams)
+            {
+                mQuadTrees[team] = new RtsQuadTree(20, Map.StartCorner, new Vector2(Map.Width, Map.Length));
+            }
         }
 
         public Task<Guid> PlaceObject(RtsGameObject obj)
@@ -97,11 +101,21 @@ namespace Assets.Core.Game
             });
         }
 
-        public void AddBotPlayer(BotPlayer bot) =>
+        public void AddBotPlayer(BotPlayer bot)
+        {
+            if (mGameState != State.Loading)
+                throw new Exception("Game is not loading.");
+            
             mBotPlayers.Add(bot.ID, bot);
+        }
 
-        public void AddPlayer(Player player) =>
+        public void AddPlayer(Player player)
+        {
+            if (mGameState != State.Loading)
+                throw new Exception("Game is not loading.");
+
             mPlayers.Add(player.ID, player);
+        }
 
         public Player GetPlayer(Guid playerId)
         {
@@ -159,8 +173,10 @@ namespace Assets.Core.Game
             foreach (var o in Filter(mGameObjects.Values))
             {
                 o.Update(elapsed);
-                mQuadTree.Remove(o);
-                mQuadTree.Add(o);
+
+                var team = GetPlayer(o.PlayerID).Team;
+                mQuadTrees[team].Remove(o);
+                mQuadTrees[team].Add(o);
             }
 
             foreach (var projectile in mProjectiles)
@@ -196,7 +212,19 @@ namespace Assets.Core.Game
 
         public void QueryObjectsNoAlloc(Vector2 position, float radius, ICollection<RtsGameObject> result)
         {
-            mQuadTree.QueryNoAlloc(position, radius, result);
+            foreach (var quadTree in mQuadTrees) 
+                quadTree.Value.QueryNoAlloc(position, radius, result);
+        }
+
+        public void QueryEnemyObjectsNoAlloc(Vector2 position, float radius, int team, ICollection<RtsGameObject> result)
+        {
+            foreach (var quadTree in mQuadTrees)
+            {
+                if (quadTree.Key == team)
+                    continue;
+                
+                quadTree.Value.QueryNoAlloc(position, radius, result);
+            }
         }
 
         public bool GetIsAreaFreeNoAlloc(Vector2 position, Vector2 size)
@@ -204,7 +232,12 @@ namespace Assets.Core.Game
             if (!Map.Data.GetIsAreaFree(position, size))
                 return false;
 
-            return !mQuadTree.Any(new Rect(position, size));
+            var box = new Rect(position, size);
+            foreach (var quadTree in mQuadTrees)
+                if (quadTree.Value.Any(box))
+                    return false;
+
+            return true;
         }
     }
 }

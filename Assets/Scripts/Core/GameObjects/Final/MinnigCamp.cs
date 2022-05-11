@@ -143,8 +143,9 @@ namespace Assets.Core.GameObjects.Final
 
             mQueriedWorkers.Clear();
             mGame.QueryObjectsNoAlloc(PositionUtils.PositionOf(this), ViewRadius * 2, mQueriedWorkers);
-            var found = mQueriedWorkers
-                .OfType<Worker>().Where(w => w.IntelligenceTag == Unit.IdleIntelligenceTag && !mOrderedToWork.Contains(w))
+            var found = mQueriedWorkers.OfType<Worker>()
+                .Where(w => w.PlayerID == PlayerID)
+                .Where(w => w.IntelligenceTag == Unit.IdleIntelligenceTag && !mOrderedToWork.Contains(w))
                 .Take(4 - WorkerCount - mOrderedToWork.Count).ToList();
             
             mOrderedToWork.AddRange(found);

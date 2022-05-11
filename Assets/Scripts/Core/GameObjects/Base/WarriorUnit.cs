@@ -156,10 +156,10 @@ namespace Assets.Core.GameObjects.Base
             public BTreeLeafState Update(TimeSpan deltaTime)
             {
                 mQueried.Clear();
-                mUnit.Game.QueryObjectsNoAlloc(mUnit.Position, mUnit.AttackRange, mQueried);
+                mUnit.Game.QueryEnemyObjectsNoAlloc(mUnit.Position, mUnit.AttackRange, mUnit.Player.Team, mQueried);
                 mTargetStorage.Target = mQueried.OrderBy(go => go.MaxHealth)
                     .ThenBy(go => Vector2.Distance(mUnit.Position, PositionUtils.PositionOf(go)))
-                    .FirstOrDefault(go => mGame.GetPlayer(go.PlayerID).Team != mUnit.Player.Team);
+                    .FirstOrDefault();
 
                 return mTargetStorage.Target == null ? BTreeLeafState.Failed : BTreeLeafState.Successed;
             }

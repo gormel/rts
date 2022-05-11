@@ -545,6 +545,8 @@ class Root : MonoBehaviour
 
     public void Close()
     {
+        GameUtils.RegistredPlayers.Clear();
+        GameUtils.BotPlayers.Clear();
         SceneManager.LoadScene("Start");
     }
 

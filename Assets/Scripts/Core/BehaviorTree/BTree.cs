@@ -49,15 +49,15 @@ namespace Assets.Core.BehaviorTree
 
             public Node(Node[] children)
             {
-                Children = children ?? new Node[0];
+                Children = children ?? Array.Empty<Node>();
             }
 
             public abstract BTreeLeafState Update(TimeSpan deltaTime);
         }
 
-        private class SquenceNode : Node
+        private class SequenceNode : Node
         {
-            public SquenceNode(Node[] children)
+            public SequenceNode(Node[] children)
                 : base(children)
             {
             }
@@ -180,7 +180,7 @@ namespace Assets.Core.BehaviorTree
             public IBTreeBuilder Sequence(Func<IBTreeBuilder, IBTreeBuilder> children)
             {
                 var childrenBuilder = new Builder(null, null, mTag);
-                return new Builder(this, () => new SquenceNode((children(childrenBuilder) as Builder)?.BuildInner()?.ToArray()), mTag);
+                return new Builder(this, () => new SequenceNode((children(childrenBuilder) as Builder)?.BuildInner()?.ToArray()), mTag);
             }
 
             public IBTreeBuilder Selector(Func<IBTreeBuilder, IBTreeBuilder> children)
