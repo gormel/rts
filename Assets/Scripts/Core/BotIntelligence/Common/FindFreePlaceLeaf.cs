@@ -19,6 +19,8 @@ namespace Core.BotIntelligence.Common
         private readonly int mBorder;
         private readonly List<Vector2Int> mFoundPlaces = new();
 
+        private int mQuadScale = 1;
+
         public FindFreePlaceLeaf(Game game, IMapData mapdata, BuildingFastMemory fastMemory, Vector2 buildingSize, int border)
         {
             mGame = game;
@@ -67,16 +69,19 @@ namespace Core.BotIntelligence.Common
             
             var workerPos = mFastMemory.FreeWorker.Position;
             var areaCenter = new Vector2Int(Mathf.FloorToInt(workerPos.x), Mathf.FloorToInt(workerPos.y));
-            for (int i = 1; i < 5; i++)
+            var area = GetSearchArea(areaCenter, mQuadScale * 5);
+            if (TryFindPlace(area, out var foundPosition))
             {
-                var area = GetSearchArea(areaCenter, 5 * i);
-                if (TryFindPlace(area, out var foundPosition))
-                {
-                    mFastMemory.Place = foundPosition;
-                    return BTreeLeafState.Successed;
-                }
+                mFastMemory.Place = foundPosition;
+                mQuadScale = 1;
+                return BTreeLeafState.Successed;
             }
-            return BTreeLeafState.Failed;
+
+            mQuadScale++;
+            if (mQuadScale >= 5)
+                return BTreeLeafState.Failed;
+                
+            return BTreeLeafState.Processing;
         }
     }
 

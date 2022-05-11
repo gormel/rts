@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Assets.Core.GameObjects.Base;
 using Assets.Core.GameObjects.Utils;
 using UnityEngine;
@@ -45,6 +46,7 @@ namespace Assets.Core.Game
 
         private Node mRoot;
         private Dictionary<Guid, List<Node>> mContainingNodes = new();
+        private Stack<Node> mQueryNodes = new();
 
         public RtsQuadTree(int chunkSize, Vector2 initPosition, Vector2 initSize)
         {
@@ -63,9 +65,12 @@ namespace Assets.Core.Game
         {
             if (!mContainingNodes.TryGetValue(obj.ID, out var nodes))
                 return;
-            
-            foreach (var node in nodes) 
+
+            for (var index = 0; index < nodes.Count; index++)
+            {
+                var node = nodes[index];
                 node.Objects.Remove(obj);
+            }
 
             mContainingNodes.Remove(obj.ID);
         }
@@ -77,48 +82,56 @@ namespace Assets.Core.Game
 
         public bool Any(Rect box)
         {
-            return Any(box, mRoot);
+            mQueryNodes.Clear();
+            mQueryNodes.Push(mRoot);
+
+            while (mQueryNodes.Count > 0)
+            {
+                var root = mQueryNodes.Pop();
+                
+                if (root == null || !box.Overlaps(root.Rect))
+                    continue;
+
+                for (var index = 0; index < root.Objects.Count; index++)
+                {
+                    var gameObject = root.Objects[index];
+                    if (gameObject.Overlaps(box))
+                        return true;
+                }
+                
+                mQueryNodes.Push(root.LeftUp);
+                mQueryNodes.Push(root.RightUp);
+                mQueryNodes.Push(root.LeftDown);
+                mQueryNodes.Push(root.RightDown);
+            }
+
+            return false;
         }
 
-        private bool Any(Rect box, Node root)
-        {
-            if (root == null || !box.Overlaps(root.Rect))
-                return false;
-
-            foreach (var gameObject in root.Objects)
-                if (gameObject.Overlaps(box))
-                    return true;
-
-            return Any(box, root.LeftUp) || 
-                   Any(box, root.RightUp) || 
-                   Any(box, root.LeftDown) || 
-                   Any(box, root.RightDown);
-        }
-
-        private void Query(Vector2 center, float radius, Node root, ICollection<RtsGameObject> result)
-        {
-            if (root == null || !Overlaps(root.Rect, center, radius))
-                return;
-
-            foreach (var gameObject in root.Objects)
-                if (gameObject.Overlaps(center, radius))
-                    result.Add(gameObject);
-
-            Query(center, radius, root.LeftUp, result);
-            Query(center, radius, root.RightUp, result);
-            Query(center, radius, root.LeftDown, result);
-            Query(center, radius, root.RightDown, result);
-        }
-        
-        
         public void QueryNoAlloc(Vector2 center, float radius, ICollection<RtsGameObject> result)
         {
-            Query(center, radius, mRoot, result);
-        }
+            mQueryNodes.Clear();
+            mQueryNodes.Push(mRoot);
 
-        private bool Overlaps(Rect rect, Vector2 center, float radius)
-        {
-            return rect.DistanceTo(center) <= radius;
+            while (mQueryNodes.Count > 0)
+            {
+                var root = mQueryNodes.Pop();
+                
+                if (root == null || PositionUtils.DistanceTo(root.Rect.center, root.Rect.size, center) > radius)
+                    continue;
+                
+                for (var index = 0; index < root.Objects.Count; index++)
+                {
+                    var gameObject = root.Objects[index];
+                    if (gameObject.Overlaps(center, radius))
+                        result.Add(gameObject);
+                }
+                
+                mQueryNodes.Push(root.LeftUp);
+                mQueryNodes.Push(root.RightUp);
+                mQueryNodes.Push(root.LeftDown);
+                mQueryNodes.Push(root.RightDown);
+            }
         }
 
         private void Add(Node root, RtsGameObject obj)

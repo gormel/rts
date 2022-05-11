@@ -182,7 +182,7 @@ namespace Assets.Core.GameObjects.Base
         private readonly CommandCancellation mCancellation = new CommandCancellation();
         private BTree mIntelligence;
 
-        private readonly IBTreeBuilder mDefaultIntelligence;
+        private readonly BTree mDefaultIntelligence;
 
         public sealed override float MaxHealth => MaxHealthBase;
         
@@ -193,10 +193,10 @@ namespace Assets.Core.GameObjects.Base
             Destignation = Position = position;
             Game = game;
             PathFinder = pathFinder;
-            mIntelligence = (mDefaultIntelligence = WrapCancellation(b => b, b => b, IdleIntelligenceTag)).Build();
+            mIntelligence = mDefaultIntelligence = WrapCancellation(b => b, b => b, IdleIntelligenceTag).Build();
         }
         
-        protected virtual IBTreeBuilder GetDefaultIntelligence()
+        protected virtual BTree GetDefaultIntelligence()
         {
             return mDefaultIntelligence;
         }
@@ -211,7 +211,7 @@ namespace Assets.Core.GameObjects.Base
 
         protected void ApplyDefaultIntelligence()
         {
-            mIntelligence = GetDefaultIntelligence().Build();
+            mIntelligence = GetDefaultIntelligence();
         }
 
         protected IBTreeBuilder WrapCancellation(Func<IBTreeBuilder, IBTreeBuilder> createBody, Func<IBTreeBuilder, IBTreeBuilder> createCancel, string tag)

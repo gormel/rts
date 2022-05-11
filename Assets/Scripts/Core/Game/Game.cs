@@ -39,7 +39,7 @@ namespace Assets.Core.Game
         public Game()
         {
             Map = new Map.Map(70, 70);
-            mQuadTree = new RtsQuadTree(5, Map.StartCorner, new Vector2(Map.Width, Map.Length));
+            mQuadTree = new RtsQuadTree(30, Map.StartCorner, new Vector2(Map.Width, Map.Length));
         }
 
         public void Start()
@@ -156,16 +156,12 @@ namespace Assets.Core.Game
                 return;
 #endif
 
-            PositionUtils.Overlapses = 0;
-            int cnt = 0;
             foreach (var o in Filter(mGameObjects.Values))
             {
-                cnt++;
                 o.Update(elapsed);
                 mQuadTree.Remove(o);
                 mQuadTree.Add(o);
             }
-            Debug.Log($"calls: {PositionUtils.Overlapses} objs: {cnt}");
 
             foreach (var projectile in mProjectiles)
                 projectile.Update(elapsed);

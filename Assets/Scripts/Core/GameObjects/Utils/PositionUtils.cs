@@ -7,12 +7,10 @@ namespace Assets.Core.GameObjects.Utils
 {
     static class PositionUtils
     {
-        public static float DistanceTo(this Rect rect, Vector2 position)
+        public static float DistanceTo(Vector2 rectCenter, Vector2 rectSize, Vector2 position)
         {
-            var p = rect.center;
-            var s = rect.size;
-            var dx = Math.Max(Math.Abs(position.x - p.x) - s.x / 2, 0);
-            var dy = Math.Max(Math.Abs(position.y - p.y) - s.y / 2, 0);
+            var dx = Math.Max(Math.Abs(position.x - rectCenter.x) - rectSize.x / 2, 0);
+            var dy = Math.Max(Math.Abs(position.y - rectCenter.y) - rectSize.y / 2, 0);
             
             return Mathf.Sqrt(dx * dx + dy * dy);
         }
@@ -24,19 +22,17 @@ namespace Assets.Core.GameObjects.Utils
 
         public static float DistanceTo(Vector2 from, IGameObjectInfo target)
         {
-            if (target is IBuildingInfo building)
+            if (target is IBuildingInfo)
             {
-                return new Rect(building.Position, building.Size).DistanceTo(from);
+                var size = ((IBuildingInfo) target).Size;
+                return DistanceTo(target.Position + size / 2, size, from);
             }
 
             return Vector2.Distance(from, PositionOf(target));
         }
 
-        public static int Overlapses;
-
         public static bool Overlaps(this IGameObjectInfo target, Rect rect)
         {
-            Overlapses++;
             if (target is IBuildingInfo building)
                 return rect.Overlaps(new Rect(building.Position, building.Size));
 
