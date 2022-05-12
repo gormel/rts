@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using Assets.Core.Game;
 using Assets.Core.GameObjects.Base;
@@ -16,6 +17,7 @@ using Assets.Views.Utils;
 using Core.BotIntelligence;
 using Core.GameObjects.Final;
 using Core.Projectiles;
+using Interaction.Debug;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
@@ -77,12 +79,12 @@ class Root : MonoBehaviour
 
         public event Action<SelectableView> ViewCreated;
 
-        public Factory(Root root)
+        public Factory(RtsServer server, Game game, Root root)
         {
-            mServer = root.mServer;
+            mServer = server;
+            mGame = game;
             mSyncContext = root.SyncContext;
             mUpdater = root.Updater;
-            mGame = root.mGame;
             mMap = root.MapView;
             mRangedWarriorPrefab = root.RangedWarriorPrefab;
             mMeeleeWarriorPrefab = root.MeeleeWarriorPrefab;
@@ -288,7 +290,8 @@ class Root : MonoBehaviour
     public ExternalUpdater Updater;
     public GameObject PlayerScreen;
 
-    public GameObject AddResourcesButton;
+    public GameObject DebugPanelRoot;
+    public GameObject DebugPanelPrefub;
 
     public MissileSpawnerView MissileSpawner;
 
@@ -311,32 +314,32 @@ class Root : MonoBehaviour
             mServer = new RtsServer();
             MapView = CreateMap(mGame.Map.Data, true);
 
-            var enemyFactory = new Factory(this);
-            var controlledFactory = new Factory(this);
-            var allyFactory = new Factory(this);
+            var enemyFactory = new Factory(mServer, mGame, this);
+            var controlledFactory = new Factory(mServer, mGame, this);
+            var allyFactory = new Factory(mServer, mGame, this);
             allyFactory.ViewCreated += AllyFactoryOnViewCreated;
             controlledFactory.ViewCreated += ControlledFactoryOnViewCreated;
             enemyFactory.ViewCreated += EnemyFactoryOnViewCreated;
 
 #if HOST_IS_BOT
-            var player = new BotPlayer(mGame, controlledFactory, GameUtils.Team);
+            var player = new BotPlayer(mGame, GameUtils.Nickname, controlledFactory, GameUtils.Team);
             mGame.AddBotPlayer(player);
 #else
-            var player = new Player(controlledFactory, GameUtils.Team);
+            var player = new Player(GameUtils.Nickname, controlledFactory, GameUtils.Team);
             mGame.AddPlayer(player);
 #endif
             Player = player;
 
             mServer.MessageRecived += OnChatMessageRecived;
+#if DEVELOPMENT_BUILD
+            mServer.GameStarted += ServerOnGameStarted;
+#endif
 
             mServer.Listen(SyncContext, enemyFactory, allyFactory, mGame, player, GameUtils.RegistredPlayers, GameUtils.BotPlayers);
 
             var success = GameUtils.TryCreateBase(mGame, player, out var basePos);
             
             PlaceCamera(basePos);
-#if DEVELOPMENT_BUILD
-            AddResourcesButton.SetActive(true);
-#endif
         }
 
         if (GameUtils.CurrentMode == GameMode.Client)
@@ -370,6 +373,15 @@ class Root : MonoBehaviour
             mClient.Listen();
         }
     }
+
+#if DEVELOPMENT_BUILD
+    private void ServerOnGameStarted()
+    {
+        var panelInst = Instantiate(DebugPanelPrefub, DebugPanelRoot.transform, false);
+        var panel = panelInst.GetComponent<DebugPanel>();
+        panel.ApplyPlayers(mGame.GetPlayers());
+    }
+#endif
 
     private void AllyFactoryOnViewCreated(SelectableView view)
     {

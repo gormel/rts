@@ -25,8 +25,8 @@ namespace Core.BotIntelligence
         private readonly BTree mWarIntelligence;
         private readonly BTree mTechIntelligence;
         
-        public BotPlayer(Game game, IGameObjectFactory externalFactory, int team) 
-            : base(externalFactory, team)
+        public BotPlayer(Game game, string nickname, IGameObjectFactory externalFactory, int team) 
+            : base(nickname, externalFactory, team)
         {
             mGame = game;
             mMemory = new BotMemory(this);

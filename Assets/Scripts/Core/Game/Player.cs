@@ -65,13 +65,15 @@ namespace Assets.Core.Game
 
         int IPlayerState.Money => Money.Resources;
         int IPlayerState.Limit => Limit.Resources;
+        public string Nickname { get; }
         public int Team { get; }
 
         public UpgradeStorage Upgrades { get; } = new UpgradeStorage();
         
-        public Player(IGameObjectFactory externalFactory, int team)
+        public Player(string nickname, IGameObjectFactory externalFactory, int team)
         {
             mExternalFactory = externalFactory;
+            Nickname = nickname;
             Team = team;
         }
 

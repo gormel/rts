@@ -42,6 +42,7 @@ namespace Assets.Networking
         public IServerProjectileSpawner ProjectileSpawner { get; private set; }
 
         public event Action<string, int> MessageRecived;
+        public event Action GameStarted;
 
         public void Listen(UnitySyncContext syncContext, IGameObjectFactory enemyFactory,
             IGameObjectFactory allyFactory, Game game, Player hostPlayer,
@@ -49,8 +50,10 @@ namespace Assets.Networking
         {
             mServer = new Server();
             mServer.Ports.Add(new ServerPort(IPAddress.Any.ToString(), GameUtils.GamePort, ServerCredentials.Insecure));
-            mServer.Services.Add(GameService.BindService(mGameService = new GameServiceImpl(game, hostPlayer, enemyFactory, allyFactory, syncContext, registredPlayers, botPlayers)));
+            mServer.Services.Add(GameService.BindService(mGameService = new GameServiceImpl(game, hostPlayer, enemyFactory, allyFactory, syncContext, registredPlayers)));
             mGameService.MessageRecived += GameServiceOnMessageRecived;
+            mGameService.GameStarted += GameServiceOnGameStarted;
+            var t = mGameService.InitBotPlayersAndStartGame(botPlayers);
 
             var projectileService = new ProjectileServiceImpl();
             ProjectileSpawner = projectileService;
@@ -101,6 +104,11 @@ namespace Assets.Networking
             mServer.Services.Add(WarriorsLabService.BindService(warriorsLabService));
 
             mServer.Start();
+        }
+
+        private void GameServiceOnGameStarted()
+        {
+            GameStarted?.Invoke();
         }
 
         private void GameServiceOnMessageRecived(string nickname, int stickerID)
