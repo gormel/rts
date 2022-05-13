@@ -9,13 +9,13 @@ namespace Interaction.Debug
         public GameObject RowPrefub;
         public GameObject RowContainer;
 
-        public void ApplyPlayers(IEnumerable<Player> players)
+        public void ApplyPlayers(IEnumerable<Player> players, Game game)
         {
             foreach (var player in players)
             {
                 var rowInst = Instantiate(RowPrefub, RowContainer.transform, false);
                 var row = rowInst.GetComponent<DebugRow>();
-                row.AssignPlayer(player);
+                row.AssignPlayer(player, game);
             }
         }
     }

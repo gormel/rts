@@ -379,7 +379,7 @@ class Root : MonoBehaviour
     {
         var panelInst = Instantiate(DebugPanelPrefub, DebugPanelRoot.transform, false);
         var panel = panelInst.GetComponent<DebugPanel>();
-        panel.ApplyPlayers(mGame.GetPlayers());
+        panel.ApplyPlayers(mGame.GetPlayers(), mGame);
     }
 #endif
 
