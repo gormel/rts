@@ -27,7 +27,7 @@ namespace Assets.Core.Map
                 return data.GetHeightAt(left, top) * t + data.GetHeightAt(right, top) * (1 - t);
             }
 
-            if (left <= 0 || top <= 0 || right >= data.Width || bottom >= data.Length)
+            if (left < 0 || top < 0 || right >= data.Width || bottom >= data.Length)
                 return 0;
 
             var k = (float)(top - bottom) / (left - right);
