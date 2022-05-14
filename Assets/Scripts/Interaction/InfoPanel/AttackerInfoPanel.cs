@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using Assets.Core.GameObjects.Base;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,10 +10,10 @@ namespace Assets.Interaction.InfoPanel
     {
         public UserInterface Interface;
         
-        public Text AttackText;
-        public Text AttackSpeedText;
-        public Text AttackRangeText;
-        public Text ArmourText;
+        public TextMeshProUGUI AttackText;
+        public TextMeshProUGUI AttackSpeedText;
+        public TextMeshProUGUI AttackRangeText;
+        public TextMeshProUGUI ArmourText;
 
         public virtual void Update()
         {

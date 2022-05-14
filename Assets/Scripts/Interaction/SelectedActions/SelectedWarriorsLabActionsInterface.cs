@@ -1,6 +1,7 @@
 using System.Linq;
 using Assets.Core.GameObjects.Base;
 using Assets.Views;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,9 +15,9 @@ namespace Assets.Interaction
         public GameObject ArmourUpgradeButton;
         public GameObject AttackRangeUpgradeButton;
 
-        public Text DamageUpgradeCostText;
-        public Text ArmourUpgradeCostText;
-        public Text AttackRangeUpgradeCostText;
+        public TextMeshProUGUI DamageUpgradeCostText;
+        public TextMeshProUGUI ArmourUpgradeCostText;
+        public TextMeshProUGUI AttackRangeUpgradeCostText;
 
         void Update()
         {

@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using Assets.Core.GameObjects.Final;
 using Assets.Views;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,7 +11,7 @@ namespace Assets.Interaction
     {
         public UserInterface Interface;
 
-        public Text WorkerCostText;
+        public TextMeshProUGUI WorkerCostText;
 
         void Update()
         {

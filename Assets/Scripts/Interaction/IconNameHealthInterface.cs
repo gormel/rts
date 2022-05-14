@@ -1,4 +1,5 @@
 ﻿using Assets.Views.Base;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -8,8 +9,8 @@ namespace Assets.Interaction
     class IconNameHealthInterface : MonoBehaviour
     {
         public Image IconImage;
-        public Text NameText;
-        public Text HealthText;
+        public TextMeshProUGUI NameText;
+        public TextMeshProUGUI HealthText;
         public RectTransform GreenHealthBar;
         public RectTransform RedHealthBar;
         public RectTransform ProgressBar;

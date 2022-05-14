@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -13,7 +14,7 @@ namespace Assets.Interaction.Selection
 {
     class SelectionGroupInterface : MonoBehaviour, IPointerClickHandler
     {
-        public Text CountTarget;
+        public TextMeshProUGUI CountTarget;
         public int Index; //[1-9]
         public UserInterface Interface;
         public Image IconTarget;
@@ -24,7 +25,6 @@ namespace Assets.Interaction.Selection
 
         private SelectionGroup mSelectionGroup;
         private RtsInputActions mInputActions;
-
         void Awake()
         {
             if (Interface == null)

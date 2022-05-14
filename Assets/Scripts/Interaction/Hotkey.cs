@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Utilities;
@@ -11,7 +12,7 @@ namespace Assets.Interaction
     public class Hotkey : MonoBehaviour
     {
         public Button TargetButton;
-        public Text View;
+        public TextMeshProUGUI View;
         public string ActionName;
         
         private RtsInputActions mInputActions;

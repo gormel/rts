@@ -2,6 +2,7 @@
 using System.Linq;
 using Assets.Core.GameObjects.Base;
 using Assets.Views;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,8 +15,8 @@ namespace Assets.Interaction
         public GameObject QueueAttackUpgradeButton;
         public GameObject QueueDefenceUpgradeButton;
 
-        public Text QueueAttackUpgradeText;
-        public Text QueueDefenceUpgradeText;
+        public TextMeshProUGUI QueueAttackUpgradeText;
+        public TextMeshProUGUI QueueDefenceUpgradeText;
 
         private void Update()
         {

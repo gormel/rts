@@ -2,6 +2,7 @@
 using System.Linq;
 using Assets.Core.GameObjects.Final;
 using Assets.Views;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,9 +11,9 @@ namespace Assets.Interaction {
     {
         public UserInterface Interface;
 
-        public Text RangedCostText;
-        public Text MeeleeCostText;
-        public Text ArtilleryCostText;
+        public TextMeshProUGUI RangedCostText;
+        public TextMeshProUGUI MeeleeCostText;
+        public TextMeshProUGUI ArtilleryCostText;
 
         public Button QueueArtilleryButton;
 

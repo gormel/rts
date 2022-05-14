@@ -1,12 +1,13 @@
 ﻿using System.Linq;
 using Assets.Core.GameObjects.Base;
+using TMPro;
 using UnityEngine.UI;
 
 namespace Assets.Interaction.InfoPanel
 {
     class WarriorInfoPanel : AttackerInfoPanel
     {
-        public Text MoveSpeedText;
+        public TextMeshProUGUI MoveSpeedText;
 
         public override void Update()
         {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Assets.Core.GameObjects.Final;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,7 +12,7 @@ namespace Assets.Interaction.InfoPanel
         public UserInterface Interface;
         public GameObject IconsRoot;
         public GameObject IconPrefab;
-        public Text MiningSpeedText;
+        public TextMeshProUGUI MiningSpeedText;
 
         public void Update()
         {

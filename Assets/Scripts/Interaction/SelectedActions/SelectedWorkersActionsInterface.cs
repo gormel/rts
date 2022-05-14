@@ -3,6 +3,7 @@ using Assets.Core.GameObjects;
 using Assets.Core.GameObjects.Base;
 using Assets.Core.GameObjects.Final;
 using Assets.Views;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,12 +15,12 @@ namespace Assets.Interaction
         public Button PlaceTurretButton;
         public Button PlaceWarriorsLabButton;
 
-        public Text CentralBuildingCostText;
-        public Text BarrakCostText;
-        public Text TurretCostText;
-        public Text BuildersLabCostText;
-        public Text WarriorsLabCostText;
-        public Text MiningCampCostText;
+        public TextMeshProUGUI CentralBuildingCostText;
+        public TextMeshProUGUI BarrakCostText;
+        public TextMeshProUGUI TurretCostText;
+        public TextMeshProUGUI BuildersLabCostText;
+        public TextMeshProUGUI WarriorsLabCostText;
+        public TextMeshProUGUI MiningCampCostText;
         
         public void StartCentralBuildingPlacement()
         {
