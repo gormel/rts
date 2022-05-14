@@ -90,7 +90,7 @@ namespace Assets.Views.Base
 
         public bool IsFree(int pointId)
         {
-            var ray = new Ray(PlacementPoints[pointId].transform.position, Vector3.up);
+            var ray = new Ray(PlacementPoints[pointId].transform.position - Vector3.up, Vector3.up);
             var size = Physics.RaycastNonAlloc(ray, mNoAllocRaycastHits, 5);
             if (size > 0)
             {

@@ -8,6 +8,7 @@ namespace Interaction.Debug
     {
         public GameObject RowPrefub;
         public GameObject RowContainer;
+        public GameObject FogOfWar;
 
         public void ApplyPlayers(IEnumerable<Player> players, Game game)
         {
@@ -17,6 +18,11 @@ namespace Interaction.Debug
                 var row = rowInst.GetComponent<DebugRow>();
                 row.AssignPlayer(player, game);
             }
+        }
+
+        public void MapHack(bool show)
+        {
+            FogOfWar.SetActive(!show);
         }
     }
 }
