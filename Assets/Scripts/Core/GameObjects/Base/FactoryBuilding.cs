@@ -131,7 +131,6 @@ namespace Assets.Core.GameObjects.Base {
         }
 
         private readonly Game.Game mGame;
-        private readonly Vector2 mInitialPosition;
         private readonly IPlacementService mPlacementService;
         private readonly IndexedQueue<Order> mOrders = new IndexedQueue<Order>();
         private readonly BTree mIntelligence;
@@ -145,7 +144,8 @@ namespace Assets.Core.GameObjects.Base {
         public FactoryBuilding(Game.Game game, Vector2 position, IPlacementService placementService)
         {
             mGame = game;
-            mInitialPosition = position;
+            Position = position;
+            Waypoint = Position + Size / 2;
             mPlacementService = placementService;
             mIntelligence = BTree.Create("Production").Sequence(b => b
                 .Selector(b1 => b1
@@ -154,12 +154,6 @@ namespace Assets.Core.GameObjects.Base {
                 .Leaf(new WaitOrderLeaf(this))
                 .Leaf(new UnlockOrderLeaf(this))
             ).Build();
-        }
-
-        public override void OnAddedToGame()
-        {
-            Waypoint = Position = mInitialPosition;
-            base.OnAddedToGame();
         }
 
         public Task SetWaypoint(Vector2 waypoint)

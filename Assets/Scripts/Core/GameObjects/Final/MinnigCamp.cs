@@ -25,7 +25,6 @@ namespace Assets.Core.GameObjects.Final
     class MiningCamp : Building, IMinigCampInfo, IMinigCampOrders
     {
         private readonly Game.Game mGame;
-        private readonly Vector2 mInitialPosition;
         public IPlacementService PlacementService { get; }
         public static Vector2 BuildingSize { get; } = new Vector2(1, 1);
         public const float MaximumHealthConst = 100;
@@ -51,7 +50,8 @@ namespace Assets.Core.GameObjects.Final
         public MiningCamp(Game.Game game, Vector2 position, IPlacementService placementService)
         {
             mGame = game;
-            mInitialPosition = position;
+            Position = position;
+            Waypoint = Position + BuildingSize / 2;
             PlacementService = placementService;
         }
 
@@ -68,13 +68,6 @@ namespace Assets.Core.GameObjects.Final
             }
 
             return false;
-        }
-
-        public override void OnAddedToGame()
-        {
-            Waypoint = Position = mInitialPosition;
-            
-            base.OnAddedToGame();
         }
 
         public bool TryPutWorker(Worker worker)
