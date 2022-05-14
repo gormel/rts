@@ -101,10 +101,12 @@ namespace Assets.Views.Base
             }
         }
 
+        private Vector3 Horizontal(Vector3 v) => new Vector3(v.x, 0, v.z);
+        
         protected virtual void LateUpdate()
         {
             if (!IsClient && !IsArrived && mNavMeshAgent.velocity.sqrMagnitude > 0)
-                transform.rotation = Quaternion.LookRotation(mNavMeshAgent.velocity.normalized);
+                transform.rotation = Quaternion.LookRotation(Horizontal(mNavMeshAgent.velocity).normalized);
             else if (mLookTarget.HasValue && Vector3.Distance(mLookTarget.Value, transform.localPosition) > 0.01)
                 transform.rotation = Quaternion.LookRotation(mLookTarget.Value - transform.localPosition);
         }
