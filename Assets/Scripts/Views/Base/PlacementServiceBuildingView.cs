@@ -83,9 +83,9 @@ namespace Assets.Views.Base
             });
         }
 
-        public Task<bool> ReleasePoint(int pointId)
+        public bool ReleasePoint(int pointId)
         {
-            return SyncContext.Execute(() => mLockedPoints.Remove(pointId));
+            return mLockedPoints.Remove(pointId);
         }
 
         public bool IsFree(int pointId)

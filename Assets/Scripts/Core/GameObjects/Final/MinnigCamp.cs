@@ -129,7 +129,7 @@ namespace Assets.Core.GameObjects.Final
             if (!new Rect(Position, Size).Contains(Waypoint))
                 await unit.GoTo(Waypoint);
             
-            await PlacementService.ReleasePoint(point.ID);
+            PlacementService.ReleasePoint(point.ID);
             return unit.ID;
         }
 

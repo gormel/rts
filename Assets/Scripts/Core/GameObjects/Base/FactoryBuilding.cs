@@ -203,7 +203,7 @@ namespace Assets.Core.GameObjects.Base {
                 var unit = await createUnit(Player, allocatedPoint.Position);
                 unit.RemovedFromGame += u => Player.Limit.Store(1);
                 await mGame.PlaceObject(unit);
-                await mPlacementService.ReleasePoint(allocatedPoint.ID);
+                mPlacementService.ReleasePoint(allocatedPoint.ID);
                 if (!new Rect(Position, Size).Contains(Waypoint))
                     await unit.GoTo(Waypoint);
             }, () =>
