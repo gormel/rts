@@ -133,13 +133,13 @@ namespace Assets.Views.Base
                 if (!mNavMeshAgent.isOnNavMesh)
                     return;
                 
+                Target = position;
                 var target = GameUtils.GetPosition(position, mapData);
                 if (Vector3.Distance(mNavMeshAgent.destination, target) < 0.01)
                     return;
                 
                 InProgress = true;
                 mLookTarget = null;
-                Target = position;
                 IsArrived = false;
                 mWaypointInst.transform.position = target;
                 mWaypointInst.SetActive(true);
