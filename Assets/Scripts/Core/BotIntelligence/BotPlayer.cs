@@ -21,9 +21,11 @@ namespace Core.BotIntelligence
         private readonly Game mGame;
         private readonly BotMemory mMemory;
 
+#if !IDLE_BOT
         private readonly BTree mEconomyIntelligence;
         private readonly BTree mWarIntelligence;
         private readonly BTree mTechIntelligence;
+#endif
         
         public BotPlayer(Game game, string nickname, IGameObjectFactory externalFactory, int team) 
             : base(nickname, externalFactory, team)
@@ -31,9 +33,11 @@ namespace Core.BotIntelligence
             mGame = game;
             mMemory = new BotMemory(this);
 
+#if !IDLE_BOT
             mEconomyIntelligence = BuildEconomyIntelligence();
             mWarIntelligence = BuildWarIntelligence();
             mTechIntelligence = BuildTechIntelligence();
+#endif
         }
 
         private BTree BuildEconomyIntelligence()
@@ -223,9 +227,11 @@ namespace Core.BotIntelligence
 
         public void Update(TimeSpan deltaTime)
         {
+#if !IDLE_BOT
             mEconomyIntelligence.Update(deltaTime);
             mWarIntelligence.Update(deltaTime);
             mTechIntelligence.Update(deltaTime);
+#endif
         }
     }
 }

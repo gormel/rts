@@ -16,6 +16,7 @@ namespace TelroshanTools.BuildSettingsPresets.Editor
 
 			{"6fe4d4826d6e04b45a67ccb7ee46e1aa", "Debug"},
 			{"13aa83117bc1ade828057c6c3e328e93", "DebugAi"},
+			{"b40ef2239c2ba954c9340c5e365d67f1", "DebugIdleAi"},
 			{"d42ad8b01c8a68846865607ee58cdd0e", "Default"},
 			{"53d68ea13bd3ea44581af27004f2a10b", "Play"},
 
@@ -36,6 +37,12 @@ namespace TelroshanTools.BuildSettingsPresets.Editor
 		public static void Apply13aa83117bc1ade828057c6c3e328e93()
 		{
 			BuildSettingsPresetsManager.ApplyPreset("13aa83117bc1ade828057c6c3e328e93");
+		}
+
+		[MenuItem("Build presets/DebugIdleAi")]
+		public static void Applyb40ef2239c2ba954c9340c5e365d67f1()
+		{
+			BuildSettingsPresetsManager.ApplyPreset("b40ef2239c2ba954c9340c5e365d67f1");
 		}
 
 		[MenuItem("Build presets/Default")]
