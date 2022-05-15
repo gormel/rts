@@ -21,7 +21,7 @@ namespace Assets.Networking.Services
             {
                 Base = StateUtils.CreateUnitState(info),
                 
-                LaunchAvaliable = info.LaunchAvaliable,
+                LaunchCooldown = info.LaunchCooldown,
                 MissileSpeed = info.MissileSpeed,
                 MissileRadius = info.MissileRadius,
                 MissileDamage = info.MissileDamage,

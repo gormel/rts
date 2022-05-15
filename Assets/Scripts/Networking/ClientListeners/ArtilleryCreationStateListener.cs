@@ -24,7 +24,7 @@ namespace Assets.Networking
         public Vector2 Destignation => State.Base.Destignation.ToUnity();
         public float ViewRadius => State.Base.Base.ViewRadius;
         public int Armour => State.Base.Base.Armour;
-        public bool LaunchAvaliable => State.LaunchAvaliable;
+        public float LaunchCooldown => State.LaunchCooldown;
         public float MissileSpeed => State.MissileSpeed;
         public float MissileRadius => State.MissileRadius;
         public float MissileDamage => State.MissileDamage;

@@ -17,10 +17,14 @@ message LaunchReqest {
     Vector Target = 2;
 }
 
+message LaunchResult {
+    bool Result = 1;
+}
+
 message ArtilleryState {
     UnitState Base = 1;
 
-    bool LaunchAvaliable = 2;
+    float LaunchCooldown = 2;
     float MissileSpeed = 3;
     float MissileRadius = 4;
     float MissileDamage = 5;

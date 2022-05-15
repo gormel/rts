@@ -550,12 +550,6 @@ class Root : MonoBehaviour
         }
     }
 
-    public void AddResources()
-    {
-        if (GameUtils.CurrentMode == GameMode.Server)
-            ((Player)Player).Money.Store(100);
-    }
-
     public void Close()
     {
         SceneManager.LoadScene("Start");

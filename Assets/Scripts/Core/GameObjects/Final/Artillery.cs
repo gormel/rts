@@ -16,7 +16,7 @@ namespace Core.GameObjects.Final
 {
     interface IArtilleryInfo : IUnitInfo
     {
-        bool LaunchAvaliable { get; }
+        float LaunchCooldown { get; }
         float MissileSpeed { get; }
         float MissileRadius { get; }
         float MissileDamage { get; }
@@ -106,8 +106,42 @@ namespace Core.GameObjects.Final
             }
         }
 
+        class ResolveTaskLeaf<T> : IBTreeLeaf
+        {
+            private readonly TaskCompletionSource<T> mTcs;
+            private readonly T mResult;
+
+            public ResolveTaskLeaf(TaskCompletionSource<T> tcs, T result)
+            {
+                mTcs = tcs;
+                mResult = result;
+            }
+            public BTreeLeafState Update(TimeSpan deltaTime)
+            {
+                if (!mTcs.TrySetResult(mResult))
+                    return BTreeLeafState.Failed;
+
+                return BTreeLeafState.Successed;
+            }
+        }
+
+        class CancelTaskLeaf<T> : IBTreeLeaf
+        {
+            private readonly TaskCompletionSource<T> mTcs;
+
+            public CancelTaskLeaf(TaskCompletionSource<T> tcs)
+            {
+                mTcs = tcs;
+            }
+            public BTreeLeafState Update(TimeSpan deltaTime)
+            {
+                mTcs.TrySetCanceled(); 
+                return BTreeLeafState.Successed;
+            }
+        }
+
         public const string LaunchIntelligenceTag = "Launch";
-        public static TimeSpan LaunchCooldown { get; } = TimeSpan.FromSeconds(2);
+        public static TimeSpan LaunchCooldownTime { get; } = TimeSpan.FromSeconds(2);
         
         private readonly IProjectileSpawner mSpawner;
         public override float ViewRadius => 2;
@@ -116,6 +150,8 @@ namespace Core.GameObjects.Final
         protected override int ArmourBase => 1;
         public override float Speed => 1.5f;
         public bool LaunchAvaliable => mLaunchTimer.Elapsed.TotalSeconds > 2;
+        
+        public float LaunchCooldown => (float)Math.Max(0, (LaunchCooldownTime - mLaunchTimer.Elapsed).TotalSeconds);
         public float MissileSpeed => 5;
         public float MissileRadius => 1;
         public float MissileDamage => 60;
@@ -129,20 +165,24 @@ namespace Core.GameObjects.Final
             mSpawner = spawner;
         }
 
-        public Task Launch(Vector2 target)
+        public async Task Launch(Vector2 target)
         {
-            return ApplyIntelligence(
+            await ApplyIntelligence(
                 b => b
-                    .Sequence(b1 => b1
-                        .Leaf(new CheckCooldownLeaf(this, LaunchCooldown))
-                        .Selector(b2 => b2
-                            .Leaf(new CheckDistanceLeaf(this, target, LaunchRange))
-                            .Leaf(new GoToTargetLeaf(PathFinder, target, Game.Map.Data))
+                    .Selector(b0 => b0
+                        .Invert(b1 => b1
+                            .Leaf(new CheckCooldownLeaf(this, LaunchCooldownTime))
                         )
-                        .Leaf(new CancelGotoLeaf(PathFinder))
-                        .Leaf(new ResetCooldownLeaf(this))
-                        .Leaf(new RotateToLeaf(PathFinder, target, Game.Map.Data))
-                        .Leaf(new LaunchMissileLeaf(this, target))
+                        .Sequence(b1 => b1
+                            .Selector(b2 => b2
+                                .Leaf(new CheckDistanceLeaf(this, target, LaunchRange))
+                                .Leaf(new GoToTargetLeaf(PathFinder, target, Game.Map.Data))
+                            )
+                            .Leaf(new CancelGotoLeaf(PathFinder))
+                            .Leaf(new ResetCooldownLeaf(this))
+                            .Leaf(new RotateToLeaf(PathFinder, target, Game.Map.Data))
+                            .Leaf(new LaunchMissileLeaf(this, target))
+                        )
                     ),
                 b => b
                     .Leaf(new CancelGotoLeaf(PathFinder)),
