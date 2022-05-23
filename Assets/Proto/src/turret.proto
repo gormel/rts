@@ -6,6 +6,8 @@ service TurretService {
     rpc ListenCreation (Empty) returns (stream TurretState);
     rpc ListenState(ID) returns (stream TurretState);
 
+    rpc CancelBuilding(CancelBuildingRequest) returns (Empty);
+
     rpc Attack(AttackRequest) returns (Empty);
     rpc Stop(StopRequest) returns (Empty);
 }

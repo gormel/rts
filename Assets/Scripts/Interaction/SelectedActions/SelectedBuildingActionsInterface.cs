@@ -21,5 +21,11 @@ namespace Assets.Interaction
             BuildingPanel.SetActive(building.BuildingProgress == BuildingProgress.Building);
             CompletePanel.SetActive(building.BuildingProgress == BuildingProgress.Complete);
         }
+
+        public void CancelBuilding()
+        {
+            foreach (var order in Interface.FetchSelectedOrders<IBuildingOrders>())
+                order.CancelBuilding();
+        }
     }
 }

@@ -6,6 +6,8 @@ service CentralBuildingService {
     rpc ListenCreation (Empty) returns (stream CentralBuildingState);
     rpc ListenState(ID) returns (stream CentralBuildingState);
 
+    rpc CancelBuilding(CancelBuildingRequest) returns (Empty);
+
     rpc CancelOredr(CancelQueuedRequest) returns (Empty);
 
     rpc QueueWorker(QueueWorkerRequest) returns (QueueWorkerResult);

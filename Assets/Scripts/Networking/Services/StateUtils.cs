@@ -34,7 +34,8 @@ namespace Assets.Networking.Services
             return new BuildingState
             {
                 Base = CreateObjectState(info),
-                Size = info.Size.ToGrpc()
+                Size = info.Size.ToGrpc(),
+                Progress = info.BuildingProgress,
             };
         }
 

@@ -6,6 +6,8 @@ service BarrakService {
     rpc ListenCreation (Empty) returns (stream BarrakState);
     rpc ListenState(ID) returns (stream BarrakState);
 
+    rpc CancelBuilding(CancelBuildingRequest) returns (Empty);
+
     rpc SetWaypoint(SetWaypointRequest) returns (Empty);
 
     rpc CancelOredr(CancelQueuedRequest) returns (Empty);

@@ -32,8 +32,8 @@ namespace Assets.Core.GameObjects.Base
         protected override float MaxHealthBase => MaximumHealthConst;
         public override Vector2 Size => BuildingSize;
         
-        public WarriorsLab(Vector2 position, IPlacementService placementService)
-            : base(position, Worker.WarriorsLabBuildTime, placementService)
+        public WarriorsLab(Game.Game game, Vector2 position, IPlacementService placementService)
+            : base(game, position, Worker.WarriorsLabBuildTime, Worker.WarriorsLabCost, placementService)
         {
         }
 

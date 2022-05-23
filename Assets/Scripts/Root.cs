@@ -222,7 +222,7 @@ class Root : MonoBehaviour
         {
             var buildersLab = await CreateModelAndView<BuildersLabView, BuildersLab, IBuildersLabOrders, IBuildersLabInfo>(
                 mBuildersLabPrefab,
-                view => new BuildersLab(position, view.PlacementService),
+                view => new BuildersLab(mGame, position, view.PlacementService),
                 position
             );
 
@@ -235,7 +235,7 @@ class Root : MonoBehaviour
         {
             var warriorsLab = await CreateModelAndView<WarriorsLabView, WarriorsLab, IWarriorsLabOrders, IWarriorsLabInfo>(
                 mWarriorsLabPrefab,
-                view => new WarriorsLab(position, view.PlacementService),
+                view => new WarriorsLab(mGame, position, view.PlacementService),
                 position
             );
 

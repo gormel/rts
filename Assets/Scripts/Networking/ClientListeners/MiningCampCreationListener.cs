@@ -45,6 +45,14 @@ namespace Assets.Networking
                 Waypoint = waypoint.ToGrpc()
             }).ResponseAsync;
         }
+
+        public Task CancelBuilding()
+        {
+            return mClient.CancelBuildingAsync(new CancelBuildingRequest()
+            {
+                BuildingID = new ID() { Value = mID }
+            }).ResponseAsync;
+        }
     }
     class ClientMiningCampInfo : IMinigCampInfo, IStateHolder<MiningCampState>
     {

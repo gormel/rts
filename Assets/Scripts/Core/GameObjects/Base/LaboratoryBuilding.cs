@@ -64,8 +64,8 @@ namespace Assets.Core.GameObjects.Base
         private TimeSpan mUpgradeTime = TimeSpan.FromSeconds(1);
         private TimeSpan mUpgradeTimeLeft = TimeSpan.Zero;
 
-        public LaboratoryBuilding(Vector2 position, TimeSpan buildingTime, IPlacementService placementService)
-            : base(buildingTime, placementService)
+        public LaboratoryBuilding(Game.Game game, Vector2 position, TimeSpan buildingTime, int buildingCost, IPlacementService placementService)
+            : base(game, buildingTime, buildingCost, placementService)
         {
             mInitialPosition = position;
         }

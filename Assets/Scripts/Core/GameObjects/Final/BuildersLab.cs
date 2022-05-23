@@ -32,8 +32,8 @@ namespace Assets.Core.GameObjects.Base
         protected override float MaxHealthBase => MaximumHealthConst;
         public override Vector2 Size => BuildingSize;
         
-        public BuildersLab(Vector2 position, IPlacementService placementService)
-            : base(position, Worker.BuildersLabBuildTime, placementService)
+        public BuildersLab(Game.Game game, Vector2 position, IPlacementService placementService)
+            : base(game, position, Worker.BuildersLabBuildTime, Worker.BuildersLabCost, placementService)
         {
         }
 

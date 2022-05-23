@@ -6,6 +6,8 @@ service MiningCampService {
     rpc ListenCreation (Empty) returns (stream MiningCampState);
     rpc ListenState(ID) returns (stream MiningCampState);
 
+    rpc CancelBuilding(CancelBuildingRequest) returns (Empty);
+
     rpc SetWaypoint(SetWaypointRequest) returns (Empty);
 
     rpc FreeWorker(FreeWorkerRequest) returns (ID);

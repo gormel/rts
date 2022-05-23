@@ -83,7 +83,7 @@ namespace Assets.Core.GameObjects.Final
                 if (target.RecivedDamage >= target.MaxHealth)
                 {
                     mTurret.IsAttacks = false;
-                    mTurret.mGame.RemoveObject(target.ID);
+                    mTurret.Game.RemoveObject(target.ID);
                     return BTreeLeafState.Successed;
                 }
 
@@ -120,7 +120,7 @@ namespace Assets.Core.GameObjects.Final
             
             public BTreeLeafState Update(TimeSpan deltaTime)
             {
-                mTargetStorage.Target = mTurret.mGame.QueryObjects(mTurret.Position + mTurret.Size / 2, mTurret.AttackRange)
+                mTargetStorage.Target = mTurret.Game.QueryObjects(mTurret.Position + mTurret.Size / 2, mTurret.AttackRange)
                     .OrderBy(go => go.MaxHealth)
                     .ThenBy(go => Vector2.Distance(mTurret.Position, PositionUtils.PositionOf(go)))
                     .FirstOrDefault(go => mGame.GetPlayer(go.PlayerID).Team != mTurret.Player.Team);
@@ -146,7 +146,6 @@ namespace Assets.Core.GameObjects.Final
         public static Vector2 BuildingSize { get; } = new Vector2(1, 1);
         public const float MaximumHealthConst = 188;
         
-        private readonly Game.Game mGame;
         private readonly Vector2 mInitialPosition;
         private BTree mIntelligence;
 
@@ -165,9 +164,8 @@ namespace Assets.Core.GameObjects.Final
         public override Vector2 Size => BuildingSize;
 
         public Turret(Game.Game game, Vector2 position, IPlacementService placementService)
-            : base(Worker.TurretBuildTime, placementService)
+            : base(game, Worker.TurretBuildTime, Worker.TurretCost, placementService)
         {
-            mGame = game;
             mInitialPosition = position;
         }
 
@@ -182,7 +180,7 @@ namespace Assets.Core.GameObjects.Final
                             .Selector(b4 => b4
                                 .Leaf(new CheckDistanceLeaf(this, mStorage))
                                 .Fail(b5 => b5.Leaf(new ClearTargetLeaf(mStorage)))
-                                .Leaf(new QueryEnemyLeaf(mGame, this, mStorage)))
+                                .Leaf(new QueryEnemyLeaf(Game, this, mStorage)))
                             .Leaf(new KillTargetLeaf(this, mStorage)))
                         .Leaf(new CancelKillLeaf(this)))).Build();
             
@@ -200,7 +198,7 @@ namespace Assets.Core.GameObjects.Final
             if (targetId == ID)
                 return;
 
-            mStorage.Target = mGame.GetObject<RtsGameObject>(targetId);
+            mStorage.Target = Game.GetObject<RtsGameObject>(targetId);
         }
 
         public Task Stop()

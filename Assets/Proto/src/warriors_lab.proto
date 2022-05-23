@@ -6,6 +6,8 @@ service WarriorsLabService {
     rpc ListenCreation (Empty) returns (stream WarriorsLabState);
     rpc ListenState(ID) returns (stream WarriorsLabState);
 
+    rpc CancelBuilding(CancelBuildingRequest) returns (Empty);
+
     rpc CancelOredr(CancelQueuedRequest) returns (Empty);
 
     rpc QueueDamageUpgrade(QueueDamageUpgradeRequest) returns (Empty);

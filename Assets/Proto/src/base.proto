@@ -112,3 +112,7 @@ message CancelQueuedRequest {
 	ID ObjectID = 1;
 	int32 Index = 2;
 }
+
+message CancelBuildingRequest {
+	ID BuildingID = 1;
+}

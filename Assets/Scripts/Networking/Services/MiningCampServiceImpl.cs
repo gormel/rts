@@ -63,6 +63,15 @@ namespace Assets.Networking.Services
             });
         }
 
+        public override Task<Empty> CancelBuilding(CancelBuildingRequest request, ServerCallContext context)
+        {
+            return mCommonService.ExecuteOrder(request.BuildingID, async orders =>
+            {
+                await orders.CancelBuilding();
+                return new Empty();
+            });
+        }
+
         public void Register(IMinigCampOrders orders, IMinigCampInfo info)
         {
             mCommonService.Register(orders, info);

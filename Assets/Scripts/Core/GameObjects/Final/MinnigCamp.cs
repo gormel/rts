@@ -24,7 +24,6 @@ namespace Assets.Core.GameObjects.Final
 
     class MiningCamp : Building, IMinigCampInfo, IMinigCampOrders
     {
-        private readonly Game.Game mGame;
         public static Vector2 BuildingSize { get; } = new Vector2(1, 1);
         public const float MaximumHealthConst = 100;
         public const int MaxWorkers = 4;
@@ -47,9 +46,8 @@ namespace Assets.Core.GameObjects.Final
         public override Vector2 Size => BuildingSize;
 
         public MiningCamp(Game.Game game, Vector2 position, IPlacementService placementService)
-            : base(Worker.MiningCampBuildTime, placementService)
+            : base(game, Worker.MiningCampBuildTime, Worker.MiningCampCost, placementService)
         {
-            mGame = game;
             Position = position;
             Waypoint = Position + BuildingSize / 2;
         }
@@ -121,7 +119,7 @@ namespace Assets.Core.GameObjects.Final
 
             var unit = mWorkers.Pop();
             await unit.Stop();
-            await unit.PathFinder.Teleport(point.Position, mGame.Map.Data);
+            await unit.PathFinder.Teleport(point.Position, Game.Map.Data);
             if (!new Rect(Position, Size).Contains(Waypoint))
                 await unit.GoTo(Waypoint);
             
@@ -140,7 +138,7 @@ namespace Assets.Core.GameObjects.Final
             mOrderedToWork.RemoveAll(w =>
                 w.IntelligenceTag != Worker.MiningIntelligenceTag || w.IsAttachedToMiningCamp);
 
-            var found = mGame.QueryObjects(Position + Size / 2, ViewRadius * 2)
+            var found = Game.QueryObjects(Position + Size / 2, ViewRadius * 2)
                 .OfType<Worker>().Where(w => w.IntelligenceTag == Unit.IdleIntelligenceTag && !mOrderedToWork.Contains(w))
                 .Take(4 - WorkerCount - mOrderedToWork.Count).ToList();
             

@@ -34,7 +34,7 @@ namespace Assets.Core.GameObjects.Final
         public override Vector2 Size => BuildingSize;
 
         public CentralBuilding(Game.Game game, Vector2 position, IPlacementService placementService)
-            : base(game, position, Worker.CentralBuildingBuildTime, placementService)
+            : base(game, position, Worker.CentralBuildingBuildTime, Worker.CentralBuildingCost, placementService)
         {
         }
 

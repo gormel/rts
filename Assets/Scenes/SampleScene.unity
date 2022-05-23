@@ -2623,6 +2623,21 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8900957453175397170, guid: 418a9b816b6bab141bc697e3b0c52d1b,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 52325949}
+    - target: {fileID: 8900957453175397170, guid: 418a9b816b6bab141bc697e3b0c52d1b,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: CancelBuilding
+      objectReference: {fileID: 0}
+    - target: {fileID: 8900957453175397170, guid: 418a9b816b6bab141bc697e3b0c52d1b,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Assets.Interaction.SelectedBuildingActionsInterface, Assembly-CSharp
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 418a9b816b6bab141bc697e3b0c52d1b, type: 3}
 --- !u!224 &222627763 stripped
@@ -4971,6 +4986,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8900957453175397170, guid: 418a9b816b6bab141bc697e3b0c52d1b,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1901407510}
+    - target: {fileID: 8900957453175397170, guid: 418a9b816b6bab141bc697e3b0c52d1b,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: CancelBuilding
+      objectReference: {fileID: 0}
+    - target: {fileID: 8900957453175397170, guid: 418a9b816b6bab141bc697e3b0c52d1b,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Assets.Interaction.SelectedBuildingActionsInterface, Assembly-CSharp
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 418a9b816b6bab141bc697e3b0c52d1b, type: 3}
@@ -9802,6 +9832,21 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8900957453175397170, guid: 418a9b816b6bab141bc697e3b0c52d1b,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 2008883301}
+    - target: {fileID: 8900957453175397170, guid: 418a9b816b6bab141bc697e3b0c52d1b,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: CancelBuilding
+      objectReference: {fileID: 0}
+    - target: {fileID: 8900957453175397170, guid: 418a9b816b6bab141bc697e3b0c52d1b,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Assets.Interaction.SelectedBuildingActionsInterface, Assembly-CSharp
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 418a9b816b6bab141bc697e3b0c52d1b, type: 3}
 --- !u!224 &701376191 stripped
@@ -13923,6 +13968,21 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8900957453175397170, guid: 418a9b816b6bab141bc697e3b0c52d1b,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1147176456}
+    - target: {fileID: 8900957453175397170, guid: 418a9b816b6bab141bc697e3b0c52d1b,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: CancelBuilding
+      objectReference: {fileID: 0}
+    - target: {fileID: 8900957453175397170, guid: 418a9b816b6bab141bc697e3b0c52d1b,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Assets.Interaction.SelectedBuildingActionsInterface, Assembly-CSharp
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 418a9b816b6bab141bc697e3b0c52d1b, type: 3}
 --- !u!224 &1067696813 stripped
@@ -15110,6 +15170,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8900957453175397170, guid: 418a9b816b6bab141bc697e3b0c52d1b,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 758904308}
+    - target: {fileID: 8900957453175397170, guid: 418a9b816b6bab141bc697e3b0c52d1b,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: CancelBuilding
+      objectReference: {fileID: 0}
+    - target: {fileID: 8900957453175397170, guid: 418a9b816b6bab141bc697e3b0c52d1b,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Assets.Interaction.SelectedBuildingActionsInterface, Assembly-CSharp
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 418a9b816b6bab141bc697e3b0c52d1b, type: 3}
@@ -21097,6 +21172,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8900957453175397170, guid: 418a9b816b6bab141bc697e3b0c52d1b,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1322697062}
+    - target: {fileID: 8900957453175397170, guid: 418a9b816b6bab141bc697e3b0c52d1b,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: CancelBuilding
+      objectReference: {fileID: 0}
+    - target: {fileID: 8900957453175397170, guid: 418a9b816b6bab141bc697e3b0c52d1b,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Assets.Interaction.SelectedBuildingActionsInterface, Assembly-CSharp
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 418a9b816b6bab141bc697e3b0c52d1b, type: 3}

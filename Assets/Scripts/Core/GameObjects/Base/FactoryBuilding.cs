@@ -130,7 +130,6 @@ namespace Assets.Core.GameObjects.Base {
             }
         }
 
-        private readonly Game.Game mGame;
         private readonly IndexedQueue<Order> mOrders = new IndexedQueue<Order>();
         private readonly BTree mIntelligence;
         private Order mLockedOrder;
@@ -140,10 +139,9 @@ namespace Assets.Core.GameObjects.Base {
         public int Queued { get; private set; }
         public float Progress { get; private set; }
 
-        public FactoryBuilding(Game.Game game, Vector2 position, TimeSpan buildingTime, IPlacementService placementService)
-            : base(buildingTime, placementService)
+        public FactoryBuilding(Game.Game game, Vector2 position, TimeSpan buildingTime, int buildingCost, IPlacementService placementService)
+            : base(game, buildingTime, buildingCost, placementService)
         {
-            mGame = game;
             Position = position;
             Waypoint = Position + Size / 2;
             mIntelligence = BTree.Create("Production").Sequence(b => b
@@ -198,7 +196,7 @@ namespace Assets.Core.GameObjects.Base {
                 Queued--;
                 var unit = await createUnit(Player, allocatedPoint.Position);
                 unit.RemovedFromGame += u => Player.Limit.Store(1);
-                await mGame.PlaceObject(unit);
+                await Game.PlaceObject(unit);
                 await PlacementService.ReleasePoint(allocatedPoint.ID);
                 if (!new Rect(Position, Size).Contains(Waypoint))
                     await unit.GoTo(Waypoint);

@@ -59,6 +59,14 @@ namespace Assets.Networking.ClientListeners
                 UnitUD = new ID { Value = mID }
             }).ResponseAsync;
         }
+
+        public Task CancelBuilding()
+        {
+            return mClient.CancelBuildingAsync(new CancelBuildingRequest()
+            {
+                BuildingID = new ID() { Value = mID }
+            }).ResponseAsync;
+        }
     }
     
     class TurretCreationListener : CommonCreationStateListener<

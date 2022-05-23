@@ -40,6 +40,14 @@ namespace Assets.Networking
                 Index = index,
             }).ResponseAsync;
         }
+
+        public Task CancelBuilding()
+        {
+            return mClient.CancelBuildingAsync(new CancelBuildingRequest()
+            {
+                BuildingID = new ID() { Value = mID }
+            }).ResponseAsync;
+        }
     }
 
     class ClientCentralBuildingState : ICentralBuildingInfo, IStateHolder<CentralBuildingState>
