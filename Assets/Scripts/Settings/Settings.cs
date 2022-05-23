@@ -3,19 +3,28 @@ using UnityEngine;
 
 namespace Settings
 {
+    enum ShowHealthState
+    {
+        SelectedOnly,
+        DamagedOnly,
+        Always,
+    }
+    
     static class Settings
     {
+        public const float CameraSpeedBase = 5;
+        public const float GameSpeedBase = 1;
         [SaveProperty]
-        public static float CameraSpeed { get; set; } = 1f;
+        public static float CameraSpeed { get; set; } = CameraSpeedBase;
         [SaveProperty]
-        public static float GameSpeed { get; set; } = 1f;
+        public static float GameSpeed { get; set; } = GameSpeedBase;
 
         [SaveProperty]
-        public static int SelfHealthState { get; set; } = 0;
+        public static ShowHealthState SelfHealthState { get; set; } = 0;
         [SaveProperty]
-        public static int AllyHealthState { get; set; } = 0;
+        public static ShowHealthState AllyHealthState { get; set; } = 0;
         [SaveProperty]
-        public static int EnemyHealthState { get; set; } = 0;
+        public static ShowHealthState EnemyHealthState { get; set; } = 0;
 
         static Settings()
         {

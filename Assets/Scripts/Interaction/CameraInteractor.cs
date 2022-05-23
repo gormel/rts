@@ -13,8 +13,6 @@ namespace Assets.Interaction
 
         public float Border = 2;
 
-        public float Speed;
-
         public GameObject InnerCamera;
         public float MinDistance;
         public float MaxDistance;
@@ -138,7 +136,7 @@ namespace Assets.Interaction
             innerPos.z = -mCameraDistance;
             InnerCamera.transform.localPosition = innerPos;
 
-            transform.localPosition += mCameraVelocity * Speed * Time.deltaTime;
+            transform.localPosition += mCameraVelocity * (global::Settings.Settings.CameraSpeed * Time.deltaTime);
         }
 
         void OnApplicationFocus(bool hasFocus)

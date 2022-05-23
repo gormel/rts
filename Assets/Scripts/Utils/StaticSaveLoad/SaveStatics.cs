@@ -25,6 +25,8 @@ namespace Assets.Utils.StaticSaveLoad
                     PlayerPrefs.SetString(saveName, (string)prop.GetValue(null));
                 if (prop.PropertyType == typeof(int))
                     PlayerPrefs.SetInt(saveName, (int)prop.GetValue(null));
+                if (prop.PropertyType.IsEnum)
+                    PlayerPrefs.SetInt(saveName, Convert.ToInt32(prop.GetValue(null)));
             }
             PlayerPrefs.Save();
         }
@@ -38,6 +40,9 @@ namespace Assets.Utils.StaticSaveLoad
             foreach (var prop in props)
             {
                 var saveName = $"{typename}.{prop.Name}";
+                if (!PlayerPrefs.HasKey(saveName))
+                    continue;
+                
                 if (prop.PropertyType == typeof(float))
                     prop.SetValue(null, PlayerPrefs.GetFloat(saveName));
                 if (prop.PropertyType == typeof(double))
@@ -45,6 +50,8 @@ namespace Assets.Utils.StaticSaveLoad
                 if (prop.PropertyType == typeof(string))
                     prop.SetValue(null, PlayerPrefs.GetString(saveName));
                 if (prop.PropertyType == typeof(int))
+                    prop.SetValue(null, PlayerPrefs.GetInt(saveName));
+                if (prop.PropertyType.IsEnum)
                     prop.SetValue(null, PlayerPrefs.GetInt(saveName));
             }
         }
