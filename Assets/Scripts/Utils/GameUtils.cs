@@ -5,6 +5,7 @@ using System.Net;
 using Assets.Core.Game;
 using Assets.Core.GameObjects.Final;
 using Assets.Core.Map;
+using Assets.Utils.StaticSaveLoad;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -20,9 +21,14 @@ namespace Assets.Utils
 
     static class GameUtils
     {
+        [SaveProperty]
         public static string Nickname { get; set; } = "Player";
         public static GameMode CurrentMode { get; set; } = GameMode.Server;
-        public static IPAddress IP { get; set; } = IPAddress.Parse("127.0.0.1");
+        
+        [SaveProperty]
+        private static string IPString { get; set; } = "127.0.0.1";
+        
+        public static IPAddress IP { get; set; }
         public static int GamePort { get; set; } = 15656;
         public static int LobbyPort { get; set; } = 15657;
         public static int Team { get; set; }
@@ -35,18 +41,14 @@ namespace Assets.Utils
         static GameUtils()
         {
             Nickname += Random.Range(0, 10);
-            if (PlayerPrefs.HasKey("Nickname"))
-                Nickname = PlayerPrefs.GetString("Nickname");
-            if (PlayerPrefs.HasKey("IP"))
-                IP = IPAddress.Parse(PlayerPrefs.GetString("IP"));
-            //save & restore settings;
+            SaveStatics.Load(typeof(GameUtils));
+            IP = IPAddress.Parse(IPString);
         }
 
         public static void SaveSettings()
         {
-            PlayerPrefs.SetString("Nickname", Nickname);
-            PlayerPrefs.GetString("IP", IP.ToString());
-            PlayerPrefs.Save();
+            IPString = IP.ToString();
+            SaveStatics.Save(typeof(GameUtils));
         }
 
         public static Vector3 GetPosition(Vector2 flatPosition, IMapData mapData)
