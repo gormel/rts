@@ -20,11 +20,11 @@ namespace Settings
         public static float GameSpeed { get; set; } = GameSpeedBase;
 
         [SaveProperty]
-        public static ShowHealthState SelfHealthState { get; set; } = 0;
+        public static ShowHealthState SelfHealthState { get; set; } = ShowHealthState.DamagedOnly;
         [SaveProperty]
-        public static ShowHealthState AllyHealthState { get; set; } = 0;
+        public static ShowHealthState AllyHealthState { get; set; } = ShowHealthState.DamagedOnly;
         [SaveProperty]
-        public static ShowHealthState EnemyHealthState { get; set; } = 0;
+        public static ShowHealthState EnemyHealthState { get; set; } = ShowHealthState.DamagedOnly;
 
         static Settings()
         {

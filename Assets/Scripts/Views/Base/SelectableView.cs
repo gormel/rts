@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Assets.Core.GameObjects.Base;
 using Assets.Views.Utils;
+using Settings;
 using UnityEngine;
 
 namespace Assets.Views.Base
@@ -155,7 +156,30 @@ namespace Assets.Views.Base
             if (HpBar != null)
             {
                 HpBar.Progress = Health / MaxHealth;
-                HpBar.gameObject.SetActive(HpBar.Progress < 1 || IsSelected);
+                var rules = Settings.Settings.SelfHealthState;
+                switch (OwnershipRelation)
+                {
+                    case ObjectOwnershipRelation.Ally:
+                        rules = Settings.Settings.AllyHealthState;
+                        break;
+                    case ObjectOwnershipRelation.Enemy:
+                        rules = Settings.Settings.EnemyHealthState;
+                        break;
+                }
+
+                switch (rules)
+                {
+                    case ShowHealthState.SelectedOnly:
+                        HpBar.gameObject.SetActive(IsSelected);
+                        break;
+                    case ShowHealthState.DamagedOnly:
+                        HpBar.gameObject.SetActive(HpBar.Progress < 1 || IsSelected);
+                        break;
+                    case ShowHealthState.Always:
+                        HpBar.gameObject.SetActive(true);
+                        break;
+                }
+                
             }
 
             if (MouseOverObject != null)

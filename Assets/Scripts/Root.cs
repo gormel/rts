@@ -372,6 +372,8 @@ class Root : MonoBehaviour
 
             mClient.Listen();
         }
+
+        Time.timeScale = Settings.Settings.GameSpeed;
     }
 
 #if DEVELOPMENT_BUILD
