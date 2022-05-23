@@ -4,9 +4,8 @@ using UnityEngine;
 
 namespace Assets.Interaction
 {
-    class SelectedMiningCampActionsInterface : MonoBehaviour
+    class SelectedMiningCampActionsInterface : SelectedBuildingActionsInterface
     {
-        public UserInterface Interface;
         public void FreeWorker()
         {
             var views = Interface.Selected.OfType<MiningCampView>();

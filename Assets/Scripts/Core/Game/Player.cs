@@ -97,19 +97,6 @@ namespace Assets.Core.Game
             return AssignPlayer(mExternalFactory.CreateArtillery(position));
         }
 
-        public Task<BuildingTemplate> CreateBuildingTemplate(Vector2 position, Func<Vector2, Task<Building>> createBuilding, TimeSpan buildTime, Vector2 size,
-            float maxHealth, int cost)
-        {
-            return AssignPlayer(mExternalFactory.CreateBuildingTemplate(
-                position,
-                createBuilding,
-                buildTime,
-                size,
-                maxHealth,
-                cost
-            ));
-        }
-
         public Task<CentralBuilding> CreateCentralBuilding(Vector2 position)
         {
             return AssignPlayer(mExternalFactory.CreateCentralBuilding(position));

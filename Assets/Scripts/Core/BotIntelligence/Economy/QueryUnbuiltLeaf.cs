@@ -20,7 +20,7 @@ namespace Core.BotIntelligence.Economy
         
         public BTreeLeafState Update(TimeSpan deltaTime)
         {
-            mFastMemory.Template = mMemory.BuildingTemplates.FirstOrDefault(t => !mMemory.TemplateAttachedBuilders.TryGetValue(t.ID, out var builders) || builders.Count < mBuilderLimit);
+            mFastMemory.Template = mMemory.AllBuildings.FirstOrDefault(t => !mMemory.TemplateAttachedBuilders.TryGetValue(t.ID, out var builders) || builders.Count < mBuilderLimit);
             return mFastMemory.Template == null ? BTreeLeafState.Failed : BTreeLeafState.Successed;
         }
     }

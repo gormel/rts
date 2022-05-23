@@ -26,6 +26,7 @@ namespace Assets.Networking.ClientListeners
         public float ViewRadius => State.Base.Base.Base.ViewRadius;
         public int Armour => State.Base.Base.Base.Armour;
         public Vector2 Size => State.Base.Base.Size.ToUnity();
+        public BuildingProgress BuildingProgress => State.Base.Base.Progress;
         public Vector2 Waypoint => State.Base.Waypoint.ToUnity();
         public int Queued => State.Base.Queued;
         public float Progress => State.Base.Progress;

@@ -49,7 +49,6 @@ namespace Assets.Interaction
         public GameObject RangedWarriorActions;
         public GameObject MeeleeWarriorActions;
         public GameObject CentralBuildingActions;
-        public GameObject BuildingTemplateActions;
         public GameObject BarrakActions;
         public GameObject MiningCampActions;
         public GameObject TurretActions;
@@ -71,7 +70,6 @@ namespace Assets.Interaction
                 new Activator<RangedWarriorView>(RangedWarriorActions, mActiveStates), 
                 new Activator<MeeleeWarriorView>(MeeleeWarriorActions, mActiveStates), 
                 new Activator<CentralBuildingView>(CentralBuildingActions, mActiveStates), 
-                new Activator<BuildingTemplateView>(BuildingTemplateActions, mActiveStates), 
                 new Activator<BarrakView>(BarrakActions, mActiveStates),
                 new Activator<MiningCampView>(MiningCampActions, mActiveStates),
                 new Activator<TurretView>(TurretActions, mActiveStates),

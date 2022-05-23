@@ -39,9 +39,15 @@ message LaboratoryBuildingState {
 	float Progress = 4;
 }
 
+enum BuildingProgress {
+	BuildingProgress_Building = 0;
+	BuildingProgress_Complete = 1;
+}
+
 message BuildingState {
 	ObjectState Base = 1;
 	Vector Size = 2;
+	BuildingProgress Progress = 3;
 }
 
 message ObjectState {

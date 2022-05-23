@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Assets.Views
 {
-    class MiningCampView : PlacementServiceBuildingView<IMinigCampOrders, IMinigCampInfo>
+    class MiningCampView : BuildingView<IMinigCampOrders, IMinigCampInfo>
     {
         public override string Name => "Добытчик";
         public override Rect FlatBounds => new Rect(Info.Position, Info.Size);

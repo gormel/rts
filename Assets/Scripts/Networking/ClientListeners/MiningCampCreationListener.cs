@@ -61,6 +61,7 @@ namespace Assets.Networking
         public int WorkerCount => State.WorkerCount;
         public Vector2 Waypoint => State.Waypoint.ToUnity();
         public int Armour => State.Base.Base.Armour;
+        public BuildingProgress BuildingProgress => State.Base.Progress;
 
         public void ResetState()
         {

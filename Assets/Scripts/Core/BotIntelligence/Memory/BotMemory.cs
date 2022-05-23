@@ -13,10 +13,10 @@ namespace Core.BotIntelligence.Memory
     class BotMemory
     {
         private readonly BotPlayer mPlayer;
+        public List<Building> AllBuildings { get; } = new();
         public List<CentralBuilding> CentralBuildings { get; } = new();
         public List<Worker> Workers { get; } = new();
         public List<MiningCamp> MiningCamps { get; } = new();
-        public List<BuildingTemplate> BuildingTemplates { get; } = new();
         public List<Barrak> Barracks { get; } = new();
         public List<MeeleeWarrior> MeeleeWarriors { get; } = new();
         public List<RangedWarrior> RangedWarriors { get; } = new();
@@ -82,6 +82,7 @@ namespace Core.BotIntelligence.Memory
             {
                 case WarriorsLab warriorsLab:
                     WarriorsLabs.Add(warriorsLab);
+                    AllBuildings.Add(warriorsLab);
                     warriorsLab.RemovedFromGame += o => WarriorsLabs.Remove(warriorsLab);
                     break;
                 case MeeleeWarrior meeleeWarrior:
@@ -98,10 +99,12 @@ namespace Core.BotIntelligence.Memory
                     break;
                 case Barrak barrak:
                     Barracks.Add(barrak);
+                    AllBuildings.Add(barrak);
                     barrak.RemovedFromGame += o => Barracks.Remove(barrak);
                     break;
                 case CentralBuilding central:
                     CentralBuildings.Add(central);
+                    AllBuildings.Add(central);
                     central.RemovedFromGame += o => CentralBuildings.Remove(central);
                     break;
                 case Worker worker:
@@ -117,18 +120,11 @@ namespace Core.BotIntelligence.Memory
                     break;
                 case MiningCamp camp:
                     MiningCamps.Add(camp);
+                    AllBuildings.Add(camp);
                     camp.RemovedFromGame += o =>
                     {
                         MiningCamps.Remove(camp);
                         MiningAttachedWorkers.TryRemove(o.ID, out _);
-                    };
-                    break;
-                case BuildingTemplate template:
-                    BuildingTemplates.Add(template);
-                    template.RemovedFromGame += o =>
-                    {
-                        BuildingTemplates.Remove(template);
-                        TemplateAttachedBuilders.TryRemove(template.ID, out _);
                     };
                     break;
             }

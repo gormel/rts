@@ -38,7 +38,7 @@ namespace Assets.Core.GameObjects.Final
         public override Vector2 Size => BuildingSize;
         
         public Barrak(Game.Game game, Vector2 position, IPlacementService placementService)
-            : base(game, position, placementService)
+            : base(game, position, Worker.BarrakBuildTime, placementService)
         {
         }
 

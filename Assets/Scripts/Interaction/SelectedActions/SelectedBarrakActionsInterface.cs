@@ -7,18 +7,17 @@ using UnityEngine;
 using UnityEngine.UI;
 
 namespace Assets.Interaction {
-    class SelectedBarrakActionsInterface : MonoBehaviour
+    class SelectedBarrakActionsInterface : SelectedBuildingActionsInterface
     {
-        public UserInterface Interface;
-
         public TextMeshProUGUI RangedCostText;
         public TextMeshProUGUI MeeleeCostText;
         public TextMeshProUGUI ArtilleryCostText;
 
         public Button QueueArtilleryButton;
 
-        private void Update()
+        public override void Update()
         {
+            base.Update();
             RangedCostText.text = Barrak.RangedWarriorCost.ToString();
             MeeleeCostText.text = Barrak.MeleeWarriorCost.ToString();
             ArtilleryCostText.text = Barrak.ArtilleryCost.ToString();

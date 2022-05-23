@@ -164,7 +164,8 @@ namespace Assets.Core.GameObjects.Final
         protected override float MaxHealthBase => MaximumHealthConst;
         public override Vector2 Size => BuildingSize;
 
-        public Turret(Game.Game game, Vector2 position)
+        public Turret(Game.Game game, Vector2 position, IPlacementService placementService)
+            : base(Worker.TurretBuildTime, placementService)
         {
             mGame = game;
             mInitialPosition = position;
@@ -190,6 +191,7 @@ namespace Assets.Core.GameObjects.Final
 
         public override void Update(TimeSpan deltaTime)
         {
+            base.Update(deltaTime);
             mIntelligence.Update(deltaTime);
         }
 

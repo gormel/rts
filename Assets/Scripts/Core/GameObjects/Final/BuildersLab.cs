@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Assets.Core.GameObjects.Base;
+using Assets.Core.GameObjects.Final;
+using Assets.Core.GameObjects.Utils;
 using UnityEngine;
 
 namespace Assets.Core.GameObjects.Base
@@ -30,8 +32,8 @@ namespace Assets.Core.GameObjects.Base
         protected override float MaxHealthBase => MaximumHealthConst;
         public override Vector2 Size => BuildingSize;
         
-        public BuildersLab(Vector2 position) 
-            : base(position)
+        public BuildersLab(Vector2 position, IPlacementService placementService)
+            : base(position, Worker.BuildersLabBuildTime, placementService)
         {
         }
 

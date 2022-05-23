@@ -31,6 +31,7 @@ namespace Assets.Views
 
         protected override void OnLoad()
         {
+            base.OnLoad();
             WatchMore(() => Info.Progress, 0.6f, p => { GatesAnimation.Play(OpenClip.name); });
             WatchMore(() => Info.Progress, 0.99f, p => { GatesAnimation.Play(CloseClip.name); });
         }

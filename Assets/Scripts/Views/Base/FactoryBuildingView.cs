@@ -3,7 +3,7 @@ using Assets.Core.GameObjects.Base;
 using UnityEngine;
 
 namespace Assets.Views.Base {
-    abstract class FactoryBuildingView<TOrderer, TInfo> : PlacementServiceBuildingView<TOrderer, TInfo>
+    abstract class FactoryBuildingView<TOrderer, TInfo> : BuildingView<TOrderer, TInfo>
         where TOrderer : IFactoryBuildingOrders
         where TInfo : IFactoryBuildingInfo
     {

@@ -38,12 +38,12 @@ namespace Interaction.Debug
                 ("Artillery", (f, p) => Add(f.CreateArtillery(p))),
                 ("Melee", (f, p) => Add(f.CreateMeeleeWarrior(p))),
                 ("Ranged", (f, p) => Add(f.CreateRangedWarrior(p))),
-                ("Command Center", (f, p) => Add(f.CreateCentralBuilding(Floor(p)))),
-                ("Barrak", (f, p) => Add(f.CreateBarrak(Floor(p)))),
-                ("Builders Lab", (f, p) => Add(f.CreateBuildersLab(Floor(p)))),
-                ("Warriors Lab", (f, p) => Add(f.CreateWarriorsLab(Floor(p)))),
-                ("Turret", (f, p) => Add(f.CreateTurret(Floor(p)))),
-                ("Mining Camp", (f, p) => Add(f.CreateMiningCamp(Floor(p)))),
+                ("Command Center", (f, p) => AddB(f.CreateCentralBuilding(Floor(p)))),
+                ("Barrak", (f, p) => AddB(f.CreateBarrak(Floor(p)))),
+                ("Builders Lab", (f, p) => AddB(f.CreateBuildersLab(Floor(p)))),
+                ("Warriors Lab", (f, p) => AddB(f.CreateWarriorsLab(Floor(p)))),
+                ("Turret", (f, p) => AddB(f.CreateTurret(Floor(p)))),
+                ("Mining Camp", (f, p) => AddB(f.CreateMiningCamp(Floor(p)))),
             };
             
             SelectedObjectText.text = mCreators[mSelectedCreatorIndex].Name;
@@ -66,10 +66,17 @@ namespace Interaction.Debug
 
         private static Vector2 Floor(Vector2 v) => new Vector2(Mathf.Floor(v.x), Mathf.Floor(v.y));
 
-        private async void Add<T>(Task<T> created) where T : RtsGameObject
+        private async Task<T> Add<T>(Task<T> created) where T : RtsGameObject
         {
             var go = await created;
             await mGame.PlaceObject(go);
+            return go;
+        }
+
+        private async void AddB<T>(Task<T> created) where T : Building
+        {
+            var go = await Add(created);
+            go.CompleteBuilding();
         }
 
         private void OnShiftMod(InputAction.CallbackContext obj)

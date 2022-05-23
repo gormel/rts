@@ -25,7 +25,6 @@ namespace Assets.Core.GameObjects.Final
     class MiningCamp : Building, IMinigCampInfo, IMinigCampOrders
     {
         private readonly Game.Game mGame;
-        public IPlacementService PlacementService { get; }
         public static Vector2 BuildingSize { get; } = new Vector2(1, 1);
         public const float MaximumHealthConst = 100;
         public const int MaxWorkers = 4;
@@ -48,11 +47,11 @@ namespace Assets.Core.GameObjects.Final
         public override Vector2 Size => BuildingSize;
 
         public MiningCamp(Game.Game game, Vector2 position, IPlacementService placementService)
+            : base(Worker.MiningCampBuildTime, placementService)
         {
             mGame = game;
             Position = position;
             Waypoint = Position + BuildingSize / 2;
-            PlacementService = placementService;
         }
 
         public static bool CheckPlaceAllowed(IMapData mapData, Vector2Int at)
@@ -84,13 +83,18 @@ namespace Assets.Core.GameObjects.Final
         
         public override void Update(TimeSpan deltaTime)
         {
-            mMinedTemp += MiningSpeed * deltaTime.TotalSeconds;
-            if (mMinedTemp > 1)
+            base.Update(deltaTime);
+
+            if (BuildingProgress == BuildingProgress.Complete)
             {
-                var ceiled = Mathf.CeilToInt((float)mMinedTemp);
-                Player.Money.Store(ceiled);
-                mMinedTemp -= ceiled;
-                mMinedTotal += ceiled;
+                mMinedTemp += MiningSpeed * deltaTime.TotalSeconds;
+                if (mMinedTemp > 1)
+                {
+                    var ceiled = Mathf.CeilToInt((float)mMinedTemp);
+                    Player.Money.Store(ceiled);
+                    mMinedTemp -= ceiled;
+                    mMinedTotal += ceiled;
+                }
             }
         }
 
@@ -127,6 +131,9 @@ namespace Assets.Core.GameObjects.Final
 
         public async Task CollectWorkers()
         {
+            if (BuildingProgress != BuildingProgress.Complete)
+                return;
+
             if (WorkerCount >= MaxWorkers)
                 return;
 

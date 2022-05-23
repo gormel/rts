@@ -74,7 +74,6 @@ namespace Assets.Networking
         public event Action<IMeeleeWarriorOrders, IMeeleeWarriorInfo> MeeleeWarriorCreated;
         public event Action<IArtilleryOrders, IArtilleryInfo> ArtilleryCreated;
         public event Action<IWorkerOrders, IWorkerInfo> WorkerCreated;
-        public event Action<IBuildingTemplateOrders, IBuildingTemplateInfo> BuildingTemplateCreated;
         public event Action<ICentralBuildingOrders, ICentralBuildingInfo> CentralBuildingCreated;
         public event Action<IMinigCampOrders, IMinigCampInfo> MiningCampCreated;
         public event Action<IBarrakOrders, IBarrakInfo> BarrakCreated;
@@ -96,7 +95,6 @@ namespace Assets.Networking
         private readonly RangedWarriorCreationStateListener mRangedWarriorCreationStateListener;
         private readonly ArtilleryCreationStateListener mArtilleryCreationStateListener;
         private readonly WorkerCreationStateListener mWorkerCreationStateListener;
-        private readonly BuildingTemplateCreationStateListener mBuildingTemplateCreationStateListener;
         private readonly CentralBuildingCreationListener mCentralBuildingCreationStateListener;
         private readonly MiningCampCreationListener mMiningCampCreationListener;
         private readonly BarrakCreationListener mBarrakCreationListener;
@@ -116,10 +114,6 @@ namespace Assets.Networking
             mWorkerCreationStateListener = new WorkerCreationStateListener(syncContext);
             mWorkerCreationStateListener.Created += (orders, info) => WorkerCreated?.Invoke(orders, info);
             mWorkerCreationStateListener.Destroyed += info => ObjectDestroyed?.Invoke(info);
-
-            mBuildingTemplateCreationStateListener = new BuildingTemplateCreationStateListener(syncContext);
-            mBuildingTemplateCreationStateListener.Created += (orders, info) => BuildingTemplateCreated?.Invoke(orders, info);
-            mBuildingTemplateCreationStateListener.Destroyed += info => ObjectDestroyed?.Invoke(info);
 
             mCentralBuildingCreationStateListener = new CentralBuildingCreationListener(syncContext);
             mCentralBuildingCreationStateListener.Created += (orders, info) => CentralBuildingCreated?.Invoke(orders, info);
@@ -252,7 +246,6 @@ namespace Assets.Networking
                                     var proj = mProjectileSpawnListener.Listen(mChannel);
 
                                     var t0 = mWorkerCreationStateListener.ListenCreations(mChannel);
-                                    var t1 = mBuildingTemplateCreationStateListener.ListenCreations(mChannel);
                                     var t2 = mCentralBuildingCreationStateListener.ListenCreations(mChannel);
                                     var t3 = mMiningCampCreationListener.ListenCreations(mChannel);
                                     var t4 = mBarrakCreationListener.ListenCreations(mChannel);

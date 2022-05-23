@@ -64,7 +64,8 @@ namespace Assets.Core.GameObjects.Base
         private TimeSpan mUpgradeTime = TimeSpan.FromSeconds(1);
         private TimeSpan mUpgradeTimeLeft = TimeSpan.Zero;
 
-        public LaboratoryBuilding(Vector2 position)
+        public LaboratoryBuilding(Vector2 position, TimeSpan buildingTime, IPlacementService placementService)
+            : base(buildingTime, placementService)
         {
             mInitialPosition = position;
         }
@@ -77,6 +78,9 @@ namespace Assets.Core.GameObjects.Base
 
         protected Task QueueUpgrade<T>(Upgrade<T> upgrade, TimeSpan upgradeTime, int cost)
         {
+            if (BuildingProgress != BuildingProgress.Complete)
+                return Task.CompletedTask;
+
             if (!Player.Money.Spend(cost))
                 return Task.CompletedTask;
             
@@ -87,6 +91,7 @@ namespace Assets.Core.GameObjects.Base
 
         public override void Update(TimeSpan deltaTime)
         {
+            base.Update(deltaTime);
             if (mProcessingUpgrade != null)
             {
                 mUpgradeTimeLeft -= deltaTime;

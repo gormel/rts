@@ -31,7 +31,6 @@ namespace Assets.Networking
         public IRegistrator<IMeeleeWarriorOrders, IMeeleeWarriorInfo> MeeleeWarriorRegistrator { get; private set; }
         public IRegistrator<IArtilleryOrders, IArtilleryInfo> ArtilleryRegistrator { get; private set; }
         public IRegistrator<IWorkerOrders, IWorkerInfo> WorkerRegistrator { get; private set; }
-        public IRegistrator<IBuildingTemplateOrders, IBuildingTemplateInfo> BuildingTemplateRegistrator { get; private set; }
         public IRegistrator<ICentralBuildingOrders, ICentralBuildingInfo> CentralBuildingRegistrator { get; private set; }
         public IRegistrator<IMinigCampOrders, IMinigCampInfo> MiningCampRegistrator { get; private set; }
         public IRegistrator<IBarrakOrders, IBarrakInfo> BarrakRegistrator { get; private set; }
@@ -74,10 +73,6 @@ namespace Assets.Networking
             var workerService = new WorkerServiceImpl();
             WorkerRegistrator = workerService;
             mServer.Services.Add(WorkerService.BindService(workerService));
-
-            var buildingTemplateService = new BuildingTemplateServiceImpl();
-            BuildingTemplateRegistrator = buildingTemplateService;
-            mServer.Services.Add(BuildingTemplateService.BindService(buildingTemplateService));
 
             var centralBuildingService = new CentralBuildingServiceImpl();
             CentralBuildingRegistrator = centralBuildingService;

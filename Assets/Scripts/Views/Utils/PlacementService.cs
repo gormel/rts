@@ -1,26 +1,23 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Assets.Core.GameObjects.Base;
 using Assets.Core.GameObjects.Utils;
 using Assets.Utils;
 using UnityEngine;
 
-namespace Assets.Views.Base
+namespace Assets.Views.Utils
 {
-    abstract class PlacementServiceBuildingView<TOrderer, TInfo> : BuildingView<TOrderer, TInfo>, IPlacementService
-        where TOrderer : IBuildingOrders
-        where TInfo : IBuildingInfo
+    class PlacementService : MonoBehaviour, IPlacementService
     {
         public GameObject[] PlacementPoints;
         public HashSet<int> mLockedPoints = new HashSet<int>();
+        public UnitySyncContext SyncContext { get; set; }
 
         private RaycastHit[] mNoAllocRaycastHits = new RaycastHit[5];
 
         public async Task<PlacementPoint> TryAllocatePoint()
         {
-            await WaitScaledAsync();
             return await SyncContext.Execute(() =>
             {
                 if (PlacementPoints == null)
@@ -36,8 +33,7 @@ namespace Assets.Views.Base
 
                     mLockedPoints.Add(i);
                     return new PlacementPoint(i,
-                        GameUtils.GetFlatPosition(transform.localPosition + PlacementPoints[i].transform.position -
-                                                  transform.position));
+                        GameUtils.GetFlatPosition(PlacementPoints[i].transform.position));
                 }
 
                 return PlacementPoint.Invalid;
@@ -46,13 +42,11 @@ namespace Assets.Views.Base
 
         public async Task<PlacementPoint> TryAllocateNearestPoint(Vector2 toPoint)
         {
-            await WaitScaledAsync();
             return await SyncContext.Execute(() =>
             {
                 if (PlacementPoints == null)
                     return PlacementPoint.Invalid;
 
-                var toPoint3D = Map.GetWorldPosition(toPoint);
                 float nearestDist = Single.PositiveInfinity;
                 int nearestPointId = -1;
                 for (int i = 0; i < PlacementPoints.Length; i++)
@@ -63,7 +57,7 @@ namespace Assets.Views.Base
                     if (!IsFree(i))
                         continue;
 
-                    var distance = Vector3.Distance(PlacementPoints[i].transform.position, toPoint3D);
+                    var distance = Vector2.Distance(GameUtils.GetFlatPosition(PlacementPoints[i].transform.position), toPoint);
                     if (distance < nearestDist)
                     {
                         nearestDist = distance;
@@ -75,8 +69,7 @@ namespace Assets.Views.Base
                 {
                     mLockedPoints.Add(nearestPointId);
                     return new PlacementPoint(nearestPointId,
-                        GameUtils.GetFlatPosition(transform.localPosition + PlacementPoints[nearestPointId].transform.position -
-                                                  transform.position));
+                        GameUtils.GetFlatPosition(PlacementPoints[nearestPointId].transform.position));
                 }
 
                 return PlacementPoint.Invalid;

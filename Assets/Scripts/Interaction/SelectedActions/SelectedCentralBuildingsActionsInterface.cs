@@ -7,14 +7,13 @@ using UnityEngine.UI;
 
 namespace Assets.Interaction
 {
-    class SelectedCentralBuildingsActionsInterface : MonoBehaviour
+    class SelectedCentralBuildingsActionsInterface : SelectedBuildingActionsInterface
     {
-        public UserInterface Interface;
-
         public TextMeshProUGUI WorkerCostText;
 
-        void Update()
+        public override void Update()
         {
+            base.Update();
             WorkerCostText.text = CentralBuilding.WorkerCost.ToString();
         }
         

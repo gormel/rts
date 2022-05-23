@@ -61,31 +61,6 @@ namespace Assets.Utils
             return new Vector2(position.x, position.z);
         }
 
-        private static bool HasCrystal(Vector2 pos, int innerRadius, int outerRadius, IMapData mapData)
-        {
-            for (int dx = -outerRadius; dx < outerRadius; dx++)
-            {
-                for (int dy = -outerRadius; dy < outerRadius; dy++)
-                {
-                    var x = (int)pos.x + dx;
-                    var y = (int)pos.y + dy;
-
-                    if (x < 0 || x >= mapData.Width)
-                        continue;
-
-                    if (y < 0 || y >= mapData.Length)
-                        continue;
-
-                    if (Mathf.Abs(dx) < innerRadius || Mathf.Abs(dy) < innerRadius)
-                        continue;
-
-                    if (mapData.GetMapObjectAt(x, y) == MapObject.Crystal)
-                        return true;
-                }
-            }
-            return false;
-        }
-
         public static bool TryCreateBase(Game game, Player player, out Vector2 basePos)
         {
             player.Money.Store(170);
@@ -93,7 +68,11 @@ namespace Assets.Utils
                 return false;
 
             var relativeCentralBuildingPosition = Vector2.one;
-            player.CreateCentralBuilding(basePos + relativeCentralBuildingPosition).ContinueWith(t => game.PlaceObject(t.Result));
+            player.CreateCentralBuilding(basePos + relativeCentralBuildingPosition).ContinueWith(async t =>
+            {
+                await game.PlaceObject(t.Result);
+                t.Result.CompleteBuilding();
+            });
             player.CreateWorker(basePos).ContinueWith(t => game.PlaceObject(t.Result));
             basePos += relativeCentralBuildingPosition + CentralBuilding.BuildingSize / 2;
             return true;

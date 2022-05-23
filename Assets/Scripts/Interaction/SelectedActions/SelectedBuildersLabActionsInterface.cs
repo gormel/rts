@@ -8,18 +8,17 @@ using UnityEngine.UI;
 
 namespace Assets.Interaction
 {
-    sealed class SelectedBuildersLabActionsInterface : MonoBehaviour
+    sealed class SelectedBuildersLabActionsInterface : SelectedBuildingActionsInterface
     {
-        public UserInterface Interface;
-
         public GameObject QueueAttackUpgradeButton;
         public GameObject QueueDefenceUpgradeButton;
 
         public TextMeshProUGUI QueueAttackUpgradeText;
         public TextMeshProUGUI QueueDefenceUpgradeText;
 
-        private void Update()
+        public override void Update()
         {
+            base.Update();
             var player = Interface.Root.Player;
             QueueAttackUpgradeButton.SetActive(player.TurretAttackUpgradeAvaliable);
             QueueDefenceUpgradeButton.SetActive(player.BuildingDefenceUpgradeAvaliable);

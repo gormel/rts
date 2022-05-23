@@ -7,10 +7,8 @@ using UnityEngine.UI;
 
 namespace Assets.Interaction
 {
-    sealed class SelectedWarriorsLabActionsInterface : MonoBehaviour
+    sealed class SelectedWarriorsLabActionsInterface : SelectedBuildingActionsInterface
     {
-        public UserInterface Interface;
-
         public GameObject DamageUpgradeButton;
         public GameObject ArmourUpgradeButton;
         public GameObject AttackRangeUpgradeButton;
@@ -19,8 +17,9 @@ namespace Assets.Interaction
         public TextMeshProUGUI ArmourUpgradeCostText;
         public TextMeshProUGUI AttackRangeUpgradeCostText;
 
-        void Update()
+        public override void Update()
         {
+            base.Update();
             var player = Interface.Root.Player;
             DamageUpgradeButton.gameObject.SetActive(player.UnitDamageUpgradeAvaliable);
             ArmourUpgradeButton.gameObject.SetActive(player.UnitArmourUpgradeAvaliable);

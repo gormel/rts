@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Assets.Core.GameObjects;
+using Assets.Core.GameObjects.Base;
 using Assets.Core.GameObjects.Final;
 using Assets.Views.Base;
 using Assets.Views.Utils;
@@ -53,11 +54,11 @@ namespace Assets.Views
 
         public override void OnRightClick(SelectableView view)
         {
-            if (view is BuildingTemplateView)
-                Orders.AttachAsBuilder(((BuildingTemplateView)view).Info.ID);
+            if (view.InfoBase is IBuildingInfo info && info.BuildingProgress == BuildingProgress.Building)
+                Orders.AttachAsBuilder(info.ID);
 
-            if (view is MiningCampView) 
-                Orders.AttachToMiningCamp(((MiningCampView) view).Info.ID);
+            if (view is MiningCampView miningCamp && miningCamp.Info.BuildingProgress == BuildingProgress.Complete) 
+                Orders.AttachToMiningCamp(miningCamp.Info.ID);
         }
     }
 }

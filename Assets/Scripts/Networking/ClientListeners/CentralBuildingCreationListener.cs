@@ -57,6 +57,7 @@ namespace Assets.Networking
         public float Progress => State.Base.Progress;
         public float ViewRadius => State.Base.Base.Base.ViewRadius;
         public int Armour => State.Base.Base.Base.Armour;
+        public BuildingProgress BuildingProgress => State.Base.Base.Progress;
 
         public void ResetState()
         {

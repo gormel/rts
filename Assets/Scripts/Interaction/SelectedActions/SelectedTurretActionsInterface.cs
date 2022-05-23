@@ -4,10 +4,8 @@ using UnityEngine;
 
 namespace Assets.Interaction
 {
-    sealed class SelectedTurretActionsInterface : MonoBehaviour
+    sealed class SelectedTurretActionsInterface : SelectedBuildingActionsInterface
     {
-        public UserInterface Interface;
-
         public void BeginAttack()
         {
             Interface.BeginAttack(Interface.FetchSelectedOrders<ITurretOrders>());

@@ -68,6 +68,7 @@ namespace Assets.Networking.ClientListeners
         public float Progress => State.Base.Progress;
         public int Queued => State.Base.Queued;
         public int Armour => State.Base.Base.Base.Armour;
+        public BuildingProgress BuildingProgress => State.Base.Base.Progress;
         
         public void ResetState()
         {

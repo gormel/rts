@@ -15,8 +15,6 @@ namespace Assets.Core.Game
         Task<MeeleeWarrior> CreateMeeleeWarrior(Vector2 position);
         Task<Artillery> CreateArtillery(Vector2 position);
 
-        Task<BuildingTemplate> CreateBuildingTemplate(Vector2 position, Func<Vector2, Task<Building>> createBuilding, TimeSpan buildTime, Vector2 size, float maxHealth, int cost);
-
         Task<CentralBuilding> CreateCentralBuilding(Vector2 position);
         Task<Barrak> CreateBarrak(Vector2 position);
         Task<Turret> CreateTurret(Vector2 position);

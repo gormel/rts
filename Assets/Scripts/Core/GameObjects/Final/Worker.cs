@@ -50,9 +50,9 @@ namespace Assets.Core.GameObjects.Final
         class BuildLeaf : IBTreeLeaf
         {
             private readonly Worker mWorker;
-            private readonly BuildingTemplate mTemplate;
+            private readonly Building mTemplate;
 
-            public BuildLeaf(Worker worker, BuildingTemplate template)
+            public BuildLeaf(Worker worker, Building template)
             {
                 mWorker = worker;
                 mTemplate = template;
@@ -65,7 +65,7 @@ namespace Assets.Core.GameObjects.Final
                 
                 if (mWorker.IsBuilding)
                 {
-                    if (mTemplate.Progress < 1)
+                    if (mTemplate.BuildingProgress == BuildingProgress.Building)
                         return BTreeLeafState.Processing;
                     
                     return BTreeLeafState.Successed;
@@ -80,9 +80,9 @@ namespace Assets.Core.GameObjects.Final
         class StopBuildLeaf : IBTreeLeaf
         {
             private readonly Worker mWorker;
-            private readonly BuildingTemplate mTemplate;
+            private readonly Building mTemplate;
 
-            public StopBuildLeaf(Worker worker, BuildingTemplate template)
+            public StopBuildLeaf(Worker worker, Building template)
             {
                 mWorker = worker;
                 mTemplate = template;
@@ -197,15 +197,8 @@ namespace Assets.Core.GameObjects.Final
 
             if (!Player.Money.Spend(CentralBuildingCost))
                 return Guid.Empty;
-            
-            var template = await Player.CreateBuildingTemplate(
-                position,
-                async pos => await Player.CreateCentralBuilding(pos),
-                CentralBuildingBuildTime,
-                CentralBuilding.BuildingSize,
-                CentralBuilding.MaximumHealthConst,
-                CentralBuildingCost
-            );
+
+            var template = await Player.CreateCentralBuilding(position);
 
             var id = await Game.PlaceObject(template);
             await AttachAsBuilder(id);
@@ -223,14 +216,7 @@ namespace Assets.Core.GameObjects.Final
             if (!Player.Money.Spend(MiningCampCost))
                 return Guid.Empty;
 
-            var template = await Player.CreateBuildingTemplate(
-                position,
-                async pos => await Player.CreateMiningCamp(pos),
-                MiningCampBuildTime,
-                MiningCamp.BuildingSize,
-                MiningCamp.MaximumHealthConst,
-                MiningCampCost
-            );
+            var template = await Player.CreateMiningCamp(position);
 
             var id = await Game.PlaceObject(template);
             await AttachAsBuilder(id);
@@ -245,14 +231,7 @@ namespace Assets.Core.GameObjects.Final
             if (!Player.Money.Spend(BarrakCost))
                 return Guid.Empty;
 
-            var template = await Player.CreateBuildingTemplate(
-                position,
-                async pos => await Player.CreateBarrak(pos),
-                BarrakBuildTime,
-                Barrak.BuildingSize,
-                Barrak.MaximumHealthConst,
-                BarrakCost
-            );
+            var template = await Player.CreateBarrak(position);
 
             var id = await Game.PlaceObject(template);
             await AttachAsBuilder(id);
@@ -270,14 +249,7 @@ namespace Assets.Core.GameObjects.Final
             if (!Player.Money.Spend(TurretCost))
                 return Guid.Empty;
 
-            var template = await Player.CreateBuildingTemplate(
-                position,
-                async pos => await Player.CreateTurret(pos),
-                TurretBuildTime,
-                Turret.BuildingSize,
-                Turret.MaximumHealthConst,
-                TurretCost
-            );
+            var template = await Player.CreateTurret(position);
 
             var id = await Game.PlaceObject(template);
             await AttachAsBuilder(id);
@@ -292,14 +264,7 @@ namespace Assets.Core.GameObjects.Final
             if (!Player.Money.Spend(BuildersLabCost))
                 return Guid.Empty;
 
-            var template = await Player.CreateBuildingTemplate(
-                position,
-                async pos => await Player.CreateBuildersLab(pos),
-                BuildersLabBuildTime,
-                BuildersLab.BuildingSize,
-                BuildersLab.MaximumHealthConst,
-                BuildersLabCost
-            );
+            var template = await Player.CreateBuildersLab(position);
 
             var id = await Game.PlaceObject(template);
             await AttachAsBuilder(id);
@@ -317,14 +282,7 @@ namespace Assets.Core.GameObjects.Final
             if (!Player.Money.Spend(WarriorsLabCost))
                 return Guid.Empty;
 
-            var template = await Player.CreateBuildingTemplate(
-                position,
-                async pos => await Player.CreateWarriorsLab(pos),
-                WarriorsLabBuildTime,
-                WarriorsLab.BuildingSize,
-                WarriorsLab.MaximumHealthConst,
-                WarriorsLabCost
-            );
+            var template = await Player.CreateWarriorsLab(position);
 
             var id = await Game.PlaceObject(template);
             await AttachAsBuilder(id);
@@ -333,7 +291,7 @@ namespace Assets.Core.GameObjects.Final
 
         public async Task AttachAsBuilder(Guid templateId)
         {
-            var template = Game.GetObject<BuildingTemplate>(templateId);
+            var template = Game.GetObject<Building>(templateId);
             var point = await template.PlacementService.TryAllocateNearestPoint(Position);
             if (point == PlacementPoint.Invalid)
                 return;

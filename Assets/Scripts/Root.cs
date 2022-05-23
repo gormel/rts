@@ -66,7 +66,6 @@ class Root : MonoBehaviour
         private readonly GameObject mRangedWarriorPrefab;
         private readonly GameObject mMeeleeWarriorPrefab;
         private readonly GameObject mWorkerPrefab;
-        private readonly GameObject mBuildingTemplatePrefab;
         private readonly GameObject mCentralBuildingPrefab;
         private readonly GameObject mMiningCampPrefab;
         private readonly GameObject mBarrakPrefab;
@@ -90,7 +89,6 @@ class Root : MonoBehaviour
             mMeeleeWarriorPrefab = root.MeeleeWarriorPrefab;
             mArtilleryPrefab = root.ArtilleryPrefab;
             mWorkerPrefab = root.WorkerPrefab;
-            mBuildingTemplatePrefab = root.BuildingTemplatePrefab;
             mCentralBuildingPrefab = root.CentralBuildingPrefab;
             mMiningCampPrefab = root.MiningCampPrefab;
             mBarrakPrefab = root.BarrakPrefab;
@@ -182,23 +180,11 @@ class Root : MonoBehaviour
             return artillery;
         }
 
-        public async Task<BuildingTemplate> CreateBuildingTemplate(Vector2 position, Func<Vector2, Task<Building>> building, TimeSpan buildTime, Vector2 size, float maxHealth, int cost)
-        {
-            var template = await CreateModelAndView<BuildingTemplateView, BuildingTemplate, IBuildingTemplateOrders, IBuildingTemplateInfo>(
-                mBuildingTemplatePrefab,
-                view => new BuildingTemplate(mGame, building, buildTime, size, position, maxHealth, view, cost),
-                position
-            );
-            template.AddedToGame += o => mServer.BuildingTemplateRegistrator.Register(template, template);
-            template.RemovedFromGame += o => mServer.BuildingTemplateRegistrator.Unregister(o.ID);
-            return template;
-        }
-
         public async Task<CentralBuilding> CreateCentralBuilding(Vector2 position)
         {
             var centralBuilding = await CreateModelAndView<CentralBuildingView, CentralBuilding, ICentralBuildingOrders, ICentralBuildingInfo>(
                 mCentralBuildingPrefab,
-                view => new CentralBuilding(mGame, position, view),
+                view => new CentralBuilding(mGame, position, view.PlacementService),
                 position
             );
             centralBuilding.AddedToGame += o => mServer.CentralBuildingRegistrator.Register(centralBuilding, centralBuilding);
@@ -210,7 +196,7 @@ class Root : MonoBehaviour
         {
             var barrak = await CreateModelAndView<BarrakView, Barrak, IBarrakOrders, IBarrakInfo>(
                 mBarrakPrefab,
-                view => new Barrak(mGame, position, view),
+                view => new Barrak(mGame, position, view.PlacementService),
                 position
             );
 
@@ -223,7 +209,7 @@ class Root : MonoBehaviour
         {
             var turret = await CreateModelAndView<TurretView, Turret, ITurretOrders, ITurretInfo>(
                 mTurretPrefab,
-                view => new Turret(mGame, position),
+                view => new Turret(mGame, position, view.PlacementService),
                 position
             );
 
@@ -236,7 +222,7 @@ class Root : MonoBehaviour
         {
             var buildersLab = await CreateModelAndView<BuildersLabView, BuildersLab, IBuildersLabOrders, IBuildersLabInfo>(
                 mBuildersLabPrefab,
-                view => new BuildersLab(position),
+                view => new BuildersLab(position, view.PlacementService),
                 position
             );
 
@@ -249,7 +235,7 @@ class Root : MonoBehaviour
         {
             var warriorsLab = await CreateModelAndView<WarriorsLabView, WarriorsLab, IWarriorsLabOrders, IWarriorsLabInfo>(
                 mWarriorsLabPrefab,
-                view => new WarriorsLab(position),
+                view => new WarriorsLab(position, view.PlacementService),
                 position
             );
 
@@ -262,7 +248,7 @@ class Root : MonoBehaviour
         {
             var miningCamp = await CreateModelAndView<MiningCampView, MiningCamp, IMinigCampOrders, IMinigCampInfo>(
                 mMiningCampPrefab,
-                view => new MiningCamp(mGame, position, view),
+                view => new MiningCamp(mGame, position, view.PlacementService),
                 position
             );
             miningCamp.AddedToGame += o => mServer.MiningCampRegistrator.Register(miningCamp, miningCamp);
@@ -279,7 +265,6 @@ class Root : MonoBehaviour
     public GameObject RangedWarriorPrefab;
     public GameObject MeeleeWarriorPrefab;
     public GameObject ArtilleryPrefab;
-    public GameObject BuildingTemplatePrefab;
     public GameObject CentralBuildingPrefab;
     public GameObject MiningCampPrefab;
     public GameObject TurretPrefab;
@@ -356,7 +341,6 @@ class Root : MonoBehaviour
             mClient.RangedWarriorCreated += ClientOnRangedWarriorCreated;
             mClient.ArtilleryCreated += ClientOnArtilleryCreated;
             mClient.WorkerCreated += ClientOnWorkerCreated;
-            mClient.BuildingTemplateCreated += ClientOnBuildingTemplateCreated;
             mClient.CentralBuildingCreated += ClientOnCentralBuildingCreated;
             mClient.MiningCampCreated += ClientOnMiningCampCreated;
             mClient.BarrakCreated += ClientOnBarrakCreated;
@@ -486,11 +470,6 @@ class Root : MonoBehaviour
     private void EnemyFactoryOnViewCreated(SelectableView obj)
     {
         obj.OwnershipRelation = ObjectOwnershipRelation.Enemy;
-    }
-
-    private void ClientOnBuildingTemplateCreated(IBuildingTemplateOrders arg1, IBuildingTemplateInfo arg2)
-    {
-        CreateClientView(arg1, arg2, BuildingTemplatePrefab);
     }
 
     private void ClientOnBarrakCreated(IBarrakOrders arg1, IBarrakInfo arg2)

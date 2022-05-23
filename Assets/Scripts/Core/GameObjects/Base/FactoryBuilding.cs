@@ -131,7 +131,6 @@ namespace Assets.Core.GameObjects.Base {
         }
 
         private readonly Game.Game mGame;
-        private readonly IPlacementService mPlacementService;
         private readonly IndexedQueue<Order> mOrders = new IndexedQueue<Order>();
         private readonly BTree mIntelligence;
         private Order mLockedOrder;
@@ -141,12 +140,12 @@ namespace Assets.Core.GameObjects.Base {
         public int Queued { get; private set; }
         public float Progress { get; private set; }
 
-        public FactoryBuilding(Game.Game game, Vector2 position, IPlacementService placementService)
+        public FactoryBuilding(Game.Game game, Vector2 position, TimeSpan buildingTime, IPlacementService placementService)
+            : base(buildingTime, placementService)
         {
             mGame = game;
             Position = position;
             Waypoint = Position + Size / 2;
-            mPlacementService = placementService;
             mIntelligence = BTree.Create("Production").Sequence(b => b
                 .Selector(b1 => b1
                     .Leaf(new CheckOrderLeaf(this))
@@ -164,6 +163,9 @@ namespace Assets.Core.GameObjects.Base {
 
         protected async Task<bool> QueueUnit(int cost, TimeSpan productionTime, Func<IGameObjectFactory, Vector2, Task<Unit>> createUnit)
         {
+            if (BuildingProgress != BuildingProgress.Complete)
+                return false;
+            
             if (!Player.Money.Spend(cost))
                 return false;
 
@@ -185,7 +187,7 @@ namespace Assets.Core.GameObjects.Base {
                     return true;
 
                 taskProcessing = true;
-                mPlacementService.TryAllocateNearestPoint(Waypoint).ContinueWith(t =>
+                PlacementService.TryAllocateNearestPoint(Waypoint).ContinueWith(t =>
                 {
                     allocatedPoint = t.Result;
                     taskProcessing = false;
@@ -197,7 +199,7 @@ namespace Assets.Core.GameObjects.Base {
                 var unit = await createUnit(Player, allocatedPoint.Position);
                 unit.RemovedFromGame += u => Player.Limit.Store(1);
                 await mGame.PlaceObject(unit);
-                await mPlacementService.ReleasePoint(allocatedPoint.ID);
+                await PlacementService.ReleasePoint(allocatedPoint.ID);
                 if (!new Rect(Position, Size).Contains(Waypoint))
                     await unit.GoTo(Waypoint);
             }, () =>
@@ -205,13 +207,14 @@ namespace Assets.Core.GameObjects.Base {
                 Queued--;
                 Player.Limit.Store(1);
                 Player.Money.Store(cost);
-                mPlacementService.ReleasePoint(allocatedPoint.ID);
+                PlacementService.ReleasePoint(allocatedPoint.ID);
             }));
             return true;
         }
 
         public override void Update(TimeSpan deltaTime)
         {
+            base.Update(deltaTime);
             mIntelligence.Update(deltaTime);
         }
 

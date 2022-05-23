@@ -9,7 +9,7 @@ namespace Core.BotIntelligence.Memory
     {
         public Worker FreeWorker { get; set; }
         public Vector2Int Place { get; set; }
-        public BuildingTemplate Template { get; set; }
+        public Building Template { get; set; }
     }
 
     class WorkerOrderingFastMemory
