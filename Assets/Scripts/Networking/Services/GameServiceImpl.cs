@@ -73,7 +73,8 @@ namespace Assets.Networking.Services
                     
                     continue;
                 }
-                
+
+                bot.GameplayState = PlayerGameplateState.Playing;
                 mGame.AddBotPlayer(bot);
             }
         }
