@@ -105,7 +105,10 @@ namespace Assets.Views.Base
         
         protected virtual void LateUpdate()
         {
-            var horizontalVelocity = Horizontal(mNavMeshAgent.velocity);
+            var horizontalVelocity = Vector3.zero;
+            if (!IsClient)
+                horizontalVelocity = Horizontal(mNavMeshAgent.velocity);
+            
             if (!IsClient && !IsArrived && horizontalVelocity.sqrMagnitude > 0)
                 transform.rotation = Quaternion.LookRotation(horizontalVelocity.normalized);
             else if (mLookTarget.HasValue && Vector3.Distance(mLookTarget.Value, transform.localPosition) > 0.01)

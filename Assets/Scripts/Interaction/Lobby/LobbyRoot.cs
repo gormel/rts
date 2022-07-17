@@ -33,6 +33,9 @@ namespace Assets.Interaction.Lobby
 
         void Start()
         {
+            GameUtils.BotPlayers.Clear();
+            GameUtils.RegistredPlayers.Clear();
+            
             if (GameUtils.CurrentMode == GameMode.Client)
             {
                 mChannel = new Channel(GameUtils.IP.ToString(), GameUtils.LobbyPort, ChannelCredentials.Insecure);
