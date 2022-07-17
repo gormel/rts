@@ -49,13 +49,13 @@ class Root : MonoBehaviour
                 mGame,
                 damage,
                 to
-            ));
-
+                ));
+            
             mServer.ProjectileSpawner.SpawnMissile(from, to, speed, radius);
             mMissileTrajectoryService.Spawn(from, to, speed, radius);
         }
     }
-
+    
     private class Factory : IGameObjectFactory
     {
         private readonly RtsServer mServer;
@@ -99,8 +99,7 @@ class Root : MonoBehaviour
             mProjectileSpawner = new ProjectileSpawner(mGame, mServer, root.MissileSpawner);
         }
 
-        private Task<TModel> CreateModelAndView<TView, TModel, TOrders, TInfo>(GameObject prefab,
-            Func<TView, TModel> createModel, Vector2 position)
+        private Task<TModel> CreateModelAndView<TView, TModel, TOrders, TInfo>(GameObject prefab, Func<TView, TModel> createModel, Vector2 position)
             where TView : ModelSelectableView<TOrders, TInfo>
             where TOrders : IGameObjectOrders
             where TInfo : IGameObjectInfo
@@ -147,12 +146,11 @@ class Root : MonoBehaviour
 
         public async Task<RangedWarrior> CreateRangedWarrior(Vector2 position)
         {
-            var rangedWarrior =
-                await CreateModelAndView<RangedWarriorView, RangedWarrior, IRangedWarriorOrders, IRangedWarriorInfo>(
-                    mRangedWarriorPrefab,
-                    view => new RangedWarrior(mGame, view, position),
-                    position
-                );
+            var rangedWarrior = await CreateModelAndView<RangedWarriorView, RangedWarrior, IRangedWarriorOrders, IRangedWarriorInfo>(
+                mRangedWarriorPrefab,
+                view => new RangedWarrior(mGame, view, position), 
+                position
+            );
             rangedWarrior.AddedToGame += o => mServer.RangedWarriorRegistrator.Register(rangedWarrior, rangedWarrior);
             rangedWarrior.RemovedFromGame += o => mServer.RangedWarriorRegistrator.Unregister(o.ID);
             return rangedWarrior;
@@ -160,12 +158,11 @@ class Root : MonoBehaviour
 
         public async Task<MeeleeWarrior> CreateMeeleeWarrior(Vector2 position)
         {
-            var meeleeWarrior =
-                await CreateModelAndView<MeeleeWarriorView, MeeleeWarrior, IMeeleeWarriorOrders, IMeeleeWarriorInfo>(
-                    mMeeleeWarriorPrefab,
-                    view => new MeeleeWarrior(mGame, view, position),
-                    position
-                );
+            var meeleeWarrior = await CreateModelAndView<MeeleeWarriorView, MeeleeWarrior, IMeeleeWarriorOrders, IMeeleeWarriorInfo> (
+                mMeeleeWarriorPrefab,
+                view => new MeeleeWarrior(mGame, view, position), 
+                position
+            );
             meeleeWarrior.AddedToGame += o => mServer.MeeleeWarriorRegistrator.Register(meeleeWarrior, meeleeWarrior);
             meeleeWarrior.RemovedFromGame += o => mServer.MeeleeWarriorRegistrator.Unregister(o.ID);
             return meeleeWarrior;
@@ -173,9 +170,9 @@ class Root : MonoBehaviour
 
         public async Task<Artillery> CreateArtillery(Vector2 position)
         {
-            var artillery = await CreateModelAndView<ArtilleryView, Artillery, IArtilleryOrders, IArtilleryInfo>(
+            var artillery = await CreateModelAndView<ArtilleryView, Artillery, IArtilleryOrders, IArtilleryInfo> (
                 mArtilleryPrefab,
-                view => new Artillery(mGame, view, position, mProjectileSpawner),
+                view => new Artillery(mGame, view, position, mProjectileSpawner), 
                 position
             );
             artillery.AddedToGame += o => mServer.ArtilleryRegistrator.Register(artillery, artillery);
@@ -185,15 +182,12 @@ class Root : MonoBehaviour
 
         public async Task<CentralBuilding> CreateCentralBuilding(Vector2 position)
         {
-            var centralBuilding =
-                await CreateModelAndView<CentralBuildingView, CentralBuilding, ICentralBuildingOrders,
-                    ICentralBuildingInfo>(
-                    mCentralBuildingPrefab,
-                    view => new CentralBuilding(mGame, position, view.PlacementService),
-                    position
-                );
-            centralBuilding.AddedToGame +=
-                o => mServer.CentralBuildingRegistrator.Register(centralBuilding, centralBuilding);
+            var centralBuilding = await CreateModelAndView<CentralBuildingView, CentralBuilding, ICentralBuildingOrders, ICentralBuildingInfo>(
+                mCentralBuildingPrefab,
+                view => new CentralBuilding(mGame, position, view.PlacementService),
+                position
+            );
+            centralBuilding.AddedToGame += o => mServer.CentralBuildingRegistrator.Register(centralBuilding, centralBuilding);
             centralBuilding.RemovedFromGame += o => mServer.CentralBuildingRegistrator.Unregister(o.ID);
             return centralBuilding;
         }
@@ -226,12 +220,11 @@ class Root : MonoBehaviour
 
         public async Task<BuildersLab> CreateBuildersLab(Vector2 position)
         {
-            var buildersLab =
-                await CreateModelAndView<BuildersLabView, BuildersLab, IBuildersLabOrders, IBuildersLabInfo>(
-                    mBuildersLabPrefab,
-                    view => new BuildersLab(mGame, position, view.PlacementService),
-                    position
-                );
+            var buildersLab = await CreateModelAndView<BuildersLabView, BuildersLab, IBuildersLabOrders, IBuildersLabInfo>(
+                mBuildersLabPrefab,
+                view => new BuildersLab(mGame, position, view.PlacementService),
+                position
+            );
 
             buildersLab.AddedToGame += o => mServer.BuildersLabRegistrator.Register(buildersLab, buildersLab);
             buildersLab.RemovedFromGame += o => mServer.BuildersLabRegistrator.Unregister(o.ID);
@@ -240,12 +233,11 @@ class Root : MonoBehaviour
 
         public async Task<WarriorsLab> CreateWarriorsLab(Vector2 position)
         {
-            var warriorsLab =
-                await CreateModelAndView<WarriorsLabView, WarriorsLab, IWarriorsLabOrders, IWarriorsLabInfo>(
-                    mWarriorsLabPrefab,
-                    view => new WarriorsLab(mGame, position, view.PlacementService),
-                    position
-                );
+            var warriorsLab = await CreateModelAndView<WarriorsLabView, WarriorsLab, IWarriorsLabOrders, IWarriorsLabInfo>(
+                mWarriorsLabPrefab,
+                view => new WarriorsLab(mGame, position, view.PlacementService),
+                position
+            );
 
             warriorsLab.AddedToGame += o => mServer.WarriorsLabRegistrator.Register(warriorsLab, warriorsLab);
             warriorsLab.RemovedFromGame += o => mServer.WarriorsLabRegistrator.Unregister(o.ID);
@@ -278,7 +270,7 @@ class Root : MonoBehaviour
     public GameObject TurretPrefab;
     public GameObject BuildersLabPrefab;
     public GameObject WarriorsLabPrefab;
-
+    
     public UnitySyncContext SyncContext;
     public ExternalUpdater Updater;
     public GameObject PlayerScreen;
@@ -292,9 +284,7 @@ class Root : MonoBehaviour
     private RtsClient mClient;
     private Game mGame;
 
-    private ConcurrentDictionary<Guid, IPlayerState> mClientOtherPlayers =
-        new ConcurrentDictionary<Guid, IPlayerState>();
-
+    private ConcurrentDictionary<Guid, IPlayerState> mClientOtherPlayers = new ConcurrentDictionary<Guid, IPlayerState>();
     public IPlayerState Player { get; private set; }
     public MapView MapView { get; private set; }
 
@@ -330,11 +320,10 @@ class Root : MonoBehaviour
             mServer.GameStarted += ServerOnGameStarted;
 #endif
 
-            mServer.Listen(SyncContext, enemyFactory, allyFactory, mGame, player, GameUtils.RegistredPlayers,
-                GameUtils.BotPlayers);
+            mServer.Listen(SyncContext, enemyFactory, allyFactory, mGame, player, GameUtils.RegistredPlayers, GameUtils.BotPlayers);
 
             var success = GameUtils.TryCreateBase(mGame, player, out var basePos);
-
+            
             PlaceCamera(basePos);
         }
 
@@ -346,8 +335,7 @@ class Root : MonoBehaviour
             mClient.BaseCreated += pos => PlaceCamera(pos);
             mClient.PlayerConnected += state => Player = state;
             mClient.DisconnectedFromServer += () => SceneManager.LoadScene(GuiSceneName);
-            mClient.OtherPlayerConnected += (nick, player) =>
-                mClientOtherPlayers.AddOrUpdate(player.ID, player, (id, p) => player);
+            mClient.OtherPlayerConnected += (nick, player) => mClientOtherPlayers.AddOrUpdate(player.ID, player, (id, p) => player);
 
             mClient.MeeleeWarriorCreated += ClientOnMeeleeWarriorCreated;
             mClient.RangedWarriorCreated += ClientOnRangedWarriorCreated;
@@ -447,8 +435,8 @@ class Root : MonoBehaviour
         }
     }
 
-    private void CreateClientView<TOrders, TInfo>(TOrders orders, TInfo info, GameObject prefab)
-        where TOrders : IGameObjectOrders
+    private void CreateClientView<TOrders, TInfo>(TOrders orders, TInfo info, GameObject prefab) 
+        where TOrders : IGameObjectOrders 
         where TInfo : IGameObjectInfo
     {
         var instance = Instantiate(prefab);
@@ -462,10 +450,10 @@ class Root : MonoBehaviour
 
         view.Map = MapView;
         view.IsClient = true;
-        view.OwnershipRelation =
-            player.ID == Player.ID ? ObjectOwnershipRelation.My :
-            player.Team == Player.Team ? ObjectOwnershipRelation.Ally :
-            ObjectOwnershipRelation.Enemy;
+        view.OwnershipRelation = 
+                player.ID == Player.ID ? ObjectOwnershipRelation.My : 
+                player.Team == Player.Team ? ObjectOwnershipRelation.Ally :
+                ObjectOwnershipRelation.Enemy;
         view.Updater = Updater;
         view.SyncContext = SyncContext;
         view.LoadModel(orders, info);
@@ -474,8 +462,7 @@ class Root : MonoBehaviour
         instance.transform.localPosition = MapView.GetWorldPosition(info.Position);
     }
 
-    private void ClientOnCentralBuildingCreated(ICentralBuildingOrders centralBuildingOrders,
-        ICentralBuildingInfo centralBuildingInfo)
+    private void ClientOnCentralBuildingCreated(ICentralBuildingOrders centralBuildingOrders, ICentralBuildingInfo centralBuildingInfo)
     {
         CreateClientView(centralBuildingOrders, centralBuildingInfo, CentralBuildingPrefab);
     }

@@ -17,7 +17,7 @@ namespace Assets.Networking.Services
     class GameServiceImpl : GameService.GameServiceBase
     {
         public event Action<string, int> MessageRecived;
-        
+        public event Action GameStarted;
 
         private readonly Game mGame;
         private readonly Player mHostPlayer;
@@ -95,6 +95,7 @@ namespace Assets.Networking.Services
             mHostPlayer.GameplayState = PlayerGameplateState.Playing;
             
             mGame.Start();
+            GameStarted?.Invoke();
         }
 
         public async Task InitBotPlayersAndStartGame(IDictionary<string, UserState> botPlayers, CancellationToken token = default)
