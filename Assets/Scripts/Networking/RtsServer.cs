@@ -98,8 +98,8 @@ namespace Assets.Networking
             WarriorsLabRegistrator = warriorsLabService;
             mServer.Services.Add(WarriorsLabService.BindService(warriorsLabService));
 
-            var t = mGameService.InitBotPlayersAndStartGame(botPlayers);
             mServer.Start();
+            var t = mGameService.InitBotPlayersAndStartGame(botPlayers);
         }
 
         private void GameServiceOnGameStarted()

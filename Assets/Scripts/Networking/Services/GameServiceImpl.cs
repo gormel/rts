@@ -78,7 +78,7 @@ namespace Assets.Networking.Services
             }
         }
 
-        private async Task WaitAndStartGame(CancellationToken token = default)
+        private async Task<Player[]> WaitPlayers(CancellationToken token = default)
         {
             await using (token.Register(() =>
             {
@@ -86,11 +86,14 @@ namespace Assets.Networking.Services
                     tcs.SetCanceled();
             }))
             {
-                var players = await Task.WhenAll(mRegistredPlayerConnections.Values.Select(s => s.Task));
-
-                foreach (var player in players)
-                    player.GameplayState = PlayerGameplateState.Playing;
+                return await Task.WhenAll(mRegistredPlayerConnections.Values.Select(s => s.Task));
             }
+        }
+
+        private void StartGame(Player[] players)
+        {
+            foreach (var player in players)
+                player.GameplayState = PlayerGameplateState.Playing;
 
             mHostPlayer.GameplayState = PlayerGameplateState.Playing;
             
@@ -100,8 +103,9 @@ namespace Assets.Networking.Services
 
         public async Task InitBotPlayersAndStartGame(IDictionary<string, UserState> botPlayers, CancellationToken token = default)
         {
+            var players = await WaitPlayers(token);
             await InitBotPlayers(botPlayers, token);
-            await WaitAndStartGame(token);
+            StartGame(players);
         }
 
         private PlayerState CollectPlayerState(IPlayerState player)
