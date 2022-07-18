@@ -45,6 +45,7 @@ namespace Assets.Core.GameObjects.Base
         {
             BuildingProgress = BuildingProgress.Complete;
             RecivedDamage = 0;
+            Player.RegisterCreatedBuilding(GetType());
         }
 
         public override void Update(TimeSpan deltaTime)
