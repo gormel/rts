@@ -143,6 +143,24 @@ namespace Assets.Core.GameObjects.Final
                 return BTreeLeafState.Successed;
             }
         }
+
+        class WaitConstructionCompleteLeaf : IBTreeLeaf
+        {
+            private readonly Building mBuilding;
+
+            public WaitConstructionCompleteLeaf(Building building)
+            {
+                mBuilding = building;
+            }
+
+            public BTreeLeafState Update(TimeSpan deltaTime)
+            {
+                return mBuilding.BuildingProgress == BuildingProgress.Building
+                    ? BTreeLeafState.Processing
+                    : BTreeLeafState.Successed;
+            }
+        }
+        
         public static Vector2 BuildingSize { get; } = new Vector2(1, 1);
         public const float MaximumHealthConst = 188;
         
@@ -177,6 +195,7 @@ namespace Assets.Core.GameObjects.Final
                 .Success(b1 => b1
                     .Selector(b2 => b2
                         .Sequence(b3 => b3
+                            .Leaf(new WaitConstructionCompleteLeaf(this))
                             .Selector(b4 => b4
                                 .Leaf(new CheckDistanceLeaf(this, mStorage))
                                 .Fail(b5 => b5.Leaf(new ClearTargetLeaf(mStorage)))

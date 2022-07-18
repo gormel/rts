@@ -55,7 +55,10 @@ namespace Assets.Core.GameObjects.Base
                 mProgress -= deltaTime * multiplyer;
                 RecivedDamage = Math.Max(RecivedDamage - (float)(deltaTime.TotalSeconds * multiplyer / mFullBuildTime.TotalSeconds * MaxHealth), 0);
                 if (mProgress < TimeSpan.Zero)
+                {
                     BuildingProgress = BuildingProgress.Complete;
+                    Player.RegisterCreatedBuilding(GetType());
+                }
             }
         }
 
@@ -64,14 +67,14 @@ namespace Assets.Core.GameObjects.Base
             base.OnAddedToGame();
 
             RecivedDamage = MaxHealth - 1;
-            Player.RegisterCreatedBuilding(GetType());
         }
 
         public override void OnRemovedFromGame()
         {
             base.OnRemovedFromGame();
             
-            Player.FreeCreatedBuilding(GetType());
+            if (BuildingProgress == BuildingProgress.Complete)
+                Player.FreeCreatedBuilding(GetType());
         }
 
         public Task CancelBuilding()
