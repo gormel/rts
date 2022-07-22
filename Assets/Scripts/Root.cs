@@ -386,7 +386,10 @@ class Root : MonoBehaviour
 
     private void OnChatMessageRecived(string nickname, int stickerID)
     {
-        ChatMessageRecived?.Invoke(nickname, stickerID);
+        SyncContext.Execute(() =>
+        {
+            ChatMessageRecived?.Invoke(nickname, stickerID);
+        });
     }
 
     private void ClientOnMeeleeWarriorCreated(IMeeleeWarriorOrders orders, IMeeleeWarriorInfo info)
