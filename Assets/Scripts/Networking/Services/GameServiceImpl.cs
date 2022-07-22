@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IdentityModel.Selectors;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -31,6 +32,7 @@ namespace Assets.Networking.Services
         private readonly ConcurrentDictionary<string, BotPlayer> mBotPlayers = new();
 
         private readonly ConcurrentDictionary<string, TaskCompletionSource<Player>> mRegistredPlayerConnections = new();
+        private TaskCompletionSource<bool> mPlayerInitAwaiter = new();
 
         public GameServiceImpl(
             Game game, 
@@ -103,9 +105,15 @@ namespace Assets.Networking.Services
 
         public async Task InitBotPlayersAndStartGame(IDictionary<string, UserState> botPlayers, CancellationToken token = default)
         {
-            var players = await WaitPlayers(token);
-            await InitBotPlayers(botPlayers, token);
-            StartGame(players);
+            using(token.Register(() => mPlayerInitAwaiter.TrySetCanceled()))
+            {
+                var players = await WaitPlayers(token);
+
+                mPlayerInitAwaiter.TrySetResult(true);
+
+                await InitBotPlayers(botPlayers, token);
+                StartGame(players);
+            }
         }
 
         private PlayerState CollectPlayerState(IPlayerState player)
@@ -285,7 +293,7 @@ namespace Assets.Networking.Services
                 UserState registredPlayer;
                 if (!mRegistredPlayers.TryGetValue(request.Nickname, out registredPlayer))
                     throw new Exception("Player is not registered.");
-
+                
                 var player = new Player(request.Nickname, registredPlayer.Team == mHostPlayer.Team ? mAllyFactory : mEnemyFactory, registredPlayer.Team);
                 mGame.AddPlayer(player);
                 
@@ -294,6 +302,8 @@ namespace Assets.Networking.Services
 
                 mConnectedPlayers.AddOrUpdate(request.Nickname, player, (s, p) => player);
                 await ReportPlayerState(request.Nickname, player, true, context.CancellationToken);
+
+                await mPlayerInitAwaiter.Task.ContinueWith(_ => {}, context.CancellationToken);
                 
                 var baseCreation = await mSyncContext.Execute(() =>
                 {
