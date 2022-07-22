@@ -156,6 +156,7 @@ namespace Assets.Networking.Lobby
 
         public override async Task<Empty> UpdateState(UserState request, ServerCallContext context)
         {
+            mActiveUsers.AddOrUpdate(request.ID, _ => request, (_, _) => request);
             ReportUserState(request);
             return new Empty();
         }
