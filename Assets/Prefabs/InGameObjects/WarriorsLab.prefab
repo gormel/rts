@@ -122,15 +122,19 @@ MonoBehaviour:
   AllyMaterial:
   - {fileID: 2100000, guid: 02de3d797cec444de8b7521f81f6d01e, type: 2}
   - {fileID: 2100000, guid: 02de3d797cec444de8b7521f81f6d01e, type: 2}
+  - {fileID: 2100000, guid: 02de3d797cec444de8b7521f81f6d01e, type: 2}
   MyMaterial:
+  - {fileID: 2100000, guid: d1435e2c5dc465247bdbb6b88465a7d5, type: 2}
   - {fileID: 2100000, guid: d1435e2c5dc465247bdbb6b88465a7d5, type: 2}
   - {fileID: 2100000, guid: d1435e2c5dc465247bdbb6b88465a7d5, type: 2}
   EnemyMaterial:
   - {fileID: 2100000, guid: c9217accbdfa61c40b586bd613264b65, type: 2}
   - {fileID: 2100000, guid: c9217accbdfa61c40b586bd613264b65, type: 2}
+  - {fileID: 2100000, guid: c9217accbdfa61c40b586bd613264b65, type: 2}
   MaterialTarget:
   - {fileID: 933970804188584171}
   - {fileID: 8973959222012648802}
+  - {fileID: 1794350527645162618}
   HpBar: {fileID: 7273769350309939700}
   SelectionPriority: 0
   ExplosionPrefab: {fileID: 4269541658022102700, guid: aa65bcd20538a464bbb22a2733200282,
@@ -728,6 +732,12 @@ GameObject:
 --- !u!4 &625433622552045333 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 05f5e04f42fbb1d47a04aad4ba6dddfd,
+    type: 3}
+  m_PrefabInstance: {fileID: 1091918321427775742}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &1794350527645162618 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -7511558181221131132, guid: 05f5e04f42fbb1d47a04aad4ba6dddfd,
     type: 3}
   m_PrefabInstance: {fileID: 1091918321427775742}
   m_PrefabAsset: {fileID: 0}
