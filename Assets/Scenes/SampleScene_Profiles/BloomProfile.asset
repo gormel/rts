@@ -18,7 +18,7 @@ MonoBehaviour:
     value: 1
   intensity:
     overrideState: 1
-    value: 5.21
+    value: 6.78
   threshold:
     overrideState: 0
     value: 1
@@ -36,7 +36,7 @@ MonoBehaviour:
     value: 0
   color:
     overrideState: 0
-    value: {r: 14.694356, g: 0.29271626, b: 0.29271626, a: 1}
+    value: {r: 1024, g: 1019.9843, b: 1019.9843, a: 1}
   fastMode:
     overrideState: 1
     value: 1
